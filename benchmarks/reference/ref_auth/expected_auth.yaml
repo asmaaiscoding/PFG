@@ -1,0 +1,62 @@
+# Ground truth for ref_auth: per-endpoint auth annotations.
+endpoints:
+  - route: /public/
+    method: GET
+    requires_auth: false
+    required_role: NONE
+    is_intentionally_public: true
+  - route: /auth/
+    method: GET
+    requires_auth: true
+    required_role: USER
+    is_intentionally_public: false
+  - route: /perm/
+    method: GET
+    requires_auth: true
+    required_role: USER
+    is_intentionally_public: false
+  - route: /staff/
+    method: GET
+    requires_auth: true
+    required_role: ADMIN
+    is_intentionally_public: false
+  - route: /api/open/
+    method: GET
+    requires_auth: false
+    required_role: NONE
+    is_intentionally_public: true
+  - route: /api/user/
+    method: GET
+    requires_auth: true
+    required_role: USER
+    is_intentionally_public: false
+  - route: /cbv/login/
+    method: GET
+    requires_auth: true
+    required_role: USER
+    is_intentionally_public: false
+  - route: /cbv/perm/
+    method: GET
+    requires_auth: true
+    required_role: USER
+    is_intentionally_public: false
+  - route: /drf/admin/
+    method: GET
+    requires_auth: true
+    required_role: ADMIN
+    is_intentionally_public: false
+  - route: /drf/anon/
+    method: GET
+    requires_auth: false
+    required_role: NONE
+    is_intentionally_public: true
+  - route: /health/
+    method: GET
+    requires_auth: false
+    required_role: NONE
+    is_intentionally_public: true
+  - route: /login/
+    method: GET
+    requires_auth: false
+    required_role: NONE
+    is_intentionally_public: true

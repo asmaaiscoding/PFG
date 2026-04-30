@@ -1,0 +1,46 @@
+{
+  "schema_version": "1.0",
+  "application": "toy_combined",
+  "framework": "synthetic",
+  "metadata": { "purpose": "missing auth AND IDOR-style flow on same endpoint" },
+  "nodes": [
+    {
+      "id": "ep_update_profile",
+      "type": "endpoint",
+      "attrs": {
+        "http_method": "PUT",
+        "route": "/api/users/{id}/profile",
+        "route_params": ["id"],
+        "requires_auth": false,
+        "required_role": "NONE",
+        "ownership_check_present": false,
+        "is_intentionally_public": false,
+        "source_location": "toy_combined/views.py:33"
+      }
+    },
+    {
+      "id": "svc_update",
+      "type": "service",
+      "attrs": { "name": "ProfileService.update", "performs_mutation": true, "performs_data_access": true }
+    },
+    {
+      "id": "da_profile_update",
+      "type": "data_access",
+      "attrs": {
+        "operation": "UPDATE",
+        "target_entity": "Profile",
+        "has_ownership_predicate": false,
+        "ownership_predicate_type": "NONE",
+        "user_controlled_params_in_query": ["id"]
+      }
+    }
+  ],
+  "edges": [
+    { "src": "ep_update_profile", "dst": "svc_update", "type": "call" },
+    { "src": "svc_update", "dst": "da_profile_update", "type": "call" },
+    { "src": "ep_update_profile", "dst": "da_profile_update", "type": "identifier_flow", "param": "id" }
+  ],
+  "labels": {
+    "ep_update_profile": { "label": "VULNERABLE", "subtype": "COMBINED", "cwe": "CWE-862" }
+  }
+}

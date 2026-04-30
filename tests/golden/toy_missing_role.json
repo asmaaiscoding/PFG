@@ -1,0 +1,52 @@
+{
+  "schema_version": "1.0",
+  "application": "toy_missing_role",
+  "framework": "synthetic",
+  "metadata": { "purpose": "authenticated user can perform admin-only mutation; no role gate" },
+  "nodes": [
+    {
+      "id": "ep_delete_user",
+      "type": "endpoint",
+      "attrs": {
+        "http_method": "DELETE",
+        "route": "/api/users/{id}",
+        "route_params": ["id"],
+        "requires_auth": true,
+        "required_role": "NONE",
+        "ownership_check_present": false,
+        "is_intentionally_public": false,
+        "source_location": "toy_missing_role/views.py:20"
+      }
+    },
+    {
+      "id": "mw_auth",
+      "type": "middleware",
+      "attrs": { "guard_type": "AUTHENTICATION", "position": "BEFORE_HANDLER" }
+    },
+    {
+      "id": "svc_delete",
+      "type": "service",
+      "attrs": { "name": "UserService.delete", "performs_mutation": true, "performs_data_access": true }
+    },
+    {
+      "id": "da_users_delete",
+      "type": "data_access",
+      "attrs": {
+        "operation": "DELETE",
+        "target_entity": "User",
+        "has_ownership_predicate": false,
+        "ownership_predicate_type": "NONE",
+        "user_controlled_params_in_query": ["id"]
+      }
+    }
+  ],
+  "edges": [
+    { "src": "ep_delete_user", "dst": "mw_auth", "type": "call" },
+    { "src": "mw_auth", "dst": "svc_delete", "type": "call" },
+    { "src": "svc_delete", "dst": "da_users_delete", "type": "call" },
+    { "src": "ep_delete_user", "dst": "da_users_delete", "type": "identifier_flow", "param": "id" }
+  ],
+  "labels": {
+    "ep_delete_user": { "label": "VULNERABLE", "subtype": "MISSING_ROLE", "cwe": "CWE-863" }
+  }
+}

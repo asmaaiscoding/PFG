@@ -1,0 +1,310 @@
+"""PFG assembly orchestrator (Phase 2 W11).
+
+Combines the W5-W10 Django sub-extractors into a complete `PFG`:
+
+  * endpoints       : discover_endpoints()
+  * auth + role     : annotate_endpoint()
+  * call graph      : build_call_graph()
+  * data access     : detect_data_accesses() per project function
+  * identifier flow : track_identifier_flow() per endpoint handler
+
+Deterministic ID scheme (so re-runs produce identical PFGs):
+
+  endpoint::<METHOD>::<route>
+  service::<dotted.qualname>
+  data::<dotted.qualname>::<lineno>::<idx>
+
+Service nodes are emitted for every project-defined function reachable from
+an endpoint that is *not* itself a data-access leaf. Data-access nodes
+attach to whichever service contains the ORM call.
+"""
+
+from __future__ import annotations
+
+import ast
+from pathlib import Path
+from typing import Any
+
+from pfg.extractors.django.auth import annotate_endpoint
+from pfg.extractors.django.callgraph import build_call_graph
+from pfg.extractors.django.dataaccess import DataAccess, detect_data_accesses
+from pfg.extractors.django.endpoints import discover_endpoints
+from pfg.extractors.django.idflow import FlowSink, track_identifier_flow
+from pfg.pfg.graph import PFG
+
+# --- ID helpers -----------------------------------------------------------
+
+
+def _safe(s: str) -> str:
+    """Sanitize a string into the schema-allowed id form ``[A-Za-z_][A-Za-z0-9_]*``."""
+    out = "".join(c if c.isalnum() else "_" for c in s)
+    if not out or not (out[0].isalpha() or out[0] == "_"):
+        out = "_" + out
+    return out
+
+
+def _endpoint_id(method: str, route: str) -> str:
+    return _safe(f"endpoint__{method}__{route}")
+
+
+def _service_id(qual: str) -> str:
+    return _safe(f"service__{qual}")
+
+
+def _data_id(qual: str, da: DataAccess, idx: int) -> str:
+    return _safe(f"data__{qual}__L{da.lineno}__{idx}")
+
+
+# --- helpers --------------------------------------------------------------
+
+
+def _resolve_function(project_root: Path, qual: str) -> tuple[ast.AST, ast.FunctionDef | ast.AsyncFunctionDef] | None:
+    """Locate the AST FunctionDef for a project qualname."""
+    parts = qual.split(".")
+    for i in range(len(parts) - 1, 0, -1):
+        rel = Path(*parts[:i])
+        for cand in (project_root / rel.with_suffix(".py"), project_root / rel / "__init__.py"):
+            if not cand.exists():
+                continue
+            try:
+                tree = ast.parse(cand.read_text(encoding="utf-8"), filename=str(cand))
+            except SyntaxError:
+                continue
+            rest = parts[i:]
+            if len(rest) == 1:
+                for n in ast.walk(tree):
+                    if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef)) and n.name == rest[0]:
+                        return tree, n
+            elif len(rest) == 2:
+                for n in ast.walk(tree):
+                    if isinstance(n, ast.ClassDef) and n.name == rest[0]:
+                        for body in n.body:
+                            if isinstance(body, (ast.FunctionDef, ast.AsyncFunctionDef)) and body.name == rest[1]:
+                                return tree, body
+    return None
+
+
+def _reachable_functions(seeds: list[str], edges: list[tuple[str, str]]) -> set[str]:
+    """All qualnames reachable from seeds via the call edges."""
+    succ: dict[str, list[str]] = {}
+    for c, e in edges:
+        succ.setdefault(c, []).append(e)
+    seen: set[str] = set()
+    stack = list(seeds)
+    while stack:
+        q = stack.pop()
+        if q in seen:
+            continue
+        seen.add(q)
+        for n in succ.get(q, []):
+            stack.append(n)
+    return seen
+
+
+# --- main entry -----------------------------------------------------------
+
+
+def build_pfg(
+    project_root: str | Path,
+    *,
+    application: str | None = None,
+) -> PFG:
+    """Run the full Django pipeline and return an in-memory `PFG`."""
+    root = Path(project_root).resolve()
+    app_name = application or root.name
+
+    discovered = discover_endpoints(root)
+
+    nodes: list[dict[str, Any]] = []
+    edges: list[dict[str, Any]] = []
+    seen_node_ids: set[str] = set()
+
+    def add_node(node: dict[str, Any]) -> None:
+        if node["id"] in seen_node_ids:
+            return
+        seen_node_ids.add(node["id"])
+        nodes.append(node)
+
+    seen_edges: set[tuple[str, str, str, str | None]] = set()
+
+    def add_edge(src: str, dst: str, etype: str, param: str | None = None) -> None:
+        key = (src, dst, etype, param)
+        if key in seen_edges:
+            return
+        seen_edges.add(key)
+        e: dict[str, Any] = {"src": src, "dst": dst, "type": etype}
+        if param is not None:
+            e["param"] = param
+        edges.append(e)
+
+    # Pass 1: endpoints.
+    seeds: list[str] = []
+    endpoint_id_by_handler: dict[str, str] = {}
+    for ep in discovered:
+        auth = annotate_endpoint(ep, root)
+        eid = _endpoint_id(ep.http_method, ep.route)
+        add_node(
+            {
+                "id": eid,
+                "type": "endpoint",
+                "attrs": {
+                    "http_method": ep.http_method,
+                    "route": ep.route,
+                    "route_params": list(ep.route_params),
+                    "requires_auth": auth.requires_auth,
+                    "required_role": auth.required_role,
+                    "ownership_check_present": False,
+                    "is_intentionally_public": auth.is_intentionally_public,
+                    "source_location": ep.source_location,
+                },
+            }
+        )
+        seeds.append(ep.handler_qualname)
+        endpoint_id_by_handler[ep.handler_qualname] = eid
+
+    # Pass 2: call graph.
+    call_edges = build_call_graph(root, seeds)
+    raw_edges = [(e.caller, e.callee) for e in call_edges]
+    reachable = _reachable_functions(seeds, raw_edges)
+
+    # Pass 3: service nodes for every reachable handler/function.
+    for qual in sorted(reachable):
+        sid = _service_id(qual)
+        add_node(
+            {
+                "id": sid,
+                "type": "service",
+                "attrs": {
+                    "name": qual,
+                    "performs_data_access": False,
+                    "performs_mutation": False,
+                },
+            }
+        )
+
+    # Pass 4: endpoint -> service call edge for the handler itself.
+    for handler, eid in endpoint_id_by_handler.items():
+        if handler in reachable:
+            add_edge(eid, _service_id(handler), "call")
+
+    # Pass 5: callgraph edges as service->service call edges.
+    for c, e in raw_edges:
+        add_edge(_service_id(c), _service_id(e), "call")
+
+    # Pass 6: data-access nodes per reachable function + idflow per endpoint.
+    da_by_qual: dict[str, list[tuple[str, DataAccess]]] = {}
+    for qual in sorted(reachable):
+        resolved = _resolve_function(root, qual)
+        if resolved is None:
+            continue
+        _, fn = resolved
+        accesses = detect_data_accesses(fn)
+        for idx, da in enumerate(accesses):
+            did = _data_id(qual, da, idx)
+            add_node(
+                {
+                    "id": did,
+                    "type": "data_access",
+                    "attrs": {
+                        "operation": da.operation,
+                        "target_entity": da.target_entity,
+                        "has_ownership_predicate": da.has_ownership_predicate,
+                        "ownership_predicate_type": da.ownership_predicate_type,
+                        "user_controlled_params_in_query": [],
+                    },
+                }
+            )
+            add_edge(_service_id(qual), did, "call")
+            da_by_qual.setdefault(qual, []).append((did, da))
+            # Mark service as performing data access / mutation.
+            for n in nodes:
+                if n["id"] == _service_id(qual):
+                    n["attrs"]["performs_data_access"] = True
+                    if da.operation in {"WRITE", "UPDATE", "DELETE"}:
+                        n["attrs"]["performs_mutation"] = True
+
+    # Pass 7: identifier flow edges from each endpoint's route params.
+    # Strategy: track flow inside the handler; whenever a sink callee maps to
+    # a known reachable qualname, add an identifier_flow edge from the
+    # endpoint to that service. If the flow lands on an ORM kwarg, the data
+    # access node also gets the kwarg recorded in its
+    # user_controlled_params_in_query.
+    for ep in discovered:
+        if not ep.route_params:
+            continue
+        eid = _endpoint_id(ep.http_method, ep.route)
+        resolved = _resolve_function(root, ep.handler_qualname)
+        if resolved is None:
+            continue
+        _, fn = resolved
+        sinks = track_identifier_flow(fn, list(ep.route_params))
+        # Build a quick lookup of reachable callee names by their last segment.
+        callee_targets = _build_callee_targets(reachable, sinks)
+        for sink in sinks:
+            target_qual = callee_targets.get(sink.callee)
+            if target_qual is None:
+                continue
+            add_edge(eid, _service_id(target_qual), "identifier_flow", param=sink.source)
+            # If sink hits a data access with matching kwarg, annotate it.
+            _annotate_dataaccess_user_param(nodes, da_by_qual, target_qual, sink)
+
+    pfg = PFG.model_validate(
+        {
+            "schema_version": "1.0",
+            "application": app_name,
+            "framework": "django",
+            "nodes": nodes,
+            "edges": edges,
+        }
+    )
+    return pfg
+
+
+# --- support --------------------------------------------------------------
+
+
+def _build_callee_targets(reachable: set[str], sinks: list[FlowSink]) -> dict[str, str]:
+    """Map a sink's `callee` (as written in source) to a reachable qualname.
+
+    The sink stores the dotted *expression* used at the call site (e.g.
+    ``services.fetch_invoice``). We map that to the canonical project
+    qualname by matching on the trailing segments.
+    """
+    by_tail: dict[str, list[str]] = {}
+    for q in reachable:
+        parts = q.split(".")
+        for i in range(1, min(len(parts), 4) + 1):
+            tail = ".".join(parts[-i:])
+            by_tail.setdefault(tail, []).append(q)
+    out: dict[str, str] = {}
+    for s in sinks:
+        cands = by_tail.get(s.callee)
+        if not cands:
+            # Fallback: last segment only.
+            last = s.callee.rsplit(".", 1)[-1]
+            cands = by_tail.get(last)
+        if cands and len(cands) == 1:
+            out[s.callee] = cands[0]
+    return out
+
+
+def _annotate_dataaccess_user_param(
+    nodes: list[dict[str, Any]],
+    da_by_qual: dict[str, list[tuple[str, DataAccess]]],
+    target_qual: str,
+    sink: FlowSink,
+) -> None:
+    if sink.arg_kind != "kwarg" or sink.arg_name is None:
+        return
+    for did, da in da_by_qual.get(target_qual, []):
+        if sink.arg_name not in {sink.arg_name}:  # always true; placeholder for refinement
+            continue
+        # Match on lineno proximity is not necessary v1; just attach.
+        for n in nodes:
+            if n["id"] == did:
+                params = n["attrs"]["user_controlled_params_in_query"]
+                if sink.arg_name not in params:
+                    params.append(sink.arg_name)
+                # silence unused-var lint
+                _ = da
+                break

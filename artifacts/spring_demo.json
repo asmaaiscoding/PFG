@@ -1,0 +1,201 @@
+{
+  "schema_version": "1.0",
+  "application": "spring_ref_min",
+  "framework": "spring",
+  "nodes": [
+    {
+      "id": "endpoint__GET___api_invoices__id_",
+      "type": "endpoint",
+      "attrs": {
+        "http_method": "GET",
+        "route": "/api/invoices/{id}",
+        "route_params": [
+          "id"
+        ],
+        "requires_auth": false,
+        "required_role": "NONE",
+        "ownership_check_present": false,
+        "is_intentionally_public": false,
+        "source_location": "src/main/java/com/example/demo/InvoiceController.java:16"
+      }
+    },
+    {
+      "id": "service__InvoiceController_getInvoice",
+      "type": "service",
+      "attrs": {
+        "name": "InvoiceController.getInvoice",
+        "performs_data_access": true,
+        "performs_mutation": false
+      }
+    },
+    {
+      "id": "data__InvoiceController_getInvoice__findById__0",
+      "type": "data_access",
+      "attrs": {
+        "operation": "READ",
+        "target_entity": "Invoice",
+        "has_ownership_predicate": false,
+        "ownership_predicate_type": "NONE",
+        "user_controlled_params_in_query": [
+          "id"
+        ]
+      }
+    },
+    {
+      "id": "endpoint__DELETE___api_invoices__id_",
+      "type": "endpoint",
+      "attrs": {
+        "http_method": "DELETE",
+        "route": "/api/invoices/{id}",
+        "route_params": [
+          "id"
+        ],
+        "requires_auth": true,
+        "required_role": "NONE",
+        "ownership_check_present": false,
+        "is_intentionally_public": false,
+        "source_location": "src/main/java/com/example/demo/InvoiceController.java:23"
+      }
+    },
+    {
+      "id": "service__InvoiceController_deleteInvoice",
+      "type": "service",
+      "attrs": {
+        "name": "InvoiceController.deleteInvoice",
+        "performs_data_access": true,
+        "performs_mutation": true
+      }
+    },
+    {
+      "id": "data__InvoiceController_deleteInvoice__deleteById__0",
+      "type": "data_access",
+      "attrs": {
+        "operation": "DELETE",
+        "target_entity": "Invoice",
+        "has_ownership_predicate": false,
+        "ownership_predicate_type": "NONE",
+        "user_controlled_params_in_query": [
+          "id"
+        ]
+      }
+    },
+    {
+      "id": "endpoint__GET___api_invoices_owned__id_",
+      "type": "endpoint",
+      "attrs": {
+        "http_method": "GET",
+        "route": "/api/invoices/owned/{id}",
+        "route_params": [
+          "id"
+        ],
+        "requires_auth": true,
+        "required_role": "USER",
+        "ownership_check_present": false,
+        "is_intentionally_public": false,
+        "source_location": "src/main/java/com/example/demo/InvoiceController.java:30"
+      }
+    },
+    {
+      "id": "service__InvoiceController_getMyInvoice",
+      "type": "service",
+      "attrs": {
+        "name": "InvoiceController.getMyInvoice",
+        "performs_data_access": true,
+        "performs_mutation": false
+      }
+    },
+    {
+      "id": "data__InvoiceController_getMyInvoice__findByIdAndByOwner__0",
+      "type": "data_access",
+      "attrs": {
+        "operation": "READ",
+        "target_entity": "Invoice",
+        "has_ownership_predicate": true,
+        "ownership_predicate_type": "DIRECT",
+        "user_controlled_params_in_query": [
+          "id"
+        ]
+      }
+    },
+    {
+      "id": "endpoint__GET___api_invoices_health",
+      "type": "endpoint",
+      "attrs": {
+        "http_method": "GET",
+        "route": "/api/invoices/health",
+        "route_params": [],
+        "requires_auth": false,
+        "required_role": "NONE",
+        "ownership_check_present": false,
+        "is_intentionally_public": false,
+        "source_location": "src/main/java/com/example/demo/InvoiceController.java:36"
+      }
+    },
+    {
+      "id": "service__InvoiceController_health",
+      "type": "service",
+      "attrs": {
+        "name": "InvoiceController.health",
+        "performs_data_access": false,
+        "performs_mutation": false
+      }
+    }
+  ],
+  "edges": [
+    {
+      "src": "endpoint__GET___api_invoices__id_",
+      "dst": "service__InvoiceController_getInvoice",
+      "type": "call"
+    },
+    {
+      "src": "service__InvoiceController_getInvoice",
+      "dst": "data__InvoiceController_getInvoice__findById__0",
+      "type": "call"
+    },
+    {
+      "src": "endpoint__GET___api_invoices__id_",
+      "dst": "data__InvoiceController_getInvoice__findById__0",
+      "type": "identifier_flow",
+      "param": "id"
+    },
+    {
+      "src": "endpoint__DELETE___api_invoices__id_",
+      "dst": "service__InvoiceController_deleteInvoice",
+      "type": "call"
+    },
+    {
+      "src": "service__InvoiceController_deleteInvoice",
+      "dst": "data__InvoiceController_deleteInvoice__deleteById__0",
+      "type": "call"
+    },
+    {
+      "src": "endpoint__DELETE___api_invoices__id_",
+      "dst": "data__InvoiceController_deleteInvoice__deleteById__0",
+      "type": "identifier_flow",
+      "param": "id"
+    },
+    {
+      "src": "endpoint__GET___api_invoices_owned__id_",
+      "dst": "service__InvoiceController_getMyInvoice",
+      "type": "call"
+    },
+    {
+      "src": "service__InvoiceController_getMyInvoice",
+      "dst": "data__InvoiceController_getMyInvoice__findByIdAndByOwner__0",
+      "type": "call"
+    },
+    {
+      "src": "endpoint__GET___api_invoices_owned__id_",
+      "dst": "data__InvoiceController_getMyInvoice__findByIdAndByOwner__0",
+      "type": "identifier_flow",
+      "param": "id"
+    },
+    {
+      "src": "endpoint__GET___api_invoices_health",
+      "dst": "service__InvoiceController_health",
+      "type": "call"
+    }
+  ],
+  "labels": {},
+  "metadata": {}
+}

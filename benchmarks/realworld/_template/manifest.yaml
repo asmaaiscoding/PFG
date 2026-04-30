@@ -1,0 +1,35 @@
+# Template manifest for a real-world Django app under evaluation.
+# Copy this file into a sibling directory (one per app), rename
+# the directory to your app slug, and fill in the fields below.
+
+application: my-django-app
+framework: django
+repo_url: https://github.com/example/my-django-app
+git_ref: 0000000000000000000000000000000000000000
+
+# Path (relative to this manifest.yaml) to the directory the extractor
+# should walk. Usually 'src/' or the repo root if you cloned the
+# project directly under this folder.
+source_root: src/
+
+cwe:
+  - CWE-862    # Missing Authorization
+  - CWE-639    # Authorization Bypass Through User-Controlled Key (IDOR)
+
+notes: |
+  Reproduces CVE-XXXX-NNNNN on /api/orders/<id>/. The view does not
+  check ownership of the order and returns it for any authenticated user.
+
+# Ground truth: every endpoint that is *expected* to be flagged.
+# subtype must be one of: MISSING_AUTH | MISSING_ROLE | IDOR | COMBINED
+expected_findings:
+  - endpoint_id: ep_orders_detail
+    subtype: IDOR
+    url_pattern: /api/orders/<id>/
+    cve: CVE-XXXX-NNNNN
+
+# Endpoints that are intentionally public (e.g. /healthz, /login).
+# Predictions on these endpoint_ids are dropped before scoring (counted
+# as true negatives, not false positives).
+intentional_public_endpoints:
+  - ep_health_check

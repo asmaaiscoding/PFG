@@ -1,0 +1,47 @@
+# Ground truth for ref_min endpoint discovery.
+# Endpoints are sorted by (method, route) for stable comparison.
+endpoints:
+  - method: DELETE
+    route: /api/users/{pk}/
+    handler: api.views.UserViewSet.destroy
+    route_params: [pk]
+  - method: GET
+    route: /api/health/
+    handler: api.views.HealthAPIView.get
+    route_params: []
+  - method: GET
+    route: /api/users/
+    handler: api.views.UserViewSet.list
+    route_params: []
+  - method: GET
+    route: /api/users/{pk}/
+    handler: api.views.UserViewSet.retrieve
+    route_params: [pk]
+  - method: GET
+    route: /blog/
+    handler: blog.views.index
+    route_params: []
+  - method: GET
+    route: /blog/archive/{year}/
+    handler: blog.views.archive
+    route_params: [year]
+  - method: GET
+    route: /blog/post/{pk}/
+    handler: blog.views.PostDetail.get
+    route_params: [pk]
+  - method: PATCH
+    route: /api/users/{pk}/
+    handler: api.views.UserViewSet.partial_update
+    route_params: [pk]
+  - method: POST
+    route: /api/users/
+    handler: api.views.UserViewSet.create
+    route_params: []
+  - method: POST
+    route: /blog/post/
+    handler: blog.views.PostCreate.post
+    route_params: []
+  - method: PUT
+    route: /api/users/{pk}/
+    handler: api.views.UserViewSet.update
+    route_params: [pk]

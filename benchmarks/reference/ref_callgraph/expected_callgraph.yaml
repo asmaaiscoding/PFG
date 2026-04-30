@@ -1,0 +1,16 @@
+# Ground truth call graph for ref_callgraph.
+# Format: list of edges [caller, callee] — both as dotted qualnames.
+# Only intra-project edges count; depth cap = 8.
+edges:
+  - [views.get_invoice, services.fetch_invoice]
+  - [services.fetch_invoice, services.audit_log]
+  - [services.fetch_invoice, repo.invoice_by_pk]
+  - [views.AdminUsers.get, services.list_users]
+  - [services.list_users, repo.all_users]
+  - [views.AdminUsers.post, services.create_user]
+  - [services.create_user, repo.insert_user]
+# views.noop has no intra-project callees.
+
+# Endpoints with no intra-project callees:
+isolated_endpoints:
+  - views.noop

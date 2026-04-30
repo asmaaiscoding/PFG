@@ -1,0 +1,58 @@
+{
+  "schema_version": "1.0",
+  "application": "toy_safe",
+  "framework": "synthetic",
+  "metadata": { "purpose": "fully-safe baseline; rules must produce zero findings" },
+  "nodes": [
+    {
+      "id": "ep_get_invoice",
+      "type": "endpoint",
+      "attrs": {
+        "http_method": "GET",
+        "route": "/api/invoices/{id}",
+        "route_params": ["id"],
+        "requires_auth": true,
+        "required_role": "USER",
+        "ownership_check_present": true,
+        "is_intentionally_public": false,
+        "source_location": "toy_safe/views.py:10"
+      }
+    },
+    {
+      "id": "mw_auth",
+      "type": "middleware",
+      "attrs": { "guard_type": "AUTHENTICATION", "position": "BEFORE_HANDLER" }
+    },
+    {
+      "id": "mw_owner",
+      "type": "middleware",
+      "attrs": { "guard_type": "OWNERSHIP_CHECK", "position": "BEFORE_HANDLER", "condition": "invoice.owner == request.user" }
+    },
+    {
+      "id": "svc_get",
+      "type": "service",
+      "attrs": { "name": "InvoiceService.get", "performs_data_access": true, "performs_mutation": false }
+    },
+    {
+      "id": "da_invoice_read",
+      "type": "data_access",
+      "attrs": {
+        "operation": "READ",
+        "target_entity": "Invoice",
+        "has_ownership_predicate": true,
+        "ownership_predicate_type": "DIRECT",
+        "user_controlled_params_in_query": ["id"]
+      }
+    }
+  ],
+  "edges": [
+    { "src": "ep_get_invoice", "dst": "mw_auth", "type": "call" },
+    { "src": "mw_auth", "dst": "mw_owner", "type": "call" },
+    { "src": "mw_owner", "dst": "svc_get", "type": "call" },
+    { "src": "svc_get", "dst": "da_invoice_read", "type": "call" },
+    { "src": "ep_get_invoice", "dst": "da_invoice_read", "type": "identifier_flow", "param": "id" }
+  ],
+  "labels": {
+    "ep_get_invoice": { "label": "SAFE" }
+  }
+}

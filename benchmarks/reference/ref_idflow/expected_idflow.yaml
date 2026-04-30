@@ -1,0 +1,78 @@
+# Ground truth for identifier-flow tracking on ref_idflow/views.py.
+#
+# Each entry: function name -> list of expected flow sinks. A sink describes
+# *one* tainted argument site (one call may have multiple sinks if multiple
+# tainted args).
+#
+# Fields:
+#   source        : original parameter name that originated the taint
+#   callee        : dotted callee expression as written (head + .attr chain)
+#   arg_kind      : "kwarg" | "positional"
+#   arg_name      : kwarg name if arg_kind=kwarg, else None
+#   arg_index     : 0-based positional index if arg_kind=positional, else null
+functions:
+  flow_direct:
+    - source: pk
+      callee: Invoice.objects.get
+      arg_kind: kwarg
+      arg_name: pk
+      arg_index: null
+  flow_via_local:
+    - source: pk
+      callee: Invoice.objects.get
+      arg_kind: kwarg
+      arg_name: pk
+      arg_index: null
+  flow_via_attr:
+    - source: pk
+      callee: Invoice.objects.get
+      arg_kind: kwarg
+      arg_name: pk
+      arg_index: null
+  flow_via_binop:
+    - source: pk
+      callee: Invoice.objects.get
+      arg_kind: kwarg
+      arg_name: pk
+      arg_index: null
+  flow_through_calls:
+    - source: pk
+      callee: service_get_invoice
+      arg_kind: positional
+      arg_name: null
+      arg_index: 0
+  flow_positional:
+    - source: pk
+      callee: Invoice.objects.get
+      arg_kind: positional
+      arg_name: null
+      arg_index: 0
+  flow_unrelated: []
+  flow_via_call_result:
+    - source: pk
+      callee: clean
+      arg_kind: positional
+      arg_name: null
+      arg_index: 0
+    - source: pk
+      callee: Invoice.objects.filter
+      arg_kind: kwarg
+      arg_name: pk
+      arg_index: null
+  flow_two_sources:
+    - source: pk
+      callee: Invoice.objects.filter
+      arg_kind: kwarg
+      arg_name: pk
+      arg_index: null
+    - source: slug
+      callee: Invoice.objects.filter
+      arg_kind: kwarg
+      arg_name: slug
+      arg_index: null
+  flow_tuple_unpack:
+    - source: pk
+      callee: Invoice.objects.filter
+      arg_kind: kwarg
+      arg_name: pk
+      arg_index: null

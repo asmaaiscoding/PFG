@@ -1,0 +1,72 @@
+{
+  "schema_version": "1.0",
+  "application": "toy_public",
+  "framework": "synthetic",
+  "metadata": { "purpose": "intentionally public endpoints (health, login) must NOT be flagged" },
+  "nodes": [
+    {
+      "id": "ep_health",
+      "type": "endpoint",
+      "attrs": {
+        "http_method": "GET",
+        "route": "/health",
+        "route_params": [],
+        "requires_auth": false,
+        "required_role": "NONE",
+        "is_intentionally_public": true
+      }
+    },
+    {
+      "id": "ep_login",
+      "type": "endpoint",
+      "attrs": {
+        "http_method": "POST",
+        "route": "/auth/login",
+        "route_params": [],
+        "requires_auth": false,
+        "required_role": "NONE",
+        "is_intentionally_public": true
+      }
+    },
+    {
+      "id": "svc_health",
+      "type": "service",
+      "attrs": { "name": "HealthService.ping", "performs_data_access": true }
+    },
+    {
+      "id": "da_health_read",
+      "type": "data_access",
+      "attrs": {
+        "operation": "READ",
+        "target_entity": "Heartbeat",
+        "has_ownership_predicate": false,
+        "ownership_predicate_type": "NONE"
+      }
+    },
+    {
+      "id": "svc_login",
+      "type": "service",
+      "attrs": { "name": "AuthService.login", "performs_data_access": true }
+    },
+    {
+      "id": "da_user_lookup",
+      "type": "data_access",
+      "attrs": {
+        "operation": "READ",
+        "target_entity": "User",
+        "has_ownership_predicate": false,
+        "ownership_predicate_type": "NONE"
+      }
+    }
+  ],
+  "edges": [
+    { "src": "ep_health", "dst": "svc_health", "type": "call" },
+    { "src": "svc_health", "dst": "da_health_read", "type": "call" },
+    { "src": "ep_login", "dst": "svc_login", "type": "call" },
+    { "src": "svc_login", "dst": "da_user_lookup", "type": "call" }
+  ],
+  "labels": {
+    "ep_health": { "label": "INTENTIONALLY_PUBLIC" },
+    "ep_login":  { "label": "INTENTIONALLY_PUBLIC" }
+  }
+}

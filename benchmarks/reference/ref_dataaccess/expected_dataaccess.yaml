@@ -1,0 +1,72 @@
+# Ground truth: per function in repo.py, the expected list of data-access nodes.
+# Each function may emit zero or more data-access calls; we list them in
+# source order.
+functions:
+  da_filter_by_user:
+    - operation: READ
+      target_entity: Invoice
+      has_ownership_predicate: true
+      ownership_predicate_type: DIRECT
+  da_filter_by_owner:
+    - operation: READ
+      target_entity: Invoice
+      has_ownership_predicate: true
+      ownership_predicate_type: DIRECT
+  da_filter_by_user_id:
+    - operation: READ
+      target_entity: Invoice
+      has_ownership_predicate: true
+      ownership_predicate_type: DIRECT
+  da_filter_no_owner:
+    - operation: READ
+      target_entity: Invoice
+      has_ownership_predicate: false
+      ownership_predicate_type: NONE
+  da_get_by_pk:
+    - operation: READ
+      target_entity: Invoice
+      has_ownership_predicate: false
+      ownership_predicate_type: NONE
+  da_all:
+    - operation: READ
+      target_entity: User
+      has_ownership_predicate: false
+      ownership_predicate_type: NONE
+  da_indirect_owner:
+    - operation: READ
+      target_entity: Order
+      has_ownership_predicate: true
+      ownership_predicate_type: INDIRECT
+  da_g404_with_assert:
+    - operation: READ
+      target_entity: Invoice
+      has_ownership_predicate: true
+      ownership_predicate_type: DIRECT
+  da_g404_no_assert:
+    - operation: READ
+      target_entity: Invoice
+      has_ownership_predicate: false
+      ownership_predicate_type: NONE
+  da_create:
+    - operation: WRITE
+      target_entity: Invoice
+      has_ownership_predicate: true
+      ownership_predicate_type: DIRECT
+  da_update:
+    - operation: READ
+      target_entity: Invoice
+      has_ownership_predicate: false
+      ownership_predicate_type: NONE
+    - operation: UPDATE
+      target_entity: Invoice
+      has_ownership_predicate: false
+      ownership_predicate_type: NONE
+  da_delete:
+    - operation: READ
+      target_entity: Invoice
+      has_ownership_predicate: false
+      ownership_predicate_type: NONE
+    - operation: DELETE
+      target_entity: Invoice
+      has_ownership_predicate: false
+      ownership_predicate_type: NONE

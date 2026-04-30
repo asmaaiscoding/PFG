@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>PFG report — spring_ref_min</title>
+<style>
+  :root {
+    --bg:#0f1115; --fg:#e6e6e6; --muted:#8b95a7;
+    --card:#171a21; --border:#262b36; --accent:#7aa2f7;
+    --bad:#f7768e; --warn:#e0af68; --ok:#9ece6a;
+    --mono: ui-monospace, Menlo, Consolas, monospace;
+  }
+  html,body { margin:0; padding:0; background:var(--bg); color:var(--fg);
+    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
+  main { max-width: 1200px; margin: 0 auto; padding: 32px 24px 80px; }
+  h1 { font-size: 28px; margin: 0 0 6px; letter-spacing: -0.01em; }
+  .sub { color: var(--muted); margin-bottom: 28px; }
+  .grid { display:grid; gap:16px; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); margin-bottom:24px; }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:14px 16px; }
+  .card .k { color:var(--muted); font-size:12px; text-transform:uppercase; letter-spacing:.06em; }
+  .card .v { font-size:20px; font-weight:600; margin-top:4px; }
+  table { width:100%; border-collapse:collapse; background:var(--card);
+    border:1px solid var(--border); border-radius:10px; overflow:hidden; }
+  th, td { padding:10px 12px; text-align:left; vertical-align:top;
+    border-bottom:1px solid var(--border); font-size:13px; }
+  th { background:#1d212b; color:var(--muted); font-weight:600; }
+  tr:last-child td { border-bottom:none; }
+  td.mono, code { font-family: var(--mono); font-size:12.5px; }
+  .pill { display:inline-block; padding:2px 8px; border-radius:999px;
+    font-size:11px; font-weight:700; letter-spacing:.04em; }
+  .pill-MISSING_AUTH { background:#3a1d22; color:var(--bad); }
+  .pill-MISSING_ROLE { background:#3a2a16; color:var(--warn); }
+  .pill-IDOR        { background:#3a1d22; color:var(--bad); }
+  .pill-COMBINED    { background:#3a1d22; color:var(--bad); }
+  .pill-SAFE        { background:#1f2a1c; color:var(--ok); }
+  details { background:var(--card); border:1px solid var(--border);
+    border-radius:10px; padding:10px 14px; margin-top:24px; }
+  summary { cursor:pointer; color:var(--muted); }
+  pre { font-family:var(--mono); font-size:12.5px; background:#10131a;
+    padding:12px; border-radius:8px; overflow:auto; }
+  .graph { background:var(--card); border:1px solid var(--border);
+    border-radius:10px; padding:16px; margin-top:16px; overflow:auto; }
+  .graph svg { max-width:100%; height:auto; background:#fff; border-radius:6px; }
+  .empty { color: var(--muted); padding:14px 0; }
+</style>
+</head>
+<body>
+<main>
+  <h1>PFG report — spring_ref_min</h1>
+  <div class="sub">4 endpoints · 4 findings</div>
+
+  <div class="grid">
+    <div class="card"><div class="k">Application</div><div class="v">spring_ref_min</div></div>
+    <div class="card"><div class="k">Framework</div><div class="v">spring</div></div>
+    <div class="card"><div class="k">Endpoints</div><div class="v">4</div></div>
+    <div class="card"><div class="k">Services</div><div class="v">4</div></div>
+    <div class="card"><div class="k">Data accesses</div><div class="v">3</div></div>
+    <div class="card"><div class="k">Findings</div><div class="v">4</div></div>
+  </div>
+
+  <h2 style="margin-top:24px;">Flagged endpoints</h2>
+  <table><thead><tr><th>Subtype</th><th>Endpoint</th><th>ID</th><th>Source</th><th>Why</th></tr></thead><tbody><tr><td><span class="pill pill-MISSING_AUTH">MISSING_AUTH</span></td><td class=mono>GET <code>/api/invoices/{id}</code></td><td class=mono>endpoint__GET___api_invoices__id_</td><td class=mono>src/main/java/com/example/demo/InvoiceController.java:16</td><td>Endpoint /api/invoices/{id} requires no authentication but reaches data-access node(s): [&#x27;data__InvoiceController_getInvoice__findById__0&#x27;]</td></tr><tr><td><span class="pill pill-MISSING_ROLE">MISSING_ROLE</span></td><td class=mono>DELETE <code>/api/invoices/{id}</code></td><td class=mono>endpoint__DELETE___api_invoices__id_</td><td class=mono>src/main/java/com/example/demo/InvoiceController.java:23</td><td>Authenticated endpoint /api/invoices/{id} performs DELETE on Invoice without a role check.</td></tr><tr><td><span class="pill pill-IDOR">IDOR</span></td><td class=mono>GET <code>/api/invoices/{id}</code></td><td class=mono>endpoint__GET___api_invoices__id_</td><td class=mono>src/main/java/com/example/demo/InvoiceController.java:16</td><td>Route param [&#x27;id&#x27;] of /api/invoices/{id} reaches READ on Invoice via 1 call path(s); none enforce ownership.</td></tr><tr><td><span class="pill pill-IDOR">IDOR</span></td><td class=mono>DELETE <code>/api/invoices/{id}</code></td><td class=mono>endpoint__DELETE___api_invoices__id_</td><td class=mono>src/main/java/com/example/demo/InvoiceController.java:23</td><td>Route param [&#x27;id&#x27;] of /api/invoices/{id} reaches DELETE on Invoice via 1 call path(s); none enforce ownership.</td></tr></tbody></table>
+
+  <h2 style="margin-top:32px;">Privilege Flow Graph</h2>
+  <div class="graph"><pre>digraph PFG_spring_ref_min {
+  rankdir=LR;
+  node [fontname=&quot;Helvetica&quot;,fontsize=10];
+  edge [fontname=&quot;Helvetica&quot;,fontsize=9];
+  &quot;endpoint__GET___api_invoices__id_&quot; [shape=box,style=filled,fillcolor=lightblue,label=&quot;GET /api/invoices/{id}\\nno-auth role=NONE&quot;];
+  &quot;service__InvoiceController_getInvoice&quot; [shape=ellipse,style=filled,fillcolor=lightgrey,label=&quot;InvoiceController.getInvoice [DA]&quot;];
+  &quot;data__InvoiceController_getInvoice__findById__0&quot; [shape=cylinder,style=filled,fillcolor=salmon,label=&quot;READ Invoice\\nUNOWNED&quot;];
+  &quot;endpoint__DELETE___api_invoices__id_&quot; [shape=box,style=filled,fillcolor=lightblue,label=&quot;DELETE /api/invoices/{id}\\nauth role=NONE&quot;];
+  &quot;service__InvoiceController_deleteInvoice&quot; [shape=ellipse,style=filled,fillcolor=lightgrey,label=&quot;InvoiceController.deleteInvoice [DA,MUT]&quot;];
+  &quot;data__InvoiceController_deleteInvoice__deleteById__0&quot; [shape=cylinder,style=filled,fillcolor=salmon,label=&quot;DELETE Invoice\\nUNOWNED&quot;];
+  &quot;endpoint__GET___api_invoices_owned__id_&quot; [shape=box,style=filled,fillcolor=lightblue,label=&quot;GET /api/invoices/owned/{id}\\nauth role=USER&quot;];
+  &quot;service__InvoiceController_getMyInvoice&quot; [shape=ellipse,style=filled,fillcolor=lightgrey,label=&quot;InvoiceController.getMyInvoice [DA]&quot;];
+  &quot;data__InvoiceController_getMyInvoice__findByIdAndByOwner__0&quot; [shape=cylinder,style=filled,fillcolor=salmon,label=&quot;READ Invoice\\nOWNED&quot;];
+  &quot;endpoint__GET___api_invoices_health&quot; [shape=box,style=filled,fillcolor=lightblue,label=&quot;GET /api/invoices/health\\nno-auth role=NONE&quot;];
+  &quot;service__InvoiceController_health&quot; [shape=ellipse,style=filled,fillcolor=lightgrey,label=&quot;InvoiceController.health&quot;];
+  &quot;endpoint__GET___api_invoices__id_&quot; -&gt; &quot;service__InvoiceController_getInvoice&quot;;
+  &quot;service__InvoiceController_getInvoice&quot; -&gt; &quot;data__InvoiceController_getInvoice__findById__0&quot;;
+  &quot;endpoint__GET___api_invoices__id_&quot; -&gt; &quot;data__InvoiceController_getInvoice__findById__0&quot; [style=dashed,color=red,label=&quot;id&quot;];
+  &quot;endpoint__DELETE___api_invoices__id_&quot; -&gt; &quot;service__InvoiceController_deleteInvoice&quot;;
+  &quot;service__InvoiceController_deleteInvoice&quot; -&gt; &quot;data__InvoiceController_deleteInvoice__deleteById__0&quot;;
+  &quot;endpoint__DELETE___api_invoices__id_&quot; -&gt; &quot;data__InvoiceController_deleteInvoice__deleteById__0&quot; [style=dashed,color=red,label=&quot;id&quot;];
+  &quot;endpoint__GET___api_invoices_owned__id_&quot; -&gt; &quot;service__InvoiceController_getMyInvoice&quot;;
+  &quot;service__InvoiceController_getMyInvoice&quot; -&gt; &quot;data__InvoiceController_getMyInvoice__findByIdAndByOwner__0&quot;;
+  &quot;endpoint__GET___api_invoices_owned__id_&quot; -&gt; &quot;data__InvoiceController_getMyInvoice__findByIdAndByOwner__0&quot; [style=dashed,color=red,label=&quot;id&quot;];
+  &quot;endpoint__GET___api_invoices_health&quot; -&gt; &quot;service__InvoiceController_health&quot;;
+}
+</pre></div>
+
+  <details>
+    <summary>Raw PFG (JSON)</summary>
+    <pre>{
+  &quot;schema_version&quot;: &quot;1.0&quot;,
+  &quot;application&quot;: &quot;spring_ref_min&quot;,
+  &quot;framework&quot;: &quot;spring&quot;,
+  &quot;nodes&quot;: [
+    {
+      &quot;id&quot;: &quot;endpoint__GET___api_invoices__id_&quot;,
+      &quot;type&quot;: &quot;endpoint&quot;,
+      &quot;attrs&quot;: {
+        &quot;http_method&quot;: &quot;GET&quot;,
+        &quot;route&quot;: &quot;/api/invoices/{id}&quot;,
+        &quot;route_params&quot;: [
+          &quot;id&quot;
+        ],
+        &quot;requires_auth&quot;: false,
+        &quot;required_role&quot;: &quot;NONE&quot;,
+        &quot;ownership_check_present&quot;: false,
+        &quot;is_intentionally_public&quot;: false,
+        &quot;source_location&quot;: &quot;src/main/java/com/example/demo/InvoiceController.java:16&quot;
+      }
+    },
+    {
+      &quot;id&quot;: &quot;service__InvoiceController_getInvoice&quot;,
+      &quot;type&quot;: &quot;service&quot;,
+      &quot;attrs&quot;: {
+        &quot;name&quot;: &quot;InvoiceController.getInvoice&quot;,
+        &quot;inherited_privilege&quot;: null,
+        &quot;performs_data_access&quot;: true,
+        &quot;performs_mutation&quot;: false,
+        &quot;source_location&quot;: null
+      }
+    },
+    {
+      &quot;id&quot;: &quot;data__InvoiceController_getInvoice__findById__0&quot;,
+      &quot;type&quot;: &quot;data_access&quot;,
+      &quot;attrs&quot;: {
+        &quot;operation&quot;: &quot;READ&quot;,
+        &quot;target_entity&quot;: &quot;Invoice&quot;,
+        &quot;has_ownership_predicate&quot;: false,
+        &quot;ownership_predicate_type&quot;: &quot;NONE&quot;,
+        &quot;user_controlled_params_in_query&quot;: [
+          &quot;id&quot;
+        ],
+        &quot;source_location&quot;: null
+      }
+    },
+    {
+      &quot;id&quot;: &quot;endpoint__DELETE___api_invoices__id_&quot;,
+      &quot;type&quot;: &quot;endpoint&quot;,
+      &quot;attrs&quot;: {
+        &quot;http_method&quot;: &quot;DELETE&quot;,
+        &quot;route&quot;: &quot;/api/invoices/{id}&quot;,
+        &quot;route_params&quot;: [
+          &quot;id&quot;
+        ],
+        &quot;requires_auth&quot;: true,
+        &quot;required_role&quot;: &quot;NONE&quot;,
+        &quot;ownership_check_present&quot;: false,
+        &quot;is_intentionally_public&quot;: false,
+        &quot;source_location&quot;: &quot;src/main/java/com/example/demo/InvoiceController.java:23&quot;
+      }
+    },
+    {
+      &quot;id&quot;: &quot;service__InvoiceController_deleteInvoice&quot;,
+      &quot;type&quot;: &quot;service&quot;,
+      &quot;attrs&quot;: {
+        &quot;name&quot;: &quot;InvoiceController.deleteInvoice&quot;,
+        &quot;inherited_privilege&quot;: null,
+        &quot;performs_data_access&quot;: true,
+        &quot;performs_mutation&quot;: true,
+        &quot;source_location&quot;: null
+      }
+    },
+    {
+      &quot;id&quot;: &quot;data__InvoiceController_deleteInvoice__deleteById__0&quot;,
+      &quot;type&quot;: &quot;data_access&quot;,
+      &quot;attrs&quot;: {
+        &quot;operation&quot;: &quot;DELETE&quot;,
+        &quot;target_entity&quot;: &quot;Invoice&quot;,
+        &quot;has_ownership_predicate&quot;: false,
+        &quot;ownership_predicate_type&quot;: &quot;NONE&quot;,
+        &quot;user_controlled_params_in_query&quot;: [
+          &quot;id&quot;
+        ],
+        &quot;source_location&quot;: null
+      }
+    },
+    {
+      &quot;id&quot;: &quot;endpoint__GET___api_invoices_owned__id_&quot;,
+      &quot;type&quot;: &quot;endpoint&quot;,
+      &quot;attrs&quot;: {
+        &quot;http_method&quot;: &quot;GET&quot;,
+        &quot;route&quot;: &quot;/api/invoices/owned/{id}&quot;,
+        &quot;route_params&quot;: [
+          &quot;id&quot;
+        ],
+        &quot;requires_auth&quot;: true,
+        &quot;required_role&quot;: &quot;USER&quot;,
+        &quot;ownership_check_present&quot;: false,
+        &quot;is_intentionally_public&quot;: false,
+        &quot;source_location&quot;: &quot;src/main/java/com/example/demo/InvoiceController.java:30&quot;
+      }
+    },
+    {
+      &quot;id&quot;: &quot;service__InvoiceController_getMyInvoice&quot;,
+      &quot;type&quot;: &quot;service&quot;,
+      &quot;attrs&quot;: {
+        &quot;name&quot;: &quot;InvoiceController.getMyInvoice&quot;,
+        &quot;inherited_privilege&quot;: null,
+        &quot;performs_data_access&quot;: true,
+        &quot;performs_mutation&quot;: false,
+        &quot;source_location&quot;: null
+      }
+    },
+    {
+      &quot;id&quot;: &quot;data__InvoiceController_getMyInvoice__findByIdAndByOwner__0&quot;,
+      &quot;type&quot;: &quot;data_access&quot;,
+      &quot;attrs&quot;: {
+        &quot;operation&quot;: &quot;READ&quot;,
+        &quot;target_entity&quot;: &quot;Invoice&quot;,
+        &quot;has_ownership_predicate&quot;: true,
+        &quot;ownership_predicate_type&quot;: &quot;DIRECT&quot;,
+        &quot;user_controlled_params_in_query&quot;: [
+          &quot;id&quot;
+        ],
+        &quot;source_location&quot;: null
+      }
+    },
+    {
+      &quot;id&quot;: &quot;endpoint__GET___api_invoices_health&quot;,
+      &quot;type&quot;: &quot;endpoint&quot;,
+      &quot;attrs&quot;: {
+        &quot;http_method&quot;: &quot;GET&quot;,
+        &quot;route&quot;: &quot;/api/invoices/health&quot;,
+        &quot;route_params&quot;: [],
+        &quot;requires_auth&quot;: false,
+        &quot;required_role&quot;: &quot;NONE&quot;,
+        &quot;ownership_check_present&quot;: false,
+        &quot;is_intentionally_public&quot;: false,
+        &quot;source_location&quot;: &quot;src/main/java/com/example/demo/InvoiceController.java:36&quot;
+      }
+    },
+    {
+      &quot;id&quot;: &quot;service__InvoiceController_health&quot;,
+      &quot;type&quot;: &quot;service&quot;,
+      &quot;attrs&quot;: {
+        &quot;name&quot;: &quot;InvoiceController.health&quot;,
+        &quot;inherited_privilege&quot;: null,
+        &quot;performs_data_access&quot;: false,
+        &quot;performs_mutation&quot;: false,
+        &quot;source_location&quot;: null
+      }
+    }
+  ],
+  &quot;edges&quot;: [
+    {
+      &quot;src&quot;: &quot;endpoint__GET___api_invoices__id_&quot;,
+      &quot;dst&quot;: &quot;service__InvoiceController_getInvoice&quot;,
+      &quot;type&quot;: &quot;call&quot;,
+      &quot;param&quot;: null
+    },
+    {
+      &quot;src&quot;: &quot;service__InvoiceController_getInvoice&quot;,
+      &quot;dst&quot;: &quot;data__InvoiceController_getInvoice__findById__0&quot;,
+      &quot;type&quot;: &quot;call&quot;,
+      &quot;param&quot;: null
+    },
+    {
+      &quot;src&quot;: &quot;endpoint__GET___api_invoices__id_&quot;,
+      &quot;dst&quot;: &quot;data__InvoiceController_getInvoice__findById__0&quot;,
+      &quot;type&quot;: &quot;identifier_flow&quot;,
+      &quot;param&quot;: &quot;id&quot;
+    },
+    {
+      &quot;src&quot;: &quot;endpoint__DELETE___api_invoices__id_&quot;,
+      &quot;dst&quot;: &quot;service__InvoiceController_deleteInvoice&quot;,
+      &quot;type&quot;: &quot;call&quot;,
+      &quot;param&quot;: null
+    },
+    {
+      &quot;src&quot;: &quot;service__InvoiceController_deleteInvoice&quot;,
+      &quot;dst&quot;: &quot;data__InvoiceController_deleteInvoice__deleteById__0&quot;,
+      &quot;type&quot;: &quot;call&quot;,
+      &quot;param&quot;: null
+    },
+    {
+      &quot;src&quot;: &quot;endpoint__DELETE___api_invoices__id_&quot;,
+      &quot;dst&quot;: &quot;data__InvoiceController_deleteInvoice__deleteById__0&quot;,
+      &quot;type&quot;: &quot;identifier_flow&quot;,
+      &quot;param&quot;: &quot;id&quot;
+    },
+    {
+      &quot;src&quot;: &quot;endpoint__GET___api_invoices_owned__id_&quot;,
+      &quot;dst&quot;: &quot;service__InvoiceController_getMyInvoice&quot;,
+      &quot;type&quot;: &quot;call&quot;,
+      &quot;param&quot;: null
+    },
+    {
+      &quot;src&quot;: &quot;service__InvoiceController_getMyInvoice&quot;,
+      &quot;dst&quot;: &quot;data__InvoiceController_getMyInvoice__findByIdAndByOwner__0&quot;,
+      &quot;type&quot;: &quot;call&quot;,
+      &quot;param&quot;: null
+    },
+    {
+      &quot;src&quot;: &quot;endpoint__GET___api_invoices_owned__id_&quot;,
+      &quot;dst&quot;: &quot;data__InvoiceController_getMyInvoice__findByIdAndByOwner__0&quot;,
+      &quot;type&quot;: &quot;identifier_flow&quot;,
+      &quot;param&quot;: &quot;id&quot;
+    },
+    {
+      &quot;src&quot;: &quot;endpoint__GET___api_invoices_health&quot;,
+      &quot;dst&quot;: &quot;service__InvoiceController_health&quot;,
+      &quot;type&quot;: &quot;call&quot;,
+      &quot;param&quot;: null
+    }
+  ],
+  &quot;labels&quot;: {},
+  &quot;metadata&quot;: {}
+}</pre>
+  </details>
+</main>
+</body>
+</html>

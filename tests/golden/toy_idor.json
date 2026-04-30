@@ -1,0 +1,53 @@
+{
+  "schema_version": "1.0",
+  "application": "toy_idor",
+  "framework": "synthetic",
+  "metadata": { "purpose": "classic IDOR: route param flows to query, no ownership predicate" },
+  "nodes": [
+    {
+      "id": "ep_get_account_tx",
+      "type": "endpoint",
+      "attrs": {
+        "http_method": "GET",
+        "route": "/api/accounts/{id}/transactions",
+        "route_params": ["id"],
+        "requires_auth": true,
+        "required_role": "USER",
+        "ownership_check_present": false,
+        "is_intentionally_public": false,
+        "source_location": "toy_idor/views.py:42"
+      }
+    },
+    {
+      "id": "mw_auth",
+      "type": "middleware",
+      "attrs": { "guard_type": "AUTHENTICATION", "position": "BEFORE_HANDLER" }
+    },
+    {
+      "id": "svc_tx",
+      "type": "service",
+      "attrs": { "name": "TransactionService.list", "performs_data_access": true }
+    },
+    {
+      "id": "da_tx_read",
+      "type": "data_access",
+      "attrs": {
+        "operation": "READ",
+        "target_entity": "Transaction",
+        "has_ownership_predicate": false,
+        "ownership_predicate_type": "NONE",
+        "user_controlled_params_in_query": ["id"],
+        "source_location": "toy_idor/services.py:88"
+      }
+    }
+  ],
+  "edges": [
+    { "src": "ep_get_account_tx", "dst": "mw_auth", "type": "call" },
+    { "src": "mw_auth", "dst": "svc_tx", "type": "call" },
+    { "src": "svc_tx", "dst": "da_tx_read", "type": "call" },
+    { "src": "ep_get_account_tx", "dst": "da_tx_read", "type": "identifier_flow", "param": "id" }
+  ],
+  "labels": {
+    "ep_get_account_tx": { "label": "VULNERABLE", "subtype": "IDOR", "cwe": "CWE-639" }
+  }
+}

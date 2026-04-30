@@ -1,0 +1,496 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>PFG report — ref_auth</title>
+<style>
+  :root {
+    --bg:#0f1115; --fg:#e6e6e6; --muted:#8b95a7;
+    --card:#171a21; --border:#262b36; --accent:#7aa2f7;
+    --bad:#f7768e; --warn:#e0af68; --ok:#9ece6a;
+    --mono: ui-monospace, Menlo, Consolas, monospace;
+  }
+  html,body { margin:0; padding:0; background:var(--bg); color:var(--fg);
+    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
+  main { max-width: 1200px; margin: 0 auto; padding: 32px 24px 80px; }
+  h1 { font-size: 28px; margin: 0 0 6px; letter-spacing: -0.01em; }
+  .sub { color: var(--muted); margin-bottom: 28px; }
+  .grid { display:grid; gap:16px; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); margin-bottom:24px; }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:14px 16px; }
+  .card .k { color:var(--muted); font-size:12px; text-transform:uppercase; letter-spacing:.06em; }
+  .card .v { font-size:20px; font-weight:600; margin-top:4px; }
+  table { width:100%; border-collapse:collapse; background:var(--card);
+    border:1px solid var(--border); border-radius:10px; overflow:hidden; }
+  th, td { padding:10px 12px; text-align:left; vertical-align:top;
+    border-bottom:1px solid var(--border); font-size:13px; }
+  th { background:#1d212b; color:var(--muted); font-weight:600; }
+  tr:last-child td { border-bottom:none; }
+  td.mono, code { font-family: var(--mono); font-size:12.5px; }
+  .pill { display:inline-block; padding:2px 8px; border-radius:999px;
+    font-size:11px; font-weight:700; letter-spacing:.04em; }
+  .pill-MISSING_AUTH { background:#3a1d22; color:var(--bad); }
+  .pill-MISSING_ROLE { background:#3a2a16; color:var(--warn); }
+  .pill-IDOR        { background:#3a1d22; color:var(--bad); }
+  .pill-COMBINED    { background:#3a1d22; color:var(--bad); }
+  .pill-SAFE        { background:#1f2a1c; color:var(--ok); }
+  details { background:var(--card); border:1px solid var(--border);
+    border-radius:10px; padding:10px 14px; margin-top:24px; }
+  summary { cursor:pointer; color:var(--muted); }
+  pre { font-family:var(--mono); font-size:12.5px; background:#10131a;
+    padding:12px; border-radius:8px; overflow:auto; }
+  .graph { background:var(--card); border:1px solid var(--border);
+    border-radius:10px; padding:16px; margin-top:16px; overflow:auto; }
+  .graph svg { max-width:100%; height:auto; background:#fff; border-radius:6px; }
+  .empty { color: var(--muted); padding:14px 0; }
+</style>
+</head>
+<body>
+<main>
+  <h1>PFG report — ref_auth</h1>
+  <div class="sub">12 endpoints · 0 findings</div>
+
+  <div class="grid">
+    <div class="card"><div class="k">Application</div><div class="v">ref_auth</div></div>
+    <div class="card"><div class="k">Framework</div><div class="v">django</div></div>
+    <div class="card"><div class="k">Endpoints</div><div class="v">12</div></div>
+    <div class="card"><div class="k">Services</div><div class="v">12</div></div>
+    <div class="card"><div class="k">Data accesses</div><div class="v">0</div></div>
+    <div class="card"><div class="k">Findings</div><div class="v">0</div></div>
+  </div>
+
+  <h2 style="margin-top:24px;">Flagged endpoints</h2>
+  <div class="empty">No vulnerable endpoints flagged by the rule baseline.</div>
+
+  <h2 style="margin-top:32px;">Privilege Flow Graph</h2>
+  <div class="graph"><pre>digraph PFG_ref_auth {
+  rankdir=LR;
+  node [fontname=&quot;Helvetica&quot;,fontsize=10];
+  edge [fontname=&quot;Helvetica&quot;,fontsize=9];
+  &quot;endpoint__GET___api_open_&quot; [shape=box,style=filled,fillcolor=lightblue,label=&quot;GET /api/open/\\nno-auth role=NONE [public]&quot;];
+  &quot;endpoint__GET___api_user_&quot; [shape=box,style=filled,fillcolor=lightblue,label=&quot;GET /api/user/\\nauth role=USER&quot;];
+  &quot;endpoint__GET___auth_&quot; [shape=box,style=filled,fillcolor=lightblue,label=&quot;GET /auth/\\nauth role=USER&quot;];
+  &quot;endpoint__GET___cbv_login_&quot; [shape=box,style=filled,fillcolor=lightblue,label=&quot;GET /cbv/login/\\nauth role=USER&quot;];
+  &quot;endpoint__GET___cbv_perm_&quot; [shape=box,style=filled,fillcolor=lightblue,label=&quot;GET /cbv/perm/\\nauth role=USER&quot;];
+  &quot;endpoint__GET___drf_admin_&quot; [shape=box,style=filled,fillcolor=lightblue,label=&quot;GET /drf/admin/\\nauth role=ADMIN&quot;];
+  &quot;endpoint__GET___drf_anon_&quot; [shape=box,style=filled,fillcolor=lightblue,label=&quot;GET /drf/anon/\\nno-auth role=NONE [public]&quot;];
+  &quot;endpoint__GET___health_&quot; [shape=box,style=filled,fillcolor=lightblue,label=&quot;GET /health/\\nno-auth role=NONE [public]&quot;];
+  &quot;endpoint__GET___login_&quot; [shape=box,style=filled,fillcolor=lightblue,label=&quot;GET /login/\\nno-auth role=NONE [public]&quot;];
+  &quot;endpoint__GET___perm_&quot; [shape=box,style=filled,fillcolor=lightblue,label=&quot;GET /perm/\\nauth role=USER&quot;];
+  &quot;endpoint__GET___public_&quot; [shape=box,style=filled,fillcolor=lightblue,label=&quot;GET /public/\\nno-auth role=NONE [public]&quot;];
+  &quot;endpoint__GET___staff_&quot; [shape=box,style=filled,fillcolor=lightblue,label=&quot;GET /staff/\\nauth role=ADMIN&quot;];
+  &quot;service__views_AdminAPIView_get&quot; [shape=ellipse,style=filled,fillcolor=lightgrey,label=&quot;views.AdminAPIView.get&quot;];
+  &quot;service__views_AnonAPIView_get&quot; [shape=ellipse,style=filled,fillcolor=lightgrey,label=&quot;views.AnonAPIView.get&quot;];
+  &quot;service__views_LoginCBV_get&quot; [shape=ellipse,style=filled,fillcolor=lightgrey,label=&quot;views.LoginCBV.get&quot;];
+  &quot;service__views_PermCBV_get&quot; [shape=ellipse,style=filled,fillcolor=lightgrey,label=&quot;views.PermCBV.get&quot;];
+  &quot;service__views_api_open&quot; [shape=ellipse,style=filled,fillcolor=lightgrey,label=&quot;views.api_open&quot;];
+  &quot;service__views_api_user&quot; [shape=ellipse,style=filled,fillcolor=lightgrey,label=&quot;views.api_user&quot;];
+  &quot;service__views_auth_required_view&quot; [shape=ellipse,style=filled,fillcolor=lightgrey,label=&quot;views.auth_required_view&quot;];
+  &quot;service__views_health&quot; [shape=ellipse,style=filled,fillcolor=lightgrey,label=&quot;views.health&quot;];
+  &quot;service__views_login_page&quot; [shape=ellipse,style=filled,fillcolor=lightgrey,label=&quot;views.login_page&quot;];
+  &quot;service__views_perm_required_view&quot; [shape=ellipse,style=filled,fillcolor=lightgrey,label=&quot;views.perm_required_view&quot;];
+  &quot;service__views_public_view&quot; [shape=ellipse,style=filled,fillcolor=lightgrey,label=&quot;views.public_view&quot;];
+  &quot;service__views_staff_view&quot; [shape=ellipse,style=filled,fillcolor=lightgrey,label=&quot;views.staff_view&quot;];
+  &quot;endpoint__GET___api_open_&quot; -&gt; &quot;service__views_api_open&quot;;
+  &quot;endpoint__GET___api_user_&quot; -&gt; &quot;service__views_api_user&quot;;
+  &quot;endpoint__GET___auth_&quot; -&gt; &quot;service__views_auth_required_view&quot;;
+  &quot;endpoint__GET___cbv_login_&quot; -&gt; &quot;service__views_LoginCBV_get&quot;;
+  &quot;endpoint__GET___cbv_perm_&quot; -&gt; &quot;service__views_PermCBV_get&quot;;
+  &quot;endpoint__GET___drf_admin_&quot; -&gt; &quot;service__views_AdminAPIView_get&quot;;
+  &quot;endpoint__GET___drf_anon_&quot; -&gt; &quot;service__views_AnonAPIView_get&quot;;
+  &quot;endpoint__GET___health_&quot; -&gt; &quot;service__views_health&quot;;
+  &quot;endpoint__GET___login_&quot; -&gt; &quot;service__views_login_page&quot;;
+  &quot;endpoint__GET___perm_&quot; -&gt; &quot;service__views_perm_required_view&quot;;
+  &quot;endpoint__GET___public_&quot; -&gt; &quot;service__views_public_view&quot;;
+  &quot;endpoint__GET___staff_&quot; -&gt; &quot;service__views_staff_view&quot;;
+}
+</pre></div>
+
+  <details>
+    <summary>Raw PFG (JSON)</summary>
+    <pre>{
+  &quot;schema_version&quot;: &quot;1.0&quot;,
+  &quot;application&quot;: &quot;ref_auth&quot;,
+  &quot;framework&quot;: &quot;django&quot;,
+  &quot;nodes&quot;: [
+    {
+      &quot;id&quot;: &quot;endpoint__GET___api_open_&quot;,
+      &quot;type&quot;: &quot;endpoint&quot;,
+      &quot;attrs&quot;: {
+        &quot;http_method&quot;: &quot;GET&quot;,
+        &quot;route&quot;: &quot;/api/open/&quot;,
+        &quot;route_params&quot;: [],
+        &quot;requires_auth&quot;: false,
+        &quot;required_role&quot;: &quot;NONE&quot;,
+        &quot;ownership_check_present&quot;: false,
+        &quot;is_intentionally_public&quot;: true,
+        &quot;source_location&quot;: &quot;C:\\Users\\la_no\\OneDrive\\Desktop\\PFG\\benchmarks\\reference\\ref_auth\\urls.py:10&quot;
+      }
+    },
+    {
+      &quot;id&quot;: &quot;endpoint__GET___api_user_&quot;,
+      &quot;type&quot;: &quot;endpoint&quot;,
+      &quot;attrs&quot;: {
+        &quot;http_method&quot;: &quot;GET&quot;,
+        &quot;route&quot;: &quot;/api/user/&quot;,
+        &quot;route_params&quot;: [],
+        &quot;requires_auth&quot;: true,
+        &quot;required_role&quot;: &quot;USER&quot;,
+        &quot;ownership_check_present&quot;: false,
+        &quot;is_intentionally_public&quot;: false,
+        &quot;source_location&quot;: &quot;C:\\Users\\la_no\\OneDrive\\Desktop\\PFG\\benchmarks\\reference\\ref_auth\\urls.py:11&quot;
+      }
+    },
+    {
+      &quot;id&quot;: &quot;endpoint__GET___auth_&quot;,
+      &quot;type&quot;: &quot;endpoint&quot;,
+      &quot;attrs&quot;: {
+        &quot;http_method&quot;: &quot;GET&quot;,
+        &quot;route&quot;: &quot;/auth/&quot;,
+        &quot;route_params&quot;: [],
+        &quot;requires_auth&quot;: true,
+        &quot;required_role&quot;: &quot;USER&quot;,
+        &quot;ownership_check_present&quot;: false,
+        &quot;is_intentionally_public&quot;: false,
+        &quot;source_location&quot;: &quot;C:\\Users\\la_no\\OneDrive\\Desktop\\PFG\\benchmarks\\reference\\ref_auth\\urls.py:7&quot;
+      }
+    },
+    {
+      &quot;id&quot;: &quot;endpoint__GET___cbv_login_&quot;,
+      &quot;type&quot;: &quot;endpoint&quot;,
+      &quot;attrs&quot;: {
+        &quot;http_method&quot;: &quot;GET&quot;,
+        &quot;route&quot;: &quot;/cbv/login/&quot;,
+        &quot;route_params&quot;: [],
+        &quot;requires_auth&quot;: true,
+        &quot;required_role&quot;: &quot;USER&quot;,
+        &quot;ownership_check_present&quot;: false,
+        &quot;is_intentionally_public&quot;: false,
+        &quot;source_location&quot;: &quot;C:\\Users\\la_no\\OneDrive\\Desktop\\PFG\\benchmarks\\reference\\ref_auth\\urls.py:12&quot;
+      }
+    },
+    {
+      &quot;id&quot;: &quot;endpoint__GET___cbv_perm_&quot;,
+      &quot;type&quot;: &quot;endpoint&quot;,
+      &quot;attrs&quot;: {
+        &quot;http_method&quot;: &quot;GET&quot;,
+        &quot;route&quot;: &quot;/cbv/perm/&quot;,
+        &quot;route_params&quot;: [],
+        &quot;requires_auth&quot;: true,
+        &quot;required_role&quot;: &quot;USER&quot;,
+        &quot;ownership_check_present&quot;: false,
+        &quot;is_intentionally_public&quot;: false,
+        &quot;source_location&quot;: &quot;C:\\Users\\la_no\\OneDrive\\Desktop\\PFG\\benchmarks\\reference\\ref_auth\\urls.py:13&quot;
+      }
+    },
+    {
+      &quot;id&quot;: &quot;endpoint__GET___drf_admin_&quot;,
+      &quot;type&quot;: &quot;endpoint&quot;,
+      &quot;attrs&quot;: {
+        &quot;http_method&quot;: &quot;GET&quot;,
+        &quot;route&quot;: &quot;/drf/admin/&quot;,
+        &quot;route_params&quot;: [],
+        &quot;requires_auth&quot;: true,
+        &quot;required_role&quot;: &quot;ADMIN&quot;,
+        &quot;ownership_check_present&quot;: false,
+        &quot;is_intentionally_public&quot;: false,
+        &quot;source_location&quot;: &quot;C:\\Users\\la_no\\OneDrive\\Desktop\\PFG\\benchmarks\\reference\\ref_auth\\urls.py:14&quot;
+      }
+    },
+    {
+      &quot;id&quot;: &quot;endpoint__GET___drf_anon_&quot;,
+      &quot;type&quot;: &quot;endpoint&quot;,
+      &quot;attrs&quot;: {
+        &quot;http_method&quot;: &quot;GET&quot;,
+        &quot;route&quot;: &quot;/drf/anon/&quot;,
+        &quot;route_params&quot;: [],
+        &quot;requires_auth&quot;: false,
+        &quot;required_role&quot;: &quot;NONE&quot;,
+        &quot;ownership_check_present&quot;: false,
+        &quot;is_intentionally_public&quot;: true,
+        &quot;source_location&quot;: &quot;C:\\Users\\la_no\\OneDrive\\Desktop\\PFG\\benchmarks\\reference\\ref_auth\\urls.py:15&quot;
+      }
+    },
+    {
+      &quot;id&quot;: &quot;endpoint__GET___health_&quot;,
+      &quot;type&quot;: &quot;endpoint&quot;,
+      &quot;attrs&quot;: {
+        &quot;http_method&quot;: &quot;GET&quot;,
+        &quot;route&quot;: &quot;/health/&quot;,
+        &quot;route_params&quot;: [],
+        &quot;requires_auth&quot;: false,
+        &quot;required_role&quot;: &quot;NONE&quot;,
+        &quot;ownership_check_present&quot;: false,
+        &quot;is_intentionally_public&quot;: true,
+        &quot;source_location&quot;: &quot;C:\\Users\\la_no\\OneDrive\\Desktop\\PFG\\benchmarks\\reference\\ref_auth\\urls.py:16&quot;
+      }
+    },
+    {
+      &quot;id&quot;: &quot;endpoint__GET___login_&quot;,
+      &quot;type&quot;: &quot;endpoint&quot;,
+      &quot;attrs&quot;: {
+        &quot;http_method&quot;: &quot;GET&quot;,
+        &quot;route&quot;: &quot;/login/&quot;,
+        &quot;route_params&quot;: [],
+        &quot;requires_auth&quot;: false,
+        &quot;required_role&quot;: &quot;NONE&quot;,
+        &quot;ownership_check_present&quot;: false,
+        &quot;is_intentionally_public&quot;: true,
+        &quot;source_location&quot;: &quot;C:\\Users\\la_no\\OneDrive\\Desktop\\PFG\\benchmarks\\reference\\ref_auth\\urls.py:17&quot;
+      }
+    },
+    {
+      &quot;id&quot;: &quot;endpoint__GET___perm_&quot;,
+      &quot;type&quot;: &quot;endpoint&quot;,
+      &quot;attrs&quot;: {
+        &quot;http_method&quot;: &quot;GET&quot;,
+        &quot;route&quot;: &quot;/perm/&quot;,
+        &quot;route_params&quot;: [],
+        &quot;requires_auth&quot;: true,
+        &quot;required_role&quot;: &quot;USER&quot;,
+        &quot;ownership_check_present&quot;: false,
+        &quot;is_intentionally_public&quot;: false,
+        &quot;source_location&quot;: &quot;C:\\Users\\la_no\\OneDrive\\Desktop\\PFG\\benchmarks\\reference\\ref_auth\\urls.py:8&quot;
+      }
+    },
+    {
+      &quot;id&quot;: &quot;endpoint__GET___public_&quot;,
+      &quot;type&quot;: &quot;endpoint&quot;,
+      &quot;attrs&quot;: {
+        &quot;http_method&quot;: &quot;GET&quot;,
+        &quot;route&quot;: &quot;/public/&quot;,
+        &quot;route_params&quot;: [],
+        &quot;requires_auth&quot;: false,
+        &quot;required_role&quot;: &quot;NONE&quot;,
+        &quot;ownership_check_present&quot;: false,
+        &quot;is_intentionally_public&quot;: true,
+        &quot;source_location&quot;: &quot;C:\\Users\\la_no\\OneDrive\\Desktop\\PFG\\benchmarks\\reference\\ref_auth\\urls.py:6&quot;
+      }
+    },
+    {
+      &quot;id&quot;: &quot;endpoint__GET___staff_&quot;,
+      &quot;type&quot;: &quot;endpoint&quot;,
+      &quot;attrs&quot;: {
+        &quot;http_method&quot;: &quot;GET&quot;,
+        &quot;route&quot;: &quot;/staff/&quot;,
+        &quot;route_params&quot;: [],
+        &quot;requires_auth&quot;: true,
+        &quot;required_role&quot;: &quot;ADMIN&quot;,
+        &quot;ownership_check_present&quot;: false,
+        &quot;is_intentionally_public&quot;: false,
+        &quot;source_location&quot;: &quot;C:\\Users\\la_no\\OneDrive\\Desktop\\PFG\\benchmarks\\reference\\ref_auth\\urls.py:9&quot;
+      }
+    },
+    {
+      &quot;id&quot;: &quot;service__views_AdminAPIView_get&quot;,
+      &quot;type&quot;: &quot;service&quot;,
+      &quot;attrs&quot;: {
+        &quot;name&quot;: &quot;views.AdminAPIView.get&quot;,
+        &quot;inherited_privilege&quot;: null,
+        &quot;performs_data_access&quot;: false,
+        &quot;performs_mutation&quot;: false,
+        &quot;source_location&quot;: null
+      }
+    },
+    {
+      &quot;id&quot;: &quot;service__views_AnonAPIView_get&quot;,
+      &quot;type&quot;: &quot;service&quot;,
+      &quot;attrs&quot;: {
+        &quot;name&quot;: &quot;views.AnonAPIView.get&quot;,
+        &quot;inherited_privilege&quot;: null,
+        &quot;performs_data_access&quot;: false,
+        &quot;performs_mutation&quot;: false,
+        &quot;source_location&quot;: null
+      }
+    },
+    {
+      &quot;id&quot;: &quot;service__views_LoginCBV_get&quot;,
+      &quot;type&quot;: &quot;service&quot;,
+      &quot;attrs&quot;: {
+        &quot;name&quot;: &quot;views.LoginCBV.get&quot;,
+        &quot;inherited_privilege&quot;: null,
+        &quot;performs_data_access&quot;: false,
+        &quot;performs_mutation&quot;: false,
+        &quot;source_location&quot;: null
+      }
+    },
+    {
+      &quot;id&quot;: &quot;service__views_PermCBV_get&quot;,
+      &quot;type&quot;: &quot;service&quot;,
+      &quot;attrs&quot;: {
+        &quot;name&quot;: &quot;views.PermCBV.get&quot;,
+        &quot;inherited_privilege&quot;: null,
+        &quot;performs_data_access&quot;: false,
+        &quot;performs_mutation&quot;: false,
+        &quot;source_location&quot;: null
+      }
+    },
+    {
+      &quot;id&quot;: &quot;service__views_api_open&quot;,
+      &quot;type&quot;: &quot;service&quot;,
+      &quot;attrs&quot;: {
+        &quot;name&quot;: &quot;views.api_open&quot;,
+        &quot;inherited_privilege&quot;: null,
+        &quot;performs_data_access&quot;: false,
+        &quot;performs_mutation&quot;: false,
+        &quot;source_location&quot;: null
+      }
+    },
+    {
+      &quot;id&quot;: &quot;service__views_api_user&quot;,
+      &quot;type&quot;: &quot;service&quot;,
+      &quot;attrs&quot;: {
+        &quot;name&quot;: &quot;views.api_user&quot;,
+        &quot;inherited_privilege&quot;: null,
+        &quot;performs_data_access&quot;: false,
+        &quot;performs_mutation&quot;: false,
+        &quot;source_location&quot;: null
+      }
+    },
+    {
+      &quot;id&quot;: &quot;service__views_auth_required_view&quot;,
+      &quot;type&quot;: &quot;service&quot;,
+      &quot;attrs&quot;: {
+        &quot;name&quot;: &quot;views.auth_required_view&quot;,
+        &quot;inherited_privilege&quot;: null,
+        &quot;performs_data_access&quot;: false,
+        &quot;performs_mutation&quot;: false,
+        &quot;source_location&quot;: null
+      }
+    },
+    {
+      &quot;id&quot;: &quot;service__views_health&quot;,
+      &quot;type&quot;: &quot;service&quot;,
+      &quot;attrs&quot;: {
+        &quot;name&quot;: &quot;views.health&quot;,
+        &quot;inherited_privilege&quot;: null,
+        &quot;performs_data_access&quot;: false,
+        &quot;performs_mutation&quot;: false,
+        &quot;source_location&quot;: null
+      }
+    },
+    {
+      &quot;id&quot;: &quot;service__views_login_page&quot;,
+      &quot;type&quot;: &quot;service&quot;,
+      &quot;attrs&quot;: {
+        &quot;name&quot;: &quot;views.login_page&quot;,
+        &quot;inherited_privilege&quot;: null,
+        &quot;performs_data_access&quot;: false,
+        &quot;performs_mutation&quot;: false,
+        &quot;source_location&quot;: null
+      }
+    },
+    {
+      &quot;id&quot;: &quot;service__views_perm_required_view&quot;,
+      &quot;type&quot;: &quot;service&quot;,
+      &quot;attrs&quot;: {
+        &quot;name&quot;: &quot;views.perm_required_view&quot;,
+        &quot;inherited_privilege&quot;: null,
+        &quot;performs_data_access&quot;: false,
+        &quot;performs_mutation&quot;: false,
+        &quot;source_location&quot;: null
+      }
+    },
+    {
+      &quot;id&quot;: &quot;service__views_public_view&quot;,
+      &quot;type&quot;: &quot;service&quot;,
+      &quot;attrs&quot;: {
+        &quot;name&quot;: &quot;views.public_view&quot;,
+        &quot;inherited_privilege&quot;: null,
+        &quot;performs_data_access&quot;: false,
+        &quot;performs_mutation&quot;: false,
+        &quot;source_location&quot;: null
+      }
+    },
+    {
+      &quot;id&quot;: &quot;service__views_staff_view&quot;,
+      &quot;type&quot;: &quot;service&quot;,
+      &quot;attrs&quot;: {
+        &quot;name&quot;: &quot;views.staff_view&quot;,
+        &quot;inherited_privilege&quot;: null,
+        &quot;performs_data_access&quot;: false,
+        &quot;performs_mutation&quot;: false,
+        &quot;source_location&quot;: null
+      }
+    }
+  ],
+  &quot;edges&quot;: [
+    {
+      &quot;src&quot;: &quot;endpoint__GET___api_open_&quot;,
+      &quot;dst&quot;: &quot;service__views_api_open&quot;,
+      &quot;type&quot;: &quot;call&quot;,
+      &quot;param&quot;: null
+    },
+    {
+      &quot;src&quot;: &quot;endpoint__GET___api_user_&quot;,
+      &quot;dst&quot;: &quot;service__views_api_user&quot;,
+      &quot;type&quot;: &quot;call&quot;,
+      &quot;param&quot;: null
+    },
+    {
+      &quot;src&quot;: &quot;endpoint__GET___auth_&quot;,
+      &quot;dst&quot;: &quot;service__views_auth_required_view&quot;,
+      &quot;type&quot;: &quot;call&quot;,
+      &quot;param&quot;: null
+    },
+    {
+      &quot;src&quot;: &quot;endpoint__GET___cbv_login_&quot;,
+      &quot;dst&quot;: &quot;service__views_LoginCBV_get&quot;,
+      &quot;type&quot;: &quot;call&quot;,
+      &quot;param&quot;: null
+    },
+    {
+      &quot;src&quot;: &quot;endpoint__GET___cbv_perm_&quot;,
+      &quot;dst&quot;: &quot;service__views_PermCBV_get&quot;,
+      &quot;type&quot;: &quot;call&quot;,
+      &quot;param&quot;: null
+    },
+    {
+      &quot;src&quot;: &quot;endpoint__GET___drf_admin_&quot;,
+      &quot;dst&quot;: &quot;service__views_AdminAPIView_get&quot;,
+      &quot;type&quot;: &quot;call&quot;,
+      &quot;param&quot;: null
+    },
+    {
+      &quot;src&quot;: &quot;endpoint__GET___drf_anon_&quot;,
+      &quot;dst&quot;: &quot;service__views_AnonAPIView_get&quot;,
+      &quot;type&quot;: &quot;call&quot;,
+      &quot;param&quot;: null
+    },
+    {
+      &quot;src&quot;: &quot;endpoint__GET___health_&quot;,
+      &quot;dst&quot;: &quot;service__views_health&quot;,
+      &quot;type&quot;: &quot;call&quot;,
+      &quot;param&quot;: null
+    },
+    {
+      &quot;src&quot;: &quot;endpoint__GET___login_&quot;,
+      &quot;dst&quot;: &quot;service__views_login_page&quot;,
+      &quot;type&quot;: &quot;call&quot;,
+      &quot;param&quot;: null
+    },
+    {
+      &quot;src&quot;: &quot;endpoint__GET___perm_&quot;,
+      &quot;dst&quot;: &quot;service__views_perm_required_view&quot;,
+      &quot;type&quot;: &quot;call&quot;,
+      &quot;param&quot;: null
+    },
+    {
+      &quot;src&quot;: &quot;endpoint__GET___public_&quot;,
+      &quot;dst&quot;: &quot;service__views_public_view&quot;,
+      &quot;type&quot;: &quot;call&quot;,
+      &quot;param&quot;: null
+    },
+    {
+      &quot;src&quot;: &quot;endpoint__GET___staff_&quot;,
+      &quot;dst&quot;: &quot;service__views_staff_view&quot;,
+      &quot;type&quot;: &quot;call&quot;,
+      &quot;param&quot;: null
+    }
+  ],
+  &quot;labels&quot;: {},
+  &quot;metadata&quot;: {}
+}</pre>
+  </details>
+</main>
+</body>
+</html>

@@ -2,10 +2,7 @@
 
 Detecting access-control vulnerabilities (incl. IDOR) in web applications via a purpose-built program representation and Graph Neural Networks.
 
-Master thesis project. See [PFG_Implementation_Plan.md](PFG_Implementation_Plan.md) for the full roadmap.
-
 ## Quick start
-
 ```powershell
 uv sync --all-extras
 uv run pytest
@@ -26,7 +23,3 @@ tests/golden/           # PFG snapshot tests
 docs/                   # spec, related work, auth-pattern catalog, thesis
 experiments/            # YAML configs, MLflow runs
 ```
-
-## License
-
-MIT.

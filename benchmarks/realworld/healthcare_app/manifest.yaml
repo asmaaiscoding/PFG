@@ -1,0 +1,63 @@
+application: healthcare-app
+framework: django
+source_root: src/
+
+cwe:
+  - CWE-862 # Missing Authorization
+  - CWE-639 # Authorization Bypass Through User-Controlled Key (IDOR)
+  - CWE-306 # Missing Authentication for Critical Function
+
+notes: |
+  Healthcare app with patients, appointments, and medical records.
+  Demonstrates IDOR on patient data access, missing auth on record
+  sharing, combined IDOR+missing-role on medical notes, and missing
+  role checks on data export and patient deletion.
+
+expected_findings:
+  # PatientViewSet retrieve/update: no ownership check
+  - endpoint_id: endpoint__GET___api_patients__pk__
+    subtype: IDOR
+    url_pattern: /api/patients/{pk}/
+  - endpoint_id: endpoint__PUT___api_patients__pk__
+    subtype: IDOR
+    url_pattern: /api/patients/{pk}/
+  - endpoint_id: endpoint__PATCH___api_patients__pk__
+    subtype: IDOR
+    url_pattern: /api/patients/{pk}/
+  # PatientViewSet destroy: should be admin only
+  - endpoint_id: endpoint__DELETE___api_patients__pk__
+    subtype: MISSING_ROLE
+    url_pattern: /api/patients/{pk}/
+  # patient_prescriptions: view any patient's prescriptions
+  - endpoint_id: endpoint__GET___api_patients__pk__prescriptions_
+    subtype: IDOR
+    url_pattern: /api/patients/{pk}/prescriptions/
+  # export_patients: any auth user can export all patient data
+  - endpoint_id: endpoint__GET___api_patients_export_
+    subtype: MISSING_ROLE
+    url_pattern: /api/patients/export/
+  # AppointmentViewSet retrieve: view any appointment
+  - endpoint_id: endpoint__GET___api_appointments__pk__
+    subtype: IDOR
+    url_pattern: /api/appointments/{pk}/
+  # AppointmentViewSet destroy: cancel any appointment
+  - endpoint_id: endpoint__DELETE___api_appointments__pk__
+    subtype: IDOR
+    url_pattern: /api/appointments/{pk}/
+  # record_detail: view any medical record
+  - endpoint_id: endpoint__GET___api_records__pk__
+    subtype: IDOR
+    url_pattern: /api/records/{pk}/
+  # record_notes: IDOR + should be doctor-only = COMBINED
+  - endpoint_id: endpoint__GET___api_records__pk__notes_
+    subtype: COMBINED
+    url_pattern: /api/records/{pk}/notes/
+  # share_record: no authentication at all
+  - endpoint_id: endpoint__GET___api_records__pk__share_
+    subtype: MISSING_AUTH
+    url_pattern: /api/records/{pk}/share/
+
+intentional_public_endpoints:
+  - endpoint__GET___api_appointments_available_slots_
+  - endpoint__GET___api_health_
+  - endpoint__GET___api_register_

@@ -1,0 +1,49 @@
+application: social-app
+framework: django
+source_root: src/
+
+cwe:
+  - CWE-862 # Missing Authorization
+  - CWE-639 # Authorization Bypass Through User-Controlled Key (IDOR)
+
+notes: |
+  Social network app with posts, profiles, and direct messages.
+  Demonstrates IDOR on post editing/deletion and message access,
+  missing role on moderation, and intentionally public feeds.
+
+expected_findings:
+  # PostViewSet update/destroy: no ownership check
+  - endpoint_id: endpoint__PUT___api_posts__pk__
+    subtype: IDOR
+    url_pattern: /api/posts/{pk}/
+  - endpoint_id: endpoint__PATCH___api_posts__pk__
+    subtype: IDOR
+    url_pattern: /api/posts/{pk}/
+  - endpoint_id: endpoint__DELETE___api_posts__pk__
+    subtype: IDOR
+    url_pattern: /api/posts/{pk}/
+  # moderate_hide: any authenticated user can moderate (should be admin)
+  - endpoint_id: endpoint__GET___api_posts_moderation_hide__pk__
+    subtype: MISSING_ROLE
+    url_pattern: /api/posts/moderation/hide/{pk}/
+  # user_settings: view any user's private settings
+  - endpoint_id: endpoint__GET___api_profiles__pk__settings_
+    subtype: IDOR
+    url_pattern: /api/profiles/{pk}/settings/
+  # message_detail: read any message
+  - endpoint_id: endpoint__GET___api_messages__pk__
+    subtype: IDOR
+    url_pattern: /api/messages/{pk}/
+  # delete_message: delete any message
+  - endpoint_id: endpoint__GET___api_messages__pk__delete_
+    subtype: IDOR
+    url_pattern: /api/messages/{pk}/delete/
+
+intentional_public_endpoints:
+  - endpoint__GET___api_posts_
+  - endpoint__GET___api_posts__pk__
+  - endpoint__GET___api_posts__pk__comments_
+  - endpoint__GET___api_posts_trending_
+  - endpoint__GET___api_profiles__pk__
+  - endpoint__GET___api_health_
+  - endpoint__GET___api_signup_

@@ -1,0 +1,71 @@
+{
+  "n_synthetic": 400,
+  "n_real": 45,
+  "n_total": 445,
+  "train_apps": [
+    "ecommerce-app",
+    "my-django-app",
+    "social-app"
+  ],
+  "test_accuracy": 0.9777777777777777,
+  "test_macro_f1": 0.9790849673202615,
+  "confusion_matrix": [
+    [
+      8,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      6,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      10,
+      0,
+      0,
+      0
+    ],
+    [
+      1,
+      0,
+      0,
+      7,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      5,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      8
+    ]
+  ],
+  "holdout": {
+    "application": "healthcare-app",
+    "tp": 3,
+    "fp": 3,
+    "fn": 8,
+    "precision": 0.5,
+    "recall": 0.2727272727272727,
+    "f1": 0.3529411764705882
+  }
+}

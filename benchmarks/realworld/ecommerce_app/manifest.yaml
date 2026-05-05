@@ -1,0 +1,54 @@
+application: ecommerce-app
+framework: django
+source_root: src/
+
+cwe:
+  - CWE-862 # Missing Authorization
+  - CWE-639 # Authorization Bypass Through User-Controlled Key (IDOR)
+
+notes: |
+  E-commerce app with orders, products, and users modules.
+  Demonstrates IDOR on order/user resources, missing role checks
+  on admin operations, and intentionally public product catalog.
+
+expected_findings:
+  # Orders: retrieve/update/destroy have no ownership check
+  - endpoint_id: endpoint__GET___api_orders__pk__
+    subtype: IDOR
+    url_pattern: /api/orders/{pk}/
+  - endpoint_id: endpoint__PUT___api_orders__pk__
+    subtype: IDOR
+    url_pattern: /api/orders/{pk}/
+  - endpoint_id: endpoint__PATCH___api_orders__pk__
+    subtype: IDOR
+    url_pattern: /api/orders/{pk}/
+  - endpoint_id: endpoint__DELETE___api_orders__pk__
+    subtype: IDOR
+    url_pattern: /api/orders/{pk}/
+  # cancel_order: no ownership check
+  - endpoint_id: endpoint__GET___api_orders__pk__cancel_
+    subtype: IDOR
+    url_pattern: /api/orders/{pk}/cancel/
+  # bulk_delete: any authenticated user, should be admin
+  - endpoint_id: endpoint__GET___api_orders_bulk_delete_
+    subtype: MISSING_ROLE
+    url_pattern: /api/orders/bulk-delete/
+  # import_products: any authenticated user, should be admin
+  - endpoint_id: endpoint__GET___api_products_import_
+    subtype: MISSING_ROLE
+    url_pattern: /api/products/import/
+  # user_detail: view any user's data
+  - endpoint_id: endpoint__GET___api_users__pk__
+    subtype: IDOR
+    url_pattern: /api/users/{pk}/
+  # user_addresses: view any user's addresses
+  - endpoint_id: endpoint__GET___api_users__pk__addresses_
+    subtype: IDOR
+    url_pattern: /api/users/{pk}/addresses/
+
+intentional_public_endpoints:
+  - endpoint__GET___api_products_
+  - endpoint__GET___api_products__pk__
+  - endpoint__GET___api_products__pk__reviews_
+  - endpoint__GET___api_health_
+  - endpoint__GET___api_login_

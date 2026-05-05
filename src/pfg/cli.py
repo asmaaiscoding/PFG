@@ -613,5 +613,154 @@ def web_cmd(host: str, port: int) -> None:
     run(host=host, port=port)
 
 
+@main.command(name="train-mixed")
+@click.argument("corpus_root", type=click.Path(exists=True, file_okay=False, path_type=Path))
+@click.option("--n-synthetic", default=400, show_default=True, type=int, help="Number of synthetic samples.")
+@click.option("--epochs", default=30, show_default=True, type=int)
+@click.option("--seed", default=0, show_default=True, type=int)
+@click.option("--batch-size", default=32, show_default=True, type=int)
+@click.option("--hidden-dim", default=64, show_default=True, type=int)
+@click.option("--num-layers", default=3, show_default=True, type=int)
+@click.option("--heads", default=4, show_default=True, type=int)
+@click.option(
+    "--holdout",
+    "holdout_app",
+    default=None,
+    help="Application name to hold out for evaluation (not used in training).",
+)
+@click.option(
+    "--out-model",
+    type=click.Path(dir_okay=False, path_type=Path),
+    default=Path("artifacts/path_analyzer_mixed.pt"),
+    show_default=True,
+)
+@click.option(
+    "--out-report",
+    type=click.Path(dir_okay=False, path_type=Path),
+    default=None,
+    help="Where to write the JSON training+eval report.",
+)
+def train_mixed_cmd(
+    corpus_root: Path,
+    n_synthetic: int,
+    epochs: int,
+    seed: int,
+    batch_size: int,
+    hidden_dim: int,
+    num_layers: int,
+    heads: int,
+    holdout_app: str | None,
+    out_model: Path,
+    out_report: Path | None,
+) -> None:
+    """Train Model B on a mix of synthetic + real-extracted data.
+
+    CORPUS_ROOT should contain subdirectories, each with a manifest.yaml.
+    If --holdout is specified, that app is excluded from training and used
+    for final evaluation to demonstrate generalization.
+    """
+    from pfg.eval.manifest import discover_manifests
+    from pfg.models.checkpoint import save_model
+    from pfg.synthetic import generate_dataset
+    from pfg.training.bridge import samples_from_manifest
+    from pfg.training.trainer import train_path_analyzer
+
+    manifests = discover_manifests(corpus_root)
+    if not manifests:
+        raise click.ClickException(f"no manifest.yaml found under {corpus_root}")
+
+    # Split into train and holdout
+    train_manifests = manifests
+    holdout_manifest = None
+    if holdout_app:
+        train_manifests = [m for m in manifests if m.application != holdout_app]
+        holdout_candidates = [m for m in manifests if m.application == holdout_app]
+        if not holdout_candidates:
+            raise click.ClickException(
+                f"--holdout app '{holdout_app}' not found. "
+                f"Available: {[m.application for m in manifests]}"
+            )
+        holdout_manifest = holdout_candidates[0]
+
+    # Build real samples from training manifests
+    click.echo(f"Extracting PFGs from {len(train_manifests)} app(s)...")
+    real_samples = []
+    for m in train_manifests:
+        try:
+            samples = samples_from_manifest(m)
+            click.echo(f"  {m.application}: {len(samples)} endpoints")
+            real_samples.extend(samples)
+        except Exception as e:
+            click.echo(f"  {m.application}: FAILED ({e})", err=True)
+
+    # Generate synthetic samples
+    click.echo(f"Generating {n_synthetic} synthetic samples...")
+    synthetic_samples = generate_dataset(n_synthetic, seed=seed)
+
+    # Combine
+    all_samples = synthetic_samples + real_samples
+    click.echo(f"Total training corpus: {len(all_samples)} samples "
+               f"({len(synthetic_samples)} synthetic + {len(real_samples)} real)")
+
+    # Train Model B
+    click.echo(f"Training PathAnalyzer for {epochs} epochs...")
+    model, metrics = train_path_analyzer(
+        all_samples,
+        epochs=epochs,
+        batch_size=batch_size,
+        hidden_dim=hidden_dim,
+        num_layers=num_layers,
+        heads=heads,
+        seed=seed,
+    )
+    click.echo(f"  test accuracy: {metrics.test_accuracy:.3f}")
+    click.echo(f"  test macro-F1: {metrics.test_macro_f1:.3f}")
+
+    # Save model
+    out_model.parent.mkdir(parents=True, exist_ok=True)
+    save_model(
+        model, out_model, kind="path",
+        hparams={"hidden_dim": hidden_dim, "num_layers": num_layers, "heads": heads},
+    )
+    click.echo(f"Saved model -> {out_model}")
+
+    # Evaluate on holdout app if specified
+    holdout_report = None
+    if holdout_manifest:
+        click.echo(f"\n=== Holdout evaluation: {holdout_manifest.application} ===")
+        from pfg.eval import evaluate_corpus, gnn_detector
+
+        det = gnn_detector(model)
+        report = evaluate_corpus([holdout_manifest], det, detector_name="path_analyzer_mixed")
+        for a in report.apps:
+            click.echo(f"  TP={a.tp}  FP={a.fp}  FN={a.fn}  "
+                       f"precision={a.precision:.2f}  recall={a.recall:.2f}  F1={a.f1:.2f}")
+        holdout_report = {
+            "application": holdout_manifest.application,
+            "tp": report.apps[0].tp if report.apps else 0,
+            "fp": report.apps[0].fp if report.apps else 0,
+            "fn": report.apps[0].fn if report.apps else 0,
+            "precision": report.micro_precision,
+            "recall": report.micro_recall,
+            "f1": report.micro_f1,
+        }
+
+    # Write report
+    if out_report:
+        report_data = {
+            "n_synthetic": n_synthetic,
+            "n_real": len(real_samples),
+            "n_total": len(all_samples),
+            "train_apps": [m.application for m in train_manifests],
+            "test_accuracy": metrics.test_accuracy,
+            "test_macro_f1": metrics.test_macro_f1,
+            "confusion_matrix": metrics.confusion,
+            "holdout": holdout_report,
+        }
+        out_report.parent.mkdir(parents=True, exist_ok=True)
+        out_report.write_text(json.dumps(report_data, indent=2), encoding="utf-8")
+        click.echo(f"Wrote report -> {out_report}")
+
+
 if __name__ == "__main__":  # pragma: no cover
     sys.exit(main())

@@ -340,6 +340,53 @@ def corpus_fetch_cmd(corpus_root: Path, force: bool) -> None:
         click.echo(f"OK: {path}")
 
 
+@main.command(name="corpus-validate")
+@click.argument("corpus_root", type=click.Path(exists=True, file_okay=False, path_type=Path))
+@click.option("--out", "out_path", type=click.Path(dir_okay=False, path_type=Path), default=None)
+def corpus_validate_cmd(corpus_root: Path, out_path: Path | None) -> None:
+    """Validate real-corpus manifests, source checkouts, labels, and detector coverage."""
+    from pfg.corpus import validate_corpus, validation_report_to_dict
+
+    report = validate_corpus(corpus_root)
+    data = validation_report_to_dict(report)
+
+    click.echo(f"=== Real corpus validation — {report.manifest_count} manifests ===")
+    click.echo(f"status={'OK' if report.ok else 'FAILED'}")
+    if report.errors:
+        for err in report.errors:
+            click.echo(f"ERROR: {err}")
+
+    classes = " ".join(f"{label}={count}" for label, count in report.class_distribution.items())
+    click.echo(f"class distribution: {classes}")
+    click.echo("split groups:")
+    if report.split_groups:
+        for group, apps in report.split_groups.items():
+            click.echo(f"  {group}: {', '.join(apps)}")
+    else:
+        click.echo("  (none)")
+
+    for validation in report.manifests:
+        status = "OK" if validation.ok else "FAIL"
+        click.echo(
+            f"  {status:4} {validation.application:30} "
+            f"endpoints={validation.endpoint_count} expected={validation.expected_endpoint_count} "
+            f"missing={len(validation.missing_expected_endpoints)} "
+            f"unlabeled_findings={len(validation.unlabeled_detector_findings)}"
+        )
+        for err in validation.errors:
+            click.echo(f"       ERROR: {err}")
+        for warning in validation.warnings:
+            click.echo(f"       WARN: {warning}")
+
+    if out_path is not None:
+        out_path.parent.mkdir(parents=True, exist_ok=True)
+        out_path.write_text(json.dumps(data, indent=2), encoding="utf-8")
+        click.echo(f"Wrote validation report -> {out_path}")
+
+    if not report.ok:
+        raise click.ClickException("corpus validation failed")
+
+
 @main.command(name="train-corpus")
 @click.argument("corpus_root", type=click.Path(exists=True, file_okay=False, path_type=Path))
 @click.option("--holdout-group", default=None, help="Dataset split group to reserve for test.")

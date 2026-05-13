@@ -9,7 +9,8 @@ Pure-AST analysis of a Django project source tree:
 No Django runtime is required.
 
 Recognized v1 patterns:
-  * `path("p/", view)`, `re_path(r"^...$", view)`, `include("app.urls")`,
+  * `path("p/", view)`, `re_path(r"^...$", view)`, `url(r"^...$", view)`,
+    `include("app.urls")`,
     `include("app.urls", namespace=...)`,
     `include((patterns_var, "app"), namespace=...)` is NOT supported (future).
   * Function-based views referenced as `views.func` or `func`.
@@ -272,6 +273,13 @@ def _resolve_view_expr(
     return full, is_class
 
 
+def _resolved_call_name(chain: list[str], mod: _ModuleIndex) -> str:
+    head, *rest = chain
+    if head in mod.aliases:
+        return ".".join([mod.aliases[head], *rest]).split(".")[-1]
+    return chain[-1]
+
+
 # --- pattern parsing ------------------------------------------------------
 
 
@@ -530,8 +538,8 @@ def _parse_pattern_call(
     chain = _attr_chain(expr.func)
     if chain is None:
         return []
-    fname = chain[-1]
-    if fname not in {"path", "re_path"}:
+    fname = _resolved_call_name(chain, mod)
+    if fname not in {"path", "re_path", "url"}:
         return []
     if not expr.args or len(expr.args) < 2:
         return []
@@ -548,7 +556,7 @@ def _parse_pattern_call(
     # include(...)?
     if isinstance(second, ast.Call):
         sub_chain = _attr_chain(second.func)
-        if sub_chain and sub_chain[-1] == "include":
+        if sub_chain and _resolved_call_name(sub_chain, mod) == "include":
             router = _router_from_include(second, routers)
             if router is not None:
                 return _emit_router_endpoints(router, full_route, project_root, mod.path)
@@ -624,6 +632,37 @@ def _handle_include(
     return []
 
 
+def _included_urlconf_files(project_root: Path, urls_files: list[Path]) -> set[Path]:
+    """URLConf files referenced by another URLConf's include("pkg.urls")."""
+    included: set[Path] = set()
+    for urls_py in urls_files:
+        try:
+            tree = ast.parse(urls_py.read_text(encoding="utf-8"), filename=str(urls_py))
+        except SyntaxError:
+            continue
+        aliases = _build_alias_map(tree, _module_dotted(project_root, urls_py))
+        package = _module_dotted(project_root, urls_py).rsplit(".", 1)[0]
+        mod = _ModuleIndex(urls_py, package, tree, aliases)
+        for node in ast.walk(tree):
+            if not isinstance(node, ast.Call):
+                continue
+            chain = _attr_chain(node.func)
+            if chain is None or _resolved_call_name(chain, mod) != "include":
+                continue
+            if not node.args:
+                continue
+            dotted = _const_str(node.args[0])
+            if dotted is None:
+                continue
+            rel = Path(*dotted.split("."))
+            candidates = [project_root / rel.with_suffix(".py"), project_root / rel / "__init__.py"]
+            for candidate in candidates:
+                if candidate.exists():
+                    included.add(candidate.resolve())
+                    break
+    return included
+
+
 def _router_from_include(call: ast.Call, routers: dict[str, _Router]) -> _Router | None:
     if not call.args:
         return None
@@ -672,10 +711,20 @@ def discover_endpoints(project_root: str | Path) -> list[DiscoveredEndpoint]:
     if top.exists():
         endpoints = _parse_urls_module(root, top, "", visited)
     else:
+        urls_files = sorted(root.rglob("urls.py"))
+        included_urlconfs = _included_urlconf_files(root, urls_files)
+        root_urlconfs = [p for p in urls_files if p.resolve() not in included_urlconfs]
+        if not root_urlconfs:
+            root_urlconfs = urls_files
         endpoints = []
-        for urls_py in sorted(root.rglob("urls.py")):
-            endpoints.extend(_parse_urls_module(root, urls_py, "", visited))
+        for urls_py in root_urlconfs:
+            endpoints.extend(_parse_urls_module(root, urls_py, "", set()))
 
-    # Stable order.
-    endpoints.sort(key=lambda e: (e.http_method, e.route, e.handler_qualname))
+    # Stable order with duplicates collapsed. Fallback discovery may see the
+    # same URLConf both standalone and through another project's include().
+    deduped = {
+        (e.http_method, e.route, e.handler_qualname): e
+        for e in endpoints
+    }
+    endpoints = sorted(deduped.values(), key=lambda e: (e.http_method, e.route, e.handler_qualname))
     return endpoints

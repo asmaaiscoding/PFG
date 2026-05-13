@@ -48,3 +48,21 @@ def test_no_dataaccess_in_pure_function() -> None:
     fn = ast.parse(src).body[0]
     assert isinstance(fn, ast.FunctionDef)
     assert detect_data_accesses(fn) == []
+
+
+def test_file_write_open_counts_as_dataaccess() -> None:
+    src = """
+def upload(path, chunks):
+    with open(path, "wb+") as file:
+        for chunk in chunks:
+            file.write(chunk)
+"""
+    fn = ast.parse(src).body[0]
+    assert isinstance(fn, ast.FunctionDef)
+
+    accesses = detect_data_accesses(fn)
+
+    assert len(accesses) == 1
+    assert accesses[0].operation == "WRITE"
+    assert accesses[0].target_entity == "filesystem"
+    assert not accesses[0].has_ownership_predicate

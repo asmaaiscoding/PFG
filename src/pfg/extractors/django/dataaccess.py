@@ -1,6 +1,6 @@
 """Django data-access + ownership predicate extractor (Phase 2 W9).
 
-Detects Django ORM call sites within a function/method AST and classifies:
+Detects Django ORM and simple filesystem call sites within a function/method AST and classifies:
 
   - operation:        READ / WRITE / UPDATE / DELETE
   - target_entity:    the Django model class name (LHS of `.objects`)
@@ -14,6 +14,8 @@ Recognized patterns:
   get_object_or_404(Cls, ...)          -- treated as READ Cls; ownership is
                                           inferred from a subsequent compare
                                           against request.user in the body.
+  open(path, "w"/"a"/"x"/"+")          -- treated as WRITE filesystem.
+  open(path, "r") / open(path)         -- treated as READ filesystem.
 
 Ownership predicate detection:
   - DIRECT   when a kwarg's value references ``request.user`` (or
@@ -65,6 +67,7 @@ _ALL_ORM_METHODS = _READ_METHODS | _WRITE_METHODS | _UPDATE_METHODS | _DELETE_ME
 
 _G404_FUNCS = frozenset({"get_object_or_404", "get_list_or_404"})
 _OWNER_PARAM_NAMES = frozenset({"user", "owner", "account", "tenant", "organization", "org"})
+_WRITE_FILE_MODES = frozenset({"w", "a", "x", "+"})
 
 
 @dataclass(frozen=True)
@@ -91,6 +94,10 @@ def _classify(method: str) -> str | None:
     if method in _DELETE_METHODS:
         return "DELETE"
     return None
+
+
+def _const_str(node: ast.AST | None) -> str | None:
+    return node.value if isinstance(node, ast.Constant) and isinstance(node.value, str) else None
 
 
 def _references_request_user(expr: ast.AST) -> bool:
@@ -186,6 +193,26 @@ def _g404_target(call: ast.Call) -> str | None:
     return None
 
 
+def _file_open_operation(call: ast.Call) -> str | None:
+    """Classify builtin ``open(...)`` calls as filesystem READ/WRITE accesses."""
+    if not isinstance(call.func, ast.Name) or call.func.id != "open":
+        return None
+    mode = "r"
+    if len(call.args) >= 2:
+        parsed = _const_str(call.args[1])
+        if parsed is not None:
+            mode = parsed
+    for kw in call.keywords:
+        if kw.arg != "mode":
+            continue
+        parsed = _const_str(kw.value)
+        if parsed is not None:
+            mode = parsed
+    if any(marker in mode for marker in _WRITE_FILE_MODES):
+        return "WRITE"
+    return "READ"
+
+
 def _g404_assignment_targets(stmt: ast.AST) -> list[str]:
     """Local variable names bound to a get_object_or_404 result in `stmt`."""
     if not isinstance(stmt, ast.Assign):
@@ -248,6 +275,23 @@ def detect_data_accesses(fn: ast.FunctionDef | ast.AsyncFunctionDef) -> list[Dat
         if not isinstance(node, ast.Call):
             continue
         sort_key = (node.lineno, node.end_col_offset or 0)
+
+        # Path 0: builtin filesystem open(...).
+        file_op = _file_open_operation(node)
+        if file_op is not None:
+            collected.append(
+                (
+                    sort_key,
+                    DataAccess(
+                        operation=file_op,
+                        target_entity="filesystem",
+                        has_ownership_predicate=False,
+                        ownership_predicate_type="NONE",
+                        lineno=node.lineno,
+                    ),
+                )
+            )
+            continue
 
         # Path 1: <Cls>.objects.<orm_method>(...) chain.
         target = _orm_target_entity(node)

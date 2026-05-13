@@ -9,6 +9,9 @@ pins a repository ref and labels endpoint-level findings.
 ```text
 benchmarks/realworld/
   _template/manifest.yaml
+  django-mdeditor-cve-2025-13030/
+    manifest.yaml
+    src/                 # ignored; created by `pfg corpus-fetch`
   wger-cve-2026-27839/
     manifest.yaml
     src/                 # ignored; created by `pfg corpus-fetch`
@@ -23,11 +26,25 @@ discovery.
 uv run pfg corpus-fetch benchmarks/realworld
 ```
 
-The `wger-cve-2026-27839` manifest clones:
+The manifests clone:
 
-- repo: `https://github.com/wger-project/wger`
-- vulnerable ref: `9c162dc82813d6a7b15dd8cabff128219ddef684`
-- local checkout: `benchmarks/realworld/wger-cve-2026-27839/src`
+- `wger-cve-2026-27839`
+  repo: `https://github.com/wger-project/wger`
+  vulnerable ref: `9c162dc82813d6a7b15dd8cabff128219ddef684`
+- `django-mdeditor-cve-2025-13030`
+  repo: `https://github.com/pylixm/django-mdeditor`
+  vulnerable ref: `e8dd73fb8571ddff2e7a20a4bfa88c376cc33b62`
+
+## Validate Corpus
+
+```bash
+uv run pfg corpus-validate benchmarks/realworld \
+  --out artifacts/corpus-validation.json
+```
+
+The validator checks required provenance fields, source checkouts, PFG
+extraction, discovered expected endpoints, class distribution, split groups,
+and unlabeled rule-baseline findings.
 
 ## Labeling Policy
 
@@ -49,5 +66,9 @@ should be generated from real manifests and recorded separately.
 uv run pfg eval benchmarks/realworld --detector rule
 ```
 
-The current first corpus entry is wger `CVE-2026-27839`, an advisory-confirmed
-DRF IDOR in three `nutritional_values` action endpoints.
+Current entries:
+
+- wger `CVE-2026-27839`: advisory-confirmed DRF IDOR in three
+  `nutritional_values` action endpoints.
+- django-mdeditor `CVE-2025-13030`: advisory-confirmed missing authentication
+  on `POST /mdeditor/uploads/`.

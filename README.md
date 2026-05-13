@@ -55,12 +55,12 @@ For each real corpus entry we store:
 Third-party source code is not vendored in this repo. It is fetched into ignored
 `benchmarks/realworld/*/src/` checkouts from pinned manifest refs.
 
-## First Real Corpus Entry
+## Real Corpus Entries
 
-The first real target is **wger** because it is a Django/DRF application with
-advisory-backed IDOR issues that match PFG’s intended signal.
+The real corpus currently contains two advisory-backed Django targets, with
+independent split groups for app-level evaluation.
 
-Manifest:
+### wger CVE-2026-27839
 
 ```text
 benchmarks/realworld/wger-cve-2026-27839/manifest.yaml
@@ -85,6 +85,31 @@ Labeled vulnerable endpoints:
 These endpoints directly used `Model.objects.get(pk=pk)`, bypassing the
 user-scoped `get_queryset()` / `self.get_object()` path.
 
+### django-mdeditor CVE-2025-13030
+
+```text
+benchmarks/realworld/django-mdeditor-cve-2025-13030/manifest.yaml
+```
+
+Provenance:
+
+- Repository: https://github.com/pylixm/django-mdeditor
+- Vulnerable ref: `e8dd73fb8571ddff2e7a20a4bfa88c376cc33b62`
+- Advisory: https://github.com/advisories/GHSA-qp2c-xqv6-phh6
+- NVD: https://nvd.nist.gov/vuln/detail/CVE-2025-13030
+- Fix commit: https://github.com/pylixm/django-mdeditor/commit/3e80f9edcabc5d2fc136b05a501964b8a5e97cfe
+- CWE: `CWE-306`
+- License: GPL-3.0-only
+
+Labeled vulnerable endpoint:
+
+- `POST /mdeditor/uploads/`
+
+This endpoint writes uploaded files into `MEDIA_ROOT` without requiring an
+authenticated user in the vulnerable ref. The fixed commit adds an
+`upload_require_auth` option, an authentication check, and additional image
+format validation.
+
 ## Commands
 
 Install and test:
@@ -100,6 +125,13 @@ Fetch real corpus sources:
 uv run pfg corpus-fetch benchmarks/realworld
 ```
 
+Validate real corpus manifests and labels:
+
+```bash
+uv run pfg corpus-validate benchmarks/realworld \
+  --out artifacts/corpus-validation.json
+```
+
 Build a PFG for the wger vulnerable ref:
 
 ```bash
@@ -112,25 +144,39 @@ Evaluate the rule baseline:
 
 ```bash
 uv run pfg eval benchmarks/realworld --detector rule \
-  --out artifacts/wger-rule-eval.json
+  --out artifacts/realworld-rule-eval.json
 ```
 
-Current first-corpus rule result after extractor hardening:
+Current two-corpus rule result after extractor hardening:
 
 ```text
 wger-cve-2026-27839: TP=3 FP=1 FN=0
-micro precision=0.750 recall=1.000 F1=0.857
+django-mdeditor-cve-2025-13030: TP=1 FP=0 FN=0
+micro precision=0.800 recall=1.000 F1=0.889
 ```
 
-The one current false positive is:
+The current validation summary is:
+
+```text
+SAFE=284 MISSING_AUTH=1 MISSING_ROLE=0 IDOR=3 COMBINED=0 INTENTIONALLY_PUBLIC=0
+wger: 1 unlabeled rule-baseline finding
+```
+
+The wger false positive is:
 
 ```text
 GET /api/v2/exerciseimage/{pk}/thumbnails/
 ```
 
-This is now part of the error-analysis backlog: decide whether it is an
-unlabeled real issue, an extractor false positive, or a rule-baseline
-over-approximation.
+This is part of the error-analysis backlog: decide whether it is an unlabeled
+real issue, an extractor false positive, or a rule-baseline over-approximation.
+
+Previous first-corpus result:
+
+```text
+wger-cve-2026-27839: TP=3 FP=1 FN=0
+micro precision=0.750 recall=1.000 F1=0.857
+```
 
 Train Model B on a real corpus once at least three independent split groups
 exist:
@@ -198,10 +244,9 @@ real corpus:
 
 ## Next Data Milestones
 
-Before claiming Model B results, add at least two more independent real
-Django/DRF split groups. Candidates already identified:
+Before claiming Model B results, add at least one more independent real
+Django/DRF split group. Candidates already identified:
 
-- `django-mdeditor` / `CVE-2025-13030` / missing authentication.
 - `Nautobot` / `CVE-2023-51649` / object-level permission enforcement.
 - `Nautobot` / `CVE-2023-50263` / unauthenticated db-file-storage views.
 - Additional wger advisories may be included, but they should share the `wger`

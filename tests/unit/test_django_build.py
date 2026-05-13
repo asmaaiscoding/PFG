@@ -57,6 +57,42 @@ def test_build_pfg_includes_call_chain() -> None:
     )
 
 
+def test_build_pfg_links_all_routes_for_shared_handler(tmp_path: Path) -> None:
+    (tmp_path / "views.py").write_text(
+        """
+def upload(request):
+    return None
+""",
+        encoding="utf-8",
+    )
+    (tmp_path / "urls.py").write_text(
+        """
+from django.urls import path
+from .views import upload
+
+urlpatterns = [
+    path("uploads/", upload),
+    path("mdeditor/uploads/", upload),
+]
+""",
+        encoding="utf-8",
+    )
+
+    pfg = build_pfg(tmp_path, application="shared_handler")
+    handler_sid = _service_id("views.upload")
+
+    assert any(
+        e.src == _endpoint_id("GET", "/uploads/") and e.dst == handler_sid and e.type == "call"
+        for e in pfg.edges
+    )
+    assert any(
+        e.src == _endpoint_id("GET", "/mdeditor/uploads/")
+        and e.dst == handler_sid
+        and e.type == "call"
+        for e in pfg.edges
+    )
+
+
 def test_to_dot_emits_valid_dot() -> None:
     pfg = build_pfg(REF_CG, application="ref_callgraph")
     dot = to_dot(pfg)

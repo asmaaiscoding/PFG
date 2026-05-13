@@ -34,3 +34,53 @@ def test_endpoint_route_params_inferred() -> None:
     assert found["/blog/archive/{year}/"].route_params == ("year",)
     assert found["/api/users/{pk}/"].route_params == ("pk",)
     assert found["/api/health/"].route_params == ()
+
+
+def test_endpoint_discovery_handles_url_alias_to_cbv(tmp_path: Path) -> None:
+    app = tmp_path / "mdeditor"
+    app.mkdir()
+    project = tmp_path / "demo"
+    project.mkdir()
+    (app / "views.py").write_text(
+        """
+from django.views import generic
+
+
+class UploadView(generic.View):
+    def post(self, request, *args, **kwargs):
+        pass
+""",
+        encoding="utf-8",
+    )
+    (app / "urls.py").write_text(
+        """
+import django
+from .views import UploadView
+
+if django.VERSION[0] > 1:
+    from django.urls import re_path as url_func
+else:
+    from django.conf.urls import url as url_func
+
+urlpatterns = [
+    url_func(r'^uploads/$', UploadView.as_view(), name='uploads'),
+]
+""",
+        encoding="utf-8",
+    )
+    (project / "urls.py").write_text(
+        """
+from django.urls import include, path
+
+urlpatterns = [
+    path("mdeditor/", include("mdeditor.urls")),
+]
+""",
+        encoding="utf-8",
+    )
+
+    found = discover_endpoints(tmp_path)
+    found_set = {(e.http_method, e.route, e.handler_qualname) for e in found}
+
+    assert ("POST", "/mdeditor/uploads/", "mdeditor.views.UploadView.post") in found_set
+    assert ("POST", "/uploads/", "mdeditor.views.UploadView.post") not in found_set

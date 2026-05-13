@@ -216,7 +216,7 @@ def build_pfg(
 
     # Pass 1: endpoints.
     seeds: list[str] = []
-    endpoint_id_by_handler: dict[str, str] = {}
+    endpoint_ids_by_handler: dict[str, list[str]] = {}
     for ep in discovered:
         auth = annotate_endpoint(ep, root)
         eid = _endpoint_id(ep.http_method, ep.route)
@@ -236,8 +236,9 @@ def build_pfg(
                 },
             }
         )
-        seeds.append(ep.handler_qualname)
-        endpoint_id_by_handler[ep.handler_qualname] = eid
+        if ep.handler_qualname not in seeds:
+            seeds.append(ep.handler_qualname)
+        endpoint_ids_by_handler.setdefault(ep.handler_qualname, []).append(eid)
 
     # Pass 2: call graph.
     call_edges = build_call_graph(root, seeds)
@@ -260,9 +261,10 @@ def build_pfg(
         )
 
     # Pass 4: endpoint -> service call edge for the handler itself.
-    for handler, eid in endpoint_id_by_handler.items():
+    for handler, endpoint_ids in endpoint_ids_by_handler.items():
         if handler in reachable:
-            add_edge(eid, _service_id(handler), "call")
+            for eid in endpoint_ids:
+                add_edge(eid, _service_id(handler), "call")
 
     # Pass 5: callgraph edges as service->service call edges.
     for c, e in raw_edges:

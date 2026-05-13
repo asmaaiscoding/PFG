@@ -37,3 +37,6 @@ Thumbs.db
 # Project
 install.log
 *.log
+
+# Reproducible third-party corpus checkouts are fetched from manifest refs.
+benchmarks/realworld/*/src/

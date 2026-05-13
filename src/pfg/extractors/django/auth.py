@@ -159,6 +159,34 @@ def _class_attr_assign(cls: ast.ClassDef, name: str) -> ast.expr | None:
     return None
 
 
+def _expr_references_request_user(expr: ast.AST) -> bool:
+    for node in ast.walk(expr):
+        if not isinstance(node, ast.Attribute) or node.attr != "user":
+            continue
+        base = node.value
+        if isinstance(base, ast.Name) and base.id == "request":
+            return True
+        if (
+            isinstance(base, ast.Attribute)
+            and base.attr == "request"
+            and isinstance(base.value, ast.Name)
+            and base.value.id == "self"
+        ):
+            return True
+    return False
+
+
+def _class_uses_request_user(cls: ast.ClassDef) -> bool:
+    for node in cls.body:
+        if (
+            isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+            and node.name in {"get_queryset", "get_object", "get_owner_objects"}
+            and _expr_references_request_user(node)
+        ):
+            return True
+    return False
+
+
 # --- core resolution ------------------------------------------------------
 
 
@@ -255,11 +283,17 @@ def _annotate_class(
     matched = False
 
     for b in bases:
-        if b in _MIXINS_AUTH_USER:
+        if b in _MIXINS_AUTH_USER or "Owner" in b or "Permission" in b:
             requires_auth = True
             if role == Role.NONE:
                 role = Role.USER
             matched = True
+
+    if _class_uses_request_user(cls):
+        requires_auth = True
+        if role == Role.NONE:
+            role = Role.USER
+        matched = True
 
     perm_attr = _class_attr_assign(cls, "permission_classes")
     if perm_attr is not None:

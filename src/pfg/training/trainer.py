@@ -314,3 +314,59 @@ def train_path_analyzer(
         run_name="path_analyzer",
     )
     return model, metrics
+
+
+def train_path_analyzer_split(
+    train_samples: list[Sample],
+    val_samples: list[Sample],
+    test_samples: list[Sample],
+    *,
+    epochs: int = 30,
+    lr: float = 1e-3,
+    weight_decay: float = 1e-4,
+    batch_size: int = 16,
+    seed: int = 0,
+    use_mlflow: bool = False,
+    device: str | None = None,
+    hidden_dim: int = 64,
+    num_layers: int = 3,
+    heads: int = 4,
+) -> tuple[PathAnalyzer, TrainResult]:
+    """Train Model B with pre-split samples.
+
+    Use this for real corpora so split boundaries can be defined at the
+    app/advisory level before endpoints are converted into PyG samples.
+    """
+    if not train_samples or not val_samples or not test_samples:
+        raise ValueError("train, val, and test sample lists must all be non-empty")
+    torch.manual_seed(seed)
+    dev = torch.device(device or ("cuda" if torch.cuda.is_available() else "cpu"))
+    train = samples_to_pyg(train_samples)
+    val = samples_to_pyg(val_samples)
+    test = samples_to_pyg(test_samples)
+
+    train_loader = DataLoader(train, batch_size=batch_size, shuffle=True)
+    val_loader = DataLoader(val, batch_size=batch_size)
+    test_loader = DataLoader(test, batch_size=batch_size)
+
+    model = PathAnalyzer(
+        hidden_dim=hidden_dim, num_layers=num_layers, heads=heads, num_classes=NUM_SUBTYPES
+    ).to(dev)
+    weights = _class_weights(
+        (int(d.y_subtype.item()) for d in train), num_classes=NUM_SUBTYPES
+    )
+    metrics = _train_loop(
+        model,
+        train_loader,
+        val_loader,
+        test_loader,
+        epochs=epochs,
+        lr=lr,
+        weight_decay=weight_decay,
+        class_weights=weights,
+        num_classes=NUM_SUBTYPES,
+        device=dev,
+        use_mlflow=use_mlflow,
+        run_name="path_analyzer_real_corpus",
+    )
+    return model, metrics

@@ -6,10 +6,19 @@ application: my-django-app
 framework: django
 repo_url: https://github.com/example/my-django-app
 git_ref: 0000000000000000000000000000000000000000
+fixed_commit: 1111111111111111111111111111111111111111
+checkout_dir: src
+source_subdir: my_django_app
+license: MIT
+advisory_id: GHSA-xxxx-yyyy-zzzz
+advisory_url: https://github.com/example/my-django-app/security/advisories/GHSA-xxxx-yyyy-zzzz
+nvd_url: https://nvd.nist.gov/vuln/detail/CVE-XXXX-NNNNN
+dataset_split_group: my-django-app
+label_status: advisory-confirmed
 
 # Path (relative to this manifest.yaml) to the directory the extractor
-# should walk. Usually 'src/' or the repo root if you cloned the
-# project directly under this folder.
+# should walk. Usually 'src/' when the whole repository is cloned there,
+# or 'src/<package>' if the extractor must start inside a package.
 source_root: src/
 
 cwe:
@@ -27,6 +36,9 @@ expected_findings:
     subtype: IDOR
     url_pattern: /api/orders/<id>/
     cve: CVE-XXXX-NNNNN
+    advisory_id: GHSA-xxxx-yyyy-zzzz
+    source: https://github.com/example/my-django-app/security/advisories/GHSA-xxxx-yyyy-zzzz
+    fixed_by: https://github.com/example/my-django-app/commit/1111111111111111111111111111111111111111
 
 # Endpoints that are intentionally public (e.g. /healthz, /login).
 # Predictions on these endpoint_ids are dropped before scoring (counted

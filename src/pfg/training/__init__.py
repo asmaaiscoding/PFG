@@ -1,5 +1,11 @@
 """Training loop and metrics."""
 
+from pfg.training.corpus import (
+    samples_from_manifest,
+    samples_from_manifests,
+    samples_from_pfg,
+    split_manifests_by_group,
+)
 from pfg.training.experiment import (
     BaselineResult,
     ExperimentReport,
@@ -21,6 +27,7 @@ from pfg.training.trainer import (
     split_indices,
     train_anomaly_detector,
     train_path_analyzer,
+    train_path_analyzer_split,
 )
 
 __all__ = [
@@ -37,7 +44,12 @@ __all__ = [
     "run_ablations",
     "run_experiment",
     "run_hparam_sweep",
+    "samples_from_manifest",
+    "samples_from_manifests",
+    "samples_from_pfg",
     "split_indices",
+    "split_manifests_by_group",
     "train_anomaly_detector",
     "train_path_analyzer",
+    "train_path_analyzer_split",
 ]

@@ -281,6 +281,15 @@ class _Router:
     registrations: list[tuple[str, str]]  # (prefix, viewset_qualname)
 
 
+@dataclass(frozen=True)
+class _ViewSetAction:
+    name: str
+    methods: tuple[str, ...]
+    suffix: str
+    route_params: tuple[str, ...]
+    source_location: str
+
+
 def _collect_routers(mod: _ModuleIndex) -> dict[str, _Router]:
     """Find DefaultRouter/SimpleRouter instantiations and .register() calls."""
     routers: dict[str, _Router] = {}
@@ -310,6 +319,111 @@ def _collect_routers(mod: _ModuleIndex) -> dict[str, _Router]:
     return routers
 
 
+def _literal_bool(node: ast.AST | None) -> bool | None:
+    return node.value if isinstance(node, ast.Constant) and isinstance(node.value, bool) else None
+
+
+def _literal_str_list(node: ast.AST | None) -> list[str]:
+    if not isinstance(node, (ast.List, ast.Tuple, ast.Set)):
+        return []
+    out: list[str] = []
+    for elt in node.elts:
+        value = _const_str(elt)
+        if value is not None:
+            out.append(value)
+    return out
+
+
+def _decorator_name(dec: ast.AST) -> str | None:
+    if isinstance(dec, ast.Call):
+        return _decorator_name(dec.func)
+    if isinstance(dec, ast.Attribute):
+        return dec.attr
+    if isinstance(dec, ast.Name):
+        return dec.id
+    return None
+
+
+def _drf_action_spec(
+    fn: ast.FunctionDef | ast.AsyncFunctionDef,
+    *,
+    source_file: Path,
+) -> _ViewSetAction | None:
+    """Return DRF `@action(...)` route metadata for a ViewSet method."""
+    for dec in fn.decorator_list:
+        if _decorator_name(dec) != "action":
+            continue
+        detail = False
+        methods: tuple[str, ...] = ("GET",)
+        url_path = fn.name
+        if isinstance(dec, ast.Call):
+            for kw in dec.keywords:
+                if kw.arg == "detail":
+                    detail = bool(_literal_bool(kw.value))
+                elif kw.arg == "methods":
+                    parsed = _literal_str_list(kw.value)
+                    if parsed:
+                        methods = tuple(m.upper() for m in parsed)
+                elif kw.arg == "url_path":
+                    parsed_path = _const_str(kw.value)
+                    if parsed_path:
+                        url_path = parsed_path
+        suffix = f"{{pk}}/{url_path}/" if detail else f"{url_path}/"
+        params = ("pk",) if detail else ()
+        return _ViewSetAction(
+            name=fn.name,
+            methods=methods,
+            suffix=suffix,
+            route_params=params,
+            source_location=f"{source_file}:{getattr(fn, 'lineno', 0)}",
+        )
+    return None
+
+
+def _viewset_actions(class_qualname: str, project_root: Path) -> list[_ViewSetAction]:
+    pkg, _, name = class_qualname.rpartition(".")
+    if not pkg:
+        return []
+    rel = Path(*pkg.split("."))
+    source_file: Path | None = None
+    for candidate in (project_root / rel.with_suffix(".py"), project_root / rel / "__init__.py"):
+        if candidate.exists():
+            source_file = candidate
+            break
+    tree = _read_module(project_root, pkg)
+    if tree is None or source_file is None:
+        return []
+    cls = _find_class(tree, name)
+    if cls is None:
+        return []
+    actions: list[_ViewSetAction] = []
+    for node in cls.body:
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            action = _drf_action_spec(node, source_file=source_file)
+            if action is not None:
+                actions.append(action)
+    return actions
+
+
+def _router_url_names(node: ast.AST, routers: dict[str, _Router]) -> set[str]:
+    """Router names used directly as `router.urls` in a urlpatterns expression.
+
+    We intentionally do not recurse into `include(router.urls)` calls here,
+    because those need to be emitted with the enclosing path() prefix.
+    """
+    out: set[str] = set()
+    if isinstance(node, ast.Call):
+        return out
+    if isinstance(node, ast.Attribute) and node.attr == "urls":
+        base = node.value
+        if isinstance(base, ast.Name) and base.id in routers:
+            out.add(base.id)
+        return out
+    for child in ast.iter_child_nodes(node):
+        out |= _router_url_names(child, routers)
+    return out
+
+
 def _emit_router_endpoints(
     router: _Router, prefix: str, project_root: Path, source_file: Path
 ) -> list[DiscoveredEndpoint]:
@@ -317,7 +431,7 @@ def _emit_router_endpoints(
     for r_prefix, viewset_qual in router.registrations:
         # Each registration mounts at `<prefix>/<r_prefix>/`
         base_route = _join_routes(prefix, r_prefix.rstrip("/") + "/")
-        for action, method, suffix in _VIEWSET_ACTIONS:
+        for action_name, method, suffix in _VIEWSET_ACTIONS:
             full_route = _join_routes(base_route, suffix)
             params: list[str] = []
             if "{pk}" in full_route:
@@ -327,10 +441,22 @@ def _emit_router_endpoints(
                     http_method=method,
                     route=full_route,
                     route_params=tuple(params),
-                    handler_qualname=f"{viewset_qual}.{action}",
+                    handler_qualname=f"{viewset_qual}.{action_name}",
                     source_location=f"{source_file}:0",
                 )
             )
+        for action in _viewset_actions(viewset_qual, project_root):
+            full_route = _join_routes(base_route, action.suffix)
+            for method in action.methods:
+                out.append(
+                    DiscoveredEndpoint(
+                        http_method=method,
+                        route=full_route,
+                        route_params=action.route_params,
+                        handler_qualname=f"{viewset_qual}.{action.name}",
+                        source_location=action.source_location,
+                    )
+                )
     return out
 
 
@@ -361,35 +487,34 @@ def _parse_urls_module(
 
     out: list[DiscoveredEndpoint] = []
 
-    # urlpatterns may be `urlpatterns = [...]` or `urlpatterns = [...] + router.urls`.
+    # urlpatterns may be `urlpatterns = [...]`, `i18n_patterns(...)`,
+    # `urlpatterns += [...]`, or `[...] + router.urls`.
     assert isinstance(tree, ast.Module)
-    pattern_lists: list[ast.List] = []
-    router_concat: set[str] = set()
     for stmt in tree.body:
-        if not (isinstance(stmt, ast.Assign) and any(
-            isinstance(t, ast.Name) and t.id == "urlpatterns" for t in stmt.targets
-        )):
+        val = _urlpatterns_value(stmt)
+        if val is None:
             continue
-        val = stmt.value
-        # collect any Lists in the rhs (handles `[...] + router.urls + [...]`).
+        for rname in _router_url_names(val, routers):
+            out.extend(_emit_router_endpoints(routers[rname], prefix, project_root, file_path))
         for sub in ast.walk(val):
-            if isinstance(sub, ast.List):
-                pattern_lists.append(sub)
-            if isinstance(sub, ast.Attribute) and sub.attr == "urls":
-                base = sub.value
-                if isinstance(base, ast.Name) and base.id in routers:
-                    router_concat.add(base.id)
-
-    # Default behaviour: if a router exists at all and no explicit concat, still emit.
-    for rname, router in routers.items():
-        if router.registrations and (rname in router_concat or not router_concat):
-            out.extend(_emit_router_endpoints(router, prefix, project_root, file_path))
-
-    for plist in pattern_lists:
-        for elt in plist.elts:
-            out.extend(_parse_pattern_call(elt, prefix, mod, project_root, visited))
+            if isinstance(sub, ast.Call):
+                out.extend(_parse_pattern_call(sub, prefix, mod, project_root, visited, routers))
 
     return out
+
+
+def _urlpatterns_value(stmt: ast.stmt) -> ast.AST | None:
+    if isinstance(stmt, ast.Assign) and any(
+        isinstance(t, ast.Name) and t.id == "urlpatterns" for t in stmt.targets
+    ):
+        return stmt.value
+    if (
+        isinstance(stmt, ast.AugAssign)
+        and isinstance(stmt.target, ast.Name)
+        and stmt.target.id == "urlpatterns"
+    ):
+        return stmt.value
+    return None
 
 
 def _parse_pattern_call(
@@ -398,6 +523,7 @@ def _parse_pattern_call(
     mod: _ModuleIndex,
     project_root: Path,
     visited: set[Path],
+    routers: dict[str, _Router],
 ) -> list[DiscoveredEndpoint]:
     if not isinstance(expr, ast.Call):
         return []
@@ -423,12 +549,29 @@ def _parse_pattern_call(
     if isinstance(second, ast.Call):
         sub_chain = _attr_chain(second.func)
         if sub_chain and sub_chain[-1] == "include":
+            router = _router_from_include(second, routers)
+            if router is not None:
+                return _emit_router_endpoints(router, full_route, project_root, mod.path)
             return _handle_include(second, full_route, project_root, visited)
 
     # Regular view reference.
     qual, is_class = _resolve_view_expr(second, mod)
     if qual is None:
         return []
+
+    as_view_actions = _as_view_actions(second)
+    if is_class and as_view_actions:
+        loc = f"{mod.path}:{getattr(expr, 'lineno', 0)}"
+        return [
+            DiscoveredEndpoint(
+                http_method=method,
+                route=full_route,
+                route_params=tuple(params),
+                handler_qualname=f"{qual}.{action}",
+                source_location=loc,
+            )
+            for method, action in as_view_actions
+        ]
 
     if is_class:
         # Decide: DRF APIView/ViewSet or generic CBV.
@@ -479,6 +622,35 @@ def _handle_include(
         if c.exists():
             return _parse_urls_module(project_root, c, prefix, visited)
     return []
+
+
+def _router_from_include(call: ast.Call, routers: dict[str, _Router]) -> _Router | None:
+    if not call.args:
+        return None
+    arg = call.args[0]
+    if isinstance(arg, ast.Attribute) and arg.attr == "urls":
+        base = arg.value
+        if isinstance(base, ast.Name):
+            return routers.get(base.id)
+    return None
+
+
+def _as_view_actions(expr: ast.AST) -> list[tuple[str, str]]:
+    """Extract DRF `Cls.as_view({"get": "list"})` method/action mappings."""
+    if not isinstance(expr, ast.Call):
+        return []
+    func = expr.func
+    if not (isinstance(func, ast.Attribute) and func.attr == "as_view"):
+        return []
+    if not expr.args or not isinstance(expr.args[0], ast.Dict):
+        return []
+    out: list[tuple[str, str]] = []
+    for key, value in zip(expr.args[0].keys, expr.args[0].values, strict=True):
+        method = _const_str(key)
+        action = _const_str(value)
+        if method and action:
+            out.append((method.upper(), action))
+    return out
 
 
 # --- public API -----------------------------------------------------------

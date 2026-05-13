@@ -37,6 +37,9 @@ class ExpectedFinding:
     subtype: str
     url_pattern: str | None = None
     cve: str | None = None
+    advisory_id: str | None = None
+    source: str | None = None
+    fixed_by: str | None = None
 
 
 @dataclass
@@ -48,6 +51,16 @@ class Manifest:
     intentional_public_endpoints: list[str] = field(default_factory=list)
     repo_url: str | None = None
     git_ref: str | None = None
+    fixed_ref: str | None = None
+    fixed_commit: str | None = None
+    checkout_dir: Path | None = None
+    source_subdir: Path | None = None
+    license: str | None = None
+    advisory_id: str | None = None
+    advisory_url: str | None = None
+    nvd_url: str | None = None
+    dataset_split_group: str | None = None
+    label_status: str | None = None
     cwe: list[str] = field(default_factory=list)
     notes: str | None = None
     manifest_path: Path | None = None
@@ -82,6 +95,9 @@ def load_manifest(path: str | Path) -> Manifest:
                 subtype=sub,
                 url_pattern=entry.get("url_pattern"),
                 cve=entry.get("cve"),
+                advisory_id=entry.get("advisory_id"),
+                source=entry.get("source"),
+                fixed_by=entry.get("fixed_by"),
             )
         )
 
@@ -93,6 +109,16 @@ def load_manifest(path: str | Path) -> Manifest:
         intentional_public_endpoints=list(raw.get("intentional_public_endpoints", []) or []),
         repo_url=raw.get("repo_url"),
         git_ref=raw.get("git_ref"),
+        fixed_ref=raw.get("fixed_ref"),
+        fixed_commit=raw.get("fixed_commit"),
+        checkout_dir=Path(raw["checkout_dir"]) if raw.get("checkout_dir") else None,
+        source_subdir=Path(raw["source_subdir"]) if raw.get("source_subdir") else None,
+        license=raw.get("license"),
+        advisory_id=raw.get("advisory_id"),
+        advisory_url=raw.get("advisory_url"),
+        nvd_url=raw.get("nvd_url"),
+        dataset_split_group=raw.get("dataset_split_group"),
+        label_status=raw.get("label_status"),
         cwe=list(raw.get("cwe", []) or []),
         notes=raw.get("notes"),
         manifest_path=p,
@@ -103,6 +129,10 @@ def discover_manifests(corpus_root: str | Path) -> list[Manifest]:
     """Find every `manifest.yaml` under `corpus_root` (recursively)."""
     root = Path(corpus_root).resolve()
     return sorted(
-        (load_manifest(p) for p in root.rglob("manifest.yaml")),
+        (
+            load_manifest(p)
+            for p in root.rglob("manifest.yaml")
+            if not any(part.startswith("_") for part in p.relative_to(root).parts)
+        ),
         key=lambda m: m.application,
     )

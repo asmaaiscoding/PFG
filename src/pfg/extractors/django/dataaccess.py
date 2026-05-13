@@ -64,6 +64,7 @@ _DELETE_METHODS = frozenset({"delete"})
 _ALL_ORM_METHODS = _READ_METHODS | _WRITE_METHODS | _UPDATE_METHODS | _DELETE_METHODS
 
 _G404_FUNCS = frozenset({"get_object_or_404", "get_list_or_404"})
+_OWNER_PARAM_NAMES = frozenset({"user", "owner", "account", "tenant", "organization", "org"})
 
 
 @dataclass(frozen=True)
@@ -112,13 +113,23 @@ def _references_request_user(expr: ast.AST) -> bool:
     return False
 
 
-def _ownership_from_kwargs(call: ast.Call) -> tuple[bool, str]:
+def _references_owner_param(expr: ast.AST, owner_param_names: set[str]) -> bool:
+    for node in ast.walk(expr):
+        if isinstance(node, ast.Name) and node.id in owner_param_names:
+            return True
+    return False
+
+
+def _ownership_from_kwargs(call: ast.Call, owner_param_names: set[str]) -> tuple[bool, str]:
     """Inspect ``call.keywords`` for an ownership-predicate kwarg."""
     indirect_seen = False
     for kw in call.keywords:
         if kw.arg is None:  # **kwargs
             continue
-        if not _references_request_user(kw.value):
+        if not (
+            _references_request_user(kw.value)
+            or _references_owner_param(kw.value, owner_param_names)
+        ):
             continue
         if "__" in kw.arg:
             indirect_seen = True
@@ -217,6 +228,12 @@ def _function_compares_var_with_request_user(fn: ast.AST, varname: str) -> bool:
 
 def detect_data_accesses(fn: ast.FunctionDef | ast.AsyncFunctionDef) -> list[DataAccess]:
     """Return all ORM data accesses inside the body of `fn`, in source order."""
+    owner_param_names = {
+        arg.arg
+        for arg in [*fn.args.posonlyargs, *fn.args.args, *fn.args.kwonlyargs]
+        if arg.arg in _OWNER_PARAM_NAMES or arg.arg.endswith("_user")
+    }
+
     # Pre-compute g404 variable names that are later validated against request.user.
     g404_validated: set[str] = set()
     for stmt in ast.walk(fn):
@@ -239,7 +256,7 @@ def detect_data_accesses(fn: ast.FunctionDef | ast.AsyncFunctionDef) -> list[Dat
             op = _classify(method)
             if op is None:
                 continue
-            owned, otype = _ownership_from_kwargs(node)
+            owned, otype = _ownership_from_kwargs(node, owner_param_names)
             collected.append(
                 (
                     sort_key,
@@ -257,7 +274,7 @@ def detect_data_accesses(fn: ast.FunctionDef | ast.AsyncFunctionDef) -> list[Dat
         # Path 2: get_object_or_404(Model, ...).
         g_target = _g404_target(node)
         if g_target is not None:
-            owned, otype = _ownership_from_kwargs(node)
+            owned, otype = _ownership_from_kwargs(node, owner_param_names)
             if not owned:
                 assigned_to = _enclosing_assignment_target(fn, node)
                 if assigned_to is not None and assigned_to in g404_validated:

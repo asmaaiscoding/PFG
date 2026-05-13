@@ -328,6 +328,108 @@ def eval_cmd(
         click.echo(f"Wrote eval report -> {out_path}")
 
 
+@main.command(name="corpus-fetch")
+@click.argument("corpus_root", type=click.Path(exists=True, file_okay=False, path_type=Path))
+@click.option("--force", is_flag=True, help="Fetch updates even when a checkout already exists.")
+def corpus_fetch_cmd(corpus_root: Path, force: bool) -> None:
+    """Fetch pinned source checkouts for every real-corpus manifest."""
+    from pfg.corpus import fetch_corpus
+
+    paths = fetch_corpus(corpus_root, force=force)
+    for path in paths:
+        click.echo(f"OK: {path}")
+
+
+@main.command(name="train-corpus")
+@click.argument("corpus_root", type=click.Path(exists=True, file_okay=False, path_type=Path))
+@click.option("--holdout-group", default=None, help="Dataset split group to reserve for test.")
+@click.option("--epochs", default=30, show_default=True, type=int)
+@click.option("--seed", default=0, show_default=True, type=int)
+@click.option("--batch-size", default=32, show_default=True, type=int)
+@click.option("--hidden-dim", default=64, show_default=True, type=int)
+@click.option("--num-layers", default=3, show_default=True, type=int)
+@click.option("--heads", default=4, show_default=True, type=int)
+@click.option(
+    "--out-model",
+    type=click.Path(dir_okay=False, path_type=Path),
+    default=Path("artifacts/path_analyzer_real.pt"),
+    show_default=True,
+)
+@click.option("--out-report", type=click.Path(dir_okay=False, path_type=Path), default=None)
+def train_corpus_cmd(
+    corpus_root: Path,
+    holdout_group: str | None,
+    epochs: int,
+    seed: int,
+    batch_size: int,
+    hidden_dim: int,
+    num_layers: int,
+    heads: int,
+    out_model: Path,
+    out_report: Path | None,
+) -> None:
+    """Train Model B on manifest-labeled real corpus samples with group splits."""
+    from pfg.eval.manifest import discover_manifests
+    from pfg.models.checkpoint import save_model
+    from pfg.training import (
+        samples_from_manifests,
+        split_manifests_by_group,
+        train_path_analyzer_split,
+    )
+
+    manifests = discover_manifests(corpus_root)
+    train_m, val_m, test_m = split_manifests_by_group(
+        manifests, seed=seed, holdout_group=holdout_group
+    )
+    if not train_m or not val_m or not test_m:
+        raise click.ClickException(
+            "Need non-empty train/val/test manifest groups. Add more real apps "
+            "or pass a holdout group after at least three groups exist."
+        )
+
+    train_samples = samples_from_manifests(train_m)
+    val_samples = samples_from_manifests(val_m)
+    test_samples = samples_from_manifests(test_m)
+    model, metrics = train_path_analyzer_split(
+        train_samples,
+        val_samples,
+        test_samples,
+        epochs=epochs,
+        seed=seed,
+        batch_size=batch_size,
+        hidden_dim=hidden_dim,
+        num_layers=num_layers,
+        heads=heads,
+    )
+
+    out_model.parent.mkdir(parents=True, exist_ok=True)
+    save_model(
+        model,
+        out_model,
+        kind="path",
+        hparams={"hidden_dim": hidden_dim, "num_layers": num_layers, "heads": heads},
+    )
+
+    report_data = {
+        "train_groups": [m.dataset_split_group or m.application for m in train_m],
+        "val_groups": [m.dataset_split_group or m.application for m in val_m],
+        "test_groups": [m.dataset_split_group or m.application for m in test_m],
+        "n_train_samples": len(train_samples),
+        "n_val_samples": len(val_samples),
+        "n_test_samples": len(test_samples),
+        "test_accuracy": metrics.test_accuracy,
+        "test_macro_f1": metrics.test_macro_f1,
+        "confusion": metrics.confusion,
+    }
+    click.echo(f"Model B real-corpus test accuracy={metrics.test_accuracy:.3f}")
+    click.echo(f"Model B real-corpus test macro-F1={metrics.test_macro_f1:.3f}")
+    click.echo(f"Saved model -> {out_model}")
+    if out_report is not None:
+        out_report.parent.mkdir(parents=True, exist_ok=True)
+        out_report.write_text(json.dumps(report_data, indent=2), encoding="utf-8")
+        click.echo(f"Wrote report -> {out_report}")
+
+
 @main.command(name="normalize")
 @click.argument(
     "tool", type=click.Choice(["semgrep", "codeql"])

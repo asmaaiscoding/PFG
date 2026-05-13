@@ -101,6 +101,83 @@ def _reachable_functions(seeds: list[str], edges: list[tuple[str, str]]) -> set[
     return seen
 
 
+def _reachable_from(seed: str, edges: list[tuple[str, str]]) -> set[str]:
+    return _reachable_functions([seed], edges)
+
+
+def _attr_chain(node: ast.AST) -> list[str] | None:
+    parts: list[str] = []
+    cur: ast.AST = node
+    while isinstance(cur, ast.Attribute):
+        parts.append(cur.attr)
+        cur = cur.value
+    if isinstance(cur, ast.Name):
+        parts.append(cur.id)
+        return list(reversed(parts))
+    return None
+
+
+def _function_references_request_user(fn: ast.AST) -> bool:
+    for node in ast.walk(fn):
+        if not isinstance(node, ast.Attribute) or node.attr != "user":
+            continue
+        base = node.value
+        if isinstance(base, ast.Name) and base.id in {"request", "user"}:
+            return True
+        if (
+            isinstance(base, ast.Attribute)
+            and base.attr == "request"
+            and isinstance(base.value, ast.Name)
+            and base.value.id == "self"
+        ):
+            return True
+    return False
+
+
+def _function_calls_self_get_object(fn: ast.AST) -> bool:
+    for node in ast.walk(fn):
+        if not isinstance(node, ast.Call):
+            continue
+        func = node.func
+        if (
+            isinstance(func, ast.Attribute)
+            and func.attr == "get_object"
+            and isinstance(func.value, ast.Name)
+            and func.value.id == "self"
+        ):
+            return True
+    return False
+
+
+def _class_get_queryset_uses_user(tree: ast.AST, class_name: str) -> bool:
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.ClassDef) or node.name != class_name:
+            continue
+        for body in node.body:
+            if (
+                isinstance(body, (ast.FunctionDef, ast.AsyncFunctionDef))
+                and body.name == "get_queryset"
+                and _function_references_request_user(body)
+            ):
+                return True
+    return False
+
+
+def _handler_ownership_check_present(project_root: Path, qual: str) -> bool:
+    resolved = _resolve_function(project_root, qual)
+    if resolved is None:
+        return False
+    tree, fn = resolved
+    if _function_calls_self_get_object(fn):
+        return True
+    parts = qual.split(".")
+    if len(parts) >= 3:
+        class_name = parts[-2]
+        if _class_get_queryset_uses_user(tree, class_name) and _function_calls_self_get_object(fn):
+            return True
+    return False
+
+
 # --- main entry -----------------------------------------------------------
 
 
@@ -153,7 +230,7 @@ def build_pfg(
                     "route_params": list(ep.route_params),
                     "requires_auth": auth.requires_auth,
                     "required_role": auth.required_role,
-                    "ownership_check_present": False,
+                    "ownership_check_present": _handler_ownership_check_present(root, ep.handler_qualname),
                     "is_intentionally_public": auth.is_intentionally_public,
                     "source_location": ep.source_location,
                 },
@@ -244,9 +321,25 @@ def build_pfg(
             target_qual = callee_targets.get(sink.callee)
             if target_qual is None:
                 continue
-            add_edge(eid, _service_id(target_qual), "identifier_flow", param=sink.source)
+            data_targets = _data_access_ids_reachable_from(target_qual, raw_edges, da_by_qual)
+            if data_targets:
+                for did in data_targets:
+                    add_edge(eid, did, "identifier_flow", param=sink.source)
+                    _annotate_dataaccess_user_param_by_id(nodes, did, sink.source)
+            else:
+                add_edge(eid, _service_id(target_qual), "identifier_flow", param=sink.source)
             # If sink hits a data access with matching kwarg, annotate it.
             _annotate_dataaccess_user_param(nodes, da_by_qual, target_qual, sink)
+
+        # Direct ORM calls inside a route handler do not resolve to a project
+        # qualname. If the route parameter is used as an ORM kwarg in the
+        # handler, attach the flow to data-access nodes in that same handler.
+        for sink in sinks:
+            if not _looks_like_orm_sink(sink) or sink.arg_kind != "kwarg":
+                continue
+            for did, _ in da_by_qual.get(ep.handler_qualname, []):
+                add_edge(eid, did, "identifier_flow", param=sink.source)
+                _annotate_dataaccess_user_param_by_id(nodes, did, sink.source)
 
     pfg = PFG.model_validate(
         {
@@ -297,14 +390,36 @@ def _annotate_dataaccess_user_param(
     if sink.arg_kind != "kwarg" or sink.arg_name is None:
         return
     for did, da in da_by_qual.get(target_qual, []):
-        if sink.arg_name not in {sink.arg_name}:  # always true; placeholder for refinement
+        _annotate_dataaccess_user_param_by_id(nodes, did, sink.source)
+        # silence unused-var lint; later we can match against per-call kwarg metadata.
+        _ = da
+
+
+def _annotate_dataaccess_user_param_by_id(
+    nodes: list[dict[str, Any]],
+    data_access_id: str,
+    param_name: str,
+) -> None:
+    for n in nodes:
+        if n["id"] != data_access_id:
             continue
-        # Match on lineno proximity is not necessary v1; just attach.
-        for n in nodes:
-            if n["id"] == did:
-                params = n["attrs"]["user_controlled_params_in_query"]
-                if sink.arg_name not in params:
-                    params.append(sink.arg_name)
-                # silence unused-var lint
-                _ = da
-                break
+        params = n["attrs"]["user_controlled_params_in_query"]
+        if param_name not in params:
+            params.append(param_name)
+        return
+
+
+def _data_access_ids_reachable_from(
+    qual: str,
+    raw_edges: list[tuple[str, str]],
+    da_by_qual: dict[str, list[tuple[str, DataAccess]]],
+) -> list[str]:
+    out: list[str] = []
+    for q in sorted(_reachable_from(qual, raw_edges)):
+        out.extend(did for did, _ in da_by_qual.get(q, []))
+    return out
+
+
+def _looks_like_orm_sink(sink: FlowSink) -> bool:
+    parts = sink.callee.split(".")
+    return len(parts) >= 3 and parts[-2] == "objects"

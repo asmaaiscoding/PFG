@@ -14,6 +14,7 @@ Bottom text: "Supervised by: [Supervisor Name] | Presented by: [Your Names]"
 **Slide 2 — The Problem**
 Title: "Broken Access Control: #1 OWASP Top 10"
 Content as bullet points:
+
 - Access-control vulnerabilities (CWE-862, CWE-639) are the most critical web security issue
 - IDOR: users access other users' data by changing an ID in the URL
 - Missing Auth: sensitive endpoints exposed without login
@@ -23,6 +24,7 @@ Content as bullet points:
 **Slide 3 — Our Solution: Privilege Flow Graphs**
 Title: "Our Contribution: Privilege Flow Graphs (PFGs)"
 Content: Show a diagram concept with these elements:
+
 - We introduce a novel graph representation that captures security-relevant structure of web applications
 - 4 node types: Endpoint (HTTP route), Middleware (auth guards), Service (business logic), Data Access (database queries)
 - 2 edge types: "call" (function invocation) and "identifier_flow" (user-controlled parameter propagation)
@@ -32,6 +34,7 @@ Content: Show a diagram concept with these elements:
 **Slide 4 — Example: Django Code to PFG**
 Title: "From Code to Graph: A Concrete Example"
 Content: Show this transformation:
+
 - Left side (Code): A Django view with @permission_classes([IsAuthenticated]) that calls services.get_order(pk), which calls Order.objects.get(pk=pk) — no user filter
 - Right side (Graph): EndpointNode(requires_auth=True, ownership_check=False) → call edge → ServiceNode(get_order) → identifier_flow edge → DataAccessNode(operation=READ, has_ownership_predicate=False)
 - Bottom: "The GNN sees: auth present + identifier flows to DB + no ownership check = IDOR vulnerability"
@@ -40,6 +43,7 @@ Content: Show this transformation:
 **Slide 5 — Model Architecture (PathAnalyzer)**
 Title: "Model B: GATv2Conv with Target-Aware Attention Pooling"
 Content as a vertical flow:
+
 - Input: 24-dim node features + 2-dim edge features
 - 3 layers of GATv2Conv (Graph Attention Network v2) with 4 attention heads
 - Novel: Target-Aware Attention Pooling — scores each node relative to the specific endpoint being classified, produces endpoint-specific graph summary
@@ -50,6 +54,7 @@ Content as a vertical flow:
 **Slide 6 — Target-Aware Pooling (Our Novel Contribution)**
 Title: "Target-Aware Attention Pooling: Why It Matters"
 Content:
+
 - Problem: Standard pooling (mean/max) treats all nodes equally — but one app has both safe and vulnerable endpoints
 - Our solution: Use the target endpoint's embedding as a query to compute attention over all nodes
 - Formula: score_i = MLP(concat(h_i, h_target)), then softmax, then weighted sum
@@ -59,6 +64,7 @@ Content:
 **Slide 7 — Training Strategy**
 Title: "Mixed Training: Synthetic + Real Data"
 Content:
+
 - Synthetic data (400 samples): Generated programmatically for volume and class balance across all 6 classes
 - Real data (45 samples): Extracted from 3 hand-crafted Django apps (ecommerce, social network, healthcare) with manually labeled ground truth
 - Total training corpus: 445 samples
@@ -68,6 +74,7 @@ Content:
 **Slide 8 — Evaluation Results**
 Title: "Generalization: GNN vs Rule Baseline on Real Apps"
 Content as a comparison table:
+
 - Holdout experiment: trained on ecommerce+social, tested on healthcare (never seen)
 - GNN Model B: Precision=0.69, Recall=0.32, F1=0.44
 - Rule Baseline: Precision=0.00, Recall=0.00, F1=0.00
@@ -78,6 +85,7 @@ Content as a comparison table:
 **Slide 9 — Why We Stand Out**
 Title: "PFG vs Existing Approaches"
 Content as a comparison:
+
 - Existing tools: flat AST patterns, single-file analysis, binary output (vuln/not), manual rule writing, very weak IDOR detection
 - Our approach: graph with data-flow + auth context, multi-layer analysis (view→service→DB), 6-class fine-grained classification, learns from data, strong IDOR detection via identifier_flow + ownership_predicate tracking
 - Key advantage: We are the first to model the full privilege flow as a graph and apply GNNs for endpoint-level vulnerability classification
@@ -85,6 +93,7 @@ Content as a comparison:
 **Slide 10 — Next Steps & Conclusion**
 Title: "Roadmap & Conclusion"
 Content:
+
 - Next steps: Scale to 10+ real apps (200+ endpoints), improve holdout F1 via data augmentation, add CI/CD integration (GitHub Action), add explainability (attention visualization), benchmark against Semgrep/CodeQL on same corpus
 - Conclusion: We introduced Privilege Flow Graphs — a novel graph representation for web security. Our GNN-based classifier achieves 97.8% accuracy on mixed data and generalizes to unseen applications, outperforming rule-based approaches that score 0% on the same task.
 - Bottom: "Tool available as CLI: pfg build → pfg train-mixed → pfg eval"

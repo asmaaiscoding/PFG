@@ -9,11 +9,12 @@
 Web applications frequently suffer from access-control vulnerabilities (CWE-862: Missing Authorization, CWE-639: IDOR). These are the **#1 category in the OWASP Top 10 (2021)** — "Broken Access Control."
 
 Existing tools (Semgrep, CodeQL) rely on pattern-matching rules that:
+
 - Cannot reason about **data flow** across multiple layers (view → service → database)
 - Cannot determine if a URL parameter like `{pk}` reaches a query **without an ownership check**
 - Produce high false-positive rates or miss subtle vulnerabilities entirely
 
-**Our goal**: Build a system that understands the *privilege flow* of a request — from HTTP endpoint to database query — and classifies each endpoint into one of 6 security categories using a Graph Neural Network.
+**Our goal**: Build a system that understands the _privilege flow_ of a request — from HTTP endpoint to database query — and classifies each endpoint into one of 6 security categories using a Graph Neural Network.
 
 ---
 
@@ -24,6 +25,7 @@ Existing tools (Semgrep, CodeQL) rely on pattern-matching rules that:
 We introduce **Privilege Flow Graphs (PFGs)** — a novel intermediate representation that captures the security-relevant structure of a web application as a directed graph.
 
 Instead of analyzing raw source code, we:
+
 1. **Extract** a PFG from Django/Spring source code (static analysis)
 2. **Encode** each node into a fixed 24-dimensional feature vector
 3. **Classify** each endpoint using a GNN with target-aware attention pooling
@@ -32,28 +34,28 @@ Instead of analyzing raw source code, we:
 
 A PFG has **4 node types** and **2 edge types**:
 
-| Node Type | Represents | Key Attributes |
-|-----------|-----------|----------------|
-| **Endpoint** | An HTTP route handler | http_method, requires_auth, required_role, ownership_check_present, route_params |
-| **Middleware** | A guard/decorator | guard_type (AUTH, ROLE_CHECK, OWNERSHIP_CHECK) |
-| **Service** | A business logic function | performs_data_access, performs_mutation |
-| **Data Access** | A database query | operation (READ/WRITE/DELETE), target_entity, has_ownership_predicate |
+| Node Type       | Represents                | Key Attributes                                                                   |
+| --------------- | ------------------------- | -------------------------------------------------------------------------------- |
+| **Endpoint**    | An HTTP route handler     | http_method, requires_auth, required_role, ownership_check_present, route_params |
+| **Middleware**  | A guard/decorator         | guard_type (AUTH, ROLE_CHECK, OWNERSHIP_CHECK)                                   |
+| **Service**     | A business logic function | performs_data_access, performs_mutation                                          |
+| **Data Access** | A database query          | operation (READ/WRITE/DELETE), target_entity, has_ownership_predicate            |
 
-| Edge Type | Meaning |
-|-----------|---------|
-| **call** | Function A invokes function B |
+| Edge Type           | Meaning                                                            |
+| ------------------- | ------------------------------------------------------------------ |
+| **call**            | Function A invokes function B                                      |
 | **identifier_flow** | A user-controlled parameter (e.g., `pk` from URL) flows to a query |
 
 ### 2.3 Classification: 6 Classes
 
-| Class | Meaning |
-|-------|---------|
-| SAFE | Proper authentication + authorization + ownership check |
-| MISSING_AUTH | No authentication required on a sensitive endpoint |
-| MISSING_ROLE | Authenticated but insufficient role check (any user can access admin ops) |
-| IDOR | Authenticated + correct role, but no ownership check (can access other users' data) |
-| COMBINED | Multiple missing controls (e.g., no role + no ownership) |
-| INTENTIONALLY_PUBLIC | Deliberately open (health checks, login, public catalog) |
+| Class                | Meaning                                                                             |
+| -------------------- | ----------------------------------------------------------------------------------- |
+| SAFE                 | Proper authentication + authorization + ownership check                             |
+| MISSING_AUTH         | No authentication required on a sensitive endpoint                                  |
+| MISSING_ROLE         | Authenticated but insufficient role check (any user can access admin ops)           |
+| IDOR                 | Authenticated + correct role, but no ownership check (can access other users' data) |
+| COMBINED             | Multiple missing controls (e.g., no role + no ownership)                            |
+| INTENTIONALLY_PUBLIC | Deliberately open (health checks, login, public catalog)                            |
 
 ---
 
@@ -116,6 +118,7 @@ def get_order_by_pk(pk):
 ### 3.3 What the GNN Sees
 
 The GNN receives:
+
 - **Node features** (24-dim per node): one-hot encodings of type, method, auth status, role, guard, operation, ownership
 - **Edge features** (2-dim per edge): `[is_call, is_identifier_flow]`
 - **Target mask**: marks which endpoint we're classifying
@@ -179,29 +182,29 @@ This means the same PFG produces different representations depending on which en
 
 ### 5.1 Mixed Training (Synthetic + Real Data)
 
-| Data Source | Samples | Purpose |
-|-------------|---------|---------|
-| Synthetic generator | 400 | Volume + balanced class distribution |
-| Real mini-apps (3 apps) | 45 | Realistic patterns + extractor validation |
-| **Total** | **445** | Mixed corpus |
+| Data Source             | Samples | Purpose                                   |
+| ----------------------- | ------- | ----------------------------------------- |
+| Synthetic generator     | 400     | Volume + balanced class distribution      |
+| Real mini-apps (3 apps) | 45      | Realistic patterns + extractor validation |
+| **Total**               | **445** | Mixed corpus                              |
 
 ### 5.2 Results on Mixed Corpus (80/10/10 split)
 
-| Metric | Value |
-|--------|-------|
+| Metric        | Value     |
+| ------------- | --------- |
 | Test accuracy | **97.8%** |
 | Test macro-F1 | **97.9%** |
 
 **Confusion matrix** (on test split):
 
-|  | SAFE | M_AUTH | M_ROLE | IDOR | COMBINED | PUBLIC |
-|--|------|--------|--------|------|----------|--------|
-| SAFE | **8** | 0 | 0 | 0 | 0 | 0 |
-| MISSING_AUTH | 0 | **6** | 0 | 0 | 0 | 0 |
-| MISSING_ROLE | 0 | 0 | **10** | 0 | 0 | 0 |
-| IDOR | 1 | 0 | 0 | **7** | 0 | 0 |
-| COMBINED | 0 | 0 | 0 | 0 | **5** | 0 |
-| PUBLIC | 0 | 0 | 0 | 0 | 0 | **8** |
+|              | SAFE  | M_AUTH | M_ROLE | IDOR  | COMBINED | PUBLIC |
+| ------------ | ----- | ------ | ------ | ----- | -------- | ------ |
+| SAFE         | **8** | 0      | 0      | 0     | 0        | 0      |
+| MISSING_AUTH | 0     | **6**  | 0      | 0     | 0        | 0      |
+| MISSING_ROLE | 0     | 0      | **10** | 0     | 0        | 0      |
+| IDOR         | 1     | 0      | 0      | **7** | 0        | 0      |
+| COMBINED     | 0     | 0      | 0      | 0     | **5**    | 0      |
+| PUBLIC       | 0     | 0      | 0      | 0     | 0        | **8**  |
 
 Near-perfect classification with only 1 misclassification (IDOR classified as SAFE).
 
@@ -214,26 +217,26 @@ Near-perfect classification with only 1 misclassification (IDOR classified as SA
 Trained on: ecommerce + social apps (+ synthetic)  
 Tested on: **healthcare app** (never seen during training)
 
-| Metric | GNN (Model B) | Rule Baseline |
-|--------|--------------|---------------|
-| Precision | **0.50** | 0.00 |
-| Recall | **0.27** | 0.00 |
-| F1 | **0.35** | 0.00 |
+| Metric    | GNN (Model B) | Rule Baseline |
+| --------- | ------------- | ------------- |
+| Precision | **0.50**      | 0.00          |
+| Recall    | **0.27**      | 0.00          |
+| F1        | **0.35**      | 0.00          |
 
 ### 6.2 Full Corpus Evaluation
 
-| Detector | Micro Precision | Micro Recall | Micro F1 |
-|----------|----------------|--------------|----------|
-| **GNN (Model B)** | **0.692** | **0.321** | **0.439** |
-| Rule Baseline | 0.000 | 0.000 | 0.000 |
+| Detector          | Micro Precision | Micro Recall | Micro F1  |
+| ----------------- | --------------- | ------------ | --------- |
+| **GNN (Model B)** | **0.692**       | **0.321**    | **0.439** |
+| Rule Baseline     | 0.000           | 0.000        | 0.000     |
 
 Per-app breakdown (GNN):
 
-| App | TP | FP | FN | Precision | Recall | F1 |
-|-----|----|----|-----|-----------|--------|------|
-| ecommerce | 3 | 0 | 6 | **1.00** | 0.33 | 0.50 |
-| social | 3 | 1 | 4 | 0.75 | 0.43 | **0.55** |
-| healthcare (holdout) | 3 | 3 | 8 | 0.50 | 0.27 | 0.35 |
+| App                  | TP  | FP  | FN  | Precision | Recall | F1       |
+| -------------------- | --- | --- | --- | --------- | ------ | -------- |
+| ecommerce            | 3   | 0   | 6   | **1.00**  | 0.33   | 0.50     |
+| social               | 3   | 1   | 4   | 0.75      | 0.43   | **0.55** |
+| healthcare (holdout) | 3   | 3   | 8   | 0.50      | 0.27   | 0.35     |
 
 **Key finding**: The GNN achieves non-zero performance on a completely unseen application, while the rule baseline fails entirely. This demonstrates that the PFG representation captures generalizable security patterns.
 
@@ -241,28 +244,28 @@ Per-app breakdown (GNN):
 
 ## 7. Where We Stand Out
 
-| Aspect | Existing Tools (Semgrep/CodeQL) | Our Approach (PFG + GNN) |
-|--------|--------------------------------|--------------------------|
-| Representation | Flat AST patterns | Graph with data-flow + auth context |
-| Reasoning | Single-file pattern match | Multi-layer flow analysis (view→service→DB) |
-| IDOR detection | Very weak (no ownership reasoning) | Strong (identifier_flow + ownership_predicate) |
-| Adaptability | Manual rule writing | Learns from data |
-| Subtype classification | Binary (vuln/not) | 6-class fine-grained |
-| New framework support | Rewrite all rules | Retrain on new extractor output |
+| Aspect                 | Existing Tools (Semgrep/CodeQL)    | Our Approach (PFG + GNN)                       |
+| ---------------------- | ---------------------------------- | ---------------------------------------------- |
+| Representation         | Flat AST patterns                  | Graph with data-flow + auth context            |
+| Reasoning              | Single-file pattern match          | Multi-layer flow analysis (view→service→DB)    |
+| IDOR detection         | Very weak (no ownership reasoning) | Strong (identifier_flow + ownership_predicate) |
+| Adaptability           | Manual rule writing                | Learns from data                               |
+| Subtype classification | Binary (vuln/not)                  | 6-class fine-grained                           |
+| New framework support  | Rewrite all rules                  | Retrain on new extractor output                |
 
 ---
 
 ## 8. Next Steps
 
-| Priority | Task | Status |
-|----------|------|--------|
-| 1 | Add more real-world apps (10+ apps, 200+ endpoints) | Planned |
-| 2 | Improve holdout F1 via data augmentation + curriculum learning | Planned |
-| 3 | Spring Boot extractor validation with real apps | Extractor exists, needs apps |
-| 4 | Integration with CI/CD (GitHub Action wrapping `pfg analyze`) | Planned |
-| 5 | Explainability: attention visualization showing WHY a prediction was made | Planned |
-| 6 | Comparison with Semgrep/CodeQL on same apps (normalized eval) | Infrastructure ready |
-| 7 | Incremental analysis (re-analyze only changed files) | Future work |
+| Priority | Task                                                                      | Status                       |
+| -------- | ------------------------------------------------------------------------- | ---------------------------- |
+| 1        | Add more real-world apps (10+ apps, 200+ endpoints)                       | Planned                      |
+| 2        | Improve holdout F1 via data augmentation + curriculum learning            | Planned                      |
+| 3        | Spring Boot extractor validation with real apps                           | Extractor exists, needs apps |
+| 4        | Integration with CI/CD (GitHub Action wrapping `pfg analyze`)             | Planned                      |
+| 5        | Explainability: attention visualization showing WHY a prediction was made | Planned                      |
+| 6        | Comparison with Semgrep/CodeQL on same apps (normalized eval)             | Infrastructure ready         |
+| 7        | Incremental analysis (re-analyze only changed files)                      | Future work                  |
 
 ---
 
@@ -287,4 +290,4 @@ benchmarks/realworld/
 
 ---
 
-*Report generated: May 2026*
+_Report generated: May 2026_

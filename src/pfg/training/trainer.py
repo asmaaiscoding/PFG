@@ -349,6 +349,7 @@ def train_path_analyzer_split(
     heads: int = 4,
     focal_gamma: float = 0.0,
     pretrained_state: dict[str, torch.Tensor] | None = None,
+    freeze_encoder: bool = False,
 ) -> tuple[PathAnalyzer, TrainResult]:
     """Train Model B with pre-split samples.
 
@@ -357,6 +358,9 @@ def train_path_analyzer_split(
 
     If *pretrained_state* is supplied, the model loads those weights before
     fine-tuning (two-stage training).
+
+    If *freeze_encoder* is True, all GNN layers are frozen and only the
+    classifier head is trained (linear probing).
     """
     if not train_samples or not val_samples or not test_samples:
         raise ValueError("train, val, and test sample lists must all be non-empty")
@@ -375,6 +379,12 @@ def train_path_analyzer_split(
     ).to(dev)
     if pretrained_state is not None:
         model.load_state_dict(pretrained_state, strict=False)
+    if freeze_encoder:
+        # Only train the classification head + attention scorer
+        trainable_prefixes = ("head.", "attn.")
+        for name, param in model.named_parameters():
+            if not any(name.startswith(p) for p in trainable_prefixes):
+                param.requires_grad = False
     weights = _class_weights(
         (int(d.y_subtype.item()) for d in train), num_classes=NUM_SUBTYPES
     )

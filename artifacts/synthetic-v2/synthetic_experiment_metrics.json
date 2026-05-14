@@ -1,0 +1,5055 @@
+{
+  "experiment": "synthetic_only_training_real_evaluation",
+  "model_scope": "Model B / PathAnalyzer \u2014 trained on synthetic only",
+  "config": {
+    "n_apps": 15,
+    "endpoints_per_app": [
+      30,
+      70
+    ],
+    "vuln_ratio": 0.35,
+    "seed": 0,
+    "epochs": 40,
+    "batch_size": 32,
+    "hidden_dim": 64,
+    "num_layers": 3,
+    "heads": 4,
+    "focal_gamma": 2.0,
+    "gnn_threshold": 0.5
+  },
+  "synthetic_dataset": {
+    "total_samples": 774,
+    "n_train": 619,
+    "n_val": 77,
+    "n_test": 78,
+    "class_distribution": {
+      "SAFE": 399,
+      "MISSING_AUTH": 58,
+      "MISSING_ROLE": 46,
+      "IDOR": 99,
+      "COMBINED": 60,
+      "INTENTIONALLY_PUBLIC": 112
+    }
+  },
+  "synthetic_test_metrics": {
+    "accuracy": 0.8717948717948718,
+    "macro_f1": 0.8265795206971678,
+    "per_class": {
+      "SAFE": {
+        "support": 35,
+        "precision": 1.0,
+        "recall": 0.9428571428571428,
+        "f1": 0.9705882352941176
+      },
+      "MISSING_AUTH": {
+        "support": 9,
+        "precision": 0.5454545454545454,
+        "recall": 0.6666666666666666,
+        "f1": 0.6
+      },
+      "MISSING_ROLE": {
+        "support": 5,
+        "precision": 0.7142857142857143,
+        "recall": 1.0,
+        "f1": 0.8333333333333333
+      },
+      "IDOR": {
+        "support": 14,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0
+      },
+      "COMBINED": {
+        "support": 5,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0
+      },
+      "INTENTIONALLY_PUBLIC": {
+        "support": 10,
+        "precision": 0.625,
+        "recall": 0.5,
+        "f1": 0.5555555555555556
+      }
+    },
+    "vulnerability_finding": {
+      "precision": 0.8108108108108109,
+      "recall": 0.9090909090909091,
+      "f1": 0.8571428571428571,
+      "tp": 30,
+      "fp": 7,
+      "fn": 3
+    },
+    "confusion": [
+      [
+        33,
+        0,
+        2,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        6,
+        0,
+        0,
+        0,
+        3
+      ],
+      [
+        0,
+        0,
+        5,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        14,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        5,
+        0
+      ],
+      [
+        0,
+        5,
+        0,
+        0,
+        0,
+        5
+      ]
+    ],
+    "test_accuracy": 0.8717948717948718,
+    "test_macro_f1": 0.8265795206971678,
+    "best_val_loss": 0.23637554552647974,
+    "history": [
+      {
+        "epoch": 1,
+        "train_loss": 1.318715773221942,
+        "val_loss": 1.9193821696491984,
+        "val_f1": 0.22139303482587067
+      },
+      {
+        "epoch": 2,
+        "train_loss": 1.074449356326379,
+        "val_loss": 1.627060332855621,
+        "val_f1": 0.32223512711317587
+      },
+      {
+        "epoch": 3,
+        "train_loss": 0.5582753637014183,
+        "val_loss": 0.9346791799966391,
+        "val_f1": 0.5387663541707187
+      },
+      {
+        "epoch": 4,
+        "train_loss": 0.17631067057562952,
+        "val_loss": 0.6094262135493291,
+        "val_f1": 0.653862418568301
+      },
+      {
+        "epoch": 5,
+        "train_loss": 0.14411348117717057,
+        "val_loss": 0.4982843894463081,
+        "val_f1": 0.6704295051353876
+      },
+      {
+        "epoch": 6,
+        "train_loss": 0.11982196746378992,
+        "val_loss": 0.43423979003708085,
+        "val_f1": 0.7199709513435004
+      },
+      {
+        "epoch": 7,
+        "train_loss": 0.12055960220551067,
+        "val_loss": 0.3885416179508358,
+        "val_f1": 0.7199709513435004
+      },
+      {
+        "epoch": 8,
+        "train_loss": 0.11440902062494651,
+        "val_loss": 0.3413839773698287,
+        "val_f1": 0.7105640807047457
+      },
+      {
+        "epoch": 9,
+        "train_loss": 0.11150142452972964,
+        "val_loss": 0.3228082161445122,
+        "val_f1": 0.7105640807047457
+      },
+      {
+        "epoch": 10,
+        "train_loss": 0.11257279566782549,
+        "val_loss": 0.3558407572956828,
+        "val_f1": 0.7105640807047457
+      },
+      {
+        "epoch": 11,
+        "train_loss": 0.10583187034278387,
+        "val_loss": 0.3045418045737527,
+        "val_f1": 0.7199709513435004
+      },
+      {
+        "epoch": 12,
+        "train_loss": 0.10318759078933272,
+        "val_loss": 0.36269085128586015,
+        "val_f1": 0.7199709513435004
+      },
+      {
+        "epoch": 13,
+        "train_loss": 0.10105598988001135,
+        "val_loss": 0.2994605813707624,
+        "val_f1": 0.7199709513435004
+      },
+      {
+        "epoch": 14,
+        "train_loss": 0.10055140804300786,
+        "val_loss": 0.2716519956464891,
+        "val_f1": 0.7199709513435004
+      },
+      {
+        "epoch": 15,
+        "train_loss": 0.1048750337544281,
+        "val_loss": 0.29408898291649754,
+        "val_f1": 0.7199709513435004
+      },
+      {
+        "epoch": 16,
+        "train_loss": 0.09870348614377236,
+        "val_loss": 0.32120863183752285,
+        "val_f1": 0.7199709513435004
+      },
+      {
+        "epoch": 17,
+        "train_loss": 0.0966983408048773,
+        "val_loss": 0.2793882729171158,
+        "val_f1": 0.7199709513435004
+      },
+      {
+        "epoch": 18,
+        "train_loss": 0.10159324680083402,
+        "val_loss": 0.26705475596638467,
+        "val_f1": 0.7199709513435004
+      },
+      {
+        "epoch": 19,
+        "train_loss": 0.10193620099774856,
+        "val_loss": 0.291415548943854,
+        "val_f1": 0.7199709513435004
+      },
+      {
+        "epoch": 20,
+        "train_loss": 0.09758519281381937,
+        "val_loss": 0.2527198110307966,
+        "val_f1": 0.7199709513435004
+      },
+      {
+        "epoch": 21,
+        "train_loss": 0.09735920991574043,
+        "val_loss": 0.2549032081257213,
+        "val_f1": 0.7199709513435004
+      },
+      {
+        "epoch": 22,
+        "train_loss": 0.09949206985737857,
+        "val_loss": 0.3335839680262974,
+        "val_f1": 0.7199709513435004
+      },
+      {
+        "epoch": 23,
+        "train_loss": 0.09830151978272325,
+        "val_loss": 0.295383019880815,
+        "val_f1": 0.7522941836667326
+      },
+      {
+        "epoch": 24,
+        "train_loss": 0.09510297446191214,
+        "val_loss": 0.25543305780980496,
+        "val_f1": 0.7199709513435004
+      },
+      {
+        "epoch": 25,
+        "train_loss": 0.1029643120939252,
+        "val_loss": 0.26438072130277557,
+        "val_f1": 0.7199709513435004
+      },
+      {
+        "epoch": 26,
+        "train_loss": 0.0940050020789869,
+        "val_loss": 0.25309310640607563,
+        "val_f1": 0.7025106338831829
+      },
+      {
+        "epoch": 27,
+        "train_loss": 0.1035146977397371,
+        "val_loss": 0.2600308083868646,
+        "val_f1": 0.7522941836667326
+      },
+      {
+        "epoch": 28,
+        "train_loss": 0.09728564420693911,
+        "val_loss": 0.2641874009912664,
+        "val_f1": 0.7199709513435004
+      },
+      {
+        "epoch": 29,
+        "train_loss": 0.09628754660414957,
+        "val_loss": 0.24790467225111923,
+        "val_f1": 0.7199709513435004
+      },
+      {
+        "epoch": 30,
+        "train_loss": 0.09705759407967474,
+        "val_loss": 0.2765138056371119,
+        "val_f1": 0.7199709513435004
+      },
+      {
+        "epoch": 31,
+        "train_loss": 0.10161101324589071,
+        "val_loss": 0.31076508063774605,
+        "val_f1": 0.7199709513435004
+      },
+      {
+        "epoch": 32,
+        "train_loss": 0.09830659469032904,
+        "val_loss": 0.23916379507485921,
+        "val_f1": 0.7199709513435004
+      },
+      {
+        "epoch": 33,
+        "train_loss": 0.0930517654811816,
+        "val_loss": 0.2845011469605681,
+        "val_f1": 0.7199709513435004
+      },
+      {
+        "epoch": 34,
+        "train_loss": 0.098182031647069,
+        "val_loss": 0.25955915451049805,
+        "val_f1": 0.7199709513435004
+      },
+      {
+        "epoch": 35,
+        "train_loss": 0.09851952302773666,
+        "val_loss": 0.23665990457906352,
+        "val_f1": 0.7199709513435004
+      },
+      {
+        "epoch": 36,
+        "train_loss": 0.0952801797192947,
+        "val_loss": 0.2569645472935268,
+        "val_f1": 0.7199709513435004
+      },
+      {
+        "epoch": 37,
+        "train_loss": 0.09351616196322325,
+        "val_loss": 0.23637554552647974,
+        "val_f1": 0.7522941836667326
+      },
+      {
+        "epoch": 38,
+        "train_loss": 0.09493667510772945,
+        "val_loss": 0.2443013469894211,
+        "val_f1": 0.7522941836667326
+      },
+      {
+        "epoch": 39,
+        "train_loss": 0.09630008957834736,
+        "val_loss": 0.2407137697393244,
+        "val_f1": 0.7199709513435004
+      },
+      {
+        "epoch": 40,
+        "train_loss": 0.09640680742788585,
+        "val_loss": 0.24400954741936226,
+        "val_f1": 0.7199709513435004
+      }
+    ]
+  },
+  "real_evaluation": {
+    "total_real_endpoints": 471,
+    "gnn_synthetic": {
+      "detector": "gnn_synthetic",
+      "micro_precision": 0.037383177570093455,
+      "micro_recall": 0.6666666666666666,
+      "micro_f1": 0.07079646017699114,
+      "apps": [
+        {
+          "application": "django-mdeditor-cve-2025-13030",
+          "tp": 1,
+          "fp": 1,
+          "fn": 0,
+          "precision": 0.5,
+          "recall": 1.0,
+          "f1": 0.6666666666666666,
+          "predictions": [
+            {
+              "endpoint_id": "endpoint__GET___show__pk__",
+              "subtype": "COMBINED"
+            },
+            {
+              "endpoint_id": "endpoint__POST___mdeditor_uploads_",
+              "subtype": "MISSING_AUTH"
+            }
+          ],
+          "expected": [
+            {
+              "endpoint_id": "endpoint__POST___mdeditor_uploads_",
+              "subtype": "MISSING_AUTH"
+            }
+          ],
+          "notes": []
+        },
+        {
+          "application": "nautobot-cve-2023-50263",
+          "tp": 0,
+          "fp": 9,
+          "fn": 2,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "predictions": [
+            {
+              "endpoint_id": "endpoint__GET___extras_jobs__class_path__run_",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__GET___extras_jobs__pk__run_",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__POST___api_graphql_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__POST___dcim_virtual_chassis__pk__edit_",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__POST___dcim_virtual_chassis_members__pk__delete_",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__POST___extras_git_repositories__pk__dry_run_",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__POST___extras_git_repositories__pk__sync_",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__POST___extras_job_button__pk__run_",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__POST___extras_jobs_scheduled_jobs_approval_queue__pk__",
+              "subtype": "IDOR"
+            }
+          ],
+          "expected": [
+            {
+              "endpoint_id": "endpoint__GET___files_get_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___files_download_",
+              "subtype": "MISSING_AUTH"
+            }
+          ],
+          "notes": []
+        },
+        {
+          "application": "wger-cve-2026-27839",
+          "tp": 3,
+          "fp": 93,
+          "fn": 0,
+          "precision": 0.03125,
+          "recall": 1.0,
+          "f1": 0.06060606060606061,
+          "predictions": [
+            {
+              "endpoint_id": "endpoint__GET___api_v2_check_permission_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___api_v2_exercise_search_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___api_v2_exerciseimage__pk__thumbnails_",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__GET___api_v2_exerciseinfo_search_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___api_v2_ingredient_search_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___api_v2_meal__pk__nutritional_values_",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__GET___api_v2_mealitem__pk__nutritional_values_",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__GET___api_v2_min_app_version_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___api_v2_nutritiondiary__pk__nutritional_values_",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__GET___api_v2_nutritionplan__pk__nutritional_values_",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__GET___api_v2_version_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__PATCH___api_v2_day__pk__",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__PATCH___api_v2_daysofweek__pk__",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__PATCH___api_v2_equipment__pk__",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__PATCH___api_v2_exercise__pk__",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__PATCH___api_v2_exercise_base__pk__",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__PATCH___api_v2_exercise_translation__pk__",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__PATCH___api_v2_exercisealias__pk__",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__PATCH___api_v2_exercisebaseinfo__pk__",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__PATCH___api_v2_exercisecategory__pk__",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__PATCH___api_v2_exercisecomment__pk__",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__PATCH___api_v2_exerciseimage__pk__",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__PATCH___api_v2_exerciseinfo__pk__",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__PATCH___api_v2_gallery__pk__",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__PATCH___api_v2_ingredient__pk__",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__PATCH___api_v2_ingredientinfo__pk__",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__PATCH___api_v2_ingredientweightunit__pk__",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__PATCH___api_v2_language__pk__",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__PATCH___api_v2_license__pk__",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__PATCH___api_v2_meal__pk__",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__PATCH___api_v2_mealitem__pk__",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__PATCH___api_v2_measurement__pk__",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__PATCH___api_v2_measurement_category__pk__",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__PATCH___api_v2_muscle__pk__",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__PATCH___api_v2_nutritiondiary__pk__",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__PATCH___api_v2_nutritionplan__pk__",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__PATCH___api_v2_nutritionplaninfo__pk__",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__PATCH___api_v2_public_templates__pk__",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__PATCH___api_v2_schedule__pk__",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__PATCH___api_v2_schedulestep__pk__",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__PATCH___api_v2_set__pk__",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__PATCH___api_v2_setting__pk__",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__PATCH___api_v2_setting_repetitionunit__pk__",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__PATCH___api_v2_setting_weightunit__pk__",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__PATCH___api_v2_templates__pk__",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__PATCH___api_v2_userprofile__pk__",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__PATCH___api_v2_variation__pk__",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__PATCH___api_v2_video__pk__",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__PATCH___api_v2_weightentry__pk__",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__PATCH___api_v2_weightunit__pk__",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__PATCH___api_v2_workout__pk__",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__PATCH___api_v2_workoutlog__pk__",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__PATCH___api_v2_workoutsession__pk__",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__POST___api_v2_login_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__PUT___api_v2_day__pk__",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__PUT___api_v2_daysofweek__pk__",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__PUT___api_v2_equipment__pk__",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__PUT___api_v2_exercise__pk__",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__PUT___api_v2_exercise_base__pk__",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__PUT___api_v2_exercise_translation__pk__",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__PUT___api_v2_exercisealias__pk__",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__PUT___api_v2_exercisebaseinfo__pk__",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__PUT___api_v2_exercisecategory__pk__",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__PUT___api_v2_exercisecomment__pk__",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__PUT___api_v2_exerciseimage__pk__",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__PUT___api_v2_exerciseinfo__pk__",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__PUT___api_v2_gallery__pk__",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__PUT___api_v2_ingredient__pk__",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__PUT___api_v2_ingredientinfo__pk__",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__PUT___api_v2_ingredientweightunit__pk__",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__PUT___api_v2_language__pk__",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__PUT___api_v2_license__pk__",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__PUT___api_v2_meal__pk__",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__PUT___api_v2_mealitem__pk__",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__PUT___api_v2_measurement__pk__",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__PUT___api_v2_measurement_category__pk__",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__PUT___api_v2_muscle__pk__",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__PUT___api_v2_nutritiondiary__pk__",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__PUT___api_v2_nutritionplan__pk__",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__PUT___api_v2_nutritionplaninfo__pk__",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__PUT___api_v2_public_templates__pk__",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__PUT___api_v2_schedule__pk__",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__PUT___api_v2_schedulestep__pk__",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__PUT___api_v2_set__pk__",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__PUT___api_v2_setting__pk__",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__PUT___api_v2_setting_repetitionunit__pk__",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__PUT___api_v2_setting_weightunit__pk__",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__PUT___api_v2_templates__pk__",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__PUT___api_v2_userprofile__pk__",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__PUT___api_v2_variation__pk__",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__PUT___api_v2_video__pk__",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__PUT___api_v2_weightentry__pk__",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__PUT___api_v2_weightunit__pk__",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__PUT___api_v2_workout__pk__",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__PUT___api_v2_workoutlog__pk__",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__PUT___api_v2_workoutsession__pk__",
+              "subtype": "IDOR"
+            }
+          ],
+          "expected": [
+            {
+              "endpoint_id": "endpoint__GET___api_v2_nutritionplan__pk__nutritional_values_",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__GET___api_v2_meal__pk__nutritional_values_",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__GET___api_v2_mealitem__pk__nutritional_values_",
+              "subtype": "IDOR"
+            }
+          ],
+          "notes": []
+        }
+      ]
+    },
+    "rule_baseline": {
+      "detector": "rule_baseline",
+      "micro_precision": 0.4,
+      "micro_recall": 0.6666666666666666,
+      "micro_f1": 0.5,
+      "apps": [
+        {
+          "application": "django-mdeditor-cve-2025-13030",
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "predictions": [
+            {
+              "endpoint_id": "endpoint__POST___mdeditor_uploads_",
+              "subtype": "MISSING_AUTH"
+            }
+          ],
+          "expected": [
+            {
+              "endpoint_id": "endpoint__POST___mdeditor_uploads_",
+              "subtype": "MISSING_AUTH"
+            }
+          ],
+          "notes": []
+        },
+        {
+          "application": "nautobot-cve-2023-50263",
+          "tp": 0,
+          "fp": 5,
+          "fn": 2,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "predictions": [
+            {
+              "endpoint_id": "endpoint__POST___dcim_virtual_chassis__pk__edit_",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__POST___dcim_virtual_chassis_members__pk__delete_",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__POST___extras_git_repositories__pk__dry_run_",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__POST___extras_git_repositories__pk__sync_",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__POST___extras_job_button__pk__run_",
+              "subtype": "IDOR"
+            }
+          ],
+          "expected": [
+            {
+              "endpoint_id": "endpoint__GET___files_get_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___files_download_",
+              "subtype": "MISSING_AUTH"
+            }
+          ],
+          "notes": []
+        },
+        {
+          "application": "wger-cve-2026-27839",
+          "tp": 3,
+          "fp": 1,
+          "fn": 0,
+          "precision": 0.75,
+          "recall": 1.0,
+          "f1": 0.8571428571428571,
+          "predictions": [
+            {
+              "endpoint_id": "endpoint__GET___api_v2_exerciseimage__pk__thumbnails_",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__GET___api_v2_meal__pk__nutritional_values_",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__GET___api_v2_mealitem__pk__nutritional_values_",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__GET___api_v2_nutritionplan__pk__nutritional_values_",
+              "subtype": "IDOR"
+            }
+          ],
+          "expected": [
+            {
+              "endpoint_id": "endpoint__GET___api_v2_nutritionplan__pk__nutritional_values_",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__GET___api_v2_meal__pk__nutritional_values_",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__GET___api_v2_mealitem__pk__nutritional_values_",
+              "subtype": "IDOR"
+            }
+          ],
+          "notes": []
+        }
+      ]
+    }
+  },
+  "real_predictions": [
+    {
+      "endpoint_id": "endpoint__GET___",
+      "expected": "SAFE",
+      "predicted": "INTENTIONALLY_PUBLIC",
+      "confidence": 0.4978286623954773,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__GET___admin_",
+      "expected": "SAFE",
+      "predicted": "INTENTIONALLY_PUBLIC",
+      "confidence": 0.4978286623954773,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__GET___model_",
+      "expected": "SAFE",
+      "predicted": "INTENTIONALLY_PUBLIC",
+      "confidence": 0.4978286623954773,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__GET___show__pk__",
+      "expected": "SAFE",
+      "predicted": "COMBINED",
+      "confidence": 0.5462133288383484,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__POST___mdeditor_uploads_",
+      "expected": "MISSING_AUTH",
+      "predicted": "MISSING_AUTH",
+      "confidence": 0.5483967065811157,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9572058916091919,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___admin_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9572058916091919,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9572058916091919,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_docs_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9572058916091919,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_status_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9572058916091919,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___circuits_circuit_terminations__termination_a_id__connect__termination_b_type__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9439953565597534,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___circuits_circuits__circuit__terminations_add_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8793317079544067,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___circuits_circuits__pk__terminations_swap_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9103554487228394,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___dcim_cables__pk__changelog_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9490885138511658,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___dcim_cables__pk__notes_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9103554487228394,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___dcim_console_ports__pk__changelog_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9490885138511658,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___dcim_console_ports__pk__notes_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9103554487228394,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___dcim_console_ports__termination_a_id__connect__termination_b_type__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9439953565597534,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___dcim_console_server_ports__pk__changelog_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9490885138511658,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___dcim_console_server_ports__pk__notes_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9103554487228394,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___dcim_console_server_ports__termination_a_id__connect__termination_b_type__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9439953565597534,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___dcim_device_bays__pk__changelog_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9490885138511658,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___dcim_device_bays__pk__depopulate_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9103554487228394,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___dcim_device_bays__pk__notes_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9103554487228394,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___dcim_device_bays__pk__populate_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9103554487228394,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___dcim_device_types__pk__changelog_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9490885138511658,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___dcim_device_types__pk__notes_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9103554487228394,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___dcim_devices__pk__notes_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9103554487228394,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___dcim_front_ports__pk__changelog_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9490885138511658,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___dcim_front_ports__pk__notes_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9103554487228394,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___dcim_front_ports__termination_a_id__connect__termination_b_type__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9439953565597534,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___dcim_interfaces__pk__changelog_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9490885138511658,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___dcim_interfaces__pk__notes_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9103554487228394,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___dcim_interfaces__termination_a_id__connect__termination_b_type__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9439953565597534,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___dcim_inventory_items__pk__changelog_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9490885138511658,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___dcim_inventory_items__pk__notes_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9103554487228394,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___dcim_location_types__pk__changelog_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9490885138511658,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___dcim_location_types__pk__notes_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9103554487228394,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___dcim_locations__pk__changelog_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9490885138511658,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___dcim_locations__pk__notes_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9103554487228394,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___dcim_manufacturers__pk__changelog_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9490885138511658,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___dcim_manufacturers__pk__notes_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9103554487228394,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___dcim_platforms__pk__changelog_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9490885138511658,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___dcim_platforms__pk__notes_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9103554487228394,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___dcim_power_feeds__pk__changelog_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9490885138511658,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___dcim_power_feeds__pk__notes_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9103554487228394,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___dcim_power_feeds__termination_a_id__connect__termination_b_type__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9439953565597534,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___dcim_power_outlets__pk__changelog_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9490885138511658,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___dcim_power_outlets__pk__notes_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9103554487228394,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___dcim_power_outlets__termination_a_id__connect__termination_b_type__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9439953565597534,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___dcim_power_panels__pk__changelog_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9490885138511658,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___dcim_power_panels__pk__notes_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9103554487228394,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___dcim_power_ports__pk__changelog_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9490885138511658,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___dcim_power_ports__pk__notes_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9103554487228394,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___dcim_power_ports__termination_a_id__connect__termination_b_type__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9439953565597534,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___dcim_rack_groups__pk__changelog_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9490885138511658,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___dcim_rack_groups__pk__notes_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9103554487228394,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___dcim_rack_reservations__pk__changelog_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9490885138511658,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___dcim_rack_reservations__pk__notes_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9103554487228394,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___dcim_racks__pk__changelog_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9490885138511658,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___dcim_racks__pk__dynamic_groups_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9103554487228394,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___dcim_racks__pk__notes_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9103554487228394,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___dcim_rear_ports__pk__changelog_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9490885138511658,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___dcim_rear_ports__pk__notes_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9103554487228394,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___dcim_rear_ports__termination_a_id__connect__termination_b_type__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9439953565597534,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___dcim_virtual_chassis_members__pk__delete_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9103554487228394,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___dcim_virtual_chassis__pk__add_member_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9103554487228394,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___dcim_virtual_chassis__pk__changelog_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9490885138511658,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___dcim_virtual_chassis__pk__edit_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9103554487228394,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___dcim_virtual_chassis__pk__notes_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9103554487228394,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___extras_computed_fields__pk__changelog_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9490885138511658,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___extras_computed_fields__pk__notes_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9103554487228394,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___extras_config_context_schemas__pk__changelog_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9490885138511658,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___extras_config_context_schemas__pk__notes_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9103554487228394,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___extras_config_contexts__pk__changelog_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9490885138511658,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___extras_config_contexts__pk__notes_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9103554487228394,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___extras_custom_fields__pk__changelog_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9490885138511658,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___extras_custom_fields__pk__notes_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9103554487228394,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___extras_custom_links__pk__changelog_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9490885138511658,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___extras_custom_links__pk__notes_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9103554487228394,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___extras_dynamic_groups__pk__changelog_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9490885138511658,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___extras_dynamic_groups__pk__notes_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9103554487228394,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___extras_export_templates__pk__changelog_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9490885138511658,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___extras_export_templates__pk__notes_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9103554487228394,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___extras_git_repositories__pk__changelog_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9490885138511658,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___extras_git_repositories__pk__notes_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9103554487228394,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___extras_graphql_queries__pk__changelog_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9490885138511658,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___extras_graphql_queries__pk__notes_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9103554487228394,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___extras_job_hooks__pk__changelog_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9490885138511658,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___extras_job_results__pk__log_table_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8793317079544067,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___extras_jobs__class_path__run_",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.9975234866142273,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__GET___extras_jobs__pk__run_",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.9975234866142273,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__GET___extras_notes__pk__changelog_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9490885138511658,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___extras_object_changes_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9572058916091919,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___extras_relationships__pk__changelog_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9490885138511658,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___extras_relationships__pk__notes_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9103554487228394,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___extras_secrets_groups__pk__changelog_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9490885138511658,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___extras_secrets_groups__pk__notes_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9103554487228394,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___extras_secrets_provider__provider_slug__form_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8793317079544067,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___extras_secrets__pk__changelog_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9490885138511658,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___extras_secrets__pk__notes_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9103554487228394,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___extras_statuses__pk__changelog_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9490885138511658,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___extras_statuses__pk__notes_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9103554487228394,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___extras_tags__pk__changelog_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9490885138511658,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___extras_tags__pk__notes_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9103554487228394,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___extras_webhooks__pk__changelog_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9490885138511658,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___extras_webhooks__pk__notes_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9103554487228394,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___files_download_",
+      "expected": "MISSING_AUTH",
+      "predicted": "SAFE",
+      "confidence": 0.9614322781562805,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__GET___files_get_",
+      "expected": "MISSING_AUTH",
+      "predicted": "SAFE",
+      "confidence": 0.9614322781562805,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__GET___ipam_ip_addresses_assign_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9614322781562805,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___ipam_ip_addresses_merge_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9572058916091919,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___ipam_ip_addresses__pk__changelog_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9490885138511658,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___ipam_ip_addresses__pk__dynamic_groups_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9103554487228394,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___ipam_ip_addresses__pk__notes_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9103554487228394,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___ipam_prefixes__pk__changelog_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9490885138511658,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___ipam_prefixes__pk__dynamic_groups_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9103554487228394,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___ipam_prefixes__pk__notes_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9103554487228394,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___ipam_rirs__pk__changelog_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9490885138511658,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___ipam_rirs__pk__notes_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9103554487228394,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___ipam_route_targets__pk__changelog_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9490885138511658,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___ipam_route_targets__pk__notes_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9103554487228394,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___ipam_services__pk__changelog_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9490885138511658,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___ipam_services__pk__notes_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9103554487228394,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___ipam_vlan_groups__pk__changelog_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9490885138511658,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___ipam_vlan_groups__pk__notes_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9103554487228394,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___ipam_vlans__pk__changelog_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9490885138511658,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___ipam_vlans__pk__notes_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9103554487228394,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___ipam_vrfs__pk__changelog_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9490885138511658,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___ipam_vrfs__pk__notes_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9103554487228394,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___login_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9572058916091919,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___logout_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9572058916091919,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___media_failure_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9572058916091919,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___media__path_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8793317079544067,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___search_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9572058916091919,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___tenancy_tenant_groups__pk__changelog_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9490885138511658,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___tenancy_tenant_groups__pk__notes_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9103554487228394,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___tenancy_tenants__pk__changelog_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9490885138511658,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___tenancy_tenants__pk__notes_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9103554487228394,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___user_api_tokens_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.957736074924469,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___user_api_tokens_add_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.957736074924469,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___user_api_tokens__pk__delete_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9116591811180115,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___user_api_tokens__pk__edit_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9116591811180115,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___user_password_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9572058916091919,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___user_preferences_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9572058916091919,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___user_profile_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9572058916091919,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___virtualization_cluster_groups__pk__changelog_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9490885138511658,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___virtualization_cluster_groups__pk__notes_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9103554487228394,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___virtualization_cluster_types__pk__changelog_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9490885138511658,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___virtualization_cluster_types__pk__notes_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9103554487228394,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___virtualization_clusters__pk__changelog_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9490885138511658,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___virtualization_clusters__pk__devices_add_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9103554487228394,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___virtualization_clusters__pk__dynamic_groups_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9103554487228394,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___virtualization_clusters__pk__notes_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9103554487228394,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___virtualization_interfaces__pk__changelog_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9490885138511658,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___virtualization_interfaces__pk__notes_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9103554487228394,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___virtualization_virtual_machines__pk__changelog_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9490885138511658,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___virtualization_virtual_machines__pk__dynamic_groups_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9103554487228394,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___virtualization_virtual_machines__pk__notes_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9103554487228394,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__POST___api_graphql_",
+      "expected": "SAFE",
+      "predicted": "MISSING_AUTH",
+      "confidence": 0.6155557036399841,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__POST___circuits_circuits__circuit__terminations_add_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8787481188774109,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__POST___circuits_circuits__pk__terminations_swap_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9695032238960266,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__POST___dcim_device_bays__pk__depopulate_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9178414940834045,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__POST___dcim_device_bays__pk__populate_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9178414940834045,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__POST___dcim_virtual_chassis_members__pk__delete_",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.996423065662384,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__POST___dcim_virtual_chassis__pk__add_member_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9178414940834045,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__POST___dcim_virtual_chassis__pk__edit_",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.9975969195365906,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__POST___extras_custom_fields_add_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.7056281566619873,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__POST___extras_custom_fields__pk__edit_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8955361247062683,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__POST___extras_dynamic_groups_add_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.7056281566619873,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__POST___extras_dynamic_groups__pk__edit_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8955361247062683,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__POST___extras_git_repositories__pk__dry_run_",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.9979898929595947,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__POST___extras_git_repositories__pk__sync_",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.9979898929595947,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__POST___extras_job_button__pk__run_",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.9979898929595947,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__POST___extras_jobs_scheduled_jobs_approval_queue__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.9980667233467102,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__POST___extras_jobs__class_path__run_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8787481188774109,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__POST___extras_jobs__pk__run_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8787481188774109,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__POST___extras_secrets_groups_add_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.7056281566619873,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__POST___extras_secrets_groups__pk__edit_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8955361247062683,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__POST___ipam_ip_addresses_assign_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8609906435012817,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__POST___ipam_ip_addresses_merge_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8769140243530273,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__POST___login_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8346614241600037,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__POST___user_api_tokens_add_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8413644433021545,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__POST___user_api_tokens__pk__delete_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9139248132705688,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__POST___user_api_tokens__pk__edit_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9139248132705688,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__POST___user_password_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8346614241600037,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__POST___user_preferences_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8346614241600037,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__POST___virtualization_clusters__pk__devices_add_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.94022136926651,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__POST___virtualization_clusters__pk__devices_remove_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9538357853889465,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__DELETE___api_v2_day__pk__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.6140454411506653,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__DELETE___api_v2_daysofweek__pk__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.6140454411506653,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__DELETE___api_v2_equipment__pk__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.6140454411506653,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__DELETE___api_v2_exercise_base__pk__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.6140454411506653,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__DELETE___api_v2_exercise_translation__pk__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.6140454411506653,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__DELETE___api_v2_exercise__pk__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.6140454411506653,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__DELETE___api_v2_exercisealias__pk__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.6140454411506653,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__DELETE___api_v2_exercisebaseinfo__pk__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.6140454411506653,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__DELETE___api_v2_exercisecategory__pk__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.6140454411506653,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__DELETE___api_v2_exercisecomment__pk__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.6140454411506653,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__DELETE___api_v2_exerciseimage__pk__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.6140454411506653,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__DELETE___api_v2_exerciseinfo__pk__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.6140454411506653,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__DELETE___api_v2_gallery__pk__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.6140454411506653,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__DELETE___api_v2_ingredient__pk__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.6140454411506653,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__DELETE___api_v2_ingredientinfo__pk__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.6140454411506653,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__DELETE___api_v2_ingredientweightunit__pk__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.6140454411506653,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__DELETE___api_v2_language__pk__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.6140454411506653,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__DELETE___api_v2_license__pk__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.6140454411506653,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__DELETE___api_v2_meal__pk__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.6140454411506653,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__DELETE___api_v2_mealitem__pk__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.6140454411506653,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__DELETE___api_v2_measurement_category__pk__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.6140454411506653,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__DELETE___api_v2_measurement__pk__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.6140454411506653,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__DELETE___api_v2_muscle__pk__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.6140454411506653,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__DELETE___api_v2_nutritiondiary__pk__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.6140454411506653,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__DELETE___api_v2_nutritionplan__pk__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.6140454411506653,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__DELETE___api_v2_nutritionplaninfo__pk__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.6140454411506653,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__DELETE___api_v2_public_templates__pk__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.6140454411506653,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__DELETE___api_v2_schedule__pk__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.6140454411506653,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__DELETE___api_v2_schedulestep__pk__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.6140454411506653,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__DELETE___api_v2_set__pk__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.6140454411506653,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__DELETE___api_v2_setting_repetitionunit__pk__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.6140454411506653,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__DELETE___api_v2_setting_weightunit__pk__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.6140454411506653,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__DELETE___api_v2_setting__pk__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.6140454411506653,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__DELETE___api_v2_templates__pk__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.6140454411506653,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__DELETE___api_v2_userprofile__pk__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.6140454411506653,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__DELETE___api_v2_variation__pk__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.6140454411506653,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__DELETE___api_v2_video__pk__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.6140454411506653,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__DELETE___api_v2_weightentry__pk__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.6140454411506653,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__DELETE___api_v2_weightunit__pk__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.6140454411506653,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__DELETE___api_v2_workout__pk__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.6140454411506653,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__DELETE___api_v2_workoutlog__pk__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.6140454411506653,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__DELETE___api_v2_workoutsession__pk__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.6140454411506653,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9566762447357178,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___add_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9566762447357178,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_check_permission_",
+      "expected": "SAFE",
+      "predicted": "MISSING_AUTH",
+      "confidence": 0.5133973956108093,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_day_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9566762447357178,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_day__pk__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8083544969558716,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_daysofweek_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9566762447357178,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_daysofweek__pk__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8083544969558716,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_equipment_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9566762447357178,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_equipment__pk__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8083544969558716,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_exercise_base_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9566762447357178,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_exercise_base__pk__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8083544969558716,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_exercise_translation_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9566762447357178,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_exercise_translation__pk__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8083544969558716,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_exercise_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9566762447357178,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_exercise_search_",
+      "expected": "SAFE",
+      "predicted": "MISSING_AUTH",
+      "confidence": 0.5257946848869324,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_exercise__pk__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8083544969558716,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_exercisealias_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9566762447357178,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_exercisealias__pk__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8083544969558716,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_exercisebaseinfo_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9566762447357178,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_exercisebaseinfo__pk__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8083544969558716,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_exercisecategory_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9566762447357178,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_exercisecategory__pk__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8083544969558716,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_exercisecomment_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9566762447357178,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_exercisecomment__pk__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8083544969558716,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_exerciseimage_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9566762447357178,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_exerciseimage__pk__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8083544969558716,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_exerciseimage__pk__thumbnails_",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.9966294169425964,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_exerciseinfo_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9566762447357178,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_exerciseinfo_search_",
+      "expected": "SAFE",
+      "predicted": "MISSING_AUTH",
+      "confidence": 0.5257946848869324,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_exerciseinfo__pk__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8083544969558716,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_gallery_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9566762447357178,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_gallery__pk__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8083544969558716,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_ingredient_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9566762447357178,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_ingredient_search_",
+      "expected": "SAFE",
+      "predicted": "MISSING_AUTH",
+      "confidence": 0.5257946848869324,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_ingredient__pk__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8083544969558716,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_ingredient__pk__get_values_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9448611736297607,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_ingredientinfo_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9566762447357178,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_ingredientinfo__pk__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8083544969558716,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_ingredientweightunit_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9566762447357178,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_ingredientweightunit__pk__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8083544969558716,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_language_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9566762447357178,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_language__pk__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8083544969558716,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_license_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9566762447357178,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_license__pk__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8083544969558716,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_meal_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9566762447357178,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_meal__pk__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8083544969558716,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_meal__pk__nutritional_values_",
+      "expected": "IDOR",
+      "predicted": "IDOR",
+      "confidence": 0.9966294169425964,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_mealitem_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9566762447357178,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_mealitem__pk__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8083544969558716,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_mealitem__pk__nutritional_values_",
+      "expected": "IDOR",
+      "predicted": "IDOR",
+      "confidence": 0.9966294169425964,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_measurement_category_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9566762447357178,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_measurement_category__pk__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8083544969558716,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_measurement_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9566762447357178,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_measurement__pk__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8083544969558716,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_min_app_version_",
+      "expected": "SAFE",
+      "predicted": "MISSING_AUTH",
+      "confidence": 0.5133973956108093,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_muscle_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9566762447357178,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_muscle__pk__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8083544969558716,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_nutritiondiary_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9566762447357178,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_nutritiondiary__pk__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8083544969558716,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_nutritiondiary__pk__nutritional_values_",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.9966193437576294,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_nutritionplan_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9566762447357178,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_nutritionplan__pk__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8083544969558716,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_nutritionplan__pk__get_log_overview_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8486433625221252,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_nutritionplan__pk__log_summary_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8486433625221252,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_nutritionplan__pk__nutritional_values_",
+      "expected": "IDOR",
+      "predicted": "IDOR",
+      "confidence": 0.9966294169425964,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_nutritionplaninfo_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9566762447357178,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_nutritionplaninfo__pk__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8083544969558716,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_public_templates_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9566762447357178,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_public_templates__pk__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8083544969558716,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_schedule_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9566762447357178,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_schedule__pk__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8083544969558716,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_schedulestep_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9566762447357178,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_schedulestep__pk__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8083544969558716,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_set_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9566762447357178,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_set__pk__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8083544969558716,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_set__pk__computed_settings_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9448611736297607,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_set__pk__smart_text_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.956977128982544,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_setting_repetitionunit_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9566762447357178,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_setting_repetitionunit__pk__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8083544969558716,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_setting_weightunit_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9566762447357178,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_setting_weightunit__pk__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8083544969558716,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_setting_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9566762447357178,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_setting__pk__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8083544969558716,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_templates_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9566762447357178,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_templates__pk__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8083544969558716,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_userprofile_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9566762447357178,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_userprofile_verify_email_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9566762447357178,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_userprofile__pk__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8083544969558716,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_variation_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9566762447357178,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_variation__pk__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8083544969558716,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_version_",
+      "expected": "SAFE",
+      "predicted": "MISSING_AUTH",
+      "confidence": 0.5133973956108093,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_video_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9566762447357178,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_video__pk__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8083544969558716,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_weightentry_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9566762447357178,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_weightentry__pk__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8083544969558716,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_weightunit_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9566762447357178,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_weightunit__pk__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8083544969558716,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_workout_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9566762447357178,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_workout__pk__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8083544969558716,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_workout__pk__canonical_representation_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9448611736297607,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_workout__pk__log_data_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.956977128982544,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_workoutlog_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9566762447357178,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_workoutlog__pk__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8083544969558716,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_workoutsession_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9566762447357178,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_workoutsession__pk__",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8083544969558716,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___dashboard",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9639917612075806,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___export_csv_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9576034545898438,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___features",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9566762447357178,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___import_csv_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9566762447357178,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___overview",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.961175799369812,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___sitemap__section__xml",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8083544969558716,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET___sitemap_xml",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.9566762447357178,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__GET____pk__edit_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8083544969558716,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__PATCH___api_v2_day__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.7319743037223816,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PATCH___api_v2_daysofweek__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.7319743037223816,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PATCH___api_v2_equipment__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.7319743037223816,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PATCH___api_v2_exercise_base__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.7319743037223816,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PATCH___api_v2_exercise_translation__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.7319743037223816,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PATCH___api_v2_exercise__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.7319743037223816,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PATCH___api_v2_exercisealias__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.7319743037223816,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PATCH___api_v2_exercisebaseinfo__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.7319743037223816,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PATCH___api_v2_exercisecategory__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.7319743037223816,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PATCH___api_v2_exercisecomment__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.7319743037223816,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PATCH___api_v2_exerciseimage__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.7319743037223816,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PATCH___api_v2_exerciseinfo__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.7319743037223816,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PATCH___api_v2_gallery__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.7319743037223816,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PATCH___api_v2_ingredient__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.7319743037223816,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PATCH___api_v2_ingredientinfo__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.7319743037223816,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PATCH___api_v2_ingredientweightunit__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.7319743037223816,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PATCH___api_v2_language__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.7319743037223816,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PATCH___api_v2_license__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.7319743037223816,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PATCH___api_v2_meal__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.7319743037223816,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PATCH___api_v2_mealitem__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.7319743037223816,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PATCH___api_v2_measurement_category__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.7319743037223816,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PATCH___api_v2_measurement__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.7319743037223816,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PATCH___api_v2_muscle__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.7319743037223816,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PATCH___api_v2_nutritiondiary__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.7319743037223816,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PATCH___api_v2_nutritionplan__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.7319743037223816,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PATCH___api_v2_nutritionplaninfo__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.7319743037223816,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PATCH___api_v2_public_templates__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.7319743037223816,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PATCH___api_v2_schedule__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.7319743037223816,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PATCH___api_v2_schedulestep__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.7319743037223816,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PATCH___api_v2_set__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.7319743037223816,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PATCH___api_v2_setting_repetitionunit__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.7319743037223816,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PATCH___api_v2_setting_weightunit__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.7319743037223816,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PATCH___api_v2_setting__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.7319743037223816,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PATCH___api_v2_templates__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.7319743037223816,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PATCH___api_v2_userprofile__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.7319743037223816,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PATCH___api_v2_variation__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.7319743037223816,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PATCH___api_v2_video__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.7319743037223816,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PATCH___api_v2_weightentry__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.7319743037223816,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PATCH___api_v2_weightunit__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.7319743037223816,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PATCH___api_v2_workout__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.7319743037223816,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PATCH___api_v2_workoutlog__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.7319743037223816,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PATCH___api_v2_workoutsession__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.7319743037223816,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__POST___api_v2_day_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8414642810821533,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__POST___api_v2_daysofweek_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8414642810821533,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__POST___api_v2_equipment_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8414642810821533,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__POST___api_v2_exercise_base_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8414642810821533,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__POST___api_v2_exercise_translation_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8414642810821533,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__POST___api_v2_exercise_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8414642810821533,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__POST___api_v2_exercisealias_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8414642810821533,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__POST___api_v2_exercisebaseinfo_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8414642810821533,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__POST___api_v2_exercisecategory_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8414642810821533,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__POST___api_v2_exercisecomment_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8414642810821533,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__POST___api_v2_exerciseimage_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8414642810821533,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__POST___api_v2_exerciseinfo_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8414642810821533,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__POST___api_v2_gallery_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8414642810821533,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__POST___api_v2_ingredient_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8414642810821533,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__POST___api_v2_ingredientinfo_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8414642810821533,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__POST___api_v2_ingredientweightunit_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8414642810821533,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__POST___api_v2_language_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8414642810821533,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__POST___api_v2_license_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8414642810821533,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__POST___api_v2_login_",
+      "expected": "SAFE",
+      "predicted": "MISSING_AUTH",
+      "confidence": 0.6204143166542053,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__POST___api_v2_meal_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8414642810821533,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__POST___api_v2_mealitem_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8414642810821533,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__POST___api_v2_measurement_category_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8414642810821533,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__POST___api_v2_measurement_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8414642810821533,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__POST___api_v2_muscle_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8414642810821533,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__POST___api_v2_nutritiondiary_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8414642810821533,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__POST___api_v2_nutritionplan_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8414642810821533,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__POST___api_v2_nutritionplaninfo_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8414642810821533,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__POST___api_v2_public_templates_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8414642810821533,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__POST___api_v2_register_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8547176718711853,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__POST___api_v2_schedule_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8414642810821533,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__POST___api_v2_schedulestep_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8414642810821533,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__POST___api_v2_set_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8414642810821533,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__POST___api_v2_setting_repetitionunit_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8414642810821533,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__POST___api_v2_setting_weightunit_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8414642810821533,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__POST___api_v2_setting_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8414642810821533,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__POST___api_v2_templates_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8414642810821533,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__POST___api_v2_userprofile_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8414642810821533,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__POST___api_v2_variation_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8414642810821533,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__POST___api_v2_video_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8414642810821533,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__POST___api_v2_weightentry_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8414642810821533,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__POST___api_v2_weightunit_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8414642810821533,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__POST___api_v2_workout_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8414642810821533,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__POST___api_v2_workoutlog_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8414642810821533,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__POST___api_v2_workoutsession_",
+      "expected": "SAFE",
+      "predicted": "SAFE",
+      "confidence": 0.8414642810821533,
+      "correct": true
+    },
+    {
+      "endpoint_id": "endpoint__PUT___api_v2_day__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.5192948579788208,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PUT___api_v2_daysofweek__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.5192948579788208,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PUT___api_v2_equipment__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.5192948579788208,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PUT___api_v2_exercise_base__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.5192948579788208,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PUT___api_v2_exercise_translation__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.5192948579788208,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PUT___api_v2_exercise__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.5192948579788208,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PUT___api_v2_exercisealias__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.5192948579788208,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PUT___api_v2_exercisebaseinfo__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.5192948579788208,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PUT___api_v2_exercisecategory__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.5192948579788208,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PUT___api_v2_exercisecomment__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.5192948579788208,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PUT___api_v2_exerciseimage__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.5192948579788208,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PUT___api_v2_exerciseinfo__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.5192948579788208,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PUT___api_v2_gallery__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.5192948579788208,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PUT___api_v2_ingredient__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.5192948579788208,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PUT___api_v2_ingredientinfo__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.5192948579788208,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PUT___api_v2_ingredientweightunit__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.5192948579788208,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PUT___api_v2_language__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.5192948579788208,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PUT___api_v2_license__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.5192948579788208,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PUT___api_v2_meal__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.5192948579788208,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PUT___api_v2_mealitem__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.5192948579788208,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PUT___api_v2_measurement_category__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.5192948579788208,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PUT___api_v2_measurement__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.5192948579788208,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PUT___api_v2_muscle__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.5192948579788208,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PUT___api_v2_nutritiondiary__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.5192948579788208,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PUT___api_v2_nutritionplan__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.5192948579788208,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PUT___api_v2_nutritionplaninfo__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.5192948579788208,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PUT___api_v2_public_templates__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.5192948579788208,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PUT___api_v2_schedule__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.5192948579788208,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PUT___api_v2_schedulestep__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.5192948579788208,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PUT___api_v2_set__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.5192948579788208,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PUT___api_v2_setting_repetitionunit__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.5192948579788208,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PUT___api_v2_setting_weightunit__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.5192948579788208,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PUT___api_v2_setting__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.5192948579788208,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PUT___api_v2_templates__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.5192948579788208,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PUT___api_v2_userprofile__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.5192948579788208,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PUT___api_v2_variation__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.5192948579788208,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PUT___api_v2_video__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.5192948579788208,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PUT___api_v2_weightentry__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.5192948579788208,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PUT___api_v2_weightunit__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.5192948579788208,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PUT___api_v2_workout__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.5192948579788208,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PUT___api_v2_workoutlog__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.5192948579788208,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PUT___api_v2_workoutsession__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.5192948579788208,
+      "correct": false
+    }
+  ],
+  "real_error_analysis": [
+    {
+      "endpoint_id": "endpoint__GET___",
+      "expected": "SAFE",
+      "predicted": "INTENTIONALLY_PUBLIC",
+      "confidence": 0.4978286623954773,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__GET___admin_",
+      "expected": "SAFE",
+      "predicted": "INTENTIONALLY_PUBLIC",
+      "confidence": 0.4978286623954773,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__GET___model_",
+      "expected": "SAFE",
+      "predicted": "INTENTIONALLY_PUBLIC",
+      "confidence": 0.4978286623954773,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__GET___show__pk__",
+      "expected": "SAFE",
+      "predicted": "COMBINED",
+      "confidence": 0.5462133288383484,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__GET___extras_jobs__class_path__run_",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.9975234866142273,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__GET___extras_jobs__pk__run_",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.9975234866142273,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__GET___files_download_",
+      "expected": "MISSING_AUTH",
+      "predicted": "SAFE",
+      "confidence": 0.9614322781562805,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__GET___files_get_",
+      "expected": "MISSING_AUTH",
+      "predicted": "SAFE",
+      "confidence": 0.9614322781562805,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__POST___api_graphql_",
+      "expected": "SAFE",
+      "predicted": "MISSING_AUTH",
+      "confidence": 0.6155557036399841,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__POST___dcim_virtual_chassis_members__pk__delete_",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.996423065662384,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__POST___dcim_virtual_chassis__pk__edit_",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.9975969195365906,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__POST___extras_git_repositories__pk__dry_run_",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.9979898929595947,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__POST___extras_git_repositories__pk__sync_",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.9979898929595947,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__POST___extras_job_button__pk__run_",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.9979898929595947,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__POST___extras_jobs_scheduled_jobs_approval_queue__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.9980667233467102,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_check_permission_",
+      "expected": "SAFE",
+      "predicted": "MISSING_AUTH",
+      "confidence": 0.5133973956108093,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_exercise_search_",
+      "expected": "SAFE",
+      "predicted": "MISSING_AUTH",
+      "confidence": 0.5257946848869324,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_exerciseimage__pk__thumbnails_",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.9966294169425964,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_exerciseinfo_search_",
+      "expected": "SAFE",
+      "predicted": "MISSING_AUTH",
+      "confidence": 0.5257946848869324,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_ingredient_search_",
+      "expected": "SAFE",
+      "predicted": "MISSING_AUTH",
+      "confidence": 0.5257946848869324,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_min_app_version_",
+      "expected": "SAFE",
+      "predicted": "MISSING_AUTH",
+      "confidence": 0.5133973956108093,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_nutritiondiary__pk__nutritional_values_",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.9966193437576294,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__GET___api_v2_version_",
+      "expected": "SAFE",
+      "predicted": "MISSING_AUTH",
+      "confidence": 0.5133973956108093,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PATCH___api_v2_day__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.7319743037223816,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PATCH___api_v2_daysofweek__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.7319743037223816,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PATCH___api_v2_equipment__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.7319743037223816,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PATCH___api_v2_exercise_base__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.7319743037223816,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PATCH___api_v2_exercise_translation__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.7319743037223816,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PATCH___api_v2_exercise__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.7319743037223816,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PATCH___api_v2_exercisealias__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.7319743037223816,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PATCH___api_v2_exercisebaseinfo__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.7319743037223816,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PATCH___api_v2_exercisecategory__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.7319743037223816,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PATCH___api_v2_exercisecomment__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.7319743037223816,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PATCH___api_v2_exerciseimage__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.7319743037223816,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PATCH___api_v2_exerciseinfo__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.7319743037223816,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PATCH___api_v2_gallery__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.7319743037223816,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PATCH___api_v2_ingredient__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.7319743037223816,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PATCH___api_v2_ingredientinfo__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.7319743037223816,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PATCH___api_v2_ingredientweightunit__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.7319743037223816,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PATCH___api_v2_language__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.7319743037223816,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PATCH___api_v2_license__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.7319743037223816,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PATCH___api_v2_meal__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.7319743037223816,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PATCH___api_v2_mealitem__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.7319743037223816,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PATCH___api_v2_measurement_category__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.7319743037223816,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PATCH___api_v2_measurement__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.7319743037223816,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PATCH___api_v2_muscle__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.7319743037223816,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PATCH___api_v2_nutritiondiary__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.7319743037223816,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PATCH___api_v2_nutritionplan__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.7319743037223816,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PATCH___api_v2_nutritionplaninfo__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.7319743037223816,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PATCH___api_v2_public_templates__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.7319743037223816,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PATCH___api_v2_schedule__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.7319743037223816,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PATCH___api_v2_schedulestep__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.7319743037223816,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PATCH___api_v2_set__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.7319743037223816,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PATCH___api_v2_setting_repetitionunit__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.7319743037223816,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PATCH___api_v2_setting_weightunit__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.7319743037223816,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PATCH___api_v2_setting__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.7319743037223816,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PATCH___api_v2_templates__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.7319743037223816,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PATCH___api_v2_userprofile__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.7319743037223816,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PATCH___api_v2_variation__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.7319743037223816,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PATCH___api_v2_video__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.7319743037223816,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PATCH___api_v2_weightentry__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.7319743037223816,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PATCH___api_v2_weightunit__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.7319743037223816,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PATCH___api_v2_workout__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.7319743037223816,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PATCH___api_v2_workoutlog__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.7319743037223816,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PATCH___api_v2_workoutsession__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.7319743037223816,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__POST___api_v2_login_",
+      "expected": "SAFE",
+      "predicted": "MISSING_AUTH",
+      "confidence": 0.6204143166542053,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PUT___api_v2_day__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.5192948579788208,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PUT___api_v2_daysofweek__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.5192948579788208,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PUT___api_v2_equipment__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.5192948579788208,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PUT___api_v2_exercise_base__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.5192948579788208,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PUT___api_v2_exercise_translation__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.5192948579788208,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PUT___api_v2_exercise__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.5192948579788208,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PUT___api_v2_exercisealias__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.5192948579788208,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PUT___api_v2_exercisebaseinfo__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.5192948579788208,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PUT___api_v2_exercisecategory__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.5192948579788208,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PUT___api_v2_exercisecomment__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.5192948579788208,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PUT___api_v2_exerciseimage__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.5192948579788208,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PUT___api_v2_exerciseinfo__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.5192948579788208,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PUT___api_v2_gallery__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.5192948579788208,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PUT___api_v2_ingredient__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.5192948579788208,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PUT___api_v2_ingredientinfo__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.5192948579788208,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PUT___api_v2_ingredientweightunit__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.5192948579788208,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PUT___api_v2_language__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.5192948579788208,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PUT___api_v2_license__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.5192948579788208,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PUT___api_v2_meal__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.5192948579788208,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PUT___api_v2_mealitem__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.5192948579788208,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PUT___api_v2_measurement_category__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.5192948579788208,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PUT___api_v2_measurement__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.5192948579788208,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PUT___api_v2_muscle__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.5192948579788208,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PUT___api_v2_nutritiondiary__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.5192948579788208,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PUT___api_v2_nutritionplan__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.5192948579788208,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PUT___api_v2_nutritionplaninfo__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.5192948579788208,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PUT___api_v2_public_templates__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.5192948579788208,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PUT___api_v2_schedule__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.5192948579788208,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PUT___api_v2_schedulestep__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.5192948579788208,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PUT___api_v2_set__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.5192948579788208,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PUT___api_v2_setting_repetitionunit__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.5192948579788208,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PUT___api_v2_setting_weightunit__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.5192948579788208,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PUT___api_v2_setting__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.5192948579788208,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PUT___api_v2_templates__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.5192948579788208,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PUT___api_v2_userprofile__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.5192948579788208,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PUT___api_v2_variation__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.5192948579788208,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PUT___api_v2_video__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.5192948579788208,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PUT___api_v2_weightentry__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.5192948579788208,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PUT___api_v2_weightunit__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.5192948579788208,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PUT___api_v2_workout__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.5192948579788208,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PUT___api_v2_workoutlog__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.5192948579788208,
+      "correct": false
+    },
+    {
+      "endpoint_id": "endpoint__PUT___api_v2_workoutsession__pk__",
+      "expected": "SAFE",
+      "predicted": "IDOR",
+      "confidence": 0.5192948579788208,
+      "correct": false
+    }
+  ]
+}

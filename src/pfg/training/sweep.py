@@ -7,11 +7,13 @@ W17: ablation experiments:
                              (requires_auth, role one-hot, ownership_check,
                               guard_type one-hot — node-feature indices 9..19).
 
-The auth-feature indices are derived from the FROZEN 24-dim node feature
+The auth-feature indices are derived from the FROZEN 28-dim node feature
 contract in `pfg.pfg.features` and must not drift from it:
   [0:4]  node type | [4:9]  http method | [9] requires_auth
   [10:15] role     | [15] ownership_check_present | [16:19] guard type
   [19:23] op       | [23] has_ownership_predicate
+  [24] has_route_params | [25] reachable_data_count | [26] has_id_flow
+  [27] unprotected_data_reachable
 """
 
 from __future__ import annotations
@@ -32,7 +34,7 @@ from pfg.training.trainer import (
     train_path_analyzer,
 )
 
-# Auth-feature index range in the frozen 24-dim node feature vector.
+# Auth-feature index range in the frozen 28-dim node feature vector.
 _AUTH_FEATURE_START = 9
 _AUTH_FEATURE_END = 19  # exclusive
 

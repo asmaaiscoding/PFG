@@ -385,10 +385,9 @@ def build_pfg(
             "edges": edges,
         }
     )
+    from pfg.pfg.features import enrich_endpoint_features
+    enrich_endpoint_features(pfg)
     return pfg
-
-
-# --- support --------------------------------------------------------------
 
 
 def _build_callee_targets(reachable: set[str], sinks: list[FlowSink]) -> dict[str, str]:

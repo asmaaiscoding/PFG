@@ -1,7 +1,7 @@
 """Model checkpoint save / load.
 
 Checkpoints are torch `.pt` files that bundle the model weights *and* the
-hyperparameters needed to reconstruct the architecture. The 24-dim node /
+hyperparameters needed to reconstruct the architecture. The 28-dim node /
 2-dim edge feature contract is implicit; loading a checkpoint built against
 a different feature contract will fail at the first forward pass.
 """
@@ -33,7 +33,7 @@ def save_model(
         "kind": kind,
         "hparams": hparams,
         "state_dict": model.state_dict(),
-        "feature_contract": {"node_dim": 24, "edge_dim": 2, "num_subtypes": NUM_SUBTYPES},
+        "feature_contract": {"node_dim": 28, "edge_dim": 2, "num_subtypes": NUM_SUBTYPES},
     }
     torch.save(payload, out)
     return out

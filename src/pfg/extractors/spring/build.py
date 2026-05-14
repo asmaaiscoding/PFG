@@ -679,4 +679,6 @@ def build_pfg(project_root: str | Path, *, application: str | None = None) -> PF
             "edges": edges,
         }
     )
+    from pfg.pfg.features import enrich_endpoint_features
+    enrich_endpoint_features(pfg)
     return pfg

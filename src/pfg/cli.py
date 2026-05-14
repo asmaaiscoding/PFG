@@ -582,6 +582,86 @@ def final_experiment_cmd(
     click.echo(f"Wrote report -> {outputs.report_path}")
 
 
+@main.command(name="synthetic-experiment")
+@click.argument("corpus_root", type=click.Path(exists=True, file_okay=False, path_type=Path))
+@click.option("--n-apps", default=15, show_default=True, type=int, help="Number of synthetic apps to generate.")
+@click.option("--min-endpoints", default=30, show_default=True, type=int)
+@click.option("--max-endpoints", default=70, show_default=True, type=int)
+@click.option("--vuln-ratio", default=0.35, show_default=True, type=float)
+@click.option("--epochs", default=40, show_default=True, type=int)
+@click.option("--seed", default=0, show_default=True, type=int)
+@click.option("--batch-size", default=32, show_default=True, type=int)
+@click.option("--hidden-dim", default=64, show_default=True, type=int)
+@click.option("--num-layers", default=3, show_default=True, type=int)
+@click.option("--heads", default=4, show_default=True, type=int)
+@click.option("--focal-gamma", default=2.0, show_default=True, type=float)
+@click.option("--gnn-threshold", default=0.5, show_default=True, type=float)
+@click.option(
+    "--out-dir",
+    type=click.Path(file_okay=False, path_type=Path),
+    default=Path("artifacts"),
+    show_default=True,
+)
+def synthetic_experiment_cmd(
+    corpus_root: Path,
+    n_apps: int,
+    min_endpoints: int,
+    max_endpoints: int,
+    vuln_ratio: float,
+    epochs: int,
+    seed: int,
+    batch_size: int,
+    hidden_dim: int,
+    num_layers: int,
+    heads: int,
+    focal_gamma: float,
+    gnn_threshold: float,
+    out_dir: Path,
+) -> None:
+    """Train GNN on synthetic data, evaluate on all real apps."""
+    from pfg.training.synthetic_experiment import run_synthetic_experiment
+
+    try:
+        outputs = run_synthetic_experiment(
+            corpus_root,
+            n_apps=n_apps,
+            endpoints_per_app=(min_endpoints, max_endpoints),
+            vuln_ratio=vuln_ratio,
+            epochs=epochs,
+            seed=seed,
+            batch_size=batch_size,
+            hidden_dim=hidden_dim,
+            num_layers=num_layers,
+            heads=heads,
+            focal_gamma=focal_gamma,
+            gnn_threshold=gnn_threshold,
+            out_dir=out_dir,
+        )
+    except ValueError as exc:
+        raise click.ClickException(str(exc)) from exc
+
+    sm = outputs.metrics["synthetic_test_metrics"]
+    gnn = outputs.metrics["real_evaluation"]["gnn_synthetic"]
+    rule = outputs.metrics["real_evaluation"]["rule_baseline"]
+    sm_vuln = sm["vulnerability_finding"]
+
+    click.echo("=== Synthetic-Only Training → Real-World Evaluation ===")
+    click.echo(f"Synthetic dataset: {outputs.metrics['synthetic_dataset']['total_samples']} samples")
+    click.echo(f"  Synthetic test: acc={sm['accuracy']:.3f} macroF1={sm['macro_f1']:.3f} "
+               f"vuln_P={sm_vuln['precision']:.3f} vuln_R={sm_vuln['recall']:.3f}")
+    click.echo(f"Real-world GNN:   P={gnn['micro_precision']:.3f} R={gnn['micro_recall']:.3f} F1={gnn['micro_f1']:.3f}")
+    click.echo(f"Real-world Rule:  P={rule['micro_precision']:.3f} R={rule['micro_recall']:.3f} F1={rule['micro_f1']:.3f}")
+
+    for app in gnn.get("apps", []):
+        click.echo(f"  GNN  {app['application']}: TP={app['tp']} FP={app['fp']} FN={app['fn']}")
+    for app in rule.get("apps", []):
+        click.echo(f"  Rule {app['application']}: TP={app['tp']} FP={app['fp']} FN={app['fn']}")
+
+    click.echo(f"Saved model -> {outputs.model_path}")
+    click.echo(f"Wrote metrics -> {outputs.metrics_path}")
+    click.echo(f"Wrote report -> {outputs.report_path}")
+
+
 @main.command(name="normalize")
 @click.argument(
     "tool", type=click.Choice(["semgrep", "codeql"])

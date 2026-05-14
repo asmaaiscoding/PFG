@@ -27,7 +27,7 @@ from pfg.synthetic import label_to_targets, pfg_to_pyg
 from pfg.synthetic.generator import Sample
 from pfg.training.augmentation import AugmentationConfig, augmented_samples_from_manifests
 from pfg.training.corpus import samples_from_manifests, split_manifests_by_group
-from pfg.training.trainer import TrainResult, train_path_analyzer_split
+from pfg.training.trainer import TrainResult, pretrain_path_analyzer, train_path_analyzer_split
 
 CLASS_NAMES = [
     "SAFE",
@@ -46,6 +46,7 @@ class FinalExperimentOutputs:
     report_path: Path
     real_only_model_path: Path
     augmented_model_path: Path
+    twostage_model_path: Path | None
     metrics: dict[str, Any]
 
 
@@ -294,15 +295,21 @@ def run_final_experiment(
     *,
     holdout_group: str | None = None,
     epochs: int = 30,
+    pretrain_epochs: int = 20,
     seed: int = 0,
     batch_size: int = 32,
     hidden_dim: int = 64,
     num_layers: int = 3,
     heads: int = 4,
+    focal_gamma: float = 2.0,
+    augmentation_cap: int = 10,
+    contrastive_pairs: int = 150,
     out_dir: str | Path = "artifacts",
     semgrep_findings: str | Path | None = None,
     codeql_findings: str | Path | None = None,
 ) -> FinalExperimentOutputs:
+    from pfg.synthetic.contrastive import generate_contrastive_dataset
+
     manifests = discover_manifests(corpus_root)
     train_m, val_m, test_m = split_manifests_by_group(
         manifests, seed=seed, holdout_group=holdout_group
@@ -314,9 +321,10 @@ def run_final_experiment(
     val_samples = samples_from_manifests(val_m)
     test_samples = samples_from_manifests(test_m)
     augmented_train_samples = augmented_samples_from_manifests(
-        train_m, config=AugmentationConfig()
+        train_m, config=AugmentationConfig(max_per_manifest=augmentation_cap)
     )
 
+    # --- Model 1: real-only (baseline) ---
     real_only_model, real_only_result = train_path_analyzer_split(
         train_samples,
         val_samples,
@@ -328,6 +336,8 @@ def run_final_experiment(
         num_layers=num_layers,
         heads=heads,
     )
+
+    # --- Model 2: real + augmented with focal loss ---
     augmented_model, augmented_result = train_path_analyzer_split(
         [*train_samples, *augmented_train_samples],
         val_samples,
@@ -338,29 +348,53 @@ def run_final_experiment(
         hidden_dim=hidden_dim,
         num_layers=num_layers,
         heads=heads,
+        focal_gamma=focal_gamma,
+    )
+
+    # --- Model 3: two-stage (contrastive pretrain -> fine-tune on real+augmented) ---
+    synthetic_samples = generate_contrastive_dataset(
+        n_pairs=contrastive_pairs, seed=seed
+    )
+    pretrained_state = pretrain_path_analyzer(
+        synthetic_samples,
+        epochs=pretrain_epochs,
+        seed=seed,
+        batch_size=batch_size,
+        hidden_dim=hidden_dim,
+        num_layers=num_layers,
+        heads=heads,
+        focal_gamma=focal_gamma,
+    )
+    twostage_model, twostage_result = train_path_analyzer_split(
+        [*train_samples, *augmented_train_samples],
+        val_samples,
+        test_samples,
+        epochs=epochs,
+        seed=seed,
+        batch_size=batch_size,
+        hidden_dim=hidden_dim,
+        num_layers=num_layers,
+        heads=heads,
+        focal_gamma=focal_gamma,
+        pretrained_state=pretrained_state,
     )
 
     out = Path(out_dir)
     out.mkdir(parents=True, exist_ok=True)
     real_only_model_path = out / "path_analyzer_real_only.pt"
     augmented_model_path = out / "path_analyzer_real_augmented.pt"
-    save_model(
-        real_only_model,
-        real_only_model_path,
-        kind="path",
-        hparams={"hidden_dim": hidden_dim, "num_layers": num_layers, "heads": heads},
-    )
-    save_model(
-        augmented_model,
-        augmented_model_path,
-        kind="path",
-        hparams={"hidden_dim": hidden_dim, "num_layers": num_layers, "heads": heads},
-    )
+    twostage_model_path = out / "path_analyzer_twostage.pt"
+    hparams = {"hidden_dim": hidden_dim, "num_layers": num_layers, "heads": heads}
+    save_model(real_only_model, real_only_model_path, kind="path", hparams=hparams)
+    save_model(augmented_model, augmented_model_path, kind="path", hparams=hparams)
+    save_model(twostage_model, twostage_model_path, kind="path", hparams=hparams)
 
     rule_report = evaluate_corpus(test_m, rule_detector, detector_name="rule_baseline")
     real_only_metrics = _train_result_to_dict(real_only_result)
     augmented_metrics = _train_result_to_dict(augmented_result)
-    delta = {
+    twostage_metrics = _train_result_to_dict(twostage_result)
+
+    delta_aug = {
         "macro_f1": augmented_metrics["macro_f1"] - real_only_metrics["macro_f1"],
         "accuracy": augmented_metrics["accuracy"] - real_only_metrics["accuracy"],
         "vulnerability_recall": (
@@ -372,9 +406,23 @@ def run_final_experiment(
             - real_only_metrics["vulnerability_finding"]["precision"]
         ),
     }
+    delta_twostage = {
+        "macro_f1": twostage_metrics["macro_f1"] - real_only_metrics["macro_f1"],
+        "accuracy": twostage_metrics["accuracy"] - real_only_metrics["accuracy"],
+        "vulnerability_recall": (
+            twostage_metrics["vulnerability_finding"]["recall"]
+            - real_only_metrics["vulnerability_finding"]["recall"]
+        ),
+        "vulnerability_precision": (
+            twostage_metrics["vulnerability_finding"]["precision"]
+            - real_only_metrics["vulnerability_finding"]["precision"]
+        ),
+    }
 
     real_only_predictions = _predict_samples(real_only_model, test_samples)
     augmented_predictions = _predict_samples(augmented_model, test_samples)
+    twostage_predictions = _predict_samples(twostage_model, test_samples)
+
     warnings = []
     if not augmented_train_samples:
         warnings.append(
@@ -382,16 +430,20 @@ def run_final_experiment(
             "real+augmented metrics are therefore not an augmentation comparison."
         )
     metrics: dict[str, Any] = {
-        "experiment": "path_analyzer_final_real_corpus",
+        "experiment": "path_analyzer_final_real_corpus_v2",
         "model_scope": "Model B / PathAnalyzer only",
         "config": {
             "holdout_group": holdout_group,
             "seed": seed,
             "epochs": epochs,
+            "pretrain_epochs": pretrain_epochs,
             "batch_size": batch_size,
             "hidden_dim": hidden_dim,
             "num_layers": num_layers,
             "heads": heads,
+            "focal_gamma": focal_gamma,
+            "augmentation_cap": augmentation_cap,
+            "contrastive_pairs": contrastive_pairs,
         },
         "warnings": warnings,
         "split": {
@@ -400,6 +452,7 @@ def run_final_experiment(
             "test_groups": sorted({m.dataset_split_group or m.application for m in test_m}),
             "n_train_real_samples": len(train_samples),
             "n_train_augmented_samples": len(augmented_train_samples),
+            "n_synthetic_contrastive_samples": len(synthetic_samples),
             "n_val_real_samples": len(val_samples),
             "n_test_real_samples": len(test_samples),
             "test_is_real_only": True,
@@ -407,13 +460,16 @@ def run_final_experiment(
         "class_distribution": {
             "train_real": _class_counts(train_samples),
             "train_augmented": _class_counts(augmented_train_samples),
+            "synthetic_contrastive": _class_counts(synthetic_samples),
             "val_real": _class_counts(val_samples),
             "test_real": _class_counts(test_samples),
         },
         "models": {
             "path_analyzer_real_only": real_only_metrics,
             "path_analyzer_real_augmented": augmented_metrics,
-            "real_augmented_delta": delta,
+            "path_analyzer_twostage": twostage_metrics,
+            "real_augmented_delta": delta_aug,
+            "twostage_delta": delta_twostage,
         },
         "baselines": {
             "rule_baseline": report_to_dict(rule_report),
@@ -431,14 +487,17 @@ def run_final_experiment(
         "predictions": {
             "path_analyzer_real_only": real_only_predictions,
             "path_analyzer_real_augmented": augmented_predictions,
+            "path_analyzer_twostage": twostage_predictions,
         },
         "error_analysis": {
             "path_analyzer_real_only": [p for p in real_only_predictions if not p["correct"]],
             "path_analyzer_real_augmented": [p for p in augmented_predictions if not p["correct"]],
+            "path_analyzer_twostage": [p for p in twostage_predictions if not p["correct"]],
         },
         "augmentation": {
-            "policy": "real-derived training-only augmentation",
+            "policy": "real-derived training-only augmentation (capped)",
             "held_out_test_contains_augmented_samples": False,
+            "max_per_manifest": augmentation_cap,
             "types": [
                 "remove_auth_guard",
                 "remove_role_guard",
@@ -462,6 +521,7 @@ def run_final_experiment(
         report_path=report_path,
         real_only_model_path=real_only_model_path,
         augmented_model_path=augmented_model_path,
+        twostage_model_path=twostage_model_path,
         metrics=metrics,
     )
 
@@ -470,14 +530,21 @@ def _render_markdown_report(metrics: dict[str, Any]) -> str:
     split = metrics["split"]
     real = metrics["models"]["path_analyzer_real_only"]
     aug = metrics["models"]["path_analyzer_real_augmented"]
-    delta = metrics["models"]["real_augmented_delta"]
+    twostage = metrics["models"].get("path_analyzer_twostage")
+    delta_aug = metrics["models"]["real_augmented_delta"]
+    delta_ts = metrics["models"].get("twostage_delta", {})
     rule = metrics["baselines"]["rule_baseline"]
     lines = [
-        "# PathAnalyzer Final Real-Corpus Report",
+        "# PathAnalyzer Final Real-Corpus Report (v2)",
         "",
         "## Methodology",
         "",
-        "This report evaluates Model B / PathAnalyzer only. Augmented samples are derived from real extracted PFGs and are used only in training; validation and test are real-only.",
+        "This report evaluates Model B / PathAnalyzer with three training strategies:",
+        "1. **Real-only** — baseline trained on real extracted PFGs only.",
+        "2. **Real + Augmented** — real PFGs plus capped real-derived augmentations with focal loss.",
+        "3. **Two-stage** — contrastive synthetic pre-training then fine-tuning on real+augmented.",
+        "",
+        "Validation and test are always real-only.",
         "",
     ]
     for warning in metrics.get("warnings", []):
@@ -493,6 +560,7 @@ def _render_markdown_report(metrics: dict[str, Any]) -> str:
             f"- Test groups: {', '.join(split['test_groups'])}",
             f"- Real train samples: {split['n_train_real_samples']}",
             f"- Augmented train samples: {split['n_train_augmented_samples']}",
+            f"- Synthetic contrastive samples: {split.get('n_synthetic_contrastive_samples', 'N/A')}",
             f"- Real validation samples: {split['n_val_real_samples']}",
             f"- Real test samples: {split['n_test_real_samples']}",
             "",
@@ -502,14 +570,36 @@ def _render_markdown_report(metrics: dict[str, Any]) -> str:
             "| --- | ---: | ---: | ---: | ---: | ---: |",
             _metric_row("PathAnalyzer real-only", real),
             _metric_row("PathAnalyzer real + augmented", aug),
+        ]
+    )
+    if twostage:
+        lines.append(_metric_row("PathAnalyzer two-stage", twostage))
+    lines.extend(
+        [
             "",
-            "## Augmentation Delta",
+            "## Augmentation Delta (vs real-only)",
             "",
-            f"- Macro F1 delta: {delta['macro_f1']:.4f}",
-            f"- Accuracy delta: {delta['accuracy']:.4f}",
-            f"- Vulnerability recall delta: {delta['vulnerability_recall']:.4f}",
-            f"- Vulnerability precision delta: {delta['vulnerability_precision']:.4f}",
+            f"- Macro F1 delta: {delta_aug['macro_f1']:.4f}",
+            f"- Accuracy delta: {delta_aug['accuracy']:.4f}",
+            f"- Vulnerability recall delta: {delta_aug['vulnerability_recall']:.4f}",
+            f"- Vulnerability precision delta: {delta_aug['vulnerability_precision']:.4f}",
             "",
+        ]
+    )
+    if delta_ts:
+        lines.extend(
+            [
+                "## Two-Stage Delta (vs real-only)",
+                "",
+                f"- Macro F1 delta: {delta_ts['macro_f1']:.4f}",
+                f"- Accuracy delta: {delta_ts['accuracy']:.4f}",
+                f"- Vulnerability recall delta: {delta_ts['vulnerability_recall']:.4f}",
+                f"- Vulnerability precision delta: {delta_ts['vulnerability_precision']:.4f}",
+                "",
+            ]
+        )
+    lines.extend(
+        [
             "## Baselines",
             "",
             f"- Rule baseline on held-out test groups: precision={rule['micro_precision']:.4f}, recall={rule['micro_recall']:.4f}, F1={rule['micro_f1']:.4f}",
@@ -520,6 +610,12 @@ def _render_markdown_report(metrics: dict[str, Any]) -> str:
             "",
             f"- PathAnalyzer real-only errors: {len(metrics['error_analysis']['path_analyzer_real_only'])}",
             f"- PathAnalyzer real + augmented errors: {len(metrics['error_analysis']['path_analyzer_real_augmented'])}",
+        ]
+    )
+    if "path_analyzer_twostage" in metrics["error_analysis"]:
+        lines.append(f"- PathAnalyzer two-stage errors: {len(metrics['error_analysis']['path_analyzer_twostage'])}")
+    lines.extend(
+        [
             "",
             "Detailed endpoint-level predictions, explanations, and confusion matrices are in `final_metrics.json`.",
             "",

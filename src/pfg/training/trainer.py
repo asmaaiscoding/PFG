@@ -112,6 +112,18 @@ def _y_field(model: Any) -> str:
     return "y_subtype" if isinstance(model, PathAnalyzer) else "y"
 
 
+def _focal_loss(
+    logits: torch.Tensor,
+    targets: torch.Tensor,
+    weight: torch.Tensor,
+    gamma: float = 2.0,
+) -> torch.Tensor:
+    """Focal loss (Lin et al., 2017) with class weights."""
+    ce = F.cross_entropy(logits, targets, weight=weight, reduction="none")
+    pt = torch.exp(-ce)
+    return ((1 - pt) ** gamma * ce).mean()
+
+
 def _eval(
     model: Any, loader: DataLoader, device: torch.device, num_classes: int
 ) -> tuple[float, float, list[list[int]], list[int], list[int]]:
@@ -150,6 +162,7 @@ def _train_loop(
     device: torch.device,
     use_mlflow: bool,
     run_name: str,
+    focal_gamma: float = 0.0,
 ) -> TrainResult:
     optim = AdamW(model.parameters(), lr=lr, weight_decay=weight_decay)
     y_field = _y_field(model)
@@ -179,7 +192,10 @@ def _train_loop(
             optim.zero_grad()
             logits = model(batch)
             y = getattr(batch, y_field).view(-1)
-            loss = F.cross_entropy(logits, y, weight=weights)
+            if focal_gamma > 0.0:
+                loss = _focal_loss(logits, y, weights, focal_gamma)
+            else:
+                loss = F.cross_entropy(logits, y, weight=weights)
             loss.backward()  # type: ignore[no-untyped-call]
             optim.step()
             running += float(loss.item()) * int(y.numel())
@@ -331,11 +347,16 @@ def train_path_analyzer_split(
     hidden_dim: int = 64,
     num_layers: int = 3,
     heads: int = 4,
+    focal_gamma: float = 0.0,
+    pretrained_state: dict[str, torch.Tensor] | None = None,
 ) -> tuple[PathAnalyzer, TrainResult]:
     """Train Model B with pre-split samples.
 
     Use this for real corpora so split boundaries can be defined at the
     app/advisory level before endpoints are converted into PyG samples.
+
+    If *pretrained_state* is supplied, the model loads those weights before
+    fine-tuning (two-stage training).
     """
     if not train_samples or not val_samples or not test_samples:
         raise ValueError("train, val, and test sample lists must all be non-empty")
@@ -352,6 +373,8 @@ def train_path_analyzer_split(
     model = PathAnalyzer(
         hidden_dim=hidden_dim, num_layers=num_layers, heads=heads, num_classes=NUM_SUBTYPES
     ).to(dev)
+    if pretrained_state is not None:
+        model.load_state_dict(pretrained_state, strict=False)
     weights = _class_weights(
         (int(d.y_subtype.item()) for d in train), num_classes=NUM_SUBTYPES
     )
@@ -368,5 +391,57 @@ def train_path_analyzer_split(
         device=dev,
         use_mlflow=use_mlflow,
         run_name="path_analyzer_real_corpus",
+        focal_gamma=focal_gamma,
     )
     return model, metrics
+
+
+def pretrain_path_analyzer(
+    samples: list[Sample],
+    *,
+    epochs: int = 20,
+    lr: float = 1e-3,
+    weight_decay: float = 1e-4,
+    batch_size: int = 32,
+    seed: int = 0,
+    device: str | None = None,
+    hidden_dim: int = 64,
+    num_layers: int = 3,
+    heads: int = 4,
+    focal_gamma: float = 2.0,
+) -> dict[str, torch.Tensor]:
+    """Pre-train Model B on synthetic data and return the state_dict.
+
+    This is stage 1 of two-stage training. The returned state_dict can be
+    passed as *pretrained_state* to ``train_path_analyzer_split``.
+    """
+    torch.manual_seed(seed)
+    dev = torch.device(device or ("cuda" if torch.cuda.is_available() else "cpu"))
+    data = samples_to_pyg(samples)
+    train, val, test = _split(data, seed=seed)
+    train_loader = DataLoader(train, batch_size=batch_size, shuffle=True)
+    val_loader = DataLoader(val, batch_size=batch_size)
+    test_loader = DataLoader(test, batch_size=batch_size)
+
+    model = PathAnalyzer(
+        hidden_dim=hidden_dim, num_layers=num_layers, heads=heads, num_classes=NUM_SUBTYPES
+    ).to(dev)
+    weights = _class_weights(
+        (int(d.y_subtype.item()) for d in train), num_classes=NUM_SUBTYPES
+    )
+    _train_loop(
+        model,
+        train_loader,
+        val_loader,
+        test_loader,
+        epochs=epochs,
+        lr=lr,
+        weight_decay=weight_decay,
+        class_weights=weights,
+        num_classes=NUM_SUBTYPES,
+        device=dev,
+        use_mlflow=False,
+        run_name="path_analyzer_pretrain_synthetic",
+        focal_gamma=focal_gamma,
+    )
+    return {k: v.cpu().clone() for k, v in model.state_dict().items()}

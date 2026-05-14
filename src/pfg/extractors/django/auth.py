@@ -16,15 +16,20 @@ Recognized v1 patterns (see docs/auth-pattern-catalog.md §A):
   * DRF class attribute `permission_classes = [...]` on `APIView` /
     `ViewSet` / `ModelViewSet`.
 
-Out of scope for v1: settings-derived `DEFAULT_PERMISSION_CLASSES`, custom
-permission classes (always treated as USER unless they look like ownership
-checks — handled by ownership extractor in W9), `@method_decorator`,
-`get_permissions()` overrides.
+Recognized v2 additions:
+  * Settings-derived ``REST_FRAMEWORK["DEFAULT_PERMISSION_CLASSES"]`` —
+    parsed from ``settings.py`` / ``settings_global.py`` as a project-wide
+    fallback when no view-level or class-level auth annotation is found.
+  * ViewSet base class methods ``restrict_queryset`` / ``initial`` that
+    reference ``request.user`` are treated as authentication evidence.
+
+Still out of scope: ``@method_decorator``, ``get_permissions()`` overrides.
 """
 
 from __future__ import annotations
 
 import ast
+import re
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -320,7 +325,50 @@ def is_intentionally_public_route(route: str) -> bool:
     return any(route.startswith(p) for p in _PUBLIC_ROUTE_PREFIXES)
 
 
-def annotate_endpoint(ep: DiscoveredEndpoint, project_root: str | Path) -> EndpointAuth:
+# --- settings-level DRF default permission resolution --------------------
+
+_SETTINGS_FILES: tuple[str, ...] = (
+    "settings.py",
+    "settings_global.py",
+    "conf/settings.py",
+)
+
+# Regex to match DEFAULT_PERMISSION_CLASSES in a REST_FRAMEWORK dict.
+_DPC_RE = re.compile(
+    r"""['"]DEFAULT_PERMISSION_CLASSES['"]\s*:\s*[\(\[\{]\s*['"]([^'"]+)['"]""",
+)
+
+
+def resolve_default_permission_classes(project_root: Path) -> EndpointAuth | None:
+    """Scan settings files for REST_FRAMEWORK DEFAULT_PERMISSION_CLASSES.
+
+    Returns an EndpointAuth to use as a project-wide fallback, or None if
+    no setting was found.
+    """
+    for settings_rel in _SETTINGS_FILES:
+        for candidate in project_root.rglob(settings_rel):
+            try:
+                text = candidate.read_text(encoding="utf-8")
+            except (OSError, UnicodeDecodeError):
+                continue
+            m = _DPC_RE.search(text)
+            if m is None:
+                continue
+            # Extract the class name (last dotted segment).
+            class_name = m.group(1).rsplit(".", 1)[-1]
+            spec = _from_perm_classes([class_name], "GET")
+            if spec is not None:
+                a, r, p = spec
+                return EndpointAuth(a, r, p)
+    return None
+
+
+def annotate_endpoint(
+    ep: DiscoveredEndpoint,
+    project_root: str | Path,
+    *,
+    default_auth: EndpointAuth | None = None,
+) -> EndpointAuth:
     """Resolve auth attributes for a single discovered endpoint."""
     project_root = Path(project_root).resolve()
 
@@ -328,9 +376,6 @@ def annotate_endpoint(ep: DiscoveredEndpoint, project_root: str | Path) -> Endpo
     parts = qual.split(".")
     method_name: str | None = None
     if len(parts) >= 2:
-        # Determine if this is a CBV method or an FBV by reading the module.
-        # Convention: handler_qualname for CBV ends with `.<http_method>` or
-        # `.<viewset_action>`; the segment before it is the class name.
         candidate_module = ".".join(parts[:-2])
         candidate_class = parts[-2]
         candidate_attr = parts[-1]
@@ -349,7 +394,14 @@ def annotate_endpoint(ep: DiscoveredEndpoint, project_root: str | Path) -> Endpo
         tree = None
 
     public_by_route = is_intentionally_public_route(ep.route)
-    fallback = EndpointAuth(False, Role.NONE, public_by_route)
+    # Use settings-level fallback when available; otherwise assume unprotected.
+    fallback = default_auth or EndpointAuth(False, Role.NONE, public_by_route)
+    if default_auth is not None and public_by_route and not default_auth.requires_auth:
+        fallback = EndpointAuth(False, Role.NONE, True)
+    elif default_auth is not None and public_by_route:
+        fallback = EndpointAuth(
+            default_auth.requires_auth, default_auth.required_role, True
+        )
 
     if tree is None:
         return fallback

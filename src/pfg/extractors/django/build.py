@@ -25,7 +25,7 @@ import ast
 from pathlib import Path
 from typing import Any
 
-from pfg.extractors.django.auth import annotate_endpoint
+from pfg.extractors.django.auth import annotate_endpoint, resolve_default_permission_classes
 from pfg.extractors.django.callgraph import build_call_graph
 from pfg.extractors.django.dataaccess import DataAccess, detect_data_accesses
 from pfg.extractors.django.endpoints import discover_endpoints
@@ -200,6 +200,9 @@ def build_pfg(
 
     discovered = discover_endpoints(root)
 
+    # Resolve project-wide DRF DEFAULT_PERMISSION_CLASSES from settings.
+    default_auth = resolve_default_permission_classes(root)
+
     nodes: list[dict[str, Any]] = []
     edges: list[dict[str, Any]] = []
     seen_node_ids: set[str] = set()
@@ -226,7 +229,7 @@ def build_pfg(
     seeds: list[str] = []
     endpoint_ids_by_handler: dict[str, list[str]] = {}
     for ep in discovered:
-        auth = annotate_endpoint(ep, root)
+        auth = annotate_endpoint(ep, root, default_auth=default_auth)
         eid = _endpoint_id(ep.http_method, ep.route)
         add_node(
             {

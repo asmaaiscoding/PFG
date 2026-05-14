@@ -14,8 +14,11 @@ We target broken access control, especially:
 - `CWE-639` IDOR / authorization bypass through a user-controlled key
 
 The thesis question is whether a learned graph representation can detect
-multi-layer privilege-flow issues better than rule-only tools. The key IDOR
-pattern is:
+multi-layer privilege-flow issues better than rule-only tools. The final
+real-data claim is scoped to **Model B / PathAnalyzer only** because the output
+must identify the target endpoint and the specific vulnerability subtype. Model
+A remains available for older synthetic experiments, but it is not part of the
+final real-corpus comparison. The key IDOR pattern is:
 
 ```text
 route parameter {pk}
@@ -57,7 +60,7 @@ Third-party source code is not vendored in this repo. It is fetched into ignored
 
 ## Real Corpus Entries
 
-The real corpus currently contains two advisory-backed Django targets, with
+The real corpus currently contains three advisory-backed Django targets, with
 independent split groups for app-level evaluation.
 
 ### wger CVE-2026-27839
@@ -110,6 +113,32 @@ authenticated user in the vulnerable ref. The fixed commit adds an
 `upload_require_auth` option, an authentication check, and additional image
 format validation.
 
+### Nautobot CVE-2023-50263
+
+```text
+benchmarks/realworld/nautobot-cve-2023-50263/manifest.yaml
+```
+
+Provenance:
+
+- Repository: https://github.com/nautobot/nautobot
+- Vulnerable ref: `b639fca0385477e7a53f927d8e31509f5989d62a`
+- Advisory: https://github.com/nautobot/nautobot/security/advisories/GHSA-75mc-3pjc-727q
+- NVD: https://nvd.nist.gov/vuln/detail/CVE-2023-50263
+- Fix commit: https://github.com/nautobot/nautobot/commit/458280c359a4833a20da294eaf4b8d55edc91cee
+- CWE: `CWE-200`
+- License: Apache-2.0
+
+Labeled vulnerable endpoints:
+
+- `GET /files/get/`
+- `GET /files/download/`
+
+These endpoints came from `include("db_file_storage.urls")`, exposing
+db-file-storage file retrieval without authentication. The fixed commit
+replaces the include with Nautobot wrapper views that enforce `FileProxy` view
+permissions.
+
 ## Commands
 
 Install and test:
@@ -147,19 +176,18 @@ uv run pfg eval benchmarks/realworld --detector rule \
   --out artifacts/realworld-rule-eval.json
 ```
 
-Current two-corpus rule result after extractor hardening:
+Current three-corpus validation summary:
 
 ```text
-wger-cve-2026-27839: TP=3 FP=1 FN=0
-django-mdeditor-cve-2025-13030: TP=1 FP=0 FN=0
-micro precision=0.800 recall=1.000 F1=0.889
+SAFE=465 MISSING_AUTH=3 MISSING_ROLE=0 IDOR=3 COMBINED=0 INTENTIONALLY_PUBLIC=0
+split groups: django-mdeditor, nautobot, wger
 ```
 
-The current validation summary is:
+Current rule-baseline caveat:
 
 ```text
-SAFE=284 MISSING_AUTH=1 MISSING_ROLE=0 IDOR=3 COMBINED=0 INTENTIONALLY_PUBLIC=0
 wger: 1 unlabeled rule-baseline finding
+nautobot: 129 unlabeled rule-baseline findings
 ```
 
 The wger false positive is:
@@ -190,6 +218,50 @@ uv run pfg train-corpus benchmarks/realworld \
 
 The command intentionally splits by app/advisory group, not by endpoint, to
 avoid leakage between train and test.
+
+## Real-Derived Augmentation
+
+The final experiment compares:
+
+- **PathAnalyzer real-only**: trained only on advisory-backed real samples.
+- **PathAnalyzer real + augmented**: trained on the same real training split
+  plus real-derived augmented samples.
+
+Augmentation is generated from extracted real PFGs, not free synthetic apps.
+The implemented mutations remove authentication guards, remove role guards, or
+remove ownership predicates from real training graphs. Every augmented sample is
+marked with:
+
+- `augmented: true`
+- `origin_manifest`
+- `origin_endpoint_id`
+- `augmentation_type`
+
+Augmented samples are used in the training split only. Validation and test are
+always held-out real advisory-backed samples.
+
+Run the paired final experiment:
+
+```bash
+uv run pfg final-experiment benchmarks/realworld \
+  --holdout-group wger \
+  --seed 1 \
+  --out-dir artifacts
+```
+
+This writes:
+
+- `artifacts/path_analyzer_real_only.pt`
+- `artifacts/path_analyzer_real_augmented.pt`
+- `artifacts/final_metrics.json`
+- `artifacts/final_report.md`
+
+Use `final_metrics.json` to compare whether augmentation improves held-out
+real performance, especially macro F1 and vulnerable-endpoint recall.
+With the current three-group corpus, the explicit `wger` holdout keeps the
+test split real-only while placing Nautobot in training, which produces
+non-empty real-derived augmentation. For thesis tables, repeat the command
+with each independent holdout group and report the per-group results.
 
 ## External Tool Comparison
 
@@ -244,16 +316,17 @@ real corpus:
 
 ## Next Data Milestones
 
-Before claiming Model B results, add at least one more independent real
-Django/DRF split group. Candidates already identified:
+The corpus now has the minimum three independent split groups required for
+train/validation/test. Additional groups remain useful for stronger evidence:
 
 - `Nautobot` / `CVE-2023-51649` / object-level permission enforcement.
 - `Nautobot` / `CVE-2023-50263` / unauthenticated db-file-storage views.
 - Additional wger advisories may be included, but they should share the `wger`
   split group to avoid app-level leakage.
 
-Only after the corpus has multiple independent groups should we train and
-report Model B against the rule baseline, Semgrep, and CodeQL.
+Final reporting should compare PathAnalyzer real-only, PathAnalyzer
+real+augmented, the rule baseline, Semgrep, and CodeQL on the same held-out real
+test groups.
 
 ## References
 

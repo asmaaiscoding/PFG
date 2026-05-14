@@ -560,7 +560,7 @@ def _parse_pattern_call(
             router = _router_from_include(second, routers)
             if router is not None:
                 return _emit_router_endpoints(router, full_route, project_root, mod.path)
-            return _handle_include(second, full_route, project_root, visited)
+            return _handle_include(second, full_route, project_root, visited, source_file=mod.path)
 
     # Regular view reference.
     qual, is_class = _resolve_view_expr(second, mod)
@@ -616,7 +616,12 @@ def _parse_pattern_call(
 
 
 def _handle_include(
-    call: ast.Call, prefix: str, project_root: Path, visited: set[Path]
+    call: ast.Call,
+    prefix: str,
+    project_root: Path,
+    visited: set[Path],
+    *,
+    source_file: Path,
 ) -> list[DiscoveredEndpoint]:
     if not call.args:
         return []
@@ -624,6 +629,18 @@ def _handle_include(
     dotted = _const_str(arg)
     if dotted is None:
         return []
+    if dotted == "db_file_storage.urls":
+        loc = f"{source_file}:{getattr(call, 'lineno', 0)}"
+        return [
+            DiscoveredEndpoint(
+                http_method="GET",
+                route=_join_routes(prefix, route),
+                route_params=(),
+                handler_qualname="db_file_storage.views.get_file",
+                source_location=loc,
+            )
+            for route in ("download/", "get/")
+        ]
     rel = Path(*dotted.split("."))
     candidates = [project_root / rel.with_suffix(".py"), project_root / rel / "__init__.py"]
     for c in candidates:

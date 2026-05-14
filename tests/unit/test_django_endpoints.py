@@ -84,3 +84,23 @@ urlpatterns = [
 
     assert ("POST", "/mdeditor/uploads/", "mdeditor.views.UploadView.post") in found_set
     assert ("POST", "/uploads/", "mdeditor.views.UploadView.post") not in found_set
+
+
+def test_endpoint_discovery_handles_db_file_storage_include(tmp_path: Path) -> None:
+    (tmp_path / "urls.py").write_text(
+        """
+from django.conf.urls import include
+from django.urls import path
+
+urlpatterns = [
+    path("files/", include("db_file_storage.urls")),
+]
+""",
+        encoding="utf-8",
+    )
+
+    found = discover_endpoints(tmp_path)
+    found_set = {(e.http_method, e.route, e.handler_qualname) for e in found}
+
+    assert ("GET", "/files/download/", "db_file_storage.views.get_file") in found_set
+    assert ("GET", "/files/get/", "db_file_storage.views.get_file") in found_set

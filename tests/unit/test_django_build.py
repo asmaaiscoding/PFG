@@ -93,6 +93,34 @@ urlpatterns = [
     )
 
 
+def test_build_pfg_adds_external_db_file_storage_dataaccess(tmp_path: Path) -> None:
+    (tmp_path / "urls.py").write_text(
+        """
+from django.conf.urls import include
+from django.urls import path
+
+urlpatterns = [
+    path("files/", include("db_file_storage.urls")),
+]
+""",
+        encoding="utf-8",
+    )
+
+    pfg = build_pfg(tmp_path, application="db_file_storage")
+
+    endpoint_ids = {n.id for n in pfg.endpoints()}
+    assert _endpoint_id("GET", "/files/get/") in endpoint_ids
+    assert _endpoint_id("GET", "/files/download/") in endpoint_ids
+    data_accesses = {n.attrs.target_entity for n in pfg.data_accesses()}
+    assert "FileProxy" in data_accesses
+    assert any(
+        e.src == _service_id("db_file_storage.views.get_file")
+        and e.dst.startswith("data__db_file_storage_views_get_file")
+        and e.type == "call"
+        for e in pfg.edges
+    )
+
+
 def test_to_dot_emits_valid_dot() -> None:
     pfg = build_pfg(REF_CG, application="ref_callgraph")
     dot = to_dot(pfg)

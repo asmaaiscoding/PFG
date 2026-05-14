@@ -1,0 +1,1263 @@
+{
+  "experiment": "path_analyzer_leave_one_group_out_real_corpus",
+  "model_scope": "Model B / PathAnalyzer only",
+  "date": "2026-05-14",
+  "tool_versions": {
+    "semgrep": "1.163.0",
+    "codeql_cli": "2.25.4",
+    "codeql_python_queries": "1.8.2"
+  },
+  "external_tool_configs": {
+    "semgrep": [
+      "p/django",
+      "p/python"
+    ],
+    "codeql": [
+      "codeql/python-queries:codeql-suites/python-security-and-quality.qls"
+    ]
+  },
+  "corpus": {
+    "groups": [
+      "wger",
+      "nautobot",
+      "django-mdeditor"
+    ],
+    "total_endpoint_samples_across_unique_apps": 471,
+    "expected_vulnerable_endpoint_labels": 6,
+    "class_distribution": {
+      "SAFE": 465,
+      "MISSING_AUTH": 3,
+      "MISSING_ROLE": 0,
+      "IDOR": 3,
+      "COMBINED": 0,
+      "INTENTIONALLY_PUBLIC": 0
+    }
+  },
+  "protocol": {
+    "split": "leave-one-dataset_split_group-out",
+    "seed": 1,
+    "epochs_per_fold": 30,
+    "batch_size": 64,
+    "hidden_dim": 64,
+    "num_layers": 3,
+    "heads": 4,
+    "validation_and_test_are_real_only": true,
+    "augmentation_train_only": true
+  },
+  "models": {
+    "path_analyzer_real_only": {
+      "accuracy": 0.9872611464968153,
+      "macro_f1": 0.1655982905982906,
+      "per_class": {
+        "SAFE": {
+          "support": 465,
+          "precision": 0.9872611464968153,
+          "recall": 1.0,
+          "f1": 0.9935897435897436
+        },
+        "MISSING_AUTH": {
+          "support": 3,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "MISSING_ROLE": {
+          "support": 0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "IDOR": {
+          "support": 3,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "COMBINED": {
+          "support": 0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "INTENTIONALLY_PUBLIC": {
+          "support": 0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        }
+      },
+      "vulnerability_finding": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "tp": 0,
+        "fp": 0,
+        "fn": 6
+      },
+      "confusion": [
+        [
+          465,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      ]
+    },
+    "path_analyzer_real_augmented": {
+      "accuracy": 0.14437367303609341,
+      "macro_f1": 0.04886370784888094,
+      "per_class": {
+        "SAFE": {
+          "support": 465,
+          "precision": 1.0,
+          "recall": 0.13333333333333333,
+          "f1": 0.23529411764705882
+        },
+        "MISSING_AUTH": {
+          "support": 3,
+          "precision": 0.014218009478672985,
+          "recall": 1.0,
+          "f1": 0.02803738317757009
+        },
+        "MISSING_ROLE": {
+          "support": 0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "IDOR": {
+          "support": 3,
+          "precision": 0.015151515151515152,
+          "recall": 1.0,
+          "f1": 0.02985074626865672
+        },
+        "COMBINED": {
+          "support": 0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "INTENTIONALLY_PUBLIC": {
+          "support": 0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        }
+      },
+      "vulnerability_finding": {
+        "precision": 0.014669926650366748,
+        "recall": 1.0,
+        "f1": 0.02891566265060241,
+        "tp": 6,
+        "fp": 403,
+        "fn": 0
+      },
+      "confusion": [
+        [
+          62,
+          208,
+          0,
+          195,
+          0,
+          0
+        ],
+        [
+          0,
+          3,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          3,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      ]
+    },
+    "real_augmented_delta": {
+      "accuracy": -0.8428874734607219,
+      "macro_f1": -0.11673458274940965,
+      "vulnerability_precision": 0.014669926650366748,
+      "vulnerability_recall": 1.0,
+      "vulnerability_f1": 0.02891566265060241
+    },
+    "fold_macro_average": {
+      "path_analyzer_real_only": {
+        "accuracy": 0.9261567771791951,
+        "macro_f1": 0.1598925436995301,
+        "vulnerability_recall": 0.0
+      },
+      "path_analyzer_real_augmented": {
+        "accuracy": 0.14687031351574015,
+        "macro_f1": 0.04196385442992527,
+        "vulnerability_recall": 1.0
+      }
+    }
+  },
+  "baselines": {
+    "rule_baseline": {
+      "tp": 6,
+      "fp": 130,
+      "fn": 0,
+      "micro_precision": 0.04411764705882353,
+      "micro_recall": 1.0,
+      "micro_f1": 0.08450704225352113,
+      "apps": [
+        {
+          "application": "wger-cve-2026-27839",
+          "tp": 3,
+          "fp": 1,
+          "fn": 0,
+          "precision": 0.75,
+          "recall": 1.0,
+          "f1": 0.8571428571428571,
+          "predictions": [
+            {
+              "endpoint_id": "endpoint__GET___api_v2_exerciseimage__pk__thumbnails_",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__GET___api_v2_meal__pk__nutritional_values_",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__GET___api_v2_mealitem__pk__nutritional_values_",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__GET___api_v2_nutritionplan__pk__nutritional_values_",
+              "subtype": "IDOR"
+            }
+          ],
+          "expected": [
+            {
+              "endpoint_id": "endpoint__GET___api_v2_nutritionplan__pk__nutritional_values_",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__GET___api_v2_meal__pk__nutritional_values_",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__GET___api_v2_mealitem__pk__nutritional_values_",
+              "subtype": "IDOR"
+            }
+          ],
+          "notes": []
+        },
+        {
+          "application": "nautobot-cve-2023-50263",
+          "tp": 2,
+          "fp": 129,
+          "fn": 0,
+          "precision": 0.015267175572519083,
+          "recall": 1.0,
+          "f1": 0.03007518796992481,
+          "predictions": [
+            {
+              "endpoint_id": "endpoint__GET___circuits_circuits__pk__terminations_swap_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___dcim_cables__pk__changelog_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___dcim_cables__pk__notes_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___dcim_console_ports__pk__changelog_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___dcim_console_ports__pk__notes_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___dcim_console_server_ports__pk__changelog_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___dcim_console_server_ports__pk__notes_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___dcim_device_bays__pk__changelog_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___dcim_device_bays__pk__depopulate_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___dcim_device_bays__pk__notes_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___dcim_device_bays__pk__populate_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___dcim_device_types__pk__changelog_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___dcim_device_types__pk__notes_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___dcim_devices__pk__notes_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___dcim_front_ports__pk__changelog_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___dcim_front_ports__pk__notes_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___dcim_interfaces__pk__changelog_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___dcim_interfaces__pk__notes_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___dcim_inventory_items__pk__changelog_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___dcim_inventory_items__pk__notes_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___dcim_location_types__pk__changelog_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___dcim_location_types__pk__notes_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___dcim_locations__pk__changelog_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___dcim_locations__pk__notes_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___dcim_manufacturers__pk__changelog_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___dcim_manufacturers__pk__notes_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___dcim_platforms__pk__changelog_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___dcim_platforms__pk__notes_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___dcim_power_feeds__pk__changelog_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___dcim_power_feeds__pk__notes_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___dcim_power_outlets__pk__changelog_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___dcim_power_outlets__pk__notes_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___dcim_power_panels__pk__changelog_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___dcim_power_panels__pk__notes_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___dcim_power_ports__pk__changelog_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___dcim_power_ports__pk__notes_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___dcim_rack_groups__pk__changelog_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___dcim_rack_groups__pk__notes_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___dcim_rack_reservations__pk__changelog_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___dcim_rack_reservations__pk__notes_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___dcim_racks__pk__changelog_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___dcim_racks__pk__dynamic_groups_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___dcim_racks__pk__notes_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___dcim_rear_ports__pk__changelog_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___dcim_rear_ports__pk__notes_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___dcim_virtual_chassis__pk__changelog_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___dcim_virtual_chassis__pk__notes_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___extras_computed_fields__pk__changelog_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___extras_computed_fields__pk__notes_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___extras_config_context_schemas__pk__changelog_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___extras_config_context_schemas__pk__notes_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___extras_config_contexts__pk__changelog_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___extras_config_contexts__pk__notes_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___extras_custom_fields__pk__changelog_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___extras_custom_fields__pk__notes_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___extras_custom_links__pk__changelog_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___extras_custom_links__pk__notes_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___extras_dynamic_groups__pk__changelog_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___extras_dynamic_groups__pk__notes_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___extras_export_templates__pk__changelog_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___extras_export_templates__pk__notes_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___extras_git_repositories__pk__changelog_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___extras_git_repositories__pk__notes_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___extras_graphql_queries__pk__changelog_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___extras_graphql_queries__pk__notes_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___extras_job_hooks__pk__changelog_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___extras_notes__pk__changelog_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___extras_relationships__pk__changelog_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___extras_relationships__pk__notes_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___extras_secrets__pk__changelog_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___extras_secrets__pk__notes_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___extras_secrets_groups__pk__changelog_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___extras_secrets_groups__pk__notes_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___extras_statuses__pk__changelog_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___extras_statuses__pk__notes_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___extras_tags__pk__changelog_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___extras_tags__pk__notes_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___extras_webhooks__pk__changelog_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___extras_webhooks__pk__notes_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___files_download_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___files_get_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___ipam_ip_addresses__pk__changelog_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___ipam_ip_addresses__pk__dynamic_groups_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___ipam_ip_addresses__pk__notes_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___ipam_ip_addresses_assign_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___ipam_prefixes__pk__changelog_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___ipam_prefixes__pk__dynamic_groups_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___ipam_prefixes__pk__notes_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___ipam_rirs__pk__changelog_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___ipam_rirs__pk__notes_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___ipam_route_targets__pk__changelog_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___ipam_route_targets__pk__notes_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___ipam_services__pk__changelog_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___ipam_services__pk__notes_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___ipam_vlan_groups__pk__changelog_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___ipam_vlan_groups__pk__notes_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___ipam_vlans__pk__changelog_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___ipam_vlans__pk__notes_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___ipam_vrfs__pk__changelog_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___ipam_vrfs__pk__notes_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___tenancy_tenant_groups__pk__changelog_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___tenancy_tenant_groups__pk__notes_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___tenancy_tenants__pk__changelog_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___tenancy_tenants__pk__notes_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___virtualization_cluster_groups__pk__changelog_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___virtualization_cluster_groups__pk__notes_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___virtualization_cluster_types__pk__changelog_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___virtualization_cluster_types__pk__notes_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___virtualization_clusters__pk__changelog_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___virtualization_clusters__pk__devices_add_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___virtualization_clusters__pk__dynamic_groups_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___virtualization_clusters__pk__notes_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___virtualization_interfaces__pk__changelog_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___virtualization_interfaces__pk__notes_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___virtualization_virtual_machines__pk__changelog_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___virtualization_virtual_machines__pk__dynamic_groups_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___virtualization_virtual_machines__pk__notes_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__POST___circuits_circuits__pk__terminations_swap_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__POST___dcim_device_bays__pk__depopulate_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__POST___dcim_device_bays__pk__populate_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__POST___dcim_virtual_chassis__pk__edit_",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__POST___dcim_virtual_chassis_members__pk__delete_",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__POST___extras_git_repositories__pk__dry_run_",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__POST___extras_git_repositories__pk__dry_run_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__POST___extras_git_repositories__pk__sync_",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__POST___extras_git_repositories__pk__sync_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__POST___extras_job_button__pk__run_",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__POST___extras_jobs_scheduled_jobs_approval_queue__pk__",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__POST___ipam_ip_addresses_assign_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__POST___virtualization_clusters__pk__devices_add_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__POST___virtualization_clusters__pk__devices_remove_",
+              "subtype": "MISSING_AUTH"
+            }
+          ],
+          "expected": [
+            {
+              "endpoint_id": "endpoint__GET___files_get_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___files_download_",
+              "subtype": "MISSING_AUTH"
+            }
+          ],
+          "notes": []
+        },
+        {
+          "application": "django-mdeditor-cve-2025-13030",
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "predictions": [
+            {
+              "endpoint_id": "endpoint__POST___mdeditor_uploads_",
+              "subtype": "MISSING_AUTH"
+            }
+          ],
+          "expected": [
+            {
+              "endpoint_id": "endpoint__POST___mdeditor_uploads_",
+              "subtype": "MISSING_AUTH"
+            }
+          ],
+          "notes": []
+        }
+      ]
+    },
+    "semgrep": {
+      "tp": 0,
+      "fp": 0,
+      "fn": 6,
+      "micro_precision": 0.0,
+      "micro_recall": 0.0,
+      "micro_f1": 0.0,
+      "apps": [
+        {
+          "application": "wger-cve-2026-27839",
+          "tp": 0,
+          "fp": 0,
+          "fn": 3,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "predictions": [],
+          "expected": [
+            {
+              "endpoint_id": "endpoint__GET___api_v2_nutritionplan__pk__nutritional_values_",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__GET___api_v2_meal__pk__nutritional_values_",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__GET___api_v2_mealitem__pk__nutritional_values_",
+              "subtype": "IDOR"
+            }
+          ],
+          "notes": []
+        },
+        {
+          "application": "nautobot-cve-2023-50263",
+          "tp": 0,
+          "fp": 0,
+          "fn": 2,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "predictions": [],
+          "expected": [
+            {
+              "endpoint_id": "endpoint__GET___files_get_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___files_download_",
+              "subtype": "MISSING_AUTH"
+            }
+          ],
+          "notes": []
+        },
+        {
+          "application": "django-mdeditor-cve-2025-13030",
+          "tp": 0,
+          "fp": 0,
+          "fn": 1,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "predictions": [],
+          "expected": [
+            {
+              "endpoint_id": "endpoint__POST___mdeditor_uploads_",
+              "subtype": "MISSING_AUTH"
+            }
+          ],
+          "notes": []
+        }
+      ]
+    },
+    "codeql": {
+      "tp": 0,
+      "fp": 0,
+      "fn": 6,
+      "micro_precision": 0.0,
+      "micro_recall": 0.0,
+      "micro_f1": 0.0,
+      "apps": [
+        {
+          "application": "wger-cve-2026-27839",
+          "tp": 0,
+          "fp": 0,
+          "fn": 3,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "predictions": [],
+          "expected": [
+            {
+              "endpoint_id": "endpoint__GET___api_v2_nutritionplan__pk__nutritional_values_",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__GET___api_v2_meal__pk__nutritional_values_",
+              "subtype": "IDOR"
+            },
+            {
+              "endpoint_id": "endpoint__GET___api_v2_mealitem__pk__nutritional_values_",
+              "subtype": "IDOR"
+            }
+          ],
+          "notes": []
+        },
+        {
+          "application": "nautobot-cve-2023-50263",
+          "tp": 0,
+          "fp": 0,
+          "fn": 2,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "predictions": [],
+          "expected": [
+            {
+              "endpoint_id": "endpoint__GET___files_get_",
+              "subtype": "MISSING_AUTH"
+            },
+            {
+              "endpoint_id": "endpoint__GET___files_download_",
+              "subtype": "MISSING_AUTH"
+            }
+          ],
+          "notes": []
+        },
+        {
+          "application": "django-mdeditor-cve-2025-13030",
+          "tp": 0,
+          "fp": 0,
+          "fn": 1,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "predictions": [],
+          "expected": [
+            {
+              "endpoint_id": "endpoint__POST___mdeditor_uploads_",
+              "subtype": "MISSING_AUTH"
+            }
+          ],
+          "notes": []
+        }
+      ]
+    },
+    "external_raw_counts": {
+      "semgrep": {
+        "django-mdeditor": {
+          "raw_findings": 0,
+          "normalized_endpoint_findings": 0
+        },
+        "wger": {
+          "raw_findings": 22,
+          "normalized_endpoint_findings": 0
+        },
+        "nautobot": {
+          "raw_findings": 17,
+          "normalized_endpoint_findings": 0
+        }
+      },
+      "codeql": {
+        "django-mdeditor": {
+          "raw_findings": 7,
+          "normalized_endpoint_findings": 0
+        },
+        "wger": {
+          "raw_findings": 157,
+          "normalized_endpoint_findings": 0
+        },
+        "nautobot": {
+          "raw_findings": 298,
+          "normalized_endpoint_findings": 0
+        }
+      }
+    }
+  },
+  "folds": {
+    "wger": {
+      "metrics_path": "artifacts/final/wger/final_metrics.json",
+      "split": {
+        "train_groups": [
+          "nautobot"
+        ],
+        "val_groups": [
+          "django-mdeditor"
+        ],
+        "test_groups": [
+          "wger"
+        ],
+        "n_train_real_samples": 183,
+        "n_train_augmented_samples": 21,
+        "n_val_real_samples": 5,
+        "n_test_real_samples": 283,
+        "test_is_real_only": true
+      },
+      "models": {
+        "path_analyzer_real_only": {
+          "accuracy": 0.9893992932862191,
+          "macro_f1": 0.16577856719952636,
+          "vulnerability_finding": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "tp": 0,
+            "fp": 0,
+            "fn": 3
+          }
+        },
+        "path_analyzer_real_augmented": {
+          "accuracy": 0.22968197879858657,
+          "macro_f1": 0.06614313561681982,
+          "vulnerability_finding": {
+            "precision": 0.013574660633484163,
+            "recall": 1.0,
+            "f1": 0.026785714285714288,
+            "tp": 3,
+            "fp": 218,
+            "fn": 0
+          }
+        }
+      },
+      "baselines": {
+        "rule_baseline": {
+          "micro_precision": 0.75,
+          "micro_recall": 1.0,
+          "micro_f1": 0.8571428571428571
+        },
+        "semgrep": {
+          "micro_precision": 0.0,
+          "micro_recall": 0.0,
+          "micro_f1": 0.0
+        },
+        "codeql": {
+          "micro_precision": 0.0,
+          "micro_recall": 0.0,
+          "micro_f1": 0.0
+        }
+      }
+    },
+    "nautobot": {
+      "metrics_path": "artifacts/final/nautobot/final_metrics.json",
+      "split": {
+        "train_groups": [
+          "wger"
+        ],
+        "val_groups": [
+          "django-mdeditor"
+        ],
+        "test_groups": [
+          "nautobot"
+        ],
+        "n_train_real_samples": 283,
+        "n_train_augmented_samples": 17,
+        "n_val_real_samples": 5,
+        "n_test_real_samples": 183,
+        "test_is_real_only": true
+      },
+      "models": {
+        "path_analyzer_real_only": {
+          "accuracy": 0.9890710382513661,
+          "macro_f1": 0.16575091575091574,
+          "vulnerability_finding": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "tp": 0,
+            "fp": 0,
+            "fn": 2
+          }
+        },
+        "path_analyzer_real_augmented": {
+          "accuracy": 0.01092896174863388,
+          "macro_f1": 0.0041928721174004195,
+          "vulnerability_finding": {
+            "precision": 0.01092896174863388,
+            "recall": 1.0,
+            "f1": 0.021621621621621623,
+            "tp": 2,
+            "fp": 181,
+            "fn": 0
+          }
+        }
+      },
+      "baselines": {
+        "rule_baseline": {
+          "micro_precision": 0.015267175572519083,
+          "micro_recall": 1.0,
+          "micro_f1": 0.03007518796992481
+        },
+        "semgrep": {
+          "micro_precision": 0.0,
+          "micro_recall": 0.0,
+          "micro_f1": 0.0
+        },
+        "codeql": {
+          "micro_precision": 0.0,
+          "micro_recall": 0.0,
+          "micro_f1": 0.0
+        }
+      }
+    },
+    "django-mdeditor": {
+      "metrics_path": "artifacts/final/django-mdeditor/final_metrics.json",
+      "split": {
+        "train_groups": [
+          "wger"
+        ],
+        "val_groups": [
+          "nautobot"
+        ],
+        "test_groups": [
+          "django-mdeditor"
+        ],
+        "n_train_real_samples": 283,
+        "n_train_augmented_samples": 17,
+        "n_val_real_samples": 183,
+        "n_test_real_samples": 5,
+        "test_is_real_only": true
+      },
+      "models": {
+        "path_analyzer_real_only": {
+          "accuracy": 0.8,
+          "macro_f1": 0.14814814814814817,
+          "vulnerability_finding": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "tp": 0,
+            "fp": 0,
+            "fn": 1
+          }
+        },
+        "path_analyzer_real_augmented": {
+          "accuracy": 0.2,
+          "macro_f1": 0.05555555555555556,
+          "vulnerability_finding": {
+            "precision": 0.2,
+            "recall": 1.0,
+            "f1": 0.33333333333333337,
+            "tp": 1,
+            "fp": 4,
+            "fn": 0
+          }
+        }
+      },
+      "baselines": {
+        "rule_baseline": {
+          "micro_precision": 1.0,
+          "micro_recall": 1.0,
+          "micro_f1": 1.0
+        },
+        "semgrep": {
+          "micro_precision": 0.0,
+          "micro_recall": 0.0,
+          "micro_f1": 0.0
+        },
+        "codeql": {
+          "micro_precision": 0.0,
+          "micro_recall": 0.0,
+          "micro_f1": 0.0
+        }
+      }
+    }
+  },
+  "artifacts": {
+    "per_fold_dir": "artifacts/final/<holdout-group>/",
+    "corpus_validation": "artifacts/corpus_validation.json",
+    "semgrep_raw": "artifacts/semgrep-*.raw.json",
+    "semgrep_normalized": "artifacts/semgrep-*.normalized.json",
+    "codeql_databases": "artifacts/codeql/*-db",
+    "codeql_sarif": "artifacts/codeql-*.sarif.json",
+    "codeql_normalized": "artifacts/codeql-*.normalized.json"
+  }
+}

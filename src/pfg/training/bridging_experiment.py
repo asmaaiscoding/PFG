@@ -26,6 +26,7 @@ from pfg.eval.harness import (
     gnn_detector,
     report_to_dict,
     rule_detector,
+    validated_gnn_detector,
 )
 from pfg.eval.manifest import Manifest, discover_manifests
 from pfg.models.checkpoint import load_model, save_model
@@ -107,6 +108,11 @@ def _run_fold(
         gnn_detector(finetuned_model, threshold=gnn_threshold),
         detector_name="gnn_finetuned",
     )
+    ft_validated_report = evaluate_corpus(
+        test_manifests,
+        validated_gnn_detector(finetuned_model, threshold=gnn_threshold),
+        detector_name="gnn_finetuned_validated",
+    )
     rule_report = evaluate_corpus(
         test_manifests,
         rule_detector,
@@ -133,6 +139,7 @@ def _run_fold(
         "n_val": len(val_samples),
         "n_test": len(test_samples),
         "finetuned": report_to_dict(ft_report),
+        "finetuned_validated": report_to_dict(ft_validated_report),
         "synthetic_only": report_to_dict(synth_report),
         "rule_baseline": report_to_dict(rule_report),
         "finetuned_train_result": {
@@ -281,6 +288,7 @@ def run_bridging_experiment(
         return {"tp": tp, "fp": fp, "fn": fn, "precision": prec, "recall": rec, "f1": f1}
 
     agg_finetuned = _agg("finetuned")
+    agg_finetuned_validated = _agg("finetuned_validated")
     agg_synthetic = _agg("synthetic_only")
     agg_rule = _agg("rule_baseline")
 
@@ -314,6 +322,7 @@ def run_bridging_experiment(
         "folds": folds,
         "aggregate": {
             "finetuned": agg_finetuned,
+            "finetuned_validated": agg_finetuned_validated,
             "synthetic_only": agg_synthetic,
             "rule_baseline": agg_rule,
         },
@@ -355,6 +364,7 @@ def _render_report(metrics: dict[str, Any]) -> str:
     ]
     for name, a in [
         ("Fine-tuned GNN", agg["finetuned"]),
+        ("Fine-tuned GNN (validated)", agg["finetuned_validated"]),
         ("Synthetic-only GNN", agg["synthetic_only"]),
         ("Rule baseline", agg["rule_baseline"]),
     ]:
@@ -374,6 +384,7 @@ def _render_report(metrics: dict[str, Any]) -> str:
         lines.append("| --- | ---: | ---: | ---: | ---: | ---: | ---: |")
         for system_key, label in [
             ("finetuned", "Fine-tuned"),
+            ("finetuned_validated", "FT+validated"),
             ("synthetic_only", "Synthetic-only"),
             ("rule_baseline", "Rule"),
         ]:

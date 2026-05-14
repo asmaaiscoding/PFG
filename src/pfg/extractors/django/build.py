@@ -171,18 +171,62 @@ def _class_get_queryset_uses_user(tree: ast.AST, class_name: str) -> bool:
     return False
 
 
+def _resolve_class_module(
+    project_root: Path, qual: str
+) -> tuple[ast.AST, str] | None:
+    """Resolve the module AST tree and class name from a qualname.
+
+    Works even when the method (last segment) is inherited and not present
+    in user source — we only need the class definition.
+    """
+    parts = qual.split(".")
+    if len(parts) < 3:
+        return None
+    class_name = parts[-2]
+    for i in range(len(parts) - 2, 0, -1):
+        rel = Path(*parts[:i])
+        for cand in (
+            project_root / rel.with_suffix(".py"),
+            project_root / rel / "__init__.py",
+        ):
+            if not cand.exists():
+                continue
+            try:
+                tree = ast.parse(cand.read_text(encoding="utf-8"), filename=str(cand))
+            except SyntaxError:
+                continue
+            for n in ast.walk(tree):
+                if isinstance(n, ast.ClassDef) and n.name == class_name:
+                    return tree, class_name
+    return None
+
+
 def _handler_ownership_check_present(project_root: Path, qual: str) -> bool:
     resolved = _resolve_function(project_root, qual)
-    if resolved is None:
-        return False
-    tree, fn = resolved
-    if _function_calls_self_get_object(fn):
-        return True
-    parts = qual.split(".")
-    if len(parts) >= 3:
-        class_name = parts[-2]
-        if _class_get_queryset_uses_user(tree, class_name) and _function_calls_self_get_object(fn):
+    if resolved is not None:
+        tree, fn = resolved
+        if _function_calls_self_get_object(fn):
             return True
+        parts = qual.split(".")
+        if len(parts) >= 3:
+            class_name = parts[-2]
+            if _class_get_queryset_uses_user(tree, class_name) and _function_calls_self_get_object(fn):
+                return True
+        # Handler found in source but doesn't use get_object() — custom action
+        # that bypasses the queryset pipeline (e.g. Model.objects.get(pk=pk)).
+        return False
+
+    # Handler method not found in user source — likely inherited from a DRF
+    # mixin/base class (retrieve, list, update, partial_update, destroy).
+    # These standard methods go through get_queryset()/get_object().  If the
+    # viewset overrides get_queryset() to scope queries to request.user,
+    # ownership is enforced for all inherited handlers.
+    resolved_class = _resolve_class_module(project_root, qual)
+    if resolved_class is not None:
+        tree, class_name = resolved_class
+        if _class_get_queryset_uses_user(tree, class_name):
+            return True
+
     return False
 
 

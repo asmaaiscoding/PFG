@@ -1,0 +1,947 @@
+{
+  "experiment": "bridging_synthetic_pretrain_mixed_finetune",
+  "config": {
+    "synth_model_path": "artifacts/synthetic-v4/path_analyzer_synthetic.pt",
+    "n_synth_apps": 5,
+    "synth_vuln_ratio": 0.8,
+    "synth_vuln_anchors": 91,
+    "epochs": 15,
+    "lr": 5e-05,
+    "focal_gamma": 2.0,
+    "batch_size": 16,
+    "hidden_dim": 64,
+    "num_layers": 3,
+    "heads": 4,
+    "gnn_threshold": 0.5,
+    "seed": 0
+  },
+  "folds": [
+    {
+      "fold": "django-mdeditor",
+      "n_train_real": 372,
+      "n_train_synth_vuln": 91,
+      "n_train_total": 463,
+      "n_val": 94,
+      "n_test": 5,
+      "finetuned": {
+        "detector": "gnn_finetuned",
+        "micro_precision": 0.2,
+        "micro_recall": 1.0,
+        "micro_f1": 0.33333333333333337,
+        "apps": [
+          {
+            "application": "django-mdeditor-cve-2025-13030",
+            "tp": 1,
+            "fp": 4,
+            "fn": 0,
+            "precision": 0.2,
+            "recall": 1.0,
+            "f1": 0.33333333333333337,
+            "predictions": [
+              {
+                "endpoint_id": "endpoint__GET___",
+                "subtype": "MISSING_AUTH"
+              },
+              {
+                "endpoint_id": "endpoint__GET___admin_",
+                "subtype": "MISSING_AUTH"
+              },
+              {
+                "endpoint_id": "endpoint__GET___model_",
+                "subtype": "MISSING_AUTH"
+              },
+              {
+                "endpoint_id": "endpoint__GET___show__pk__",
+                "subtype": "COMBINED"
+              },
+              {
+                "endpoint_id": "endpoint__POST___mdeditor_uploads_",
+                "subtype": "MISSING_AUTH"
+              }
+            ],
+            "expected": [
+              {
+                "endpoint_id": "endpoint__POST___mdeditor_uploads_",
+                "subtype": "MISSING_AUTH"
+              }
+            ],
+            "notes": []
+          }
+        ]
+      },
+      "synthetic_only": {
+        "detector": "gnn_synthetic_only",
+        "micro_precision": 0.5,
+        "micro_recall": 1.0,
+        "micro_f1": 0.6666666666666666,
+        "apps": [
+          {
+            "application": "django-mdeditor-cve-2025-13030",
+            "tp": 1,
+            "fp": 1,
+            "fn": 0,
+            "precision": 0.5,
+            "recall": 1.0,
+            "f1": 0.6666666666666666,
+            "predictions": [
+              {
+                "endpoint_id": "endpoint__GET___show__pk__",
+                "subtype": "COMBINED"
+              },
+              {
+                "endpoint_id": "endpoint__POST___mdeditor_uploads_",
+                "subtype": "MISSING_AUTH"
+              }
+            ],
+            "expected": [
+              {
+                "endpoint_id": "endpoint__POST___mdeditor_uploads_",
+                "subtype": "MISSING_AUTH"
+              }
+            ],
+            "notes": []
+          }
+        ]
+      },
+      "rule_baseline": {
+        "detector": "rule_baseline",
+        "micro_precision": 1.0,
+        "micro_recall": 1.0,
+        "micro_f1": 1.0,
+        "apps": [
+          {
+            "application": "django-mdeditor-cve-2025-13030",
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "predictions": [
+              {
+                "endpoint_id": "endpoint__POST___mdeditor_uploads_",
+                "subtype": "MISSING_AUTH"
+              }
+            ],
+            "expected": [
+              {
+                "endpoint_id": "endpoint__POST___mdeditor_uploads_",
+                "subtype": "MISSING_AUTH"
+              }
+            ],
+            "notes": []
+          }
+        ]
+      },
+      "finetuned_train_result": {
+        "test_accuracy": 0.2,
+        "test_macro_f1": 0.06666666666666667,
+        "best_val_loss": 0.39155837322803255
+      }
+    },
+    {
+      "fold": "nautobot",
+      "n_train_real": 230,
+      "n_train_synth_vuln": 91,
+      "n_train_total": 321,
+      "n_val": 58,
+      "n_test": 183,
+      "finetuned": {
+        "detector": "gnn_finetuned",
+        "micro_precision": 0.16666666666666666,
+        "micro_recall": 1.0,
+        "micro_f1": 0.2857142857142857,
+        "apps": [
+          {
+            "application": "nautobot-cve-2023-50263",
+            "tp": 2,
+            "fp": 10,
+            "fn": 0,
+            "precision": 0.16666666666666666,
+            "recall": 1.0,
+            "f1": 0.2857142857142857,
+            "predictions": [
+              {
+                "endpoint_id": "endpoint__GET___admin_",
+                "subtype": "MISSING_AUTH"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_jobs__class_path__run_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_jobs__pk__run_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___files_download_",
+                "subtype": "MISSING_AUTH"
+              },
+              {
+                "endpoint_id": "endpoint__GET___files_get_",
+                "subtype": "MISSING_AUTH"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_graphql_",
+                "subtype": "MISSING_AUTH"
+              },
+              {
+                "endpoint_id": "endpoint__POST___dcim_virtual_chassis__pk__edit_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___dcim_virtual_chassis_members__pk__delete_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___extras_git_repositories__pk__dry_run_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___extras_git_repositories__pk__sync_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___extras_job_button__pk__run_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___extras_jobs_scheduled_jobs_approval_queue__pk__",
+                "subtype": "IDOR"
+              }
+            ],
+            "expected": [
+              {
+                "endpoint_id": "endpoint__GET___files_get_",
+                "subtype": "MISSING_AUTH"
+              },
+              {
+                "endpoint_id": "endpoint__GET___files_download_",
+                "subtype": "MISSING_AUTH"
+              }
+            ],
+            "notes": []
+          }
+        ]
+      },
+      "synthetic_only": {
+        "detector": "gnn_synthetic_only",
+        "micro_precision": 0.16666666666666666,
+        "micro_recall": 1.0,
+        "micro_f1": 0.2857142857142857,
+        "apps": [
+          {
+            "application": "nautobot-cve-2023-50263",
+            "tp": 2,
+            "fp": 10,
+            "fn": 0,
+            "precision": 0.16666666666666666,
+            "recall": 1.0,
+            "f1": 0.2857142857142857,
+            "predictions": [
+              {
+                "endpoint_id": "endpoint__GET___admin_",
+                "subtype": "MISSING_AUTH"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_jobs__class_path__run_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_jobs__pk__run_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___files_download_",
+                "subtype": "MISSING_AUTH"
+              },
+              {
+                "endpoint_id": "endpoint__GET___files_get_",
+                "subtype": "MISSING_AUTH"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_graphql_",
+                "subtype": "MISSING_AUTH"
+              },
+              {
+                "endpoint_id": "endpoint__POST___dcim_virtual_chassis__pk__edit_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___dcim_virtual_chassis_members__pk__delete_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___extras_git_repositories__pk__dry_run_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___extras_git_repositories__pk__sync_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___extras_job_button__pk__run_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___extras_jobs_scheduled_jobs_approval_queue__pk__",
+                "subtype": "IDOR"
+              }
+            ],
+            "expected": [
+              {
+                "endpoint_id": "endpoint__GET___files_get_",
+                "subtype": "MISSING_AUTH"
+              },
+              {
+                "endpoint_id": "endpoint__GET___files_download_",
+                "subtype": "MISSING_AUTH"
+              }
+            ],
+            "notes": []
+          }
+        ]
+      },
+      "rule_baseline": {
+        "detector": "rule_baseline",
+        "micro_precision": 0.2857142857142857,
+        "micro_recall": 1.0,
+        "micro_f1": 0.4444444444444445,
+        "apps": [
+          {
+            "application": "nautobot-cve-2023-50263",
+            "tp": 2,
+            "fp": 5,
+            "fn": 0,
+            "precision": 0.2857142857142857,
+            "recall": 1.0,
+            "f1": 0.4444444444444445,
+            "predictions": [
+              {
+                "endpoint_id": "endpoint__GET___files_download_",
+                "subtype": "MISSING_AUTH"
+              },
+              {
+                "endpoint_id": "endpoint__GET___files_get_",
+                "subtype": "MISSING_AUTH"
+              },
+              {
+                "endpoint_id": "endpoint__POST___dcim_virtual_chassis__pk__edit_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___dcim_virtual_chassis_members__pk__delete_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___extras_git_repositories__pk__dry_run_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___extras_git_repositories__pk__sync_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___extras_job_button__pk__run_",
+                "subtype": "IDOR"
+              }
+            ],
+            "expected": [
+              {
+                "endpoint_id": "endpoint__GET___files_get_",
+                "subtype": "MISSING_AUTH"
+              },
+              {
+                "endpoint_id": "endpoint__GET___files_download_",
+                "subtype": "MISSING_AUTH"
+              }
+            ],
+            "notes": []
+          }
+        ]
+      },
+      "finetuned_train_result": {
+        "test_accuracy": 0.9398907103825137,
+        "test_macro_f1": 0.2725546058879392,
+        "best_val_loss": 0.8626809777884648
+      }
+    },
+    {
+      "fold": "wger",
+      "n_train_real": 150,
+      "n_train_synth_vuln": 91,
+      "n_train_total": 241,
+      "n_val": 38,
+      "n_test": 283,
+      "finetuned": {
+        "detector": "gnn_finetuned",
+        "micro_precision": 0.2,
+        "micro_recall": 1.0,
+        "micro_f1": 0.33333333333333337,
+        "apps": [
+          {
+            "application": "wger-cve-2026-27839",
+            "tp": 3,
+            "fp": 12,
+            "fn": 0,
+            "precision": 0.2,
+            "recall": 1.0,
+            "f1": 0.33333333333333337,
+            "predictions": [
+              {
+                "endpoint_id": "endpoint__GET___add_",
+                "subtype": "MISSING_AUTH"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_check_permission_",
+                "subtype": "MISSING_AUTH"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_exercise_search_",
+                "subtype": "MISSING_AUTH"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_exerciseimage__pk__thumbnails_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_exerciseinfo_search_",
+                "subtype": "MISSING_AUTH"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_ingredient_search_",
+                "subtype": "MISSING_AUTH"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_meal__pk__nutritional_values_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_mealitem__pk__nutritional_values_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_min_app_version_",
+                "subtype": "MISSING_AUTH"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_nutritiondiary__pk__nutritional_values_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_nutritionplan__pk__nutritional_values_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_version_",
+                "subtype": "MISSING_AUTH"
+              },
+              {
+                "endpoint_id": "endpoint__GET___import_csv_",
+                "subtype": "MISSING_AUTH"
+              },
+              {
+                "endpoint_id": "endpoint__GET___sitemap_xml",
+                "subtype": "MISSING_AUTH"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_login_",
+                "subtype": "MISSING_AUTH"
+              }
+            ],
+            "expected": [
+              {
+                "endpoint_id": "endpoint__GET___api_v2_nutritionplan__pk__nutritional_values_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_meal__pk__nutritional_values_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_mealitem__pk__nutritional_values_",
+                "subtype": "IDOR"
+              }
+            ],
+            "notes": []
+          }
+        ]
+      },
+      "synthetic_only": {
+        "detector": "gnn_synthetic_only",
+        "micro_precision": 0.03333333333333333,
+        "micro_recall": 1.0,
+        "micro_f1": 0.06451612903225806,
+        "apps": [
+          {
+            "application": "wger-cve-2026-27839",
+            "tp": 3,
+            "fp": 87,
+            "fn": 0,
+            "precision": 0.03333333333333333,
+            "recall": 1.0,
+            "f1": 0.06451612903225806,
+            "predictions": [
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_daysofweek__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_equipment__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_exercise__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_exercise_base__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_exercise_translation__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_exercisealias__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_exercisebaseinfo__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_exercisecategory__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_exercisecomment__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_exerciseimage__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_exerciseinfo__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_ingredient__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_ingredientinfo__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_ingredientweightunit__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_language__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_license__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_muscle__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_nutritionplaninfo__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_public_templates__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_setting_repetitionunit__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_setting_weightunit__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_userprofile__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_variation__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_video__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_weightunit__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___add_",
+                "subtype": "MISSING_AUTH"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_check_permission_",
+                "subtype": "MISSING_AUTH"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_exercise_search_",
+                "subtype": "MISSING_AUTH"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_exerciseimage__pk__thumbnails_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_exerciseinfo_search_",
+                "subtype": "MISSING_AUTH"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_ingredient_search_",
+                "subtype": "MISSING_AUTH"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_meal__pk__nutritional_values_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_mealitem__pk__nutritional_values_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_min_app_version_",
+                "subtype": "MISSING_AUTH"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_nutritiondiary__pk__nutritional_values_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_nutritionplan__pk__nutritional_values_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_version_",
+                "subtype": "MISSING_AUTH"
+              },
+              {
+                "endpoint_id": "endpoint__GET___import_csv_",
+                "subtype": "MISSING_AUTH"
+              },
+              {
+                "endpoint_id": "endpoint__GET___sitemap_xml",
+                "subtype": "MISSING_AUTH"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_daysofweek__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_equipment__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_exercise__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_exercise_base__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_exercise_translation__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_exercisealias__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_exercisebaseinfo__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_exercisecategory__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_exercisecomment__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_exerciseimage__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_exerciseinfo__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_ingredient__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_ingredientinfo__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_ingredientweightunit__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_language__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_license__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_muscle__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_nutritionplaninfo__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_public_templates__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_setting_repetitionunit__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_setting_weightunit__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_userprofile__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_variation__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_video__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_weightunit__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_login_",
+                "subtype": "MISSING_AUTH"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_daysofweek__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_equipment__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_exercise__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_exercise_base__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_exercise_translation__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_exercisealias__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_exercisebaseinfo__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_exercisecategory__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_exercisecomment__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_exerciseimage__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_exerciseinfo__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_ingredient__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_ingredientinfo__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_ingredientweightunit__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_language__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_license__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_muscle__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_nutritionplaninfo__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_public_templates__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_setting_repetitionunit__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_setting_weightunit__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_userprofile__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_variation__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_video__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_weightunit__pk__",
+                "subtype": "IDOR"
+              }
+            ],
+            "expected": [
+              {
+                "endpoint_id": "endpoint__GET___api_v2_nutritionplan__pk__nutritional_values_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_meal__pk__nutritional_values_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_mealitem__pk__nutritional_values_",
+                "subtype": "IDOR"
+              }
+            ],
+            "notes": []
+          }
+        ]
+      },
+      "rule_baseline": {
+        "detector": "rule_baseline",
+        "micro_precision": 0.75,
+        "micro_recall": 1.0,
+        "micro_f1": 0.8571428571428571,
+        "apps": [
+          {
+            "application": "wger-cve-2026-27839",
+            "tp": 3,
+            "fp": 1,
+            "fn": 0,
+            "precision": 0.75,
+            "recall": 1.0,
+            "f1": 0.8571428571428571,
+            "predictions": [
+              {
+                "endpoint_id": "endpoint__GET___api_v2_exerciseimage__pk__thumbnails_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_meal__pk__nutritional_values_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_mealitem__pk__nutritional_values_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_nutritionplan__pk__nutritional_values_",
+                "subtype": "IDOR"
+              }
+            ],
+            "expected": [
+              {
+                "endpoint_id": "endpoint__GET___api_v2_nutritionplan__pk__nutritional_values_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_meal__pk__nutritional_values_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_mealitem__pk__nutritional_values_",
+                "subtype": "IDOR"
+              }
+            ],
+            "notes": []
+          }
+        ]
+      },
+      "finetuned_train_result": {
+        "test_accuracy": 0.950530035335689,
+        "test_macro_f1": 0.28739316239316237,
+        "best_val_loss": 0.427898518348995
+      }
+    }
+  ],
+  "aggregate": {
+    "finetuned": {
+      "tp": 6,
+      "fp": 26,
+      "fn": 0,
+      "precision": 0.1875,
+      "recall": 1.0,
+      "f1": 0.3157894736842105
+    },
+    "synthetic_only": {
+      "tp": 6,
+      "fp": 98,
+      "fn": 0,
+      "precision": 0.057692307692307696,
+      "recall": 1.0,
+      "f1": 0.1090909090909091
+    },
+    "rule_baseline": {
+      "tp": 6,
+      "fp": 6,
+      "fn": 0,
+      "precision": 0.5,
+      "recall": 1.0,
+      "f1": 0.6666666666666666
+    }
+  }
+}

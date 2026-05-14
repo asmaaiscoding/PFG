@@ -1,0 +1,1731 @@
+{
+  "corpus_root": "/Users/salah/Documents/PFE/PFG/benchmarks/realworld",
+  "ok": true,
+  "manifest_count": 3,
+  "errors": [],
+  "class_distribution": {
+    "SAFE": 465,
+    "MISSING_AUTH": 3,
+    "MISSING_ROLE": 0,
+    "IDOR": 3,
+    "COMBINED": 0,
+    "INTENTIONALLY_PUBLIC": 0
+  },
+  "split_groups": {
+    "django-mdeditor": [
+      "django-mdeditor-cve-2025-13030"
+    ],
+    "nautobot": [
+      "nautobot-cve-2023-50263"
+    ],
+    "wger": [
+      "wger-cve-2026-27839"
+    ]
+  },
+  "manifests": [
+    {
+      "application": "django-mdeditor-cve-2025-13030",
+      "manifest_path": "/Users/salah/Documents/PFE/PFG/benchmarks/realworld/django-mdeditor-cve-2025-13030/manifest.yaml",
+      "ok": true,
+      "errors": [],
+      "warnings": [],
+      "missing_metadata_fields": [],
+      "checkout_root": "/Users/salah/Documents/PFE/PFG/benchmarks/realworld/django-mdeditor-cve-2025-13030/src",
+      "source_root": "/Users/salah/Documents/PFE/PFG/benchmarks/realworld/django-mdeditor-cve-2025-13030/src",
+      "checkout_exists": true,
+      "source_exists": true,
+      "node_count": 11,
+      "edge_count": 6,
+      "endpoint_count": 5,
+      "data_access_count": 1,
+      "expected_endpoint_count": 1,
+      "discovered_expected_endpoints": [
+        "endpoint__POST___mdeditor_uploads_"
+      ],
+      "missing_expected_endpoints": [],
+      "missing_intentional_public_endpoints": [],
+      "detector_findings": [
+        {
+          "endpoint_id": "endpoint__POST___mdeditor_uploads_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__mdeditor_views_UploadView_post__L63__0",
+          "explanation": "Endpoint /mdeditor/uploads/ requires no authentication but reaches data-access node(s): ['data__mdeditor_views_UploadView_post__L63__0']"
+        }
+      ],
+      "unlabeled_detector_findings": [],
+      "class_distribution": {
+        "SAFE": 4,
+        "MISSING_AUTH": 1,
+        "MISSING_ROLE": 0,
+        "IDOR": 0,
+        "COMBINED": 0,
+        "INTENTIONALLY_PUBLIC": 0
+      }
+    },
+    {
+      "application": "nautobot-cve-2023-50263",
+      "manifest_path": "/Users/salah/Documents/PFE/PFG/benchmarks/realworld/nautobot-cve-2023-50263/manifest.yaml",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "129 detector finding(s) are not labeled in the manifest"
+      ],
+      "missing_metadata_fields": [],
+      "checkout_root": "/Users/salah/Documents/PFE/PFG/benchmarks/realworld/nautobot-cve-2023-50263/src",
+      "source_root": "/Users/salah/Documents/PFE/PFG/benchmarks/realworld/nautobot-cve-2023-50263/src",
+      "checkout_exists": true,
+      "source_exists": true,
+      "node_count": 368,
+      "edge_count": 341,
+      "endpoint_count": 183,
+      "data_access_count": 107,
+      "expected_endpoint_count": 2,
+      "discovered_expected_endpoints": [
+        "endpoint__GET___files_download_",
+        "endpoint__GET___files_get_"
+      ],
+      "missing_expected_endpoints": [],
+      "missing_intentional_public_endpoints": [],
+      "detector_findings": [
+        {
+          "endpoint_id": "endpoint__GET___circuits_circuits__pk__terminations_swap_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_circuits_views_CircuitSwapTerminations_get__L216__0",
+          "explanation": "Endpoint /circuits/circuits/{pk}/terminations/swap/ requires no authentication but reaches data-access node(s): ['data__nautobot_circuits_views_CircuitSwapTerminations_get__L216__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_cables__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /dcim/cables/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_cables__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /dcim/cables/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_console_ports__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /dcim/console-ports/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_console_ports__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /dcim/console-ports/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_console_server_ports__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /dcim/console-server-ports/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_console_server_ports__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /dcim/console-server-ports/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_device_bays__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /dcim/device-bays/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_device_bays__pk__depopulate_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_dcim_views_DeviceBayDepopulateView_get__L2019__0",
+          "explanation": "Endpoint /dcim/device-bays/{pk}/depopulate/ requires no authentication but reaches data-access node(s): ['data__nautobot_dcim_views_DeviceBayDepopulateView_get__L2019__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_device_bays__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /dcim/device-bays/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_device_bays__pk__populate_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_dcim_views_DeviceBayPopulateView_get__L1977__0",
+          "explanation": "Endpoint /dcim/device-bays/{pk}/populate/ requires no authentication but reaches data-access node(s): ['data__nautobot_dcim_views_DeviceBayPopulateView_get__L1977__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_device_types__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /dcim/device-types/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_device_types__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /dcim/device-types/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_devices__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /dcim/devices/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_front_ports__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /dcim/front-ports/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_front_ports__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /dcim/front-ports/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_interfaces__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /dcim/interfaces/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_interfaces__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /dcim/interfaces/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_inventory_items__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /dcim/inventory-items/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_inventory_items__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /dcim/inventory-items/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_location_types__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /dcim/location-types/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_location_types__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /dcim/location-types/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_locations__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /dcim/locations/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_locations__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /dcim/locations/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_manufacturers__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /dcim/manufacturers/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_manufacturers__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /dcim/manufacturers/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_platforms__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /dcim/platforms/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_platforms__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /dcim/platforms/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_power_feeds__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /dcim/power-feeds/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_power_feeds__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /dcim/power-feeds/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_power_outlets__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /dcim/power-outlets/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_power_outlets__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /dcim/power-outlets/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_power_panels__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /dcim/power-panels/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_power_panels__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /dcim/power-panels/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_power_ports__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /dcim/power-ports/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_power_ports__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /dcim/power-ports/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_rack_groups__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /dcim/rack-groups/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_rack_groups__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /dcim/rack-groups/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_rack_reservations__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /dcim/rack-reservations/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_rack_reservations__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /dcim/rack-reservations/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_racks__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /dcim/racks/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_racks__pk__dynamic_groups_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectDynamicGroupsView_get__L737__0",
+          "explanation": "Endpoint /dcim/racks/{pk}/dynamic-groups/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectDynamicGroupsView_get__L737__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_racks__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /dcim/racks/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_rear_ports__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /dcim/rear-ports/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_rear_ports__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /dcim/rear-ports/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_virtual_chassis__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /dcim/virtual-chassis/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_virtual_chassis__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /dcim/virtual-chassis/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___extras_computed_fields__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /extras/computed-fields/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___extras_computed_fields__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /extras/computed-fields/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___extras_config_context_schemas__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /extras/config-context-schemas/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___extras_config_context_schemas__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /extras/config-context-schemas/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___extras_config_contexts__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /extras/config-contexts/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___extras_config_contexts__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /extras/config-contexts/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___extras_custom_fields__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /extras/custom-fields/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___extras_custom_fields__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /extras/custom-fields/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___extras_custom_links__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /extras/custom-links/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___extras_custom_links__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /extras/custom-links/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___extras_dynamic_groups__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /extras/dynamic-groups/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___extras_dynamic_groups__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /extras/dynamic-groups/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___extras_export_templates__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /extras/export-templates/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___extras_export_templates__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /extras/export-templates/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___extras_git_repositories__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /extras/git-repositories/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___extras_git_repositories__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /extras/git-repositories/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___extras_graphql_queries__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /extras/graphql-queries/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___extras_graphql_queries__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /extras/graphql-queries/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___extras_job_hooks__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /extras/job-hooks/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___extras_notes__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /extras/notes/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___extras_relationships__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /extras/relationships/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___extras_relationships__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /extras/relationships/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___extras_secrets__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /extras/secrets/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___extras_secrets__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /extras/secrets/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___extras_secrets_groups__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /extras/secrets-groups/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___extras_secrets_groups__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /extras/secrets-groups/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___extras_statuses__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /extras/statuses/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___extras_statuses__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /extras/statuses/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___extras_tags__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /extras/tags/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___extras_tags__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /extras/tags/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___extras_webhooks__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /extras/webhooks/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___extras_webhooks__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /extras/webhooks/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___files_download_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__db_file_storage_views_get_file__external__0",
+          "explanation": "Endpoint /files/download/ requires no authentication but reaches data-access node(s): ['data__db_file_storage_views_get_file__external__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___files_get_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__db_file_storage_views_get_file__external__0",
+          "explanation": "Endpoint /files/get/ requires no authentication but reaches data-access node(s): ['data__db_file_storage_views_get_file__external__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___ipam_ip_addresses__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /ipam/ip-addresses/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___ipam_ip_addresses__pk__dynamic_groups_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectDynamicGroupsView_get__L737__0",
+          "explanation": "Endpoint /ipam/ip-addresses/{pk}/dynamic-groups/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectDynamicGroupsView_get__L737__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___ipam_ip_addresses__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /ipam/ip-addresses/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___ipam_ip_addresses_assign_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_ipam_utils_retrieve_interface_or_vminterface_from_request__L272__0",
+          "explanation": "Endpoint /ipam/ip-addresses/assign/ requires no authentication but reaches data-access node(s): ['data__nautobot_ipam_utils_retrieve_interface_or_vminterface_from_request__L272__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___ipam_prefixes__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /ipam/prefixes/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___ipam_prefixes__pk__dynamic_groups_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectDynamicGroupsView_get__L737__0",
+          "explanation": "Endpoint /ipam/prefixes/{pk}/dynamic-groups/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectDynamicGroupsView_get__L737__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___ipam_prefixes__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /ipam/prefixes/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___ipam_rirs__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /ipam/rirs/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___ipam_rirs__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /ipam/rirs/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___ipam_route_targets__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /ipam/route-targets/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___ipam_route_targets__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /ipam/route-targets/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___ipam_services__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /ipam/services/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___ipam_services__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /ipam/services/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___ipam_vlan_groups__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /ipam/vlan-groups/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___ipam_vlan_groups__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /ipam/vlan-groups/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___ipam_vlans__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /ipam/vlans/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___ipam_vlans__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /ipam/vlans/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___ipam_vrfs__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /ipam/vrfs/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___ipam_vrfs__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /ipam/vrfs/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___tenancy_tenant_groups__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /tenancy/tenant-groups/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___tenancy_tenant_groups__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /tenancy/tenant-groups/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___tenancy_tenants__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /tenancy/tenants/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___tenancy_tenants__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /tenancy/tenants/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___virtualization_cluster_groups__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /virtualization/cluster-groups/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___virtualization_cluster_groups__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /virtualization/cluster-groups/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___virtualization_cluster_types__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /virtualization/cluster-types/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___virtualization_cluster_types__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /virtualization/cluster-types/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___virtualization_clusters__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /virtualization/clusters/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___virtualization_clusters__pk__devices_add_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_virtualization_views_ClusterAddDevicesView_get__L208__0",
+          "explanation": "Endpoint /virtualization/clusters/{pk}/devices/add/ requires no authentication but reaches data-access node(s): ['data__nautobot_virtualization_views_ClusterAddDevicesView_get__L208__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___virtualization_clusters__pk__dynamic_groups_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectDynamicGroupsView_get__L737__0",
+          "explanation": "Endpoint /virtualization/clusters/{pk}/dynamic-groups/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectDynamicGroupsView_get__L737__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___virtualization_clusters__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /virtualization/clusters/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___virtualization_interfaces__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /virtualization/interfaces/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___virtualization_interfaces__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /virtualization/interfaces/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___virtualization_virtual_machines__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /virtualization/virtual-machines/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___virtualization_virtual_machines__pk__dynamic_groups_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectDynamicGroupsView_get__L737__0",
+          "explanation": "Endpoint /virtualization/virtual-machines/{pk}/dynamic-groups/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectDynamicGroupsView_get__L737__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___virtualization_virtual_machines__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /virtualization/virtual-machines/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__POST___circuits_circuits__pk__terminations_swap_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_circuits_views_CircuitSwapTerminations_post__L249__3",
+          "explanation": "Endpoint /circuits/circuits/{pk}/terminations/swap/ requires no authentication but reaches data-access node(s): ['data__nautobot_circuits_views_CircuitSwapTerminations_post__L242__0', 'data__nautobot_circuits_views_CircuitSwapTerminations_post__L246__1', 'data__nautobot_circuits_views_CircuitSwapTerminations_post__L246__2', 'data__nautobot_circuits_views_CircuitSwapTerminations_post__L249__3', 'data__nautobot_circuits_views_CircuitSwapTerminations_post__L249__4']"
+        },
+        {
+          "endpoint_id": "endpoint__POST___dcim_device_bays__pk__depopulate_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_dcim_views_DeviceBayDepopulateView_post__L2033__0",
+          "explanation": "Endpoint /dcim/device-bays/{pk}/depopulate/ requires no authentication but reaches data-access node(s): ['data__nautobot_dcim_views_DeviceBayDepopulateView_post__L2033__0']"
+        },
+        {
+          "endpoint_id": "endpoint__POST___dcim_device_bays__pk__populate_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_dcim_views_DeviceBayPopulateView_post__L1991__0",
+          "explanation": "Endpoint /dcim/device-bays/{pk}/populate/ requires no authentication but reaches data-access node(s): ['data__nautobot_dcim_views_DeviceBayPopulateView_post__L1991__0']"
+        },
+        {
+          "endpoint_id": "endpoint__POST___dcim_virtual_chassis__pk__edit_",
+          "subtype": "IDOR",
+          "data_access_id": "data__nautobot_dcim_views_VirtualChassisEditView_post__L2554__0",
+          "explanation": "Route param ['pk'] of /dcim/virtual-chassis/{pk}/edit/ reaches READ on queryset via 1 call path(s); none enforce ownership."
+        },
+        {
+          "endpoint_id": "endpoint__POST___dcim_virtual_chassis_members__pk__delete_",
+          "subtype": "IDOR",
+          "data_access_id": "data__nautobot_dcim_views_VirtualChassisRemoveMemberView_post__L2684__1",
+          "explanation": "Route param ['pk'] of /dcim/virtual-chassis-members/{pk}/delete/ reaches READ on VirtualChassis via 1 call path(s); none enforce ownership."
+        },
+        {
+          "endpoint_id": "endpoint__POST___extras_git_repositories__pk__dry_run_",
+          "subtype": "IDOR",
+          "data_access_id": "data__nautobot_extras_views_check_and_call_git_repository_function__L909__0",
+          "explanation": "Route param ['pk'] of /extras/git-repositories/{pk}/dry-run/ reaches READ on GitRepository via 1 call path(s); none enforce ownership."
+        },
+        {
+          "endpoint_id": "endpoint__POST___extras_git_repositories__pk__dry_run_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_check_and_call_git_repository_function__L909__0",
+          "explanation": "Endpoint /extras/git-repositories/{pk}/dry-run/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_check_and_call_git_repository_function__L909__0']"
+        },
+        {
+          "endpoint_id": "endpoint__POST___extras_git_repositories__pk__sync_",
+          "subtype": "IDOR",
+          "data_access_id": "data__nautobot_extras_views_check_and_call_git_repository_function__L909__0",
+          "explanation": "Route param ['pk'] of /extras/git-repositories/{pk}/sync/ reaches READ on GitRepository via 1 call path(s); none enforce ownership."
+        },
+        {
+          "endpoint_id": "endpoint__POST___extras_git_repositories__pk__sync_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_check_and_call_git_repository_function__L909__0",
+          "explanation": "Endpoint /extras/git-repositories/{pk}/sync/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_check_and_call_git_repository_function__L909__0']"
+        },
+        {
+          "endpoint_id": "endpoint__POST___extras_job_button__pk__run_",
+          "subtype": "IDOR",
+          "data_access_id": "data__nautobot_extras_views_JobButtonRunView_post__L1557__0",
+          "explanation": "Route param ['pk'] of /extras/job-button/{pk}/run/ reaches READ on JobButton via 1 call path(s); none enforce ownership."
+        },
+        {
+          "endpoint_id": "endpoint__POST___extras_jobs_scheduled_jobs_approval_queue__pk__",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_JobApprovalRequestView_post__L1308__0",
+          "explanation": "Endpoint /extras/jobs/scheduled-jobs/approval-queue/{pk}/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_JobApprovalRequestView_post__L1308__0']"
+        },
+        {
+          "endpoint_id": "endpoint__POST___ipam_ip_addresses_assign_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_ipam_utils_retrieve_interface_or_vminterface_from_request__L272__0",
+          "explanation": "Endpoint /ipam/ip-addresses/assign/ requires no authentication but reaches data-access node(s): ['data__nautobot_ipam_utils_retrieve_interface_or_vminterface_from_request__L272__0', 'data__nautobot_ipam_views_IPAddressAssignView_post__L917__0']"
+        },
+        {
+          "endpoint_id": "endpoint__POST___virtualization_clusters__pk__devices_add_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_virtualization_views_ClusterAddDevicesView_post__L222__0",
+          "explanation": "Endpoint /virtualization/clusters/{pk}/devices/add/ requires no authentication but reaches data-access node(s): ['data__nautobot_virtualization_views_ClusterAddDevicesView_post__L222__0', 'data__nautobot_virtualization_views_ClusterAddDevicesView_post__L229__1']"
+        },
+        {
+          "endpoint_id": "endpoint__POST___virtualization_clusters__pk__devices_remove_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_virtualization_views_ClusterRemoveDevicesView_post__L277__2",
+          "explanation": "Endpoint /virtualization/clusters/{pk}/devices/remove/ requires no authentication but reaches data-access node(s): ['data__nautobot_virtualization_views_ClusterRemoveDevicesView_post__L256__0', 'data__nautobot_virtualization_views_ClusterRemoveDevicesView_post__L264__1', 'data__nautobot_virtualization_views_ClusterRemoveDevicesView_post__L277__2']"
+        }
+      ],
+      "unlabeled_detector_findings": [
+        {
+          "endpoint_id": "endpoint__GET___circuits_circuits__pk__terminations_swap_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_circuits_views_CircuitSwapTerminations_get__L216__0",
+          "explanation": "Endpoint /circuits/circuits/{pk}/terminations/swap/ requires no authentication but reaches data-access node(s): ['data__nautobot_circuits_views_CircuitSwapTerminations_get__L216__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_cables__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /dcim/cables/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_cables__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /dcim/cables/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_console_ports__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /dcim/console-ports/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_console_ports__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /dcim/console-ports/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_console_server_ports__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /dcim/console-server-ports/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_console_server_ports__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /dcim/console-server-ports/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_device_bays__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /dcim/device-bays/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_device_bays__pk__depopulate_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_dcim_views_DeviceBayDepopulateView_get__L2019__0",
+          "explanation": "Endpoint /dcim/device-bays/{pk}/depopulate/ requires no authentication but reaches data-access node(s): ['data__nautobot_dcim_views_DeviceBayDepopulateView_get__L2019__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_device_bays__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /dcim/device-bays/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_device_bays__pk__populate_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_dcim_views_DeviceBayPopulateView_get__L1977__0",
+          "explanation": "Endpoint /dcim/device-bays/{pk}/populate/ requires no authentication but reaches data-access node(s): ['data__nautobot_dcim_views_DeviceBayPopulateView_get__L1977__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_device_types__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /dcim/device-types/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_device_types__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /dcim/device-types/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_devices__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /dcim/devices/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_front_ports__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /dcim/front-ports/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_front_ports__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /dcim/front-ports/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_interfaces__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /dcim/interfaces/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_interfaces__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /dcim/interfaces/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_inventory_items__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /dcim/inventory-items/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_inventory_items__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /dcim/inventory-items/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_location_types__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /dcim/location-types/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_location_types__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /dcim/location-types/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_locations__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /dcim/locations/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_locations__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /dcim/locations/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_manufacturers__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /dcim/manufacturers/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_manufacturers__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /dcim/manufacturers/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_platforms__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /dcim/platforms/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_platforms__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /dcim/platforms/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_power_feeds__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /dcim/power-feeds/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_power_feeds__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /dcim/power-feeds/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_power_outlets__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /dcim/power-outlets/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_power_outlets__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /dcim/power-outlets/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_power_panels__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /dcim/power-panels/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_power_panels__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /dcim/power-panels/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_power_ports__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /dcim/power-ports/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_power_ports__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /dcim/power-ports/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_rack_groups__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /dcim/rack-groups/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_rack_groups__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /dcim/rack-groups/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_rack_reservations__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /dcim/rack-reservations/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_rack_reservations__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /dcim/rack-reservations/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_racks__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /dcim/racks/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_racks__pk__dynamic_groups_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectDynamicGroupsView_get__L737__0",
+          "explanation": "Endpoint /dcim/racks/{pk}/dynamic-groups/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectDynamicGroupsView_get__L737__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_racks__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /dcim/racks/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_rear_ports__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /dcim/rear-ports/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_rear_ports__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /dcim/rear-ports/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_virtual_chassis__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /dcim/virtual-chassis/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___dcim_virtual_chassis__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /dcim/virtual-chassis/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___extras_computed_fields__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /extras/computed-fields/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___extras_computed_fields__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /extras/computed-fields/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___extras_config_context_schemas__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /extras/config-context-schemas/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___extras_config_context_schemas__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /extras/config-context-schemas/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___extras_config_contexts__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /extras/config-contexts/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___extras_config_contexts__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /extras/config-contexts/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___extras_custom_fields__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /extras/custom-fields/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___extras_custom_fields__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /extras/custom-fields/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___extras_custom_links__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /extras/custom-links/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___extras_custom_links__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /extras/custom-links/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___extras_dynamic_groups__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /extras/dynamic-groups/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___extras_dynamic_groups__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /extras/dynamic-groups/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___extras_export_templates__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /extras/export-templates/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___extras_export_templates__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /extras/export-templates/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___extras_git_repositories__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /extras/git-repositories/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___extras_git_repositories__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /extras/git-repositories/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___extras_graphql_queries__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /extras/graphql-queries/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___extras_graphql_queries__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /extras/graphql-queries/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___extras_job_hooks__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /extras/job-hooks/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___extras_notes__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /extras/notes/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___extras_relationships__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /extras/relationships/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___extras_relationships__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /extras/relationships/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___extras_secrets__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /extras/secrets/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___extras_secrets__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /extras/secrets/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___extras_secrets_groups__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /extras/secrets-groups/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___extras_secrets_groups__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /extras/secrets-groups/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___extras_statuses__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /extras/statuses/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___extras_statuses__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /extras/statuses/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___extras_tags__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /extras/tags/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___extras_tags__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /extras/tags/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___extras_webhooks__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /extras/webhooks/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___extras_webhooks__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /extras/webhooks/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___ipam_ip_addresses__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /ipam/ip-addresses/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___ipam_ip_addresses__pk__dynamic_groups_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectDynamicGroupsView_get__L737__0",
+          "explanation": "Endpoint /ipam/ip-addresses/{pk}/dynamic-groups/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectDynamicGroupsView_get__L737__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___ipam_ip_addresses__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /ipam/ip-addresses/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___ipam_ip_addresses_assign_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_ipam_utils_retrieve_interface_or_vminterface_from_request__L272__0",
+          "explanation": "Endpoint /ipam/ip-addresses/assign/ requires no authentication but reaches data-access node(s): ['data__nautobot_ipam_utils_retrieve_interface_or_vminterface_from_request__L272__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___ipam_prefixes__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /ipam/prefixes/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___ipam_prefixes__pk__dynamic_groups_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectDynamicGroupsView_get__L737__0",
+          "explanation": "Endpoint /ipam/prefixes/{pk}/dynamic-groups/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectDynamicGroupsView_get__L737__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___ipam_prefixes__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /ipam/prefixes/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___ipam_rirs__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /ipam/rirs/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___ipam_rirs__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /ipam/rirs/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___ipam_route_targets__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /ipam/route-targets/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___ipam_route_targets__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /ipam/route-targets/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___ipam_services__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /ipam/services/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___ipam_services__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /ipam/services/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___ipam_vlan_groups__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /ipam/vlan-groups/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___ipam_vlan_groups__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /ipam/vlan-groups/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___ipam_vlans__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /ipam/vlans/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___ipam_vlans__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /ipam/vlans/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___ipam_vrfs__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /ipam/vrfs/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___ipam_vrfs__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /ipam/vrfs/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___tenancy_tenant_groups__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /tenancy/tenant-groups/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___tenancy_tenant_groups__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /tenancy/tenant-groups/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___tenancy_tenants__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /tenancy/tenants/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___tenancy_tenants__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /tenancy/tenants/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___virtualization_cluster_groups__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /virtualization/cluster-groups/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___virtualization_cluster_groups__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /virtualization/cluster-groups/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___virtualization_cluster_types__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /virtualization/cluster-types/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___virtualization_cluster_types__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /virtualization/cluster-types/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___virtualization_clusters__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /virtualization/clusters/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___virtualization_clusters__pk__devices_add_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_virtualization_views_ClusterAddDevicesView_get__L208__0",
+          "explanation": "Endpoint /virtualization/clusters/{pk}/devices/add/ requires no authentication but reaches data-access node(s): ['data__nautobot_virtualization_views_ClusterAddDevicesView_get__L208__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___virtualization_clusters__pk__dynamic_groups_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectDynamicGroupsView_get__L737__0",
+          "explanation": "Endpoint /virtualization/clusters/{pk}/dynamic-groups/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectDynamicGroupsView_get__L737__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___virtualization_clusters__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /virtualization/clusters/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___virtualization_interfaces__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /virtualization/interfaces/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___virtualization_interfaces__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /virtualization/interfaces/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___virtualization_virtual_machines__pk__changelog_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0",
+          "explanation": "Endpoint /virtualization/virtual-machines/{pk}/changelog/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectChangeLogView_get__L1634__0', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__1', 'data__nautobot_extras_views_ObjectChangeLogView_get__L1639__2']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___virtualization_virtual_machines__pk__dynamic_groups_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectDynamicGroupsView_get__L737__0",
+          "explanation": "Endpoint /virtualization/virtual-machines/{pk}/dynamic-groups/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectDynamicGroupsView_get__L737__0']"
+        },
+        {
+          "endpoint_id": "endpoint__GET___virtualization_virtual_machines__pk__notes_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_ObjectNotesView_get__L1718__0",
+          "explanation": "Endpoint /virtualization/virtual-machines/{pk}/notes/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_ObjectNotesView_get__L1718__0']"
+        },
+        {
+          "endpoint_id": "endpoint__POST___circuits_circuits__pk__terminations_swap_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_circuits_views_CircuitSwapTerminations_post__L249__3",
+          "explanation": "Endpoint /circuits/circuits/{pk}/terminations/swap/ requires no authentication but reaches data-access node(s): ['data__nautobot_circuits_views_CircuitSwapTerminations_post__L242__0', 'data__nautobot_circuits_views_CircuitSwapTerminations_post__L246__1', 'data__nautobot_circuits_views_CircuitSwapTerminations_post__L246__2', 'data__nautobot_circuits_views_CircuitSwapTerminations_post__L249__3', 'data__nautobot_circuits_views_CircuitSwapTerminations_post__L249__4']"
+        },
+        {
+          "endpoint_id": "endpoint__POST___dcim_device_bays__pk__depopulate_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_dcim_views_DeviceBayDepopulateView_post__L2033__0",
+          "explanation": "Endpoint /dcim/device-bays/{pk}/depopulate/ requires no authentication but reaches data-access node(s): ['data__nautobot_dcim_views_DeviceBayDepopulateView_post__L2033__0']"
+        },
+        {
+          "endpoint_id": "endpoint__POST___dcim_device_bays__pk__populate_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_dcim_views_DeviceBayPopulateView_post__L1991__0",
+          "explanation": "Endpoint /dcim/device-bays/{pk}/populate/ requires no authentication but reaches data-access node(s): ['data__nautobot_dcim_views_DeviceBayPopulateView_post__L1991__0']"
+        },
+        {
+          "endpoint_id": "endpoint__POST___dcim_virtual_chassis__pk__edit_",
+          "subtype": "IDOR",
+          "data_access_id": "data__nautobot_dcim_views_VirtualChassisEditView_post__L2554__0",
+          "explanation": "Route param ['pk'] of /dcim/virtual-chassis/{pk}/edit/ reaches READ on queryset via 1 call path(s); none enforce ownership."
+        },
+        {
+          "endpoint_id": "endpoint__POST___dcim_virtual_chassis_members__pk__delete_",
+          "subtype": "IDOR",
+          "data_access_id": "data__nautobot_dcim_views_VirtualChassisRemoveMemberView_post__L2684__1",
+          "explanation": "Route param ['pk'] of /dcim/virtual-chassis-members/{pk}/delete/ reaches READ on VirtualChassis via 1 call path(s); none enforce ownership."
+        },
+        {
+          "endpoint_id": "endpoint__POST___extras_git_repositories__pk__dry_run_",
+          "subtype": "IDOR",
+          "data_access_id": "data__nautobot_extras_views_check_and_call_git_repository_function__L909__0",
+          "explanation": "Route param ['pk'] of /extras/git-repositories/{pk}/dry-run/ reaches READ on GitRepository via 1 call path(s); none enforce ownership."
+        },
+        {
+          "endpoint_id": "endpoint__POST___extras_git_repositories__pk__dry_run_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_check_and_call_git_repository_function__L909__0",
+          "explanation": "Endpoint /extras/git-repositories/{pk}/dry-run/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_check_and_call_git_repository_function__L909__0']"
+        },
+        {
+          "endpoint_id": "endpoint__POST___extras_git_repositories__pk__sync_",
+          "subtype": "IDOR",
+          "data_access_id": "data__nautobot_extras_views_check_and_call_git_repository_function__L909__0",
+          "explanation": "Route param ['pk'] of /extras/git-repositories/{pk}/sync/ reaches READ on GitRepository via 1 call path(s); none enforce ownership."
+        },
+        {
+          "endpoint_id": "endpoint__POST___extras_git_repositories__pk__sync_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_check_and_call_git_repository_function__L909__0",
+          "explanation": "Endpoint /extras/git-repositories/{pk}/sync/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_check_and_call_git_repository_function__L909__0']"
+        },
+        {
+          "endpoint_id": "endpoint__POST___extras_job_button__pk__run_",
+          "subtype": "IDOR",
+          "data_access_id": "data__nautobot_extras_views_JobButtonRunView_post__L1557__0",
+          "explanation": "Route param ['pk'] of /extras/job-button/{pk}/run/ reaches READ on JobButton via 1 call path(s); none enforce ownership."
+        },
+        {
+          "endpoint_id": "endpoint__POST___extras_jobs_scheduled_jobs_approval_queue__pk__",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_extras_views_JobApprovalRequestView_post__L1308__0",
+          "explanation": "Endpoint /extras/jobs/scheduled-jobs/approval-queue/{pk}/ requires no authentication but reaches data-access node(s): ['data__nautobot_extras_views_JobApprovalRequestView_post__L1308__0']"
+        },
+        {
+          "endpoint_id": "endpoint__POST___ipam_ip_addresses_assign_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_ipam_utils_retrieve_interface_or_vminterface_from_request__L272__0",
+          "explanation": "Endpoint /ipam/ip-addresses/assign/ requires no authentication but reaches data-access node(s): ['data__nautobot_ipam_utils_retrieve_interface_or_vminterface_from_request__L272__0', 'data__nautobot_ipam_views_IPAddressAssignView_post__L917__0']"
+        },
+        {
+          "endpoint_id": "endpoint__POST___virtualization_clusters__pk__devices_add_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_virtualization_views_ClusterAddDevicesView_post__L222__0",
+          "explanation": "Endpoint /virtualization/clusters/{pk}/devices/add/ requires no authentication but reaches data-access node(s): ['data__nautobot_virtualization_views_ClusterAddDevicesView_post__L222__0', 'data__nautobot_virtualization_views_ClusterAddDevicesView_post__L229__1']"
+        },
+        {
+          "endpoint_id": "endpoint__POST___virtualization_clusters__pk__devices_remove_",
+          "subtype": "MISSING_AUTH",
+          "data_access_id": "data__nautobot_virtualization_views_ClusterRemoveDevicesView_post__L277__2",
+          "explanation": "Endpoint /virtualization/clusters/{pk}/devices/remove/ requires no authentication but reaches data-access node(s): ['data__nautobot_virtualization_views_ClusterRemoveDevicesView_post__L256__0', 'data__nautobot_virtualization_views_ClusterRemoveDevicesView_post__L264__1', 'data__nautobot_virtualization_views_ClusterRemoveDevicesView_post__L277__2']"
+        }
+      ],
+      "class_distribution": {
+        "SAFE": 181,
+        "MISSING_AUTH": 2,
+        "MISSING_ROLE": 0,
+        "IDOR": 0,
+        "COMBINED": 0,
+        "INTENTIONALLY_PUBLIC": 0
+      }
+    },
+    {
+      "application": "wger-cve-2026-27839",
+      "manifest_path": "/Users/salah/Documents/PFE/PFG/benchmarks/realworld/wger-cve-2026-27839/manifest.yaml",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "1 detector finding(s) are not labeled in the manifest"
+      ],
+      "missing_metadata_fields": [],
+      "checkout_root": "/Users/salah/Documents/PFE/PFG/benchmarks/realworld/wger-cve-2026-27839/src",
+      "source_root": "/Users/salah/Documents/PFE/PFG/benchmarks/realworld/wger-cve-2026-27839/src",
+      "checkout_exists": true,
+      "source_exists": true,
+      "node_count": 599,
+      "edge_count": 329,
+      "endpoint_count": 283,
+      "data_access_count": 28,
+      "expected_endpoint_count": 3,
+      "discovered_expected_endpoints": [
+        "endpoint__GET___api_v2_meal__pk__nutritional_values_",
+        "endpoint__GET___api_v2_mealitem__pk__nutritional_values_",
+        "endpoint__GET___api_v2_nutritionplan__pk__nutritional_values_"
+      ],
+      "missing_expected_endpoints": [],
+      "missing_intentional_public_endpoints": [],
+      "detector_findings": [
+        {
+          "endpoint_id": "endpoint__GET___api_v2_exerciseimage__pk__thumbnails_",
+          "subtype": "IDOR",
+          "data_access_id": "data__wger_exercises_api_views_ExerciseImageViewSet_thumbnails__L408__0",
+          "explanation": "Route param ['pk'] of /api/v2/exerciseimage/{pk}/thumbnails/ reaches READ on ExerciseImage via 1 call path(s); none enforce ownership."
+        },
+        {
+          "endpoint_id": "endpoint__GET___api_v2_meal__pk__nutritional_values_",
+          "subtype": "IDOR",
+          "data_access_id": "data__wger_nutrition_api_views_MealViewSet_nutritional_values__L310__0",
+          "explanation": "Route param ['pk'] of /api/v2/meal/{pk}/nutritional_values/ reaches READ on Meal via 1 call path(s); none enforce ownership."
+        },
+        {
+          "endpoint_id": "endpoint__GET___api_v2_mealitem__pk__nutritional_values_",
+          "subtype": "IDOR",
+          "data_access_id": "data__wger_nutrition_api_views_MealItemViewSet_nutritional_values__L351__0",
+          "explanation": "Route param ['pk'] of /api/v2/mealitem/{pk}/nutritional_values/ reaches READ on MealItem via 1 call path(s); none enforce ownership."
+        },
+        {
+          "endpoint_id": "endpoint__GET___api_v2_nutritionplan__pk__nutritional_values_",
+          "subtype": "IDOR",
+          "data_access_id": "data__wger_nutrition_api_views_NutritionPlanViewSet_nutritional_values__L238__0",
+          "explanation": "Route param ['pk'] of /api/v2/nutritionplan/{pk}/nutritional_values/ reaches READ on NutritionPlan via 1 call path(s); none enforce ownership."
+        }
+      ],
+      "unlabeled_detector_findings": [
+        {
+          "endpoint_id": "endpoint__GET___api_v2_exerciseimage__pk__thumbnails_",
+          "subtype": "IDOR",
+          "data_access_id": "data__wger_exercises_api_views_ExerciseImageViewSet_thumbnails__L408__0",
+          "explanation": "Route param ['pk'] of /api/v2/exerciseimage/{pk}/thumbnails/ reaches READ on ExerciseImage via 1 call path(s); none enforce ownership."
+        }
+      ],
+      "class_distribution": {
+        "SAFE": 280,
+        "MISSING_AUTH": 0,
+        "MISSING_ROLE": 0,
+        "IDOR": 3,
+        "COMBINED": 0,
+        "INTENTIONALLY_PUBLIC": 0
+      }
+    }
+  ]
+}

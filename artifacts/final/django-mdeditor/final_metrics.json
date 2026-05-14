@@ -1,0 +1,1592 @@
+{
+  "experiment": "path_analyzer_final_real_corpus",
+  "model_scope": "Model B / PathAnalyzer only",
+  "config": {
+    "holdout_group": "django-mdeditor",
+    "seed": 1,
+    "epochs": 30,
+    "batch_size": 64,
+    "hidden_dim": 64,
+    "num_layers": 3,
+    "heads": 4
+  },
+  "warnings": [],
+  "split": {
+    "train_groups": [
+      "wger"
+    ],
+    "val_groups": [
+      "nautobot"
+    ],
+    "test_groups": [
+      "django-mdeditor"
+    ],
+    "n_train_real_samples": 283,
+    "n_train_augmented_samples": 17,
+    "n_val_real_samples": 183,
+    "n_test_real_samples": 5,
+    "test_is_real_only": true
+  },
+  "class_distribution": {
+    "train_real": {
+      "SAFE": 280,
+      "MISSING_AUTH": 0,
+      "MISSING_ROLE": 0,
+      "IDOR": 3,
+      "COMBINED": 0,
+      "INTENTIONALLY_PUBLIC": 0
+    },
+    "train_augmented": {
+      "SAFE": 0,
+      "MISSING_AUTH": 13,
+      "MISSING_ROLE": 1,
+      "IDOR": 3,
+      "COMBINED": 0,
+      "INTENTIONALLY_PUBLIC": 0
+    },
+    "val_real": {
+      "SAFE": 181,
+      "MISSING_AUTH": 2,
+      "MISSING_ROLE": 0,
+      "IDOR": 0,
+      "COMBINED": 0,
+      "INTENTIONALLY_PUBLIC": 0
+    },
+    "test_real": {
+      "SAFE": 4,
+      "MISSING_AUTH": 1,
+      "MISSING_ROLE": 0,
+      "IDOR": 0,
+      "COMBINED": 0,
+      "INTENTIONALLY_PUBLIC": 0
+    }
+  },
+  "models": {
+    "path_analyzer_real_only": {
+      "accuracy": 0.8,
+      "macro_f1": 0.14814814814814817,
+      "per_class": {
+        "SAFE": {
+          "support": 4,
+          "precision": 0.8,
+          "recall": 1.0,
+          "f1": 0.888888888888889
+        },
+        "MISSING_AUTH": {
+          "support": 1,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "MISSING_ROLE": {
+          "support": 0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "IDOR": {
+          "support": 0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "COMBINED": {
+          "support": 0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "INTENTIONALLY_PUBLIC": {
+          "support": 0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        }
+      },
+      "vulnerability_finding": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "tp": 0,
+        "fp": 0,
+        "fn": 1
+      },
+      "confusion": [
+        [
+          4,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          1,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      ],
+      "test_accuracy": 0.8,
+      "test_macro_f1": 0.14814814814814817,
+      "best_val_loss": 0.16545852546483442,
+      "history": [
+        {
+          "epoch": 1,
+          "train_loss": 1.7906748111172195,
+          "val_loss": 1.5819888922686134,
+          "val_f1": 0.16575091575091574
+        },
+        {
+          "epoch": 2,
+          "train_loss": 1.4674732373375774,
+          "val_loss": 1.2063098344646517,
+          "val_f1": 0.16575091575091574
+        },
+        {
+          "epoch": 3,
+          "train_loss": 1.1487237427765404,
+          "val_loss": 0.7820724112088563,
+          "val_f1": 0.16575091575091574
+        },
+        {
+          "epoch": 4,
+          "train_loss": 0.8062813673760781,
+          "val_loss": 0.4886843154990608,
+          "val_f1": 0.16575091575091574
+        },
+        {
+          "epoch": 5,
+          "train_loss": 0.679683432140957,
+          "val_loss": 0.34675199998532485,
+          "val_f1": 0.16575091575091574
+        },
+        {
+          "epoch": 6,
+          "train_loss": 0.616622419112984,
+          "val_loss": 0.37829016596893145,
+          "val_f1": 0.16575091575091574
+        },
+        {
+          "epoch": 7,
+          "train_loss": 0.6126768673266623,
+          "val_loss": 0.4114091591756852,
+          "val_f1": 0.16575091575091574
+        },
+        {
+          "epoch": 8,
+          "train_loss": 0.6096261007836346,
+          "val_loss": 0.5041592082039255,
+          "val_f1": 0.16575091575091574
+        },
+        {
+          "epoch": 9,
+          "train_loss": 0.6347478529168523,
+          "val_loss": 0.5195708978371542,
+          "val_f1": 0.16575091575091574
+        },
+        {
+          "epoch": 10,
+          "train_loss": 0.510627702878979,
+          "val_loss": 0.37566458592649365,
+          "val_f1": 0.16575091575091574
+        },
+        {
+          "epoch": 11,
+          "train_loss": 0.5631966426599995,
+          "val_loss": 0.2997839776544623,
+          "val_f1": 0.16575091575091574
+        },
+        {
+          "epoch": 12,
+          "train_loss": 0.5545759534877939,
+          "val_loss": 0.4683750027515849,
+          "val_f1": 0.15904761904761905
+        },
+        {
+          "epoch": 13,
+          "train_loss": 0.45588504172887906,
+          "val_loss": 0.4954633973335308,
+          "val_f1": 0.15904761904761905
+        },
+        {
+          "epoch": 14,
+          "train_loss": 0.4339698642597603,
+          "val_loss": 0.3094063117855885,
+          "val_f1": 0.15904761904761905
+        },
+        {
+          "epoch": 15,
+          "train_loss": 0.4210029139114353,
+          "val_loss": 0.23418221708203926,
+          "val_f1": 0.15904761904761905
+        },
+        {
+          "epoch": 16,
+          "train_loss": 0.35825855340216267,
+          "val_loss": 0.25785171529634404,
+          "val_f1": 0.15904761904761905
+        },
+        {
+          "epoch": 17,
+          "train_loss": 0.30666907847770114,
+          "val_loss": 0.23320289257445623,
+          "val_f1": 0.15904761904761905
+        },
+        {
+          "epoch": 18,
+          "train_loss": 0.37289011057189836,
+          "val_loss": 0.19516664515427554,
+          "val_f1": 0.15904761904761905
+        },
+        {
+          "epoch": 19,
+          "train_loss": 0.3003688920618367,
+          "val_loss": 0.20870530540174473,
+          "val_f1": 0.15904761904761905
+        },
+        {
+          "epoch": 20,
+          "train_loss": 0.28067539184759027,
+          "val_loss": 0.19241631096178066,
+          "val_f1": 0.15904761904761905
+        },
+        {
+          "epoch": 21,
+          "train_loss": 0.33489254970011356,
+          "val_loss": 0.18206306624282254,
+          "val_f1": 0.15904761904761905
+        },
+        {
+          "epoch": 22,
+          "train_loss": 0.38935654091750777,
+          "val_loss": 0.17149964316946562,
+          "val_f1": 0.15904761904761905
+        },
+        {
+          "epoch": 23,
+          "train_loss": 0.35635245709874186,
+          "val_loss": 0.23263528438213746,
+          "val_f1": 0.15904761904761905
+        },
+        {
+          "epoch": 24,
+          "train_loss": 0.3179507295571452,
+          "val_loss": 0.24631509103410232,
+          "val_f1": 0.15904761904761905
+        },
+        {
+          "epoch": 25,
+          "train_loss": 0.3593785523209892,
+          "val_loss": 0.2199355683040098,
+          "val_f1": 0.15904761904761905
+        },
+        {
+          "epoch": 26,
+          "train_loss": 0.3025233208501297,
+          "val_loss": 0.20144083200256682,
+          "val_f1": 0.15904761904761905
+        },
+        {
+          "epoch": 27,
+          "train_loss": 0.3069790496421787,
+          "val_loss": 0.181840242583895,
+          "val_f1": 0.15904761904761905
+        },
+        {
+          "epoch": 28,
+          "train_loss": 0.3227969797150406,
+          "val_loss": 0.17757755811097192,
+          "val_f1": 0.15904761904761905
+        },
+        {
+          "epoch": 29,
+          "train_loss": 0.3281791083804289,
+          "val_loss": 0.1744344560174994,
+          "val_f1": 0.15904761904761905
+        },
+        {
+          "epoch": 30,
+          "train_loss": 0.2611227638413965,
+          "val_loss": 0.16545852546483442,
+          "val_f1": 0.15904761904761905
+        }
+      ]
+    },
+    "path_analyzer_real_augmented": {
+      "accuracy": 0.2,
+      "macro_f1": 0.05555555555555556,
+      "per_class": {
+        "SAFE": {
+          "support": 4,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "MISSING_AUTH": {
+          "support": 1,
+          "precision": 0.2,
+          "recall": 1.0,
+          "f1": 0.33333333333333337
+        },
+        "MISSING_ROLE": {
+          "support": 0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "IDOR": {
+          "support": 0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "COMBINED": {
+          "support": 0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "INTENTIONALLY_PUBLIC": {
+          "support": 0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        }
+      },
+      "vulnerability_finding": {
+        "precision": 0.2,
+        "recall": 1.0,
+        "f1": 0.33333333333333337,
+        "tp": 1,
+        "fp": 4,
+        "fn": 0
+      },
+      "confusion": [
+        [
+          0,
+          4,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      ],
+      "test_accuracy": 0.2,
+      "test_macro_f1": 0.05555555555555556,
+      "best_val_loss": 1.4664216171848319,
+      "history": [
+        {
+          "epoch": 1,
+          "train_loss": 1.7934592215220133,
+          "val_loss": 1.7535758513570483,
+          "val_f1": 0.024918260718436686
+        },
+        {
+          "epoch": 2,
+          "train_loss": 1.6653603061040243,
+          "val_loss": 1.6218842886836151,
+          "val_f1": 0.052121497316616805
+        },
+        {
+          "epoch": 3,
+          "train_loss": 1.50762642065684,
+          "val_loss": 1.5538911663117956,
+          "val_f1": 0.0041928721174004195
+        },
+        {
+          "epoch": 4,
+          "train_loss": 1.4354340410232544,
+          "val_loss": 1.5235490225703339,
+          "val_f1": 0.0041928721174004195
+        },
+        {
+          "epoch": 5,
+          "train_loss": 1.2858610773086547,
+          "val_loss": 1.4664216171848319,
+          "val_f1": 0.0041928721174004195
+        },
+        {
+          "epoch": 6,
+          "train_loss": 1.173496442635854,
+          "val_loss": 1.593472006542435,
+          "val_f1": 0.024918260718436686
+        },
+        {
+          "epoch": 7,
+          "train_loss": 1.139098748366038,
+          "val_loss": 1.8246733868708376,
+          "val_f1": 0.024918260718436686
+        },
+        {
+          "epoch": 8,
+          "train_loss": 1.057440217336019,
+          "val_loss": 1.7455858741301657,
+          "val_f1": 0.024918260718436686
+        },
+        {
+          "epoch": 9,
+          "train_loss": 0.9513839562733968,
+          "val_loss": 1.560854385459358,
+          "val_f1": 0.024918260718436686
+        },
+        {
+          "epoch": 10,
+          "train_loss": 0.9137890609105428,
+          "val_loss": 1.9988192365469177,
+          "val_f1": 0.024918260718436686
+        },
+        {
+          "epoch": 11,
+          "train_loss": 0.8387936997413635,
+          "val_loss": 2.092269355482091,
+          "val_f1": 0.024918260718436686
+        },
+        {
+          "epoch": 12,
+          "train_loss": 0.7944756698608398,
+          "val_loss": 1.9563408940216231,
+          "val_f1": 0.024918260718436686
+        },
+        {
+          "epoch": 13,
+          "train_loss": 0.7630973629156749,
+          "val_loss": 1.8004799514520364,
+          "val_f1": 0.024918260718436686
+        },
+        {
+          "epoch": 14,
+          "train_loss": 0.6716726636886596,
+          "val_loss": 2.0251052939826675,
+          "val_f1": 0.024918260718436686
+        },
+        {
+          "epoch": 15,
+          "train_loss": 0.7428753145535787,
+          "val_loss": 1.8431938880128287,
+          "val_f1": 0.024918260718436686
+        },
+        {
+          "epoch": 16,
+          "train_loss": 0.6259732270240783,
+          "val_loss": 1.9210953842746756,
+          "val_f1": 0.024918260718436686
+        },
+        {
+          "epoch": 17,
+          "train_loss": 0.5540658219655354,
+          "val_loss": 2.00808840892354,
+          "val_f1": 0.024918260718436686
+        },
+        {
+          "epoch": 18,
+          "train_loss": 0.6487418166796366,
+          "val_loss": 2.187949050319651,
+          "val_f1": 0.025260535993326515
+        },
+        {
+          "epoch": 19,
+          "train_loss": 0.5176017550627391,
+          "val_loss": 2.160852567745688,
+          "val_f1": 0.025260535993326515
+        },
+        {
+          "epoch": 20,
+          "train_loss": 0.5113734543323517,
+          "val_loss": 1.9004993959854208,
+          "val_f1": 0.025453520988743122
+        },
+        {
+          "epoch": 21,
+          "train_loss": 0.4450736888249715,
+          "val_loss": 2.059709017394019,
+          "val_f1": 0.025453520988743122
+        },
+        {
+          "epoch": 22,
+          "train_loss": 0.47286786198616026,
+          "val_loss": 2.1124273831727076,
+          "val_f1": 0.025260535993326515
+        },
+        {
+          "epoch": 23,
+          "train_loss": 0.4732404601573944,
+          "val_loss": 2.075051604724321,
+          "val_f1": 0.025260535993326515
+        },
+        {
+          "epoch": 24,
+          "train_loss": 0.5459877387682597,
+          "val_loss": 1.9457269470548368,
+          "val_f1": 0.025260535993326515
+        },
+        {
+          "epoch": 25,
+          "train_loss": 0.48939860304196675,
+          "val_loss": 1.6384452027701288,
+          "val_f1": 0.025260535993326515
+        },
+        {
+          "epoch": 26,
+          "train_loss": 0.5460228816668192,
+          "val_loss": 1.7806388563145705,
+          "val_f1": 0.025260535993326515
+        },
+        {
+          "epoch": 27,
+          "train_loss": 0.4751835556825002,
+          "val_loss": 1.7486069059111382,
+          "val_f1": 0.024918260718436686
+        },
+        {
+          "epoch": 28,
+          "train_loss": 0.44077775796254476,
+          "val_loss": 1.86398357120368,
+          "val_f1": 0.025260535993326515
+        },
+        {
+          "epoch": 29,
+          "train_loss": 0.4278284780184428,
+          "val_loss": 1.813065950987769,
+          "val_f1": 0.025260535993326515
+        },
+        {
+          "epoch": 30,
+          "train_loss": 0.4651968244711558,
+          "val_loss": 1.7825717196438482,
+          "val_f1": 0.025260535993326515
+        }
+      ]
+    },
+    "real_augmented_delta": {
+      "macro_f1": -0.09259259259259262,
+      "accuracy": -0.6000000000000001,
+      "vulnerability_recall": 1.0,
+      "vulnerability_precision": 0.2
+    }
+  },
+  "baselines": {
+    "rule_baseline": {
+      "detector": "rule_baseline",
+      "micro_precision": 1.0,
+      "micro_recall": 1.0,
+      "micro_f1": 1.0,
+      "apps": [
+        {
+          "application": "django-mdeditor-cve-2025-13030",
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "predictions": [
+            {
+              "endpoint_id": "endpoint__POST___mdeditor_uploads_",
+              "subtype": "MISSING_AUTH"
+            }
+          ],
+          "expected": [
+            {
+              "endpoint_id": "endpoint__POST___mdeditor_uploads_",
+              "subtype": "MISSING_AUTH"
+            }
+          ],
+          "notes": []
+        }
+      ]
+    },
+    "semgrep": {
+      "detector": "semgrep",
+      "micro_precision": 0.0,
+      "micro_recall": 0.0,
+      "micro_f1": 0.0,
+      "apps": [
+        {
+          "application": "django-mdeditor-cve-2025-13030",
+          "tp": 0,
+          "fp": 0,
+          "fn": 1,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "predictions": [],
+          "expected": [
+            {
+              "endpoint_id": "endpoint__POST___mdeditor_uploads_",
+              "subtype": "MISSING_AUTH"
+            }
+          ],
+          "notes": []
+        }
+      ],
+      "status": "provided",
+      "findings_path": "artifacts/semgrep-django-mdeditor.normalized.json",
+      "n_findings": 0,
+      "record_scope": "flat_endpoint_list",
+      "note": "Flat normalized findings are interpreted as belonging to the held-out manifest set. Add `application` or `dataset_split_group` when combining findings from multiple apps."
+    },
+    "codeql": {
+      "detector": "codeql",
+      "micro_precision": 0.0,
+      "micro_recall": 0.0,
+      "micro_f1": 0.0,
+      "apps": [
+        {
+          "application": "django-mdeditor-cve-2025-13030",
+          "tp": 0,
+          "fp": 0,
+          "fn": 1,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "predictions": [],
+          "expected": [
+            {
+              "endpoint_id": "endpoint__POST___mdeditor_uploads_",
+              "subtype": "MISSING_AUTH"
+            }
+          ],
+          "notes": []
+        }
+      ],
+      "status": "provided",
+      "findings_path": "artifacts/codeql-django-mdeditor.normalized.json",
+      "n_findings": 0,
+      "record_scope": "flat_endpoint_list",
+      "note": "Flat normalized findings are interpreted as belonging to the held-out manifest set. Add `application` or `dataset_split_group` when combining findings from multiple apps."
+    }
+  },
+  "predictions": {
+    "path_analyzer_real_only": [
+      {
+        "endpoint_id": "endpoint__GET___",
+        "expected": "SAFE",
+        "predicted": "SAFE",
+        "confidence": 0.9820514917373657,
+        "correct": true,
+        "explanation": {
+          "route": "/",
+          "source_location": "/Users/salah/Documents/PFE/PFG/benchmarks/realworld/django-mdeditor-cve-2025-13030/src/mdeditor_demo_app/urls.py:6",
+          "attention_ranked_nodes": [
+            {
+              "node_id": "service__django_contrib_admin_site_urls",
+              "type": "service",
+              "attention": 0.10513365268707275
+            },
+            {
+              "node_id": "service__mdeditor_demo_app_views_mdeditor_form_view",
+              "type": "service",
+              "attention": 0.10513365268707275
+            },
+            {
+              "node_id": "service__mdeditor_demo_app_views_mdeditor_model_form_view",
+              "type": "service",
+              "attention": 0.10513365268707275
+            },
+            {
+              "node_id": "service__mdeditor_demo_app_views_show_view",
+              "type": "service",
+              "attention": 0.10513365268707275
+            },
+            {
+              "node_id": "endpoint__GET___",
+              "type": "endpoint",
+              "attention": 0.10307985544204712
+            },
+            {
+              "node_id": "endpoint__GET___admin_",
+              "type": "endpoint",
+              "attention": 0.10307985544204712
+            },
+            {
+              "node_id": "endpoint__GET___model_",
+              "type": "endpoint",
+              "attention": 0.10307985544204712
+            },
+            {
+              "node_id": "endpoint__GET___show__pk__",
+              "type": "endpoint",
+              "attention": 0.10307985544204712
+            }
+          ],
+          "identifier_flow": [],
+          "reachable_data_access": []
+        }
+      },
+      {
+        "endpoint_id": "endpoint__GET___admin_",
+        "expected": "SAFE",
+        "predicted": "SAFE",
+        "confidence": 0.9820514917373657,
+        "correct": true,
+        "explanation": {
+          "route": "/admin/",
+          "source_location": "/Users/salah/Documents/PFE/PFG/benchmarks/realworld/django-mdeditor-cve-2025-13030/src/mdeditor_demo/urls.py:7",
+          "attention_ranked_nodes": [
+            {
+              "node_id": "service__django_contrib_admin_site_urls",
+              "type": "service",
+              "attention": 0.10513365268707275
+            },
+            {
+              "node_id": "service__mdeditor_demo_app_views_mdeditor_form_view",
+              "type": "service",
+              "attention": 0.10513365268707275
+            },
+            {
+              "node_id": "service__mdeditor_demo_app_views_mdeditor_model_form_view",
+              "type": "service",
+              "attention": 0.10513365268707275
+            },
+            {
+              "node_id": "service__mdeditor_demo_app_views_show_view",
+              "type": "service",
+              "attention": 0.10513365268707275
+            },
+            {
+              "node_id": "endpoint__GET___",
+              "type": "endpoint",
+              "attention": 0.10307985544204712
+            },
+            {
+              "node_id": "endpoint__GET___admin_",
+              "type": "endpoint",
+              "attention": 0.10307985544204712
+            },
+            {
+              "node_id": "endpoint__GET___model_",
+              "type": "endpoint",
+              "attention": 0.10307985544204712
+            },
+            {
+              "node_id": "endpoint__GET___show__pk__",
+              "type": "endpoint",
+              "attention": 0.10307985544204712
+            }
+          ],
+          "identifier_flow": [],
+          "reachable_data_access": []
+        }
+      },
+      {
+        "endpoint_id": "endpoint__GET___model_",
+        "expected": "SAFE",
+        "predicted": "SAFE",
+        "confidence": 0.9820514917373657,
+        "correct": true,
+        "explanation": {
+          "route": "/model/",
+          "source_location": "/Users/salah/Documents/PFE/PFG/benchmarks/realworld/django-mdeditor-cve-2025-13030/src/mdeditor_demo_app/urls.py:7",
+          "attention_ranked_nodes": [
+            {
+              "node_id": "service__django_contrib_admin_site_urls",
+              "type": "service",
+              "attention": 0.10513365268707275
+            },
+            {
+              "node_id": "service__mdeditor_demo_app_views_mdeditor_form_view",
+              "type": "service",
+              "attention": 0.10513365268707275
+            },
+            {
+              "node_id": "service__mdeditor_demo_app_views_mdeditor_model_form_view",
+              "type": "service",
+              "attention": 0.10513365268707275
+            },
+            {
+              "node_id": "service__mdeditor_demo_app_views_show_view",
+              "type": "service",
+              "attention": 0.10513365268707275
+            },
+            {
+              "node_id": "endpoint__GET___",
+              "type": "endpoint",
+              "attention": 0.10307985544204712
+            },
+            {
+              "node_id": "endpoint__GET___admin_",
+              "type": "endpoint",
+              "attention": 0.10307985544204712
+            },
+            {
+              "node_id": "endpoint__GET___model_",
+              "type": "endpoint",
+              "attention": 0.10307985544204712
+            },
+            {
+              "node_id": "endpoint__GET___show__pk__",
+              "type": "endpoint",
+              "attention": 0.10307985544204712
+            }
+          ],
+          "identifier_flow": [],
+          "reachable_data_access": []
+        }
+      },
+      {
+        "endpoint_id": "endpoint__GET___show__pk__",
+        "expected": "SAFE",
+        "predicted": "SAFE",
+        "confidence": 0.9820514917373657,
+        "correct": true,
+        "explanation": {
+          "route": "/show/{pk}/",
+          "source_location": "/Users/salah/Documents/PFE/PFG/benchmarks/realworld/django-mdeditor-cve-2025-13030/src/mdeditor_demo_app/urls.py:8",
+          "attention_ranked_nodes": [
+            {
+              "node_id": "service__django_contrib_admin_site_urls",
+              "type": "service",
+              "attention": 0.10513365268707275
+            },
+            {
+              "node_id": "service__mdeditor_demo_app_views_mdeditor_form_view",
+              "type": "service",
+              "attention": 0.10513365268707275
+            },
+            {
+              "node_id": "service__mdeditor_demo_app_views_mdeditor_model_form_view",
+              "type": "service",
+              "attention": 0.10513365268707275
+            },
+            {
+              "node_id": "service__mdeditor_demo_app_views_show_view",
+              "type": "service",
+              "attention": 0.10513365268707275
+            },
+            {
+              "node_id": "endpoint__GET___",
+              "type": "endpoint",
+              "attention": 0.10307985544204712
+            },
+            {
+              "node_id": "endpoint__GET___admin_",
+              "type": "endpoint",
+              "attention": 0.10307985544204712
+            },
+            {
+              "node_id": "endpoint__GET___model_",
+              "type": "endpoint",
+              "attention": 0.10307985544204712
+            },
+            {
+              "node_id": "endpoint__GET___show__pk__",
+              "type": "endpoint",
+              "attention": 0.10307985544204712
+            }
+          ],
+          "identifier_flow": [],
+          "reachable_data_access": []
+        }
+      },
+      {
+        "endpoint_id": "endpoint__POST___mdeditor_uploads_",
+        "expected": "MISSING_AUTH",
+        "predicted": "SAFE",
+        "confidence": 0.9981715679168701,
+        "correct": false,
+        "explanation": {
+          "route": "/mdeditor/uploads/",
+          "source_location": "/Users/salah/Documents/PFE/PFG/benchmarks/realworld/django-mdeditor-cve-2025-13030/src/mdeditor/urls.py:13",
+          "attention_ranked_nodes": [
+            {
+              "node_id": "service__django_contrib_admin_site_urls",
+              "type": "service",
+              "attention": 0.09886591136455536
+            },
+            {
+              "node_id": "service__mdeditor_demo_app_views_mdeditor_form_view",
+              "type": "service",
+              "attention": 0.09886591136455536
+            },
+            {
+              "node_id": "service__mdeditor_demo_app_views_mdeditor_model_form_view",
+              "type": "service",
+              "attention": 0.09886591136455536
+            },
+            {
+              "node_id": "service__mdeditor_demo_app_views_show_view",
+              "type": "service",
+              "attention": 0.09886591136455536
+            },
+            {
+              "node_id": "endpoint__GET___",
+              "type": "endpoint",
+              "attention": 0.09705885499715805
+            },
+            {
+              "node_id": "endpoint__GET___admin_",
+              "type": "endpoint",
+              "attention": 0.09705885499715805
+            },
+            {
+              "node_id": "endpoint__GET___model_",
+              "type": "endpoint",
+              "attention": 0.09705885499715805
+            },
+            {
+              "node_id": "endpoint__GET___show__pk__",
+              "type": "endpoint",
+              "attention": 0.09705885499715805
+            }
+          ],
+          "identifier_flow": [],
+          "reachable_data_access": [
+            "data__mdeditor_views_UploadView_post__L63__0"
+          ]
+        }
+      }
+    ],
+    "path_analyzer_real_augmented": [
+      {
+        "endpoint_id": "endpoint__GET___",
+        "expected": "SAFE",
+        "predicted": "MISSING_AUTH",
+        "confidence": 0.39690887928009033,
+        "correct": false,
+        "explanation": {
+          "route": "/",
+          "source_location": "/Users/salah/Documents/PFE/PFG/benchmarks/realworld/django-mdeditor-cve-2025-13030/src/mdeditor_demo_app/urls.py:6",
+          "attention_ranked_nodes": [
+            {
+              "node_id": "data__mdeditor_views_UploadView_post__L63__0",
+              "type": "data_access",
+              "attention": 0.10252880305051804
+            },
+            {
+              "node_id": "service__django_contrib_admin_site_urls",
+              "type": "service",
+              "attention": 0.09279955923557281
+            },
+            {
+              "node_id": "service__mdeditor_demo_app_views_mdeditor_form_view",
+              "type": "service",
+              "attention": 0.09279955923557281
+            },
+            {
+              "node_id": "service__mdeditor_demo_app_views_mdeditor_model_form_view",
+              "type": "service",
+              "attention": 0.09279955923557281
+            },
+            {
+              "node_id": "service__mdeditor_demo_app_views_show_view",
+              "type": "service",
+              "attention": 0.09279955923557281
+            },
+            {
+              "node_id": "service__mdeditor_views_UploadView_post",
+              "type": "service",
+              "attention": 0.08946331590414047
+            },
+            {
+              "node_id": "endpoint__GET___",
+              "type": "endpoint",
+              "attention": 0.08785568177700043
+            },
+            {
+              "node_id": "endpoint__GET___admin_",
+              "type": "endpoint",
+              "attention": 0.08785568177700043
+            }
+          ],
+          "identifier_flow": [],
+          "reachable_data_access": []
+        }
+      },
+      {
+        "endpoint_id": "endpoint__GET___admin_",
+        "expected": "SAFE",
+        "predicted": "MISSING_AUTH",
+        "confidence": 0.39690887928009033,
+        "correct": false,
+        "explanation": {
+          "route": "/admin/",
+          "source_location": "/Users/salah/Documents/PFE/PFG/benchmarks/realworld/django-mdeditor-cve-2025-13030/src/mdeditor_demo/urls.py:7",
+          "attention_ranked_nodes": [
+            {
+              "node_id": "data__mdeditor_views_UploadView_post__L63__0",
+              "type": "data_access",
+              "attention": 0.10252880305051804
+            },
+            {
+              "node_id": "service__django_contrib_admin_site_urls",
+              "type": "service",
+              "attention": 0.09279955923557281
+            },
+            {
+              "node_id": "service__mdeditor_demo_app_views_mdeditor_form_view",
+              "type": "service",
+              "attention": 0.09279955923557281
+            },
+            {
+              "node_id": "service__mdeditor_demo_app_views_mdeditor_model_form_view",
+              "type": "service",
+              "attention": 0.09279955923557281
+            },
+            {
+              "node_id": "service__mdeditor_demo_app_views_show_view",
+              "type": "service",
+              "attention": 0.09279955923557281
+            },
+            {
+              "node_id": "service__mdeditor_views_UploadView_post",
+              "type": "service",
+              "attention": 0.08946331590414047
+            },
+            {
+              "node_id": "endpoint__GET___",
+              "type": "endpoint",
+              "attention": 0.08785568177700043
+            },
+            {
+              "node_id": "endpoint__GET___admin_",
+              "type": "endpoint",
+              "attention": 0.08785568177700043
+            }
+          ],
+          "identifier_flow": [],
+          "reachable_data_access": []
+        }
+      },
+      {
+        "endpoint_id": "endpoint__GET___model_",
+        "expected": "SAFE",
+        "predicted": "MISSING_AUTH",
+        "confidence": 0.39690887928009033,
+        "correct": false,
+        "explanation": {
+          "route": "/model/",
+          "source_location": "/Users/salah/Documents/PFE/PFG/benchmarks/realworld/django-mdeditor-cve-2025-13030/src/mdeditor_demo_app/urls.py:7",
+          "attention_ranked_nodes": [
+            {
+              "node_id": "data__mdeditor_views_UploadView_post__L63__0",
+              "type": "data_access",
+              "attention": 0.10252880305051804
+            },
+            {
+              "node_id": "service__django_contrib_admin_site_urls",
+              "type": "service",
+              "attention": 0.09279955923557281
+            },
+            {
+              "node_id": "service__mdeditor_demo_app_views_mdeditor_form_view",
+              "type": "service",
+              "attention": 0.09279955923557281
+            },
+            {
+              "node_id": "service__mdeditor_demo_app_views_mdeditor_model_form_view",
+              "type": "service",
+              "attention": 0.09279955923557281
+            },
+            {
+              "node_id": "service__mdeditor_demo_app_views_show_view",
+              "type": "service",
+              "attention": 0.09279955923557281
+            },
+            {
+              "node_id": "service__mdeditor_views_UploadView_post",
+              "type": "service",
+              "attention": 0.08946331590414047
+            },
+            {
+              "node_id": "endpoint__GET___",
+              "type": "endpoint",
+              "attention": 0.08785568177700043
+            },
+            {
+              "node_id": "endpoint__GET___admin_",
+              "type": "endpoint",
+              "attention": 0.08785568177700043
+            }
+          ],
+          "identifier_flow": [],
+          "reachable_data_access": []
+        }
+      },
+      {
+        "endpoint_id": "endpoint__GET___show__pk__",
+        "expected": "SAFE",
+        "predicted": "MISSING_AUTH",
+        "confidence": 0.39690887928009033,
+        "correct": false,
+        "explanation": {
+          "route": "/show/{pk}/",
+          "source_location": "/Users/salah/Documents/PFE/PFG/benchmarks/realworld/django-mdeditor-cve-2025-13030/src/mdeditor_demo_app/urls.py:8",
+          "attention_ranked_nodes": [
+            {
+              "node_id": "data__mdeditor_views_UploadView_post__L63__0",
+              "type": "data_access",
+              "attention": 0.10252880305051804
+            },
+            {
+              "node_id": "service__django_contrib_admin_site_urls",
+              "type": "service",
+              "attention": 0.09279955923557281
+            },
+            {
+              "node_id": "service__mdeditor_demo_app_views_mdeditor_form_view",
+              "type": "service",
+              "attention": 0.09279955923557281
+            },
+            {
+              "node_id": "service__mdeditor_demo_app_views_mdeditor_model_form_view",
+              "type": "service",
+              "attention": 0.09279955923557281
+            },
+            {
+              "node_id": "service__mdeditor_demo_app_views_show_view",
+              "type": "service",
+              "attention": 0.09279955923557281
+            },
+            {
+              "node_id": "service__mdeditor_views_UploadView_post",
+              "type": "service",
+              "attention": 0.08946331590414047
+            },
+            {
+              "node_id": "endpoint__GET___",
+              "type": "endpoint",
+              "attention": 0.08785568177700043
+            },
+            {
+              "node_id": "endpoint__GET___admin_",
+              "type": "endpoint",
+              "attention": 0.08785568177700043
+            }
+          ],
+          "identifier_flow": [],
+          "reachable_data_access": []
+        }
+      },
+      {
+        "endpoint_id": "endpoint__POST___mdeditor_uploads_",
+        "expected": "MISSING_AUTH",
+        "predicted": "MISSING_AUTH",
+        "confidence": 0.35165196657180786,
+        "correct": true,
+        "explanation": {
+          "route": "/mdeditor/uploads/",
+          "source_location": "/Users/salah/Documents/PFE/PFG/benchmarks/realworld/django-mdeditor-cve-2025-13030/src/mdeditor/urls.py:13",
+          "attention_ranked_nodes": [
+            {
+              "node_id": "data__mdeditor_views_UploadView_post__L63__0",
+              "type": "data_access",
+              "attention": 0.10372034460306168
+            },
+            {
+              "node_id": "service__django_contrib_admin_site_urls",
+              "type": "service",
+              "attention": 0.0925937369465828
+            },
+            {
+              "node_id": "service__mdeditor_demo_app_views_mdeditor_form_view",
+              "type": "service",
+              "attention": 0.0925937369465828
+            },
+            {
+              "node_id": "service__mdeditor_demo_app_views_mdeditor_model_form_view",
+              "type": "service",
+              "attention": 0.0925937369465828
+            },
+            {
+              "node_id": "service__mdeditor_demo_app_views_show_view",
+              "type": "service",
+              "attention": 0.0925937369465828
+            },
+            {
+              "node_id": "service__mdeditor_views_UploadView_post",
+              "type": "service",
+              "attention": 0.09022758901119232
+            },
+            {
+              "node_id": "endpoint__GET___",
+              "type": "endpoint",
+              "attention": 0.0874118059873581
+            },
+            {
+              "node_id": "endpoint__GET___admin_",
+              "type": "endpoint",
+              "attention": 0.0874118059873581
+            }
+          ],
+          "identifier_flow": [],
+          "reachable_data_access": [
+            "data__mdeditor_views_UploadView_post__L63__0"
+          ]
+        }
+      }
+    ]
+  },
+  "error_analysis": {
+    "path_analyzer_real_only": [
+      {
+        "endpoint_id": "endpoint__POST___mdeditor_uploads_",
+        "expected": "MISSING_AUTH",
+        "predicted": "SAFE",
+        "confidence": 0.9981715679168701,
+        "correct": false,
+        "explanation": {
+          "route": "/mdeditor/uploads/",
+          "source_location": "/Users/salah/Documents/PFE/PFG/benchmarks/realworld/django-mdeditor-cve-2025-13030/src/mdeditor/urls.py:13",
+          "attention_ranked_nodes": [
+            {
+              "node_id": "service__django_contrib_admin_site_urls",
+              "type": "service",
+              "attention": 0.09886591136455536
+            },
+            {
+              "node_id": "service__mdeditor_demo_app_views_mdeditor_form_view",
+              "type": "service",
+              "attention": 0.09886591136455536
+            },
+            {
+              "node_id": "service__mdeditor_demo_app_views_mdeditor_model_form_view",
+              "type": "service",
+              "attention": 0.09886591136455536
+            },
+            {
+              "node_id": "service__mdeditor_demo_app_views_show_view",
+              "type": "service",
+              "attention": 0.09886591136455536
+            },
+            {
+              "node_id": "endpoint__GET___",
+              "type": "endpoint",
+              "attention": 0.09705885499715805
+            },
+            {
+              "node_id": "endpoint__GET___admin_",
+              "type": "endpoint",
+              "attention": 0.09705885499715805
+            },
+            {
+              "node_id": "endpoint__GET___model_",
+              "type": "endpoint",
+              "attention": 0.09705885499715805
+            },
+            {
+              "node_id": "endpoint__GET___show__pk__",
+              "type": "endpoint",
+              "attention": 0.09705885499715805
+            }
+          ],
+          "identifier_flow": [],
+          "reachable_data_access": [
+            "data__mdeditor_views_UploadView_post__L63__0"
+          ]
+        }
+      }
+    ],
+    "path_analyzer_real_augmented": [
+      {
+        "endpoint_id": "endpoint__GET___",
+        "expected": "SAFE",
+        "predicted": "MISSING_AUTH",
+        "confidence": 0.39690887928009033,
+        "correct": false,
+        "explanation": {
+          "route": "/",
+          "source_location": "/Users/salah/Documents/PFE/PFG/benchmarks/realworld/django-mdeditor-cve-2025-13030/src/mdeditor_demo_app/urls.py:6",
+          "attention_ranked_nodes": [
+            {
+              "node_id": "data__mdeditor_views_UploadView_post__L63__0",
+              "type": "data_access",
+              "attention": 0.10252880305051804
+            },
+            {
+              "node_id": "service__django_contrib_admin_site_urls",
+              "type": "service",
+              "attention": 0.09279955923557281
+            },
+            {
+              "node_id": "service__mdeditor_demo_app_views_mdeditor_form_view",
+              "type": "service",
+              "attention": 0.09279955923557281
+            },
+            {
+              "node_id": "service__mdeditor_demo_app_views_mdeditor_model_form_view",
+              "type": "service",
+              "attention": 0.09279955923557281
+            },
+            {
+              "node_id": "service__mdeditor_demo_app_views_show_view",
+              "type": "service",
+              "attention": 0.09279955923557281
+            },
+            {
+              "node_id": "service__mdeditor_views_UploadView_post",
+              "type": "service",
+              "attention": 0.08946331590414047
+            },
+            {
+              "node_id": "endpoint__GET___",
+              "type": "endpoint",
+              "attention": 0.08785568177700043
+            },
+            {
+              "node_id": "endpoint__GET___admin_",
+              "type": "endpoint",
+              "attention": 0.08785568177700043
+            }
+          ],
+          "identifier_flow": [],
+          "reachable_data_access": []
+        }
+      },
+      {
+        "endpoint_id": "endpoint__GET___admin_",
+        "expected": "SAFE",
+        "predicted": "MISSING_AUTH",
+        "confidence": 0.39690887928009033,
+        "correct": false,
+        "explanation": {
+          "route": "/admin/",
+          "source_location": "/Users/salah/Documents/PFE/PFG/benchmarks/realworld/django-mdeditor-cve-2025-13030/src/mdeditor_demo/urls.py:7",
+          "attention_ranked_nodes": [
+            {
+              "node_id": "data__mdeditor_views_UploadView_post__L63__0",
+              "type": "data_access",
+              "attention": 0.10252880305051804
+            },
+            {
+              "node_id": "service__django_contrib_admin_site_urls",
+              "type": "service",
+              "attention": 0.09279955923557281
+            },
+            {
+              "node_id": "service__mdeditor_demo_app_views_mdeditor_form_view",
+              "type": "service",
+              "attention": 0.09279955923557281
+            },
+            {
+              "node_id": "service__mdeditor_demo_app_views_mdeditor_model_form_view",
+              "type": "service",
+              "attention": 0.09279955923557281
+            },
+            {
+              "node_id": "service__mdeditor_demo_app_views_show_view",
+              "type": "service",
+              "attention": 0.09279955923557281
+            },
+            {
+              "node_id": "service__mdeditor_views_UploadView_post",
+              "type": "service",
+              "attention": 0.08946331590414047
+            },
+            {
+              "node_id": "endpoint__GET___",
+              "type": "endpoint",
+              "attention": 0.08785568177700043
+            },
+            {
+              "node_id": "endpoint__GET___admin_",
+              "type": "endpoint",
+              "attention": 0.08785568177700043
+            }
+          ],
+          "identifier_flow": [],
+          "reachable_data_access": []
+        }
+      },
+      {
+        "endpoint_id": "endpoint__GET___model_",
+        "expected": "SAFE",
+        "predicted": "MISSING_AUTH",
+        "confidence": 0.39690887928009033,
+        "correct": false,
+        "explanation": {
+          "route": "/model/",
+          "source_location": "/Users/salah/Documents/PFE/PFG/benchmarks/realworld/django-mdeditor-cve-2025-13030/src/mdeditor_demo_app/urls.py:7",
+          "attention_ranked_nodes": [
+            {
+              "node_id": "data__mdeditor_views_UploadView_post__L63__0",
+              "type": "data_access",
+              "attention": 0.10252880305051804
+            },
+            {
+              "node_id": "service__django_contrib_admin_site_urls",
+              "type": "service",
+              "attention": 0.09279955923557281
+            },
+            {
+              "node_id": "service__mdeditor_demo_app_views_mdeditor_form_view",
+              "type": "service",
+              "attention": 0.09279955923557281
+            },
+            {
+              "node_id": "service__mdeditor_demo_app_views_mdeditor_model_form_view",
+              "type": "service",
+              "attention": 0.09279955923557281
+            },
+            {
+              "node_id": "service__mdeditor_demo_app_views_show_view",
+              "type": "service",
+              "attention": 0.09279955923557281
+            },
+            {
+              "node_id": "service__mdeditor_views_UploadView_post",
+              "type": "service",
+              "attention": 0.08946331590414047
+            },
+            {
+              "node_id": "endpoint__GET___",
+              "type": "endpoint",
+              "attention": 0.08785568177700043
+            },
+            {
+              "node_id": "endpoint__GET___admin_",
+              "type": "endpoint",
+              "attention": 0.08785568177700043
+            }
+          ],
+          "identifier_flow": [],
+          "reachable_data_access": []
+        }
+      },
+      {
+        "endpoint_id": "endpoint__GET___show__pk__",
+        "expected": "SAFE",
+        "predicted": "MISSING_AUTH",
+        "confidence": 0.39690887928009033,
+        "correct": false,
+        "explanation": {
+          "route": "/show/{pk}/",
+          "source_location": "/Users/salah/Documents/PFE/PFG/benchmarks/realworld/django-mdeditor-cve-2025-13030/src/mdeditor_demo_app/urls.py:8",
+          "attention_ranked_nodes": [
+            {
+              "node_id": "data__mdeditor_views_UploadView_post__L63__0",
+              "type": "data_access",
+              "attention": 0.10252880305051804
+            },
+            {
+              "node_id": "service__django_contrib_admin_site_urls",
+              "type": "service",
+              "attention": 0.09279955923557281
+            },
+            {
+              "node_id": "service__mdeditor_demo_app_views_mdeditor_form_view",
+              "type": "service",
+              "attention": 0.09279955923557281
+            },
+            {
+              "node_id": "service__mdeditor_demo_app_views_mdeditor_model_form_view",
+              "type": "service",
+              "attention": 0.09279955923557281
+            },
+            {
+              "node_id": "service__mdeditor_demo_app_views_show_view",
+              "type": "service",
+              "attention": 0.09279955923557281
+            },
+            {
+              "node_id": "service__mdeditor_views_UploadView_post",
+              "type": "service",
+              "attention": 0.08946331590414047
+            },
+            {
+              "node_id": "endpoint__GET___",
+              "type": "endpoint",
+              "attention": 0.08785568177700043
+            },
+            {
+              "node_id": "endpoint__GET___admin_",
+              "type": "endpoint",
+              "attention": 0.08785568177700043
+            }
+          ],
+          "identifier_flow": [],
+          "reachable_data_access": []
+        }
+      }
+    ]
+  },
+  "augmentation": {
+    "policy": "real-derived training-only augmentation",
+    "held_out_test_contains_augmented_samples": false,
+    "types": [
+      "remove_auth_guard",
+      "remove_role_guard",
+      "remove_ownership_predicate"
+    ],
+    "sample_metadata_keys": [
+      "augmented",
+      "origin_manifest",
+      "origin_endpoint_id",
+      "augmentation_type"
+    ]
+  }
+}

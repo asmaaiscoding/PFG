@@ -263,6 +263,25 @@ test split real-only while placing Nautobot in training, which produces
 non-empty real-derived augmentation. For thesis tables, repeat the command
 with each independent holdout group and report the per-group results.
 
+The current recorded final run uses leave-one-group-out evaluation and stores
+per-fold checkpoints/reports under:
+
+```text
+artifacts/final/<holdout-group>/
+```
+
+The aggregate result is:
+
+| System | Accuracy | Macro F1 | Vuln Precision | Vuln Recall | Vuln F1 |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| PathAnalyzer real-only | 0.987 | 0.166 | 0.000 | 0.000 | 0.000 |
+| PathAnalyzer real + augmented | 0.144 | 0.049 | 0.015 | 1.000 | 0.029 |
+
+Interpretation: real-derived augmentation helped recall on this tiny corpus,
+but it did not improve the final objective result because precision and macro
+F1 collapsed. The honest current conclusion is that the augmentation policy is
+too aggressive and needs refinement before it can be claimed as helpful.
+
 ## External Tool Comparison
 
 Semgrep and CodeQL are compared through normalized endpoint findings.
@@ -270,11 +289,11 @@ Semgrep and CodeQL are compared through normalized endpoint findings.
 Semgrep workflow:
 
 ```bash
-semgrep scan --config auto --json \
+semgrep scan --config p/django --config p/python --json --metrics=off \
   benchmarks/realworld/wger-cve-2026-27839/src \
-  > artifacts/semgrep-wger.json
+  > artifacts/semgrep-wger.raw.json
 
-uv run pfg normalize semgrep artifacts/semgrep-wger.json \
+uv run pfg normalize semgrep artifacts/semgrep-wger.raw.json \
   --manifest benchmarks/realworld/wger-cve-2026-27839/manifest.yaml \
   --out artifacts/semgrep-wger.normalized.json
 
@@ -285,11 +304,14 @@ uv run pfg eval benchmarks/realworld --detector external \
 CodeQL workflow:
 
 ```bash
+codeql pack download codeql/python-queries
+
 codeql database create artifacts/codeql/wger-db \
   --language=python \
   --source-root benchmarks/realworld/wger-cve-2026-27839/src
 
 codeql database analyze artifacts/codeql/wger-db \
+  codeql/python-queries:codeql-suites/python-security-and-quality.qls \
   --format=sarifv2.1.0 \
   --output artifacts/codeql-wger.sarif.json
 
@@ -300,6 +322,17 @@ uv run pfg normalize codeql artifacts/codeql-wger.sarif.json \
 uv run pfg eval benchmarks/realworld --detector external \
   --external-findings artifacts/codeql-wger.normalized.json
 ```
+
+Current external-tool result:
+
+| Tool | Raw findings | Normalized endpoint findings | Endpoint-level precision | Endpoint-level recall | Endpoint-level F1 |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Semgrep | 39 | 0 | 0.000 | 0.000 | 0.000 |
+| CodeQL | 462 | 0 | 0.000 | 0.000 | 0.000 |
+
+These are not missing runs: the tools produced raw findings, but their standard
+rules/queries did not map to the six advisory-backed privilege-flow endpoint
+labels in this corpus.
 
 ## Extractor Improvements Made for Real Data
 

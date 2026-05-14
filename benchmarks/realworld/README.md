@@ -99,3 +99,9 @@ real + augmented, then writes `final_metrics.json`, `final_report.md`,
 The explicit holdout/seed shown above gives a non-empty augmented training set
 with the current minimum corpus. For final thesis evidence, run one pass per
 independent holdout group.
+
+The current recorded result uses leave-one-group-out folds under
+`artifacts/final/<holdout-group>/` and an aggregate report in
+`artifacts/final_report.md`. On this three-group corpus, augmentation increased
+vulnerable-endpoint recall from `0.000` to `1.000`, but reduced macro F1 from
+`0.166` to `0.049`; it is therefore not yet a net improvement.

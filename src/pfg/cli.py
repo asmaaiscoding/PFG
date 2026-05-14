@@ -481,11 +481,15 @@ def train_corpus_cmd(
 @click.argument("corpus_root", type=click.Path(exists=True, file_okay=False, path_type=Path))
 @click.option("--holdout-group", default=None, help="Dataset split group to reserve for test.")
 @click.option("--epochs", default=30, show_default=True, type=int)
+@click.option("--pretrain-epochs", default=20, show_default=True, type=int)
 @click.option("--seed", default=0, show_default=True, type=int)
 @click.option("--batch-size", default=32, show_default=True, type=int)
 @click.option("--hidden-dim", default=64, show_default=True, type=int)
 @click.option("--num-layers", default=3, show_default=True, type=int)
 @click.option("--heads", default=4, show_default=True, type=int)
+@click.option("--focal-gamma", default=2.0, show_default=True, type=float)
+@click.option("--augmentation-cap", default=10, show_default=True, type=int)
+@click.option("--contrastive-pairs", default=150, show_default=True, type=int)
 @click.option(
     "--out-dir",
     type=click.Path(file_okay=False, path_type=Path),
@@ -508,16 +512,20 @@ def final_experiment_cmd(
     corpus_root: Path,
     holdout_group: str | None,
     epochs: int,
+    pretrain_epochs: int,
     seed: int,
     batch_size: int,
     hidden_dim: int,
     num_layers: int,
     heads: int,
+    focal_gamma: float,
+    augmentation_cap: int,
+    contrastive_pairs: int,
     out_dir: Path,
     semgrep_findings: Path | None,
     codeql_findings: Path | None,
 ) -> None:
-    """Run the final real-corpus Model B comparison: real-only vs real+augmented."""
+    """Run the final real-corpus Model B comparison: real-only vs augmented vs two-stage."""
     from pfg.training.final import run_final_experiment
 
     try:
@@ -525,11 +533,15 @@ def final_experiment_cmd(
             corpus_root,
             holdout_group=holdout_group,
             epochs=epochs,
+            pretrain_epochs=pretrain_epochs,
             seed=seed,
             batch_size=batch_size,
             hidden_dim=hidden_dim,
             num_layers=num_layers,
             heads=heads,
+            focal_gamma=focal_gamma,
+            augmentation_cap=augmentation_cap,
+            contrastive_pairs=contrastive_pairs,
             out_dir=out_dir,
             semgrep_findings=semgrep_findings,
             codeql_findings=codeql_findings,
@@ -539,8 +551,10 @@ def final_experiment_cmd(
 
     real = outputs.metrics["models"]["path_analyzer_real_only"]
     aug = outputs.metrics["models"]["path_analyzer_real_augmented"]
-    delta = outputs.metrics["models"]["real_augmented_delta"]
-    click.echo("=== Final PathAnalyzer real-corpus experiment ===")
+    ts = outputs.metrics["models"]["path_analyzer_twostage"]
+    delta_aug = outputs.metrics["models"]["real_augmented_delta"]
+    delta_ts = outputs.metrics["models"]["twostage_delta"]
+    click.echo("=== Final PathAnalyzer real-corpus experiment (v2) ===")
     click.echo(
         f"real-only:        acc={real['accuracy']:.3f} macroF1={real['macro_f1']:.3f}"
     )
@@ -548,13 +562,22 @@ def final_experiment_cmd(
         f"real+augmented:   acc={aug['accuracy']:.3f} macroF1={aug['macro_f1']:.3f}"
     )
     click.echo(
-        f"augmentation delta: macroF1={delta['macro_f1']:+.3f} "
-        f"vuln_recall={delta['vulnerability_recall']:+.3f}"
+        f"two-stage:        acc={ts['accuracy']:.3f} macroF1={ts['macro_f1']:.3f}"
+    )
+    click.echo(
+        f"augmentation delta: macroF1={delta_aug['macro_f1']:+.3f} "
+        f"vuln_recall={delta_aug['vulnerability_recall']:+.3f}"
+    )
+    click.echo(
+        f"two-stage delta:    macroF1={delta_ts['macro_f1']:+.3f} "
+        f"vuln_recall={delta_ts['vulnerability_recall']:+.3f}"
     )
     for warning in outputs.metrics.get("warnings", []):
         click.echo(f"WARNING: {warning}")
     click.echo(f"Saved real-only model -> {outputs.real_only_model_path}")
     click.echo(f"Saved augmented model -> {outputs.augmented_model_path}")
+    if outputs.twostage_model_path:
+        click.echo(f"Saved two-stage model -> {outputs.twostage_model_path}")
     click.echo(f"Wrote metrics -> {outputs.metrics_path}")
     click.echo(f"Wrote report -> {outputs.report_path}")
 

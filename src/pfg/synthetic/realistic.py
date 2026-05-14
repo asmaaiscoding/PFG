@@ -443,6 +443,8 @@ class _AppBuilder:
             "nodes": self.nodes,
             "edges": self.edges,
         })
+        from pfg.pfg.features import enrich_endpoint_features
+        enrich_endpoint_features(pfg)
         return pfg, self.labels
 
 

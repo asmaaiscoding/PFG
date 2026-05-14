@@ -18,6 +18,7 @@ from __future__ import annotations
 import random
 from typing import Any
 
+from pfg.pfg.features import enrich_endpoint_features
 from pfg.pfg.graph import PFG
 from pfg.pfg.nodes import Label, LabelKind, VulnSubtype
 from pfg.synthetic.generator import Sample
@@ -179,6 +180,8 @@ def _pair_idor(
         "schema_version": "1.0", "application": f"contrastive_{app_idx}",
         "framework": "synthetic", "nodes": nodes_s, "edges": edges_s,
     })
+    enrich_endpoint_features(pfg_v)
+    enrich_endpoint_features(pfg_s)
 
     vuln = Sample(pfg=pfg_v, label=Label(label=LabelKind.VULNERABLE, subtype=VulnSubtype.IDOR, cwe="CWE-639"), target_endpoint_id=eid_v)
     safe = Sample(pfg=pfg_s, label=Label(label=LabelKind.SAFE), target_endpoint_id=eid_s)
@@ -249,6 +252,8 @@ def _pair_missing_auth(
         "schema_version": "1.0", "application": f"contrastive_{app_idx}",
         "framework": "synthetic", "nodes": nodes_s, "edges": edges_s,
     })
+    enrich_endpoint_features(pfg_v)
+    enrich_endpoint_features(pfg_s)
 
     vuln = Sample(pfg=pfg_v, label=Label(label=LabelKind.VULNERABLE, subtype=VulnSubtype.MISSING_AUTH, cwe="CWE-862"), target_endpoint_id=eid_v)
     safe_label = Label(label=LabelKind.INTENTIONALLY_PUBLIC) if use_public else Label(label=LabelKind.SAFE)
@@ -300,6 +305,8 @@ def _pair_missing_role(
         "schema_version": "1.0", "application": f"contrastive_{app_idx}",
         "framework": "synthetic", "nodes": nodes_s, "edges": edges_s,
     })
+    enrich_endpoint_features(pfg_v)
+    enrich_endpoint_features(pfg_s)
 
     vuln = Sample(pfg=pfg_v, label=Label(label=LabelKind.VULNERABLE, subtype=VulnSubtype.MISSING_ROLE, cwe="CWE-863"), target_endpoint_id=eid_v)
     safe = Sample(pfg=pfg_s, label=Label(label=LabelKind.SAFE), target_endpoint_id=eid_s)
@@ -354,6 +361,8 @@ def _pair_combined(
         "schema_version": "1.0", "application": f"contrastive_{app_idx}",
         "framework": "synthetic", "nodes": nodes_s, "edges": edges_s,
     })
+    enrich_endpoint_features(pfg_v)
+    enrich_endpoint_features(pfg_s)
 
     vuln = Sample(pfg=pfg_v, label=Label(label=LabelKind.VULNERABLE, subtype=VulnSubtype.COMBINED, cwe="CWE-862"), target_endpoint_id=eid_v)
     safe = Sample(pfg=pfg_s, label=Label(label=LabelKind.SAFE), target_endpoint_id=eid_s)
@@ -376,6 +385,7 @@ def _extra_safe_no_data(
         "schema_version": "1.0", "application": f"contrastive_{app_idx}",
         "framework": "synthetic", "nodes": nodes, "edges": edges,
     })
+    enrich_endpoint_features(pfg)
     return Sample(pfg=pfg, label=Label(label=LabelKind.SAFE), target_endpoint_id=eid)
 
 
@@ -403,6 +413,7 @@ def _extra_safe_with_params(
         "schema_version": "1.0", "application": f"contrastive_{app_idx}",
         "framework": "synthetic", "nodes": nodes, "edges": edges,
     })
+    enrich_endpoint_features(pfg)
     return Sample(pfg=pfg, label=Label(label=LabelKind.SAFE), target_endpoint_id=eid)
 
 

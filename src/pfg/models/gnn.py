@@ -12,7 +12,7 @@ Two architectures contribute jointly to the thesis:
     -> MLP head over the joint (target, graph) representation.
 
 Both consume the same `Data` produced by `pfg.synthetic.dataset.pfg_to_pyg`,
-which guarantees a frozen 24-dim node + 2-dim edge feature contract.
+which guarantees a frozen 28-dim node + 2-dim edge feature contract.
 
 Implementation notes
 --------------------

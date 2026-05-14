@@ -95,6 +95,11 @@ class EndpointAttrs(_Base):
     ownership_check_present: bool = False
     is_intentionally_public: bool = False
     source_location: str | None = None
+    # Derived structural features (computed post-build via enrich_endpoint_features).
+    has_route_params: bool = False
+    reachable_data_count: int = 0
+    has_id_flow: bool = False
+    unprotected_data_reachable: bool = False
 
 
 class MiddlewareAttrs(_Base):

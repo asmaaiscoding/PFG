@@ -1,0 +1,3149 @@
+{
+  "experiment": "bridging_synthetic_pretrain_mixed_finetune",
+  "config": {
+    "synth_model_path": "artifacts/synthetic-v1/path_analyzer_synthetic.pt",
+    "n_synth_apps": 5,
+    "synth_vuln_ratio": 0.8,
+    "synth_vuln_anchors": 91,
+    "epochs": 15,
+    "lr": 5e-05,
+    "focal_gamma": 2.0,
+    "batch_size": 16,
+    "hidden_dim": 64,
+    "num_layers": 3,
+    "heads": 4,
+    "gnn_threshold": 0.5,
+    "seed": 0
+  },
+  "folds": [
+    {
+      "fold": "django-mdeditor",
+      "n_train_real": 372,
+      "n_train_synth_vuln": 91,
+      "n_train_total": 463,
+      "n_val": 94,
+      "n_test": 5,
+      "finetuned": {
+        "detector": "gnn_finetuned",
+        "micro_precision": 0.0,
+        "micro_recall": 0.0,
+        "micro_f1": 0.0,
+        "apps": [
+          {
+            "application": "django-mdeditor-cve-2025-13030",
+            "tp": 0,
+            "fp": 0,
+            "fn": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "predictions": [],
+            "expected": [
+              {
+                "endpoint_id": "endpoint__POST___mdeditor_uploads_",
+                "subtype": "MISSING_AUTH"
+              }
+            ],
+            "notes": []
+          }
+        ]
+      },
+      "synthetic_only": {
+        "detector": "gnn_synthetic_only",
+        "micro_precision": 0.0,
+        "micro_recall": 0.0,
+        "micro_f1": 0.0,
+        "apps": [
+          {
+            "application": "django-mdeditor-cve-2025-13030",
+            "tp": 0,
+            "fp": 0,
+            "fn": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "predictions": [],
+            "expected": [
+              {
+                "endpoint_id": "endpoint__POST___mdeditor_uploads_",
+                "subtype": "MISSING_AUTH"
+              }
+            ],
+            "notes": []
+          }
+        ]
+      },
+      "rule_baseline": {
+        "detector": "rule_baseline",
+        "micro_precision": 1.0,
+        "micro_recall": 1.0,
+        "micro_f1": 1.0,
+        "apps": [
+          {
+            "application": "django-mdeditor-cve-2025-13030",
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "predictions": [
+              {
+                "endpoint_id": "endpoint__POST___mdeditor_uploads_",
+                "subtype": "MISSING_AUTH"
+              }
+            ],
+            "expected": [
+              {
+                "endpoint_id": "endpoint__POST___mdeditor_uploads_",
+                "subtype": "MISSING_AUTH"
+              }
+            ],
+            "notes": []
+          }
+        ]
+      },
+      "finetuned_train_result": {
+        "test_accuracy": 0.0,
+        "test_macro_f1": 0.0,
+        "best_val_loss": 0.9068975448608398
+      }
+    },
+    {
+      "fold": "nautobot",
+      "n_train_real": 230,
+      "n_train_synth_vuln": 91,
+      "n_train_total": 321,
+      "n_val": 58,
+      "n_test": 183,
+      "finetuned": {
+        "detector": "gnn_finetuned",
+        "micro_precision": 0.0,
+        "micro_recall": 0.0,
+        "micro_f1": 0.0,
+        "apps": [
+          {
+            "application": "nautobot-cve-2023-50263",
+            "tp": 0,
+            "fp": 167,
+            "fn": 2,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "predictions": [
+              {
+                "endpoint_id": "endpoint__GET___",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___admin_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_docs_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_status_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___circuits_circuits__circuit__terminations_add_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___circuits_circuits__pk__terminations_swap_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_cables__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_cables__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_console_ports__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_console_ports__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_console_server_ports__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_console_server_ports__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_device_bays__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_device_bays__pk__depopulate_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_device_bays__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_device_bays__pk__populate_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_device_types__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_device_types__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_devices__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_front_ports__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_front_ports__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_interfaces__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_interfaces__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_inventory_items__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_inventory_items__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_location_types__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_location_types__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_locations__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_locations__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_manufacturers__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_manufacturers__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_platforms__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_platforms__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_power_feeds__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_power_feeds__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_power_outlets__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_power_outlets__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_power_panels__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_power_panels__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_power_ports__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_power_ports__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_rack_groups__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_rack_groups__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_rack_reservations__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_rack_reservations__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_racks__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_racks__pk__dynamic_groups_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_racks__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_rear_ports__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_rear_ports__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_virtual_chassis__pk__add_member_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_virtual_chassis__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_virtual_chassis__pk__edit_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_virtual_chassis__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_virtual_chassis_members__pk__delete_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_computed_fields__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_computed_fields__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_config_context_schemas__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_config_context_schemas__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_config_contexts__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_config_contexts__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_custom_fields__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_custom_fields__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_custom_links__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_custom_links__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_dynamic_groups__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_dynamic_groups__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_export_templates__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_export_templates__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_git_repositories__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_git_repositories__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_graphql_queries__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_graphql_queries__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_job_hooks__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_job_results__pk__log_table_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_jobs__class_path__run_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_jobs__pk__run_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_notes__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_object_changes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_relationships__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_relationships__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_secrets__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_secrets__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_secrets_groups__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_secrets_groups__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_secrets_provider__provider_slug__form_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_statuses__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_statuses__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_tags__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_tags__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_webhooks__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_webhooks__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___files_download_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___files_get_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_ip_addresses__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_ip_addresses__pk__dynamic_groups_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_ip_addresses__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_ip_addresses_assign_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_ip_addresses_merge_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_prefixes__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_prefixes__pk__dynamic_groups_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_prefixes__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_rirs__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_rirs__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_route_targets__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_route_targets__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_services__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_services__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_vlan_groups__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_vlan_groups__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_vlans__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_vlans__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_vrfs__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_vrfs__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___login_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___logout_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___media__path_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___media_failure_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___search_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___tenancy_tenant_groups__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___tenancy_tenant_groups__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___tenancy_tenants__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___tenancy_tenants__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___user_api_tokens_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___user_api_tokens__pk__delete_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___user_api_tokens__pk__edit_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___user_api_tokens_add_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___user_password_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___user_preferences_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___user_profile_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___virtualization_cluster_groups__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___virtualization_cluster_groups__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___virtualization_cluster_types__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___virtualization_cluster_types__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___virtualization_clusters__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___virtualization_clusters__pk__devices_add_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___virtualization_clusters__pk__dynamic_groups_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___virtualization_clusters__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___virtualization_interfaces__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___virtualization_interfaces__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___virtualization_virtual_machines__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___virtualization_virtual_machines__pk__dynamic_groups_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___virtualization_virtual_machines__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___circuits_circuits__circuit__terminations_add_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___circuits_circuits__pk__terminations_swap_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___dcim_device_bays__pk__depopulate_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___dcim_device_bays__pk__populate_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___dcim_virtual_chassis__pk__add_member_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___dcim_virtual_chassis__pk__edit_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___dcim_virtual_chassis_members__pk__delete_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___extras_git_repositories__pk__dry_run_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___extras_git_repositories__pk__sync_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___extras_job_button__pk__run_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___extras_jobs__class_path__run_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___extras_jobs__pk__run_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___extras_jobs_scheduled_jobs_approval_queue__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___ipam_ip_addresses_assign_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___ipam_ip_addresses_merge_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___login_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___user_api_tokens__pk__delete_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___user_api_tokens__pk__edit_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___user_api_tokens_add_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___user_password_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___user_preferences_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___virtualization_clusters__pk__devices_add_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___virtualization_clusters__pk__devices_remove_",
+                "subtype": "IDOR"
+              }
+            ],
+            "expected": [
+              {
+                "endpoint_id": "endpoint__GET___files_get_",
+                "subtype": "MISSING_AUTH"
+              },
+              {
+                "endpoint_id": "endpoint__GET___files_download_",
+                "subtype": "MISSING_AUTH"
+              }
+            ],
+            "notes": []
+          }
+        ]
+      },
+      "synthetic_only": {
+        "detector": "gnn_synthetic_only",
+        "micro_precision": 0.0,
+        "micro_recall": 0.0,
+        "micro_f1": 0.0,
+        "apps": [
+          {
+            "application": "nautobot-cve-2023-50263",
+            "tp": 0,
+            "fp": 167,
+            "fn": 2,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "predictions": [
+              {
+                "endpoint_id": "endpoint__GET___",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___admin_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_docs_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_status_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___circuits_circuits__circuit__terminations_add_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___circuits_circuits__pk__terminations_swap_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_cables__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_cables__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_console_ports__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_console_ports__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_console_server_ports__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_console_server_ports__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_device_bays__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_device_bays__pk__depopulate_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_device_bays__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_device_bays__pk__populate_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_device_types__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_device_types__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_devices__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_front_ports__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_front_ports__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_interfaces__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_interfaces__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_inventory_items__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_inventory_items__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_location_types__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_location_types__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_locations__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_locations__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_manufacturers__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_manufacturers__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_platforms__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_platforms__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_power_feeds__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_power_feeds__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_power_outlets__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_power_outlets__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_power_panels__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_power_panels__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_power_ports__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_power_ports__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_rack_groups__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_rack_groups__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_rack_reservations__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_rack_reservations__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_racks__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_racks__pk__dynamic_groups_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_racks__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_rear_ports__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_rear_ports__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_virtual_chassis__pk__add_member_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_virtual_chassis__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_virtual_chassis__pk__edit_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_virtual_chassis__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_virtual_chassis_members__pk__delete_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_computed_fields__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_computed_fields__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_config_context_schemas__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_config_context_schemas__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_config_contexts__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_config_contexts__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_custom_fields__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_custom_fields__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_custom_links__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_custom_links__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_dynamic_groups__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_dynamic_groups__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_export_templates__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_export_templates__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_git_repositories__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_git_repositories__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_graphql_queries__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_graphql_queries__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_job_hooks__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_job_results__pk__log_table_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_jobs__class_path__run_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_jobs__pk__run_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_notes__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_object_changes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_relationships__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_relationships__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_secrets__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_secrets__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_secrets_groups__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_secrets_groups__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_secrets_provider__provider_slug__form_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_statuses__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_statuses__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_tags__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_tags__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_webhooks__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_webhooks__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___files_download_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___files_get_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_ip_addresses__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_ip_addresses__pk__dynamic_groups_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_ip_addresses__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_ip_addresses_assign_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_ip_addresses_merge_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_prefixes__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_prefixes__pk__dynamic_groups_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_prefixes__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_rirs__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_rirs__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_route_targets__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_route_targets__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_services__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_services__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_vlan_groups__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_vlan_groups__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_vlans__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_vlans__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_vrfs__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_vrfs__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___login_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___logout_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___media__path_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___media_failure_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___search_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___tenancy_tenant_groups__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___tenancy_tenant_groups__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___tenancy_tenants__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___tenancy_tenants__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___user_api_tokens_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___user_api_tokens__pk__delete_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___user_api_tokens__pk__edit_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___user_api_tokens_add_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___user_password_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___user_preferences_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___user_profile_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___virtualization_cluster_groups__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___virtualization_cluster_groups__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___virtualization_cluster_types__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___virtualization_cluster_types__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___virtualization_clusters__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___virtualization_clusters__pk__devices_add_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___virtualization_clusters__pk__dynamic_groups_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___virtualization_clusters__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___virtualization_interfaces__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___virtualization_interfaces__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___virtualization_virtual_machines__pk__changelog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___virtualization_virtual_machines__pk__dynamic_groups_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___virtualization_virtual_machines__pk__notes_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___circuits_circuits__circuit__terminations_add_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___circuits_circuits__pk__terminations_swap_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___dcim_device_bays__pk__depopulate_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___dcim_device_bays__pk__populate_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___dcim_virtual_chassis__pk__add_member_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___dcim_virtual_chassis__pk__edit_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___dcim_virtual_chassis_members__pk__delete_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___extras_git_repositories__pk__dry_run_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___extras_git_repositories__pk__sync_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___extras_job_button__pk__run_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___extras_jobs__class_path__run_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___extras_jobs__pk__run_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___extras_jobs_scheduled_jobs_approval_queue__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___ipam_ip_addresses_assign_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___ipam_ip_addresses_merge_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___login_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___user_api_tokens__pk__delete_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___user_api_tokens__pk__edit_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___user_api_tokens_add_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___user_password_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___user_preferences_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___virtualization_clusters__pk__devices_add_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___virtualization_clusters__pk__devices_remove_",
+                "subtype": "IDOR"
+              }
+            ],
+            "expected": [
+              {
+                "endpoint_id": "endpoint__GET___files_get_",
+                "subtype": "MISSING_AUTH"
+              },
+              {
+                "endpoint_id": "endpoint__GET___files_download_",
+                "subtype": "MISSING_AUTH"
+              }
+            ],
+            "notes": []
+          }
+        ]
+      },
+      "rule_baseline": {
+        "detector": "rule_baseline",
+        "micro_precision": 0.0,
+        "micro_recall": 0.0,
+        "micro_f1": 0.0,
+        "apps": [
+          {
+            "application": "nautobot-cve-2023-50263",
+            "tp": 0,
+            "fp": 5,
+            "fn": 2,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "predictions": [
+              {
+                "endpoint_id": "endpoint__POST___dcim_virtual_chassis__pk__edit_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___dcim_virtual_chassis_members__pk__delete_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___extras_git_repositories__pk__dry_run_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___extras_git_repositories__pk__sync_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___extras_job_button__pk__run_",
+                "subtype": "IDOR"
+              }
+            ],
+            "expected": [
+              {
+                "endpoint_id": "endpoint__GET___files_get_",
+                "subtype": "MISSING_AUTH"
+              },
+              {
+                "endpoint_id": "endpoint__GET___files_download_",
+                "subtype": "MISSING_AUTH"
+              }
+            ],
+            "notes": []
+          }
+        ]
+      },
+      "finetuned_train_result": {
+        "test_accuracy": 0.08196721311475409,
+        "test_macro_f1": 0.025510204081632654,
+        "best_val_loss": 1.0157154921827645
+      }
+    },
+    {
+      "fold": "wger",
+      "n_train_real": 150,
+      "n_train_synth_vuln": 91,
+      "n_train_total": 241,
+      "n_val": 38,
+      "n_test": 283,
+      "finetuned": {
+        "detector": "gnn_finetuned",
+        "micro_precision": 0.0,
+        "micro_recall": 0.0,
+        "micro_f1": 0.0,
+        "apps": [
+          {
+            "application": "wger-cve-2026-27839",
+            "tp": 0,
+            "fp": 84,
+            "fn": 3,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "predictions": [
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_day__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_daysofweek__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_equipment__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_exercise__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_exercise_base__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_exercise_translation__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_exercisealias__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_exercisebaseinfo__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_exercisecategory__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_exercisecomment__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_exerciseimage__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_exerciseinfo__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_gallery__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_ingredient__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_ingredientinfo__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_ingredientweightunit__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_language__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_license__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_meal__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_mealitem__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_measurement__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_measurement_category__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_muscle__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_nutritiondiary__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_nutritionplan__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_nutritionplaninfo__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_public_templates__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_schedule__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_schedulestep__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_set__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_setting__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_setting_repetitionunit__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_setting_weightunit__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_templates__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_userprofile__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_variation__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_video__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_weightentry__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_weightunit__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_workout__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_workoutlog__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_workoutsession__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_day__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_daysofweek__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_equipment__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_exercise__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_exercise_base__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_exercise_translation__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_exercisealias__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_exercisebaseinfo__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_exercisecategory__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_exercisecomment__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_exerciseimage__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_exerciseinfo__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_gallery__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_ingredient__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_ingredientinfo__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_ingredientweightunit__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_language__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_license__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_meal__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_mealitem__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_measurement__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_measurement_category__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_muscle__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_nutritiondiary__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_nutritionplan__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_nutritionplaninfo__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_public_templates__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_schedule__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_schedulestep__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_set__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_setting__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_setting_repetitionunit__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_setting_weightunit__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_templates__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_userprofile__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_variation__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_video__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_weightentry__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_weightunit__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_workout__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_workoutlog__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_workoutsession__pk__",
+                "subtype": "IDOR"
+              }
+            ],
+            "expected": [
+              {
+                "endpoint_id": "endpoint__GET___api_v2_nutritionplan__pk__nutritional_values_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_meal__pk__nutritional_values_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_mealitem__pk__nutritional_values_",
+                "subtype": "IDOR"
+              }
+            ],
+            "notes": []
+          }
+        ]
+      },
+      "synthetic_only": {
+        "detector": "gnn_synthetic_only",
+        "micro_precision": 0.01107011070110701,
+        "micro_recall": 1.0,
+        "micro_f1": 0.0218978102189781,
+        "apps": [
+          {
+            "application": "wger-cve-2026-27839",
+            "tp": 3,
+            "fp": 268,
+            "fn": 0,
+            "precision": 0.01107011070110701,
+            "recall": 1.0,
+            "f1": 0.0218978102189781,
+            "predictions": [
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_day__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_daysofweek__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_equipment__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_exercise__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_exercise_base__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_exercise_translation__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_exercisealias__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_exercisebaseinfo__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_exercisecategory__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_exercisecomment__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_exerciseimage__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_exerciseinfo__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_gallery__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_ingredient__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_ingredientinfo__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_ingredientweightunit__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_language__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_license__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_meal__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_mealitem__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_measurement__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_measurement_category__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_muscle__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_nutritiondiary__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_nutritionplan__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_nutritionplaninfo__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_public_templates__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_schedule__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_schedulestep__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_set__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_setting__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_setting_repetitionunit__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_setting_weightunit__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_templates__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_userprofile__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_variation__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_video__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_weightentry__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_weightunit__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_workout__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_workoutlog__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_workoutsession__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET____pk__edit_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___add_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_day_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_day__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_daysofweek_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_daysofweek__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_equipment_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_equipment__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_exercise_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_exercise__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_exercise_base_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_exercise_base__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_exercise_translation_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_exercise_translation__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_exercisealias_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_exercisealias__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_exercisebaseinfo_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_exercisebaseinfo__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_exercisecategory_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_exercisecategory__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_exercisecomment_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_exercisecomment__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_exerciseimage_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_exerciseimage__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_exerciseimage__pk__thumbnails_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_exerciseinfo_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_exerciseinfo__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_gallery_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_gallery__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_ingredient_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_ingredient__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_ingredientinfo_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_ingredientinfo__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_ingredientweightunit_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_ingredientweightunit__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_language_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_language__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_license_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_license__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_meal_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_meal__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_meal__pk__nutritional_values_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_mealitem_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_mealitem__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_mealitem__pk__nutritional_values_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_measurement_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_measurement__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_measurement_category_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_measurement_category__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_muscle_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_muscle__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_nutritiondiary_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_nutritiondiary__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_nutritiondiary__pk__nutritional_values_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_nutritionplan_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_nutritionplan__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_nutritionplan__pk__get_log_overview_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_nutritionplan__pk__log_summary_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_nutritionplan__pk__nutritional_values_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_nutritionplaninfo_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_nutritionplaninfo__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_public_templates_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_public_templates__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_schedule_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_schedule__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_schedulestep_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_schedulestep__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_set_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_set__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_setting_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_setting__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_setting_repetitionunit_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_setting_repetitionunit__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_setting_weightunit_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_setting_weightunit__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_templates_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_templates__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_userprofile_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_userprofile__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_userprofile_verify_email_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_variation_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_variation__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_video_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_video__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_weightentry_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_weightentry__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_weightunit_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_weightunit__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_workout_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_workout__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_workoutlog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_workoutlog__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_workoutsession_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_workoutsession__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dashboard",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___export_csv_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___features",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___import_csv_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___overview",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___sitemap__section__xml",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___sitemap_xml",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_day__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_daysofweek__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_equipment__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_exercise__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_exercise_base__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_exercise_translation__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_exercisealias__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_exercisebaseinfo__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_exercisecategory__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_exercisecomment__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_exerciseimage__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_exerciseinfo__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_gallery__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_ingredient__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_ingredientinfo__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_ingredientweightunit__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_language__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_license__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_meal__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_mealitem__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_measurement__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_measurement_category__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_muscle__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_nutritiondiary__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_nutritionplan__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_nutritionplaninfo__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_public_templates__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_schedule__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_schedulestep__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_set__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_setting__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_setting_repetitionunit__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_setting_weightunit__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_templates__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_userprofile__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_variation__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_video__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_weightentry__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_weightunit__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_workout__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_workoutlog__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_workoutsession__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_day_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_daysofweek_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_equipment_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_exercise_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_exercise_base_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_exercise_translation_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_exercisealias_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_exercisebaseinfo_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_exercisecategory_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_exercisecomment_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_exerciseimage_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_exerciseinfo_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_gallery_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_ingredient_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_ingredientinfo_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_ingredientweightunit_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_language_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_license_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_meal_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_mealitem_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_measurement_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_measurement_category_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_muscle_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_nutritiondiary_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_nutritionplan_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_nutritionplaninfo_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_public_templates_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_register_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_schedule_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_schedulestep_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_set_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_setting_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_setting_repetitionunit_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_setting_weightunit_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_templates_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_userprofile_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_variation_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_video_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_weightentry_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_weightunit_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_workout_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_workoutlog_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_workoutsession_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_day__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_daysofweek__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_equipment__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_exercise__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_exercise_base__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_exercise_translation__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_exercisealias__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_exercisebaseinfo__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_exercisecategory__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_exercisecomment__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_exerciseimage__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_exerciseinfo__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_gallery__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_ingredient__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_ingredientinfo__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_ingredientweightunit__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_language__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_license__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_meal__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_mealitem__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_measurement__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_measurement_category__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_muscle__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_nutritiondiary__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_nutritionplan__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_nutritionplaninfo__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_public_templates__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_schedule__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_schedulestep__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_set__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_setting__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_setting_repetitionunit__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_setting_weightunit__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_templates__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_userprofile__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_variation__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_video__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_weightentry__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_weightunit__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_workout__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_workoutlog__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_workoutsession__pk__",
+                "subtype": "IDOR"
+              }
+            ],
+            "expected": [
+              {
+                "endpoint_id": "endpoint__GET___api_v2_nutritionplan__pk__nutritional_values_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_meal__pk__nutritional_values_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_mealitem__pk__nutritional_values_",
+                "subtype": "IDOR"
+              }
+            ],
+            "notes": []
+          }
+        ]
+      },
+      "rule_baseline": {
+        "detector": "rule_baseline",
+        "micro_precision": 0.75,
+        "micro_recall": 1.0,
+        "micro_f1": 0.8571428571428571,
+        "apps": [
+          {
+            "application": "wger-cve-2026-27839",
+            "tp": 3,
+            "fp": 1,
+            "fn": 0,
+            "precision": 0.75,
+            "recall": 1.0,
+            "f1": 0.8571428571428571,
+            "predictions": [
+              {
+                "endpoint_id": "endpoint__GET___api_v2_exerciseimage__pk__thumbnails_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_meal__pk__nutritional_values_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_mealitem__pk__nutritional_values_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_nutritionplan__pk__nutritional_values_",
+                "subtype": "IDOR"
+              }
+            ],
+            "expected": [
+              {
+                "endpoint_id": "endpoint__GET___api_v2_nutritionplan__pk__nutritional_values_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_meal__pk__nutritional_values_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_mealitem__pk__nutritional_values_",
+                "subtype": "IDOR"
+              }
+            ],
+            "notes": []
+          }
+        ]
+      },
+      "finetuned_train_result": {
+        "test_accuracy": 0.6678445229681979,
+        "test_macro_f1": 0.13347457627118645,
+        "best_val_loss": 0.9242819233944541
+      }
+    }
+  ],
+  "aggregate": {
+    "finetuned": {
+      "tp": 0,
+      "fp": 251,
+      "fn": 6,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "synthetic_only": {
+      "tp": 3,
+      "fp": 435,
+      "fn": 3,
+      "precision": 0.00684931506849315,
+      "recall": 0.5,
+      "f1": 0.013513513513513513
+    },
+    "rule_baseline": {
+      "tp": 4,
+      "fp": 6,
+      "fn": 2,
+      "precision": 0.4,
+      "recall": 0.6666666666666666,
+      "f1": 0.5
+    }
+  }
+}

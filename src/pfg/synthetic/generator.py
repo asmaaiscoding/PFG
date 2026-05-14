@@ -269,6 +269,8 @@ def _generate_one(rng: random.Random, idx: int) -> Sample:
             "edges": edges,
         }
     )
+    from pfg.pfg.features import enrich_endpoint_features
+    enrich_endpoint_features(pfg)
     return Sample(pfg=pfg, label=label, target_endpoint_id=eid)
 
 

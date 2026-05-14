@@ -662,6 +662,79 @@ def synthetic_experiment_cmd(
     click.echo(f"Wrote report -> {outputs.report_path}")
 
 
+@main.command(name="bridging-experiment")
+@click.argument("corpus_root", type=click.Path(exists=True, file_okay=False, path_type=Path))
+@click.option("--synth-model", type=click.Path(exists=True, dir_okay=False, path_type=Path), default=None, help="Path to synthetic-pretrained model checkpoint.")
+@click.option("--n-synth-apps", default=5, show_default=True, type=int, help="Synthetic apps for vuln anchors.")
+@click.option("--synth-vuln-ratio", default=0.8, show_default=True, type=float, help="Vuln ratio in anchor apps.")
+@click.option("--epochs", default=15, show_default=True, type=int)
+@click.option("--lr", default=5e-5, show_default=True, type=float)
+@click.option("--focal-gamma", default=2.0, show_default=True, type=float)
+@click.option("--batch-size", default=16, show_default=True, type=int)
+@click.option("--gnn-threshold", default=0.5, show_default=True, type=float)
+@click.option("--seed", default=0, show_default=True, type=int)
+@click.option(
+    "--out-dir",
+    type=click.Path(file_okay=False, path_type=Path),
+    default=Path("artifacts/bridging-v1"),
+    show_default=True,
+)
+def bridging_experiment_cmd(
+    corpus_root: Path,
+    synth_model: Path | None,
+    n_synth_apps: int,
+    synth_vuln_ratio: float,
+    epochs: int,
+    lr: float,
+    focal_gamma: float,
+    batch_size: int,
+    gnn_threshold: float,
+    seed: int,
+    out_dir: Path,
+) -> None:
+    """Fine-tune synthetic-pretrained GNN on real data + synth vuln anchors."""
+    from pfg.training.bridging_experiment import run_bridging_experiment
+
+    try:
+        outputs = run_bridging_experiment(
+            corpus_root,
+            synth_model_path=synth_model,
+            n_synth_apps=n_synth_apps,
+            synth_vuln_ratio=synth_vuln_ratio,
+            epochs=epochs,
+            lr=lr,
+            focal_gamma=focal_gamma,
+            batch_size=batch_size,
+            gnn_threshold=gnn_threshold,
+            seed=seed,
+            out_dir=out_dir,
+        )
+    except ValueError as exc:
+        raise click.ClickException(str(exc)) from exc
+
+    agg = outputs.metrics["aggregate"]
+    cfg = outputs.metrics["config"]
+    click.echo("=== Bridging: Synthetic Pretrain → Mixed Fine-tune ===")
+    click.echo(f"Synth vuln anchors: {cfg['synth_vuln_anchors']} samples")
+    click.echo("")
+    click.echo("Aggregate (leave-one-app-out):")
+    for name, key in [("Fine-tuned", "finetuned"), ("Synth-only", "synthetic_only"), ("Rule", "rule_baseline")]:
+        a = agg[key]
+        click.echo(f"  {name:12s}  TP={a['tp']}  FP={a['fp']}  FN={a['fn']}  "
+                    f"P={a['precision']:.3f}  R={a['recall']:.3f}  F1={a['f1']:.3f}")
+    click.echo("")
+    for fold in outputs.metrics["folds"]:
+        click.echo(f"Fold holdout={fold['fold']} "
+                    f"(real={fold['n_train_real']}+synth={fold['n_train_synth_vuln']}, "
+                    f"val={fold['n_val']}, test={fold['n_test']}):")
+        for sys_key, label in [("finetuned", "FT"), ("synthetic_only", "Syn"), ("rule_baseline", "Rule")]:
+            for app in fold[sys_key]["apps"]:
+                click.echo(f"  {label:5s} {app['application']}: TP={app['tp']} FP={app['fp']} FN={app['fn']}")
+
+    click.echo(f"\nWrote metrics -> {outputs.metrics_path}")
+    click.echo(f"Wrote report -> {outputs.report_path}")
+
+
 @main.command(name="normalize")
 @click.argument(
     "tool", type=click.Choice(["semgrep", "codeql"])

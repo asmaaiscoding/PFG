@@ -77,11 +77,20 @@ def split_manifests_by_group(
     else:
         rng = random.Random(seed)
         rng.shuffle(groups)
-        n_train = int(len(groups) * ratios[0])
-        n_val = int(len(groups) * ratios[1])
+        if len(groups) >= 3:
+            n_test = max(1, round(len(groups) * ratios[2]))
+            n_val = max(1, round(len(groups) * ratios[1]))
+            if n_test + n_val >= len(groups):
+                n_test = 1
+                n_val = 1
+            n_train = len(groups) - n_val - n_test
+        else:
+            n_train = int(len(groups) * ratios[0])
+            n_val = int(len(groups) * ratios[1])
+            n_test = len(groups) - n_train - n_val
         train_groups = groups[:n_train]
         val_groups = groups[n_train : n_train + n_val]
-        test_groups = groups[n_train + n_val :]
+        test_groups = groups[n_train + n_val : n_train + n_val + n_test]
         return (
             [m for g in train_groups for m in by_group[g]],
             [m for g in val_groups for m in by_group[g]],
@@ -90,7 +99,14 @@ def split_manifests_by_group(
 
     rng = random.Random(seed)
     rng.shuffle(train_val_groups)
-    n_train = int(len(train_val_groups) * (ratios[0] / max(ratios[0] + ratios[1], 1e-12)))
+    if len(train_val_groups) >= 2:
+        n_train = max(
+            1,
+            int(len(train_val_groups) * (ratios[0] / max(ratios[0] + ratios[1], 1e-12))),
+        )
+        n_train = min(n_train, len(train_val_groups) - 1)
+    else:
+        n_train = len(train_val_groups)
     train_groups = train_val_groups[:n_train]
     val_groups = train_val_groups[n_train:]
     return (

@@ -477,6 +477,88 @@ def train_corpus_cmd(
         click.echo(f"Wrote report -> {out_report}")
 
 
+@main.command(name="final-experiment")
+@click.argument("corpus_root", type=click.Path(exists=True, file_okay=False, path_type=Path))
+@click.option("--holdout-group", default=None, help="Dataset split group to reserve for test.")
+@click.option("--epochs", default=30, show_default=True, type=int)
+@click.option("--seed", default=0, show_default=True, type=int)
+@click.option("--batch-size", default=32, show_default=True, type=int)
+@click.option("--hidden-dim", default=64, show_default=True, type=int)
+@click.option("--num-layers", default=3, show_default=True, type=int)
+@click.option("--heads", default=4, show_default=True, type=int)
+@click.option(
+    "--out-dir",
+    type=click.Path(file_okay=False, path_type=Path),
+    default=Path("artifacts"),
+    show_default=True,
+)
+@click.option(
+    "--semgrep-findings",
+    type=click.Path(exists=True, dir_okay=False, path_type=Path),
+    default=None,
+    help="Optional normalized endpoint-level Semgrep findings JSON.",
+)
+@click.option(
+    "--codeql-findings",
+    type=click.Path(exists=True, dir_okay=False, path_type=Path),
+    default=None,
+    help="Optional normalized endpoint-level CodeQL findings JSON.",
+)
+def final_experiment_cmd(
+    corpus_root: Path,
+    holdout_group: str | None,
+    epochs: int,
+    seed: int,
+    batch_size: int,
+    hidden_dim: int,
+    num_layers: int,
+    heads: int,
+    out_dir: Path,
+    semgrep_findings: Path | None,
+    codeql_findings: Path | None,
+) -> None:
+    """Run the final real-corpus Model B comparison: real-only vs real+augmented."""
+    from pfg.training.final import run_final_experiment
+
+    try:
+        outputs = run_final_experiment(
+            corpus_root,
+            holdout_group=holdout_group,
+            epochs=epochs,
+            seed=seed,
+            batch_size=batch_size,
+            hidden_dim=hidden_dim,
+            num_layers=num_layers,
+            heads=heads,
+            out_dir=out_dir,
+            semgrep_findings=semgrep_findings,
+            codeql_findings=codeql_findings,
+        )
+    except ValueError as exc:
+        raise click.ClickException(str(exc)) from exc
+
+    real = outputs.metrics["models"]["path_analyzer_real_only"]
+    aug = outputs.metrics["models"]["path_analyzer_real_augmented"]
+    delta = outputs.metrics["models"]["real_augmented_delta"]
+    click.echo("=== Final PathAnalyzer real-corpus experiment ===")
+    click.echo(
+        f"real-only:        acc={real['accuracy']:.3f} macroF1={real['macro_f1']:.3f}"
+    )
+    click.echo(
+        f"real+augmented:   acc={aug['accuracy']:.3f} macroF1={aug['macro_f1']:.3f}"
+    )
+    click.echo(
+        f"augmentation delta: macroF1={delta['macro_f1']:+.3f} "
+        f"vuln_recall={delta['vulnerability_recall']:+.3f}"
+    )
+    for warning in outputs.metrics.get("warnings", []):
+        click.echo(f"WARNING: {warning}")
+    click.echo(f"Saved real-only model -> {outputs.real_only_model_path}")
+    click.echo(f"Saved augmented model -> {outputs.augmented_model_path}")
+    click.echo(f"Wrote metrics -> {outputs.metrics_path}")
+    click.echo(f"Wrote report -> {outputs.report_path}")
+
+
 @main.command(name="normalize")
 @click.argument(
     "tool", type=click.Choice(["semgrep", "codeql"])

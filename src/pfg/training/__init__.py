@@ -1,5 +1,11 @@
 """Training loop and metrics."""
 
+from pfg.training.augmentation import (
+    AugmentationConfig,
+    augmented_samples_from_manifest,
+    augmented_samples_from_manifests,
+    augmented_samples_from_pfg,
+)
 from pfg.training.corpus import (
     samples_from_manifest,
     samples_from_manifests,
@@ -11,6 +17,11 @@ from pfg.training.experiment import (
     ExperimentReport,
     evaluate_rule_baseline,
     run_experiment,
+)
+from pfg.training.final import (
+    FinalExperimentOutputs,
+    final_outputs_to_dict,
+    run_final_experiment,
 )
 from pfg.training.sweep import (
     AblationKind,
@@ -33,16 +44,23 @@ from pfg.training.trainer import (
 __all__ = [
     "AblationKind",
     "AblationOutcome",
+    "AugmentationConfig",
     "BaselineResult",
     "ExperimentReport",
+    "FinalExperimentOutputs",
     "SweepEntry",
     "SweepReport",
     "TrainResult",
     "apply_ablation",
+    "augmented_samples_from_manifest",
+    "augmented_samples_from_manifests",
+    "augmented_samples_from_pfg",
     "evaluate_rule_baseline",
+    "final_outputs_to_dict",
     "report_to_dict",
     "run_ablations",
     "run_experiment",
+    "run_final_experiment",
     "run_hparam_sweep",
     "samples_from_manifest",
     "samples_from_manifests",

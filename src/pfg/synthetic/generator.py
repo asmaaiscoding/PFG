@@ -29,7 +29,7 @@ Design choices
 from __future__ import annotations
 
 import random
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Any
 
 from pfg.pfg.graph import PFG
@@ -45,6 +45,7 @@ class Sample:
     pfg: PFG
     label: Label
     target_endpoint_id: str  # the endpoint that carries the (potential) issue
+    metadata: dict[str, Any] = field(default_factory=dict)
 
 
 # --- internal helpers -----------------------------------------------------

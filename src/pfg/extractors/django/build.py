@@ -34,6 +34,10 @@ from pfg.pfg.graph import PFG
 
 # --- ID helpers -----------------------------------------------------------
 
+_EXTERNAL_DATA_ACCESS: dict[str, tuple[str, str]] = {
+    "db_file_storage.views.get_file": ("READ", "FileProxy"),
+}
+
 
 def _safe(s: str) -> str:
     """Sanitize a string into the schema-allowed id form ``[A-Za-z_][A-Za-z0-9_]*``."""
@@ -53,6 +57,10 @@ def _service_id(qual: str) -> str:
 
 def _data_id(qual: str, da: DataAccess, idx: int) -> str:
     return _safe(f"data__{qual}__L{da.lineno}__{idx}")
+
+
+def _external_data_id(qual: str, idx: int) -> str:
+    return _safe(f"data__{qual}__external__{idx}")
 
 
 # --- helpers --------------------------------------------------------------
@@ -273,6 +281,28 @@ def build_pfg(
     # Pass 6: data-access nodes per reachable function + idflow per endpoint.
     da_by_qual: dict[str, list[tuple[str, DataAccess]]] = {}
     for qual in sorted(reachable):
+        external = _EXTERNAL_DATA_ACCESS.get(qual)
+        if external is not None:
+            operation, target_entity = external
+            did = _external_data_id(qual, 0)
+            add_node(
+                {
+                    "id": did,
+                    "type": "data_access",
+                    "attrs": {
+                        "operation": operation,
+                        "target_entity": target_entity,
+                        "has_ownership_predicate": False,
+                        "ownership_predicate_type": "NONE",
+                        "user_controlled_params_in_query": [],
+                    },
+                }
+            )
+            add_edge(_service_id(qual), did, "call")
+            for n in nodes:
+                if n["id"] == _service_id(qual):
+                    n["attrs"]["performs_data_access"] = True
+            continue
         resolved = _resolve_function(root, qual)
         if resolved is None:
             continue

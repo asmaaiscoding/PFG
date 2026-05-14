@@ -7,6 +7,7 @@ from pathlib import Path
 from pfg.corpus import validate_corpus, validation_report_to_dict
 from pfg.eval.manifest import discover_manifests, load_manifest
 from pfg.pfg.graph import PFG
+from pfg.training.corpus import split_manifests_by_group
 
 
 def _manifest(path: Path, name: str) -> None:
@@ -142,3 +143,38 @@ def test_validate_corpus_reports_missing_checkout(tmp_path: Path) -> None:
     assert not app.checkout_exists
     assert not app.source_exists
     assert any("corpus-fetch" in error for error in app.errors)
+
+
+def test_split_manifests_by_group_keeps_three_groups_non_empty(tmp_path: Path) -> None:
+    paths = []
+    for name in ("a", "b", "c"):
+        path = tmp_path / name / "manifest.yaml"
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(
+            f"""
+application: {name}
+framework: django
+source_root: src
+repo_url: https://github.com/example/{name}
+git_ref: abc123
+fixed_commit: def456
+checkout_dir: src
+dataset_split_group: {name}
+expected_findings: []
+""",
+            encoding="utf-8",
+        )
+        paths.append(path)
+    manifests = [load_manifest(path) for path in paths]
+
+    train, val, test = split_manifests_by_group(manifests, seed=0)
+
+    assert train
+    assert val
+    assert test
+    split_apps = {
+        *(m.application for m in train),
+        *(m.application for m in val),
+        *(m.application for m in test),
+    }
+    assert len(split_apps) == 3

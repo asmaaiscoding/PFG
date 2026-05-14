@@ -147,7 +147,7 @@ if _TORCH_AVAILABLE:
             )
             self.head = _mlp(2 * hidden_dim, hidden_dim, num_classes, dropout=dropout)
 
-        def forward(self, data) -> torch.Tensor:  # type: ignore[no-untyped-def]
+        def _encode_with_attention(self, data):  # type: ignore[no-untyped-def]
             x, edge_index, edge_attr = data.x, data.edge_index, data.edge_attr
             batch = getattr(data, "batch", None)
             if batch is None:
@@ -170,8 +170,18 @@ if _TORCH_AVAILABLE:
             pooled = _segment_weighted_sum(h, attn, batch, num_graphs)
 
             g = torch.cat([pooled, h_target], dim=1)
+            return g, attn
+
+        def forward(self, data) -> torch.Tensor:  # type: ignore[no-untyped-def]
+            g, _ = self._encode_with_attention(data)  # type: ignore[no-untyped-call]
             out: torch.Tensor = self.head(g)
             return out
+
+        def forward_with_attention(self, data) -> tuple[torch.Tensor, torch.Tensor]:  # type: ignore[no-untyped-def]
+            """Return logits plus target-aware node attention weights."""
+            g, attn = self._encode_with_attention(data)  # type: ignore[no-untyped-call]
+            out: torch.Tensor = self.head(g)
+            return out, attn
 
     # --- pooling helpers ------------------------------------------------
 

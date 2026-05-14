@@ -1,0 +1,557 @@
+"""Final real-corpus experiment for PathAnalyzer (Model B only)."""
+
+from __future__ import annotations
+
+import json
+from collections import Counter
+from dataclasses import asdict, dataclass
+from pathlib import Path
+from typing import Any, cast
+
+import torch
+
+from pfg.eval.harness import (
+    AppScore,
+    CorpusReport,
+    evaluate_app,
+    evaluate_corpus,
+    report_to_dict,
+    rule_detector,
+)
+from pfg.eval.manifest import Manifest, discover_manifests
+from pfg.extractors.django.build import build_pfg
+from pfg.models.checkpoint import save_model
+from pfg.models.gnn import PathAnalyzer
+from pfg.pfg.nodes import EndpointAttrs
+from pfg.synthetic import label_to_targets, pfg_to_pyg
+from pfg.synthetic.generator import Sample
+from pfg.training.augmentation import AugmentationConfig, augmented_samples_from_manifests
+from pfg.training.corpus import samples_from_manifests, split_manifests_by_group
+from pfg.training.trainer import TrainResult, train_path_analyzer_split
+
+CLASS_NAMES = [
+    "SAFE",
+    "MISSING_AUTH",
+    "MISSING_ROLE",
+    "IDOR",
+    "COMBINED",
+    "INTENTIONALLY_PUBLIC",
+]
+VULNERABLE_CLASS_IDS = {1, 2, 3, 4}
+
+
+@dataclass(frozen=True)
+class FinalExperimentOutputs:
+    metrics_path: Path
+    report_path: Path
+    real_only_model_path: Path
+    augmented_model_path: Path
+    metrics: dict[str, Any]
+
+
+def _class_counts(samples: list[Sample]) -> dict[str, int]:
+    counts: Counter[str] = Counter()
+    for sample in samples:
+        _, y = label_to_targets(sample)
+        counts[CLASS_NAMES[y]] += 1
+    return {name: counts.get(name, 0) for name in CLASS_NAMES}
+
+
+def _metrics_from_confusion(cm: list[list[int]]) -> dict[str, Any]:
+    per_class: dict[str, dict[str, float | int]] = {}
+    total = sum(sum(row) for row in cm)
+    correct = sum(cm[i][i] for i in range(len(cm)))
+    f1s: list[float] = []
+    for i, name in enumerate(CLASS_NAMES):
+        tp = cm[i][i]
+        fp = sum(cm[r][i] for r in range(len(cm)) if r != i)
+        fn = sum(cm[i][c] for c in range(len(cm)) if c != i)
+        precision = tp / (tp + fp) if (tp + fp) else 0.0
+        recall = tp / (tp + fn) if (tp + fn) else 0.0
+        f1 = (2 * precision * recall / (precision + recall)) if (precision + recall) else 0.0
+        f1s.append(f1)
+        per_class[name] = {
+            "support": sum(cm[i]),
+            "precision": precision,
+            "recall": recall,
+            "f1": f1,
+        }
+
+    vuln_tp = sum(cm[i][j] for i in VULNERABLE_CLASS_IDS for j in VULNERABLE_CLASS_IDS)
+    vuln_fp = sum(
+        cm[i][j]
+        for i in range(len(cm))
+        for j in VULNERABLE_CLASS_IDS
+        if i not in VULNERABLE_CLASS_IDS
+    )
+    vuln_fn = sum(
+        cm[i][j]
+        for i in VULNERABLE_CLASS_IDS
+        for j in range(len(cm))
+        if j not in VULNERABLE_CLASS_IDS
+    )
+    vuln_precision = vuln_tp / (vuln_tp + vuln_fp) if (vuln_tp + vuln_fp) else 0.0
+    vuln_recall = vuln_tp / (vuln_tp + vuln_fn) if (vuln_tp + vuln_fn) else 0.0
+    vuln_f1 = (
+        2 * vuln_precision * vuln_recall / (vuln_precision + vuln_recall)
+        if (vuln_precision + vuln_recall)
+        else 0.0
+    )
+    return {
+        "accuracy": correct / total if total else 0.0,
+        "macro_f1": sum(f1s) / len(f1s) if f1s else 0.0,
+        "per_class": per_class,
+        "vulnerability_finding": {
+            "precision": vuln_precision,
+            "recall": vuln_recall,
+            "f1": vuln_f1,
+            "tp": vuln_tp,
+            "fp": vuln_fp,
+            "fn": vuln_fn,
+        },
+        "confusion": cm,
+    }
+
+
+def _train_result_to_dict(result: TrainResult) -> dict[str, Any]:
+    metrics = _metrics_from_confusion(result.confusion)
+    metrics.update(
+        {
+            "test_accuracy": result.test_accuracy,
+            "test_macro_f1": result.test_macro_f1,
+            "best_val_loss": result.best_val_loss,
+            "history": result.history,
+        }
+    )
+    return metrics
+
+
+def _predict_samples(model: PathAnalyzer, samples: list[Sample]) -> list[dict[str, Any]]:
+    model.eval()
+    out: list[dict[str, Any]] = []
+    with torch.no_grad():
+        for sample in samples:
+            data = pfg_to_pyg(sample)
+            logits, attn = model.forward_with_attention(data)
+            probs = torch.softmax(logits, dim=-1).squeeze(0)
+            predicted_idx = int(probs.argmax().item())
+            _, expected_idx = label_to_targets(sample)
+            out.append(
+                {
+                    "endpoint_id": sample.target_endpoint_id,
+                    "expected": CLASS_NAMES[expected_idx],
+                    "predicted": CLASS_NAMES[predicted_idx],
+                    "confidence": float(probs[predicted_idx].item()),
+                    "correct": expected_idx == predicted_idx,
+                    "explanation": _explain_sample(sample, attn.cpu().tolist()),
+                }
+            )
+    return out
+
+
+def _explain_sample(sample: Sample, attention: list[float]) -> dict[str, Any]:
+    pfg = sample.pfg
+    node_by_id = {node.id: node for node in pfg.nodes}
+    endpoint = node_by_id.get(sample.target_endpoint_id)
+    endpoint_attrs = endpoint.attrs if endpoint is not None else None
+    if not isinstance(endpoint_attrs, EndpointAttrs):
+        source_location = None
+        route = None
+    else:
+        source_location = endpoint_attrs.source_location
+        route = endpoint_attrs.route
+
+    top_nodes = sorted(
+        (
+            {
+                "node_id": node.id,
+                "type": str(node.type),
+                "attention": attention[idx] if idx < len(attention) else 0.0,
+            }
+            for idx, node in enumerate(pfg.nodes)
+        ),
+        key=lambda item: cast(float, item["attention"]),
+        reverse=True,
+    )[:8]
+    identifier_flow = [
+        {"dst": edge.dst, "param": edge.param}
+        for edge in pfg.edges
+        if edge.src == sample.target_endpoint_id and edge.type == "identifier_flow"
+    ]
+    reachable_data_access = [
+        node.id
+        for node in pfg.data_accesses()
+        if _has_call_path(pfg, sample.target_endpoint_id, node.id)
+    ][:12]
+    return {
+        "route": route,
+        "source_location": source_location,
+        "attention_ranked_nodes": top_nodes,
+        "identifier_flow": identifier_flow,
+        "reachable_data_access": reachable_data_access,
+    }
+
+
+def _has_call_path(pfg: Any, src: str, dst: str) -> bool:
+    succ: dict[str, list[str]] = {}
+    for edge in pfg.edges:
+        if edge.type == "call":
+            succ.setdefault(edge.src, []).append(edge.dst)
+    seen = {src}
+    stack = [src]
+    while stack:
+        cur = stack.pop()
+        if cur == dst:
+            return True
+        for nxt in succ.get(cur, []):
+            if nxt not in seen:
+                seen.add(nxt)
+                stack.append(nxt)
+    return False
+
+
+def _external_system_report(
+    path: Path | None,
+    manifests: list[Manifest],
+    *,
+    detector_name: str,
+) -> dict[str, Any]:
+    if path is None:
+        return {
+            "status": "not_run",
+            "reason": "No normalized endpoint-level findings file was provided.",
+        }
+    records = json.loads(path.read_text(encoding="utf-8"))
+    has_scope = any(
+        "application" in record
+        or "app" in record
+        or "dataset_split_group" in record
+        or "group" in record
+        for record in records
+    )
+    apps: list[AppScore] = []
+    for manifest in manifests:
+        preds = {
+            (record["endpoint_id"], record["subtype"])
+            for record in records
+            if _external_record_applies(record, manifest, scoped=has_scope)
+        }
+
+        def detector(_pfg: Any, preds: set[tuple[str, str]] = preds) -> set[tuple[str, str]]:
+            return preds
+
+        def builder(root: Path, app: str = manifest.application) -> Any:
+            return build_pfg(root, application=app)
+
+        apps.append(
+            evaluate_app(
+                manifest,
+                detector,
+                build=builder,
+            )
+        )
+
+    tp = sum(app.tp for app in apps)
+    fp = sum(app.fp for app in apps)
+    fn = sum(app.fn for app in apps)
+    precision = tp / (tp + fp) if (tp + fp) else 0.0
+    recall = tp / (tp + fn) if (tp + fn) else 0.0
+    f1 = (2 * precision * recall / (precision + recall)) if (precision + recall) else 0.0
+    report = CorpusReport(
+        detector_name=detector_name,
+        apps=apps,
+        micro_precision=precision,
+        micro_recall=recall,
+        micro_f1=f1,
+    )
+    data = report_to_dict(report)
+    data.update(
+        {
+            "status": "provided",
+            "findings_path": str(path),
+            "n_findings": len(records),
+            "record_scope": "application_or_group" if has_scope else "flat_endpoint_list",
+            "note": (
+                "Flat normalized findings are interpreted as belonging to the held-out "
+                "manifest set. Add `application` or `dataset_split_group` when combining "
+                "findings from multiple apps."
+            ),
+        }
+    )
+    return data
+
+
+def _external_record_applies(record: dict[str, Any], manifest: Manifest, *, scoped: bool) -> bool:
+    if not scoped:
+        return True
+    app = record.get("application") or record.get("app")
+    group = record.get("dataset_split_group") or record.get("group")
+    return app == manifest.application or group == (manifest.dataset_split_group or manifest.application)
+
+
+def run_final_experiment(
+    corpus_root: str | Path,
+    *,
+    holdout_group: str | None = None,
+    epochs: int = 30,
+    seed: int = 0,
+    batch_size: int = 32,
+    hidden_dim: int = 64,
+    num_layers: int = 3,
+    heads: int = 4,
+    out_dir: str | Path = "artifacts",
+    semgrep_findings: str | Path | None = None,
+    codeql_findings: str | Path | None = None,
+) -> FinalExperimentOutputs:
+    manifests = discover_manifests(corpus_root)
+    train_m, val_m, test_m = split_manifests_by_group(
+        manifests, seed=seed, holdout_group=holdout_group
+    )
+    if not train_m or not val_m or not test_m:
+        raise ValueError("Need non-empty train/val/test split groups for final experiment")
+
+    train_samples = samples_from_manifests(train_m)
+    val_samples = samples_from_manifests(val_m)
+    test_samples = samples_from_manifests(test_m)
+    augmented_train_samples = augmented_samples_from_manifests(
+        train_m, config=AugmentationConfig()
+    )
+
+    real_only_model, real_only_result = train_path_analyzer_split(
+        train_samples,
+        val_samples,
+        test_samples,
+        epochs=epochs,
+        seed=seed,
+        batch_size=batch_size,
+        hidden_dim=hidden_dim,
+        num_layers=num_layers,
+        heads=heads,
+    )
+    augmented_model, augmented_result = train_path_analyzer_split(
+        [*train_samples, *augmented_train_samples],
+        val_samples,
+        test_samples,
+        epochs=epochs,
+        seed=seed,
+        batch_size=batch_size,
+        hidden_dim=hidden_dim,
+        num_layers=num_layers,
+        heads=heads,
+    )
+
+    out = Path(out_dir)
+    out.mkdir(parents=True, exist_ok=True)
+    real_only_model_path = out / "path_analyzer_real_only.pt"
+    augmented_model_path = out / "path_analyzer_real_augmented.pt"
+    save_model(
+        real_only_model,
+        real_only_model_path,
+        kind="path",
+        hparams={"hidden_dim": hidden_dim, "num_layers": num_layers, "heads": heads},
+    )
+    save_model(
+        augmented_model,
+        augmented_model_path,
+        kind="path",
+        hparams={"hidden_dim": hidden_dim, "num_layers": num_layers, "heads": heads},
+    )
+
+    rule_report = evaluate_corpus(test_m, rule_detector, detector_name="rule_baseline")
+    real_only_metrics = _train_result_to_dict(real_only_result)
+    augmented_metrics = _train_result_to_dict(augmented_result)
+    delta = {
+        "macro_f1": augmented_metrics["macro_f1"] - real_only_metrics["macro_f1"],
+        "accuracy": augmented_metrics["accuracy"] - real_only_metrics["accuracy"],
+        "vulnerability_recall": (
+            augmented_metrics["vulnerability_finding"]["recall"]
+            - real_only_metrics["vulnerability_finding"]["recall"]
+        ),
+        "vulnerability_precision": (
+            augmented_metrics["vulnerability_finding"]["precision"]
+            - real_only_metrics["vulnerability_finding"]["precision"]
+        ),
+    }
+
+    real_only_predictions = _predict_samples(real_only_model, test_samples)
+    augmented_predictions = _predict_samples(augmented_model, test_samples)
+    warnings = []
+    if not augmented_train_samples:
+        warnings.append(
+            "The selected training split produced zero augmented samples; "
+            "real+augmented metrics are therefore not an augmentation comparison."
+        )
+    metrics: dict[str, Any] = {
+        "experiment": "path_analyzer_final_real_corpus",
+        "model_scope": "Model B / PathAnalyzer only",
+        "config": {
+            "holdout_group": holdout_group,
+            "seed": seed,
+            "epochs": epochs,
+            "batch_size": batch_size,
+            "hidden_dim": hidden_dim,
+            "num_layers": num_layers,
+            "heads": heads,
+        },
+        "warnings": warnings,
+        "split": {
+            "train_groups": sorted({m.dataset_split_group or m.application for m in train_m}),
+            "val_groups": sorted({m.dataset_split_group or m.application for m in val_m}),
+            "test_groups": sorted({m.dataset_split_group or m.application for m in test_m}),
+            "n_train_real_samples": len(train_samples),
+            "n_train_augmented_samples": len(augmented_train_samples),
+            "n_val_real_samples": len(val_samples),
+            "n_test_real_samples": len(test_samples),
+            "test_is_real_only": True,
+        },
+        "class_distribution": {
+            "train_real": _class_counts(train_samples),
+            "train_augmented": _class_counts(augmented_train_samples),
+            "val_real": _class_counts(val_samples),
+            "test_real": _class_counts(test_samples),
+        },
+        "models": {
+            "path_analyzer_real_only": real_only_metrics,
+            "path_analyzer_real_augmented": augmented_metrics,
+            "real_augmented_delta": delta,
+        },
+        "baselines": {
+            "rule_baseline": report_to_dict(rule_report),
+            "semgrep": _external_system_report(
+                Path(semgrep_findings) if semgrep_findings else None,
+                test_m,
+                detector_name="semgrep",
+            ),
+            "codeql": _external_system_report(
+                Path(codeql_findings) if codeql_findings else None,
+                test_m,
+                detector_name="codeql",
+            ),
+        },
+        "predictions": {
+            "path_analyzer_real_only": real_only_predictions,
+            "path_analyzer_real_augmented": augmented_predictions,
+        },
+        "error_analysis": {
+            "path_analyzer_real_only": [p for p in real_only_predictions if not p["correct"]],
+            "path_analyzer_real_augmented": [p for p in augmented_predictions if not p["correct"]],
+        },
+        "augmentation": {
+            "policy": "real-derived training-only augmentation",
+            "held_out_test_contains_augmented_samples": False,
+            "types": [
+                "remove_auth_guard",
+                "remove_role_guard",
+                "remove_ownership_predicate",
+            ],
+            "sample_metadata_keys": [
+                "augmented",
+                "origin_manifest",
+                "origin_endpoint_id",
+                "augmentation_type",
+            ],
+        },
+    }
+
+    metrics_path = out / "final_metrics.json"
+    report_path = out / "final_report.md"
+    metrics_path.write_text(json.dumps(metrics, indent=2), encoding="utf-8")
+    report_path.write_text(_render_markdown_report(metrics), encoding="utf-8")
+    return FinalExperimentOutputs(
+        metrics_path=metrics_path,
+        report_path=report_path,
+        real_only_model_path=real_only_model_path,
+        augmented_model_path=augmented_model_path,
+        metrics=metrics,
+    )
+
+
+def _render_markdown_report(metrics: dict[str, Any]) -> str:
+    split = metrics["split"]
+    real = metrics["models"]["path_analyzer_real_only"]
+    aug = metrics["models"]["path_analyzer_real_augmented"]
+    delta = metrics["models"]["real_augmented_delta"]
+    rule = metrics["baselines"]["rule_baseline"]
+    lines = [
+        "# PathAnalyzer Final Real-Corpus Report",
+        "",
+        "## Methodology",
+        "",
+        "This report evaluates Model B / PathAnalyzer only. Augmented samples are derived from real extracted PFGs and are used only in training; validation and test are real-only.",
+        "",
+    ]
+    for warning in metrics.get("warnings", []):
+        lines.append(f"> Warning: {warning}")
+    if metrics.get("warnings"):
+        lines.append("")
+    lines.extend(
+        [
+            "## Dataset Split",
+            "",
+            f"- Train groups: {', '.join(split['train_groups'])}",
+            f"- Validation groups: {', '.join(split['val_groups'])}",
+            f"- Test groups: {', '.join(split['test_groups'])}",
+            f"- Real train samples: {split['n_train_real_samples']}",
+            f"- Augmented train samples: {split['n_train_augmented_samples']}",
+            f"- Real validation samples: {split['n_val_real_samples']}",
+            f"- Real test samples: {split['n_test_real_samples']}",
+            "",
+            "## Model Comparison",
+            "",
+            "| System | Accuracy | Macro F1 | Vuln Precision | Vuln Recall | Vuln F1 |",
+            "| --- | ---: | ---: | ---: | ---: | ---: |",
+            _metric_row("PathAnalyzer real-only", real),
+            _metric_row("PathAnalyzer real + augmented", aug),
+            "",
+            "## Augmentation Delta",
+            "",
+            f"- Macro F1 delta: {delta['macro_f1']:.4f}",
+            f"- Accuracy delta: {delta['accuracy']:.4f}",
+            f"- Vulnerability recall delta: {delta['vulnerability_recall']:.4f}",
+            f"- Vulnerability precision delta: {delta['vulnerability_precision']:.4f}",
+            "",
+            "## Baselines",
+            "",
+            f"- Rule baseline on held-out test groups: precision={rule['micro_precision']:.4f}, recall={rule['micro_recall']:.4f}, F1={rule['micro_f1']:.4f}",
+            f"- Semgrep: {metrics['baselines']['semgrep']['status']}",
+            f"- CodeQL: {metrics['baselines']['codeql']['status']}",
+            "",
+            "## Error Analysis",
+            "",
+            f"- PathAnalyzer real-only errors: {len(metrics['error_analysis']['path_analyzer_real_only'])}",
+            f"- PathAnalyzer real + augmented errors: {len(metrics['error_analysis']['path_analyzer_real_augmented'])}",
+            "",
+            "Detailed endpoint-level predictions, explanations, and confusion matrices are in `final_metrics.json`.",
+            "",
+            "## Limitations",
+            "",
+            "External-tool results are marked `not_run` unless normalized Semgrep/CodeQL findings are provided. Large real apps may still expose extractor false positives that are tracked in error analysis rather than hidden.",
+            "",
+        ]
+    )
+    return "\n".join(lines)
+
+
+def _metric_row(name: str, metrics: dict[str, Any]) -> str:
+    vuln = metrics["vulnerability_finding"]
+    return (
+        f"| {name} | {metrics['accuracy']:.4f} | {metrics['macro_f1']:.4f} | "
+        f"{vuln['precision']:.4f} | {vuln['recall']:.4f} | {vuln['f1']:.4f} |"
+    )
+
+
+def final_outputs_to_dict(outputs: FinalExperimentOutputs) -> dict[str, Any]:
+    data = asdict(outputs)
+    data["metrics_path"] = str(outputs.metrics_path)
+    data["report_path"] = str(outputs.report_path)
+    data["real_only_model_path"] = str(outputs.real_only_model_path)
+    data["augmented_model_path"] = str(outputs.augmented_model_path)
+    return data
+
+
+__all__ = [
+    "CLASS_NAMES",
+    "FinalExperimentOutputs",
+    "final_outputs_to_dict",
+    "run_final_experiment",
+]

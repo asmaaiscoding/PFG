@@ -718,7 +718,7 @@ def bridging_experiment_cmd(
     click.echo(f"Synth vuln anchors: {cfg['synth_vuln_anchors']} samples")
     click.echo("")
     click.echo("Aggregate (leave-one-app-out):")
-    for name, key in [("Fine-tuned", "finetuned"), ("Synth-only", "synthetic_only"), ("Rule", "rule_baseline")]:
+    for name, key in [("Fine-tuned", "finetuned"), ("FT+validated", "finetuned_validated"), ("Synth-only", "synthetic_only"), ("Rule", "rule_baseline")]:
         a = agg[key]
         click.echo(f"  {name:12s}  TP={a['tp']}  FP={a['fp']}  FN={a['fn']}  "
                     f"P={a['precision']:.3f}  R={a['recall']:.3f}  F1={a['f1']:.3f}")
@@ -727,7 +727,7 @@ def bridging_experiment_cmd(
         click.echo(f"Fold holdout={fold['fold']} "
                     f"(real={fold['n_train_real']}+synth={fold['n_train_synth_vuln']}, "
                     f"val={fold['n_val']}, test={fold['n_test']}):")
-        for sys_key, label in [("finetuned", "FT"), ("synthetic_only", "Syn"), ("rule_baseline", "Rule")]:
+        for sys_key, label in [("finetuned", "FT"), ("finetuned_validated", "FT+val"), ("synthetic_only", "Syn"), ("rule_baseline", "Rule")]:
             for app in fold[sys_key]["apps"]:
                 click.echo(f"  {label:5s} {app['application']}: TP={app['tp']} FP={app['fp']} FN={app['fn']}")
 

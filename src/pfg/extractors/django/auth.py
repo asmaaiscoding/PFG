@@ -404,7 +404,13 @@ def annotate_endpoint(
         )
 
     if tree is None:
-        return fallback
+        # Module source not found in project — likely a third-party package.
+        # DRF DEFAULT_PERMISSION_CLASSES only applies to DRF views, NOT to
+        # plain Django views from third-party libraries.  Without source
+        # evidence we must assume NO authentication is enforced.
+        if public_by_route:
+            return EndpointAuth(False, Role.NONE, True)
+        return EndpointAuth(False, Role.NONE, False)
 
     if method_name is not None:
         cls = _find_class(tree, class_name)

@@ -43,20 +43,20 @@ route parameter {pk}
 
 ### Node Features (28-dim)
 
-| Dims | Feature | Description |
-|------|---------|-------------|
-| 0–3 | node_type | One-hot: endpoint, middleware, service, data_access |
-| 4–8 | http_method | One-hot: GET, POST, PUT, PATCH, DELETE |
-| 9 | requires_auth | Whether the endpoint requires authentication |
-| 10–14 | required_role | One-hot role encoding |
-| 15 | ownership_check | Whether the handler verifies object ownership |
-| 16–18 | guard_type | One-hot guard encoding |
-| 19–22 | op_type | One-hot operation type |
-| 23 | has_ownership_predicate | Data-access node has ownership predicate |
-| 24 | has_route_params | URL contains `{pk}`, `{id}`, etc. |
-| 25 | reachable_data_count | Normalized count of reachable data_access nodes |
-| 26 | has_id_flow | identifier_flow edge reaches a data_access node |
-| 27 | unprotected_data_reachable | Reachable data_access lacks ownership predicate |
+| Dims  | Feature                    | Description                                         |
+| ----- | -------------------------- | --------------------------------------------------- |
+| 0–3   | node_type                  | One-hot: endpoint, middleware, service, data_access |
+| 4–8   | http_method                | One-hot: GET, POST, PUT, PATCH, DELETE              |
+| 9     | requires_auth              | Whether the endpoint requires authentication        |
+| 10–14 | required_role              | One-hot role encoding                               |
+| 15    | ownership_check            | Whether the handler verifies object ownership       |
+| 16–18 | guard_type                 | One-hot guard encoding                              |
+| 19–22 | op_type                    | One-hot operation type                              |
+| 23    | has_ownership_predicate    | Data-access node has ownership predicate            |
+| 24    | has_route_params           | URL contains `{pk}`, `{id}`, etc.                   |
+| 25    | reachable_data_count       | Normalized count of reachable data_access nodes     |
+| 26    | has_id_flow                | identifier_flow edge reaches a data_access node     |
+| 27    | unprotected_data_reachable | Reachable data_access lacks ownership predicate     |
 
 Dimensions 24–27 are the structural features added during the GNN improvement
 work. They are computed by `enrich_endpoint_features()` via BFS over call and
@@ -69,22 +69,22 @@ synthetic data (774 samples), then fine-tune on real data with leave-one-app-out
 cross-validation. Structural post-validation suppresses predictions that lack
 necessary graph-level evidence.
 
-| Approach | TP | FP | FN | P | R | F1 |
-|---|---:|---:|---:|---:|---:|---:|
-| GNN synth-only (24-dim) | 3 | 435 | 3 | 0.007 | 0.500 | 0.014 |
-| GNN synth-only (28-dim) | 4 | 103 | 2 | 0.037 | 0.667 | 0.071 |
-| Bridging (synth → real fine-tune) | 4 | 22 | 2 | 0.154 | 0.667 | 0.250 |
-| + auth extractor fix | 6 | 25 | 0 | 0.194 | 1.000 | 0.324 |
+| Approach                          |    TP |     FP |    FN |         P |         R |        F1 |
+| --------------------------------- | ----: | -----: | ----: | --------: | --------: | --------: |
+| GNN synth-only (24-dim)           |     3 |    435 |     3 |     0.007 |     0.500 |     0.014 |
+| GNN synth-only (28-dim)           |     4 |    103 |     2 |     0.037 |     0.667 |     0.071 |
+| Bridging (synth → real fine-tune) |     4 |     22 |     2 |     0.154 |     0.667 |     0.250 |
+| + auth extractor fix              |     6 |     25 |     0 |     0.194 |     1.000 |     0.324 |
 | **+ ownership + post-validation** | **6** | **10** | **0** | **0.375** | **1.000** | **0.545** |
-| Rule baseline | 6 | 6 | 0 | 0.500 | 1.000 | 0.667 |
+| Rule baseline                     |     6 |      6 |     0 |     0.500 |     1.000 |     0.667 |
 
 Per-app breakdown (validated GNN):
 
-| App | TP | FP | FN |
-|---|---:|---:|---:|
-| wger | 3 | 5 | 0 |
-| nautobot | 2 | 5 | 0 |
-| django-mdeditor | 1 | 0 | 0 |
+| App             |  TP |  FP |  FN |
+| --------------- | --: | --: | --: |
+| wger            |   3 |   5 |   0 |
+| nautobot        |   2 |   5 |   0 |
+| django-mdeditor |   1 |   0 |   0 |
 
 The 10 remaining FPs are structurally valid — they share graph-level signatures
 with real vulnerabilities and require semantic data-ownership understanding to
@@ -324,10 +324,10 @@ artifacts/final/<holdout-group>/
 
 The aggregate result is:
 
-| System | Accuracy | Macro F1 | Vuln Precision | Vuln Recall | Vuln F1 |
-| --- | ---: | ---: | ---: | ---: | ---: |
-| PathAnalyzer real-only | 0.987 | 0.166 | 0.000 | 0.000 | 0.000 |
-| PathAnalyzer real + augmented | 0.144 | 0.049 | 0.015 | 1.000 | 0.029 |
+| System                        | Accuracy | Macro F1 | Vuln Precision | Vuln Recall | Vuln F1 |
+| ----------------------------- | -------: | -------: | -------------: | ----------: | ------: |
+| PathAnalyzer real-only        |    0.987 |    0.166 |          0.000 |       0.000 |   0.000 |
+| PathAnalyzer real + augmented |    0.144 |    0.049 |          0.015 |       1.000 |   0.029 |
 
 Interpretation: real-derived augmentation helped recall on this tiny corpus,
 but it did not improve the final objective result because precision and macro
@@ -377,10 +377,10 @@ uv run pfg eval benchmarks/realworld --detector external \
 
 Current external-tool result:
 
-| Tool | Raw findings | Normalized endpoint findings | Endpoint-level precision | Endpoint-level recall | Endpoint-level F1 |
-| --- | ---: | ---: | ---: | ---: | ---: |
-| Semgrep | 39 | 0 | 0.000 | 0.000 | 0.000 |
-| CodeQL | 462 | 0 | 0.000 | 0.000 | 0.000 |
+| Tool    | Raw findings | Normalized endpoint findings | Endpoint-level precision | Endpoint-level recall | Endpoint-level F1 |
+| ------- | -----------: | ---------------------------: | -----------------------: | --------------------: | ----------------: |
+| Semgrep |           39 |                            0 |                    0.000 |                 0.000 |             0.000 |
+| CodeQL  |          462 |                            0 |                    0.000 |                 0.000 |             0.000 |
 
 These are not missing runs: the tools produced raw findings, but their standard
 rules/queries did not map to the six advisory-backed privilege-flow endpoint

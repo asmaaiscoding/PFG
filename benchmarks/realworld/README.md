@@ -96,19 +96,19 @@ Current entries:
 
 ### Detection Results
 
-| Detector | TP | FP | FN | P | R | F1 |
-|---|---:|---:|---:|---:|---:|---:|
-| Rule baseline | 6 | 6 | 0 | 0.500 | 1.000 | 0.667 |
-| GNN (validated) | 6 | 10 | 0 | 0.375 | 1.000 | 0.545 |
-| GNN (raw) | 6 | 25 | 0 | 0.194 | 1.000 | 0.324 |
+| Detector        |  TP |  FP |  FN |     P |     R |    F1 |
+| --------------- | --: | --: | --: | ----: | ----: | ----: |
+| Rule baseline   |   6 |   6 |   0 | 0.500 | 1.000 | 0.667 |
+| GNN (validated) |   6 |  10 |   0 | 0.375 | 1.000 | 0.545 |
+| GNN (raw)       |   6 |  25 |   0 | 0.194 | 1.000 | 0.324 |
 
 Per-app breakdown (validated GNN):
 
-| App | TP | FP | FN |
-|---|---:|---:|---:|
-| wger | 3 | 5 | 0 |
-| nautobot | 2 | 5 | 0 |
-| django-mdeditor | 1 | 0 | 0 |
+| App             |  TP |  FP |  FN |
+| --------------- | --: | --: | --: |
+| wger            |   3 |   5 |   0 |
+| nautobot        |   2 |   5 |   0 |
+| django-mdeditor |   1 |   0 |   0 |
 
 All 6 known CVEs are detected with 100% recall. The 10 remaining FPs are
 structurally valid endpoints that share graph-level signatures with real

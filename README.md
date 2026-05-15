@@ -30,13 +30,66 @@ route parameter {pk}
 ## Pipeline
 
 1. Extract a **Privilege Flow Graph** from Django/Spring source.
-2. Encode nodes into the frozen 24-dimensional feature contract.
-3. Encode edges as `[is_call, is_identifier_flow]`.
-4. Classify each target endpoint with Model B.
-5. Evaluate against:
+2. Enrich endpoints with structural features (`enrich_endpoint_features`).
+3. Encode nodes into the frozen **28-dimensional** feature contract.
+4. Encode edges as `[is_call, is_identifier_flow]`.
+5. Classify each target endpoint with Model B (PathAnalyzer).
+6. Apply structural post-validation to suppress predictions lacking
+   graph-level evidence (`validated_gnn_detector`).
+7. Evaluate against:
    - our rule baseline,
    - Semgrep output normalized to endpoint findings,
    - CodeQL SARIF output normalized to endpoint findings.
+
+### Node Features (28-dim)
+
+| Dims | Feature | Description |
+|------|---------|-------------|
+| 0–3 | node_type | One-hot: endpoint, middleware, service, data_access |
+| 4–8 | http_method | One-hot: GET, POST, PUT, PATCH, DELETE |
+| 9 | requires_auth | Whether the endpoint requires authentication |
+| 10–14 | required_role | One-hot role encoding |
+| 15 | ownership_check | Whether the handler verifies object ownership |
+| 16–18 | guard_type | One-hot guard encoding |
+| 19–22 | op_type | One-hot operation type |
+| 23 | has_ownership_predicate | Data-access node has ownership predicate |
+| 24 | has_route_params | URL contains `{pk}`, `{id}`, etc. |
+| 25 | reachable_data_count | Normalized count of reachable data_access nodes |
+| 26 | has_id_flow | identifier_flow edge reaches a data_access node |
+| 27 | unprotected_data_reachable | Reachable data_access lacks ownership predicate |
+
+Dimensions 24–27 are the structural features added during the GNN improvement
+work. They are computed by `enrich_endpoint_features()` via BFS over call and
+identifier_flow edges.
+
+## GNN Detection Results
+
+The PathAnalyzer GNN was trained with a bridging strategy: pre-train on
+synthetic data (774 samples), then fine-tune on real data with leave-one-app-out
+cross-validation. Structural post-validation suppresses predictions that lack
+necessary graph-level evidence.
+
+| Approach | TP | FP | FN | P | R | F1 |
+|---|---:|---:|---:|---:|---:|---:|
+| GNN synth-only (24-dim) | 3 | 435 | 3 | 0.007 | 0.500 | 0.014 |
+| GNN synth-only (28-dim) | 4 | 103 | 2 | 0.037 | 0.667 | 0.071 |
+| Bridging (synth → real fine-tune) | 4 | 22 | 2 | 0.154 | 0.667 | 0.250 |
+| + auth extractor fix | 6 | 25 | 0 | 0.194 | 1.000 | 0.324 |
+| **+ ownership + post-validation** | **6** | **10** | **0** | **0.375** | **1.000** | **0.545** |
+| Rule baseline | 6 | 6 | 0 | 0.500 | 1.000 | 0.667 |
+
+Per-app breakdown (validated GNN):
+
+| App | TP | FP | FN |
+|---|---:|---:|---:|
+| wger | 3 | 5 | 0 |
+| nautobot | 2 | 5 | 0 |
+| django-mdeditor | 1 | 0 | 0 |
+
+The 10 remaining FPs are structurally valid — they share graph-level signatures
+with real vulnerabilities and require semantic data-ownership understanding to
+eliminate. See [docs/gnn-improvement-report.md](docs/gnn-improvement-report.md)
+for the full technical report.
 
 ## Current Real-Data Strategy
 
@@ -176,28 +229,27 @@ uv run pfg eval benchmarks/realworld --detector rule \
   --out artifacts/realworld-rule-eval.json
 ```
 
+Run the bridging experiment (leave-one-app-out):
+
+```bash
+uv run pfg bridging-experiment benchmarks/realworld \
+  --out-dir artifacts/bridging-v7 \
+  --synth-model artifacts/synthetic-v3/path_analyzer_synthetic.pt
+```
+
 Current three-corpus validation summary:
 
 ```text
 SAFE=465 MISSING_AUTH=3 MISSING_ROLE=0 IDOR=3 COMBINED=0 INTENTIONALLY_PUBLIC=0
 split groups: django-mdeditor, nautobot, wger
+total endpoints: 471, vulnerable: 6 (1.3%)
 ```
 
-Current rule-baseline caveat:
+Bridging experiment output (validated GNN):
 
 ```text
-wger: 1 unlabeled rule-baseline finding
-nautobot: 129 unlabeled rule-baseline findings
+TP=6  FP=10  FN=0  P=0.375  R=1.000  F1=0.545
 ```
-
-The wger false positive is:
-
-```text
-GET /api/v2/exerciseimage/{pk}/thumbnails/
-```
-
-This is part of the error-analysis backlog: decide whether it is an unlabeled
-real issue, an extractor false positive, or a rule-baseline over-approximation.
 
 Previous first-corpus result:
 

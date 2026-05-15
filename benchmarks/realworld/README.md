@@ -71,8 +71,18 @@ advisory-backed corpus samples.
 
 ## Evaluation
 
+Rule baseline:
+
 ```bash
 uv run pfg eval benchmarks/realworld --detector rule
+```
+
+Bridging experiment (leave-one-app-out GNN with structural post-validation):
+
+```bash
+uv run pfg bridging-experiment benchmarks/realworld \
+  --out-dir artifacts/bridging-v7 \
+  --synth-model artifacts/synthetic-v3/path_analyzer_synthetic.pt
 ```
 
 Current entries:
@@ -83,6 +93,27 @@ Current entries:
   on `POST /mdeditor/uploads/`.
 - Nautobot `CVE-2023-50263`: advisory-confirmed missing authentication on
   db-file-storage `GET /files/get/` and `GET /files/download/`.
+
+### Detection Results
+
+| Detector | TP | FP | FN | P | R | F1 |
+|---|---:|---:|---:|---:|---:|---:|
+| Rule baseline | 6 | 6 | 0 | 0.500 | 1.000 | 0.667 |
+| GNN (validated) | 6 | 10 | 0 | 0.375 | 1.000 | 0.545 |
+| GNN (raw) | 6 | 25 | 0 | 0.194 | 1.000 | 0.324 |
+
+Per-app breakdown (validated GNN):
+
+| App | TP | FP | FN |
+|---|---:|---:|---:|
+| wger | 3 | 5 | 0 |
+| nautobot | 2 | 5 | 0 |
+| django-mdeditor | 1 | 0 | 0 |
+
+All 6 known CVEs are detected with 100% recall. The 10 remaining FPs are
+structurally valid endpoints that share graph-level signatures with real
+vulnerabilities. See [/docs/gnn-improvement-report.md](/docs/gnn-improvement-report.md)
+for the full technical report.
 
 ## Final Model B Comparison
 
@@ -96,6 +127,13 @@ uv run pfg final-experiment benchmarks/realworld \
 The final command trains and compares PathAnalyzer real-only vs PathAnalyzer
 real + augmented, then writes `final_metrics.json`, `final_report.md`,
 `path_analyzer_real_only.pt`, and `path_analyzer_real_augmented.pt`.
+
+The GNN uses a bridging strategy: pre-train on synthetic data (774 samples),
+then fine-tune on real data with leave-one-app-out cross-validation. Structural
+post-validation (`validated_gnn_detector`) suppresses predictions that lack
+necessary graph-level evidence (e.g., IDOR without route params + id_flow,
+MISSING_AUTH without reachable data access).
+
 The explicit holdout/seed shown above gives a non-empty augmented training set
 with the current minimum corpus. For final thesis evidence, run one pass per
 independent holdout group.

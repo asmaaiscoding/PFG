@@ -33,6 +33,7 @@ from pfg.models.checkpoint import load_model, save_model
 from pfg.models.gnn import PathAnalyzer
 from pfg.pfg.nodes import LabelKind
 from pfg.synthetic import NUM_SUBTYPES
+from pfg.synthetic.generator import Sample
 from pfg.synthetic.realistic import generate_realistic_dataset
 from pfg.training.corpus import (
     samples_from_manifests,
@@ -62,11 +63,11 @@ def _app_groups(manifests: list[Manifest]) -> list[str]:
 
 def _run_fold(
     fold_name: str,
-    train_samples: list,
-    val_samples: list,
+    train_samples: list[Sample],
+    val_samples: list[Sample],
     test_manifests: list[Manifest],
     synth_state: dict[str, torch.Tensor],
-    synth_vuln_samples: list,
+    synth_vuln_samples: list[Sample],
     *,
     epochs: int,
     lr: float,
@@ -130,6 +131,11 @@ def _run_fold(
         gnn_detector(synth_model, threshold=gnn_threshold),
         detector_name="gnn_synthetic_only",
     )
+    synth_validated_report = evaluate_corpus(
+        test_manifests,
+        validated_gnn_detector(synth_model, threshold=gnn_threshold),
+        detector_name="gnn_synthetic_validated",
+    )
 
     return {
         "fold": fold_name,
@@ -141,6 +147,7 @@ def _run_fold(
         "finetuned": report_to_dict(ft_report),
         "finetuned_validated": report_to_dict(ft_validated_report),
         "synthetic_only": report_to_dict(synth_report),
+        "synthetic_validated": report_to_dict(synth_validated_report),
         "rule_baseline": report_to_dict(rule_report),
         "finetuned_train_result": {
             "test_accuracy": ft_result.test_accuracy,
@@ -290,6 +297,7 @@ def run_bridging_experiment(
     agg_finetuned = _agg("finetuned")
     agg_finetuned_validated = _agg("finetuned_validated")
     agg_synthetic = _agg("synthetic_only")
+    agg_synthetic_validated = _agg("synthetic_validated")
     agg_rule = _agg("rule_baseline")
 
     # Save best model
@@ -324,6 +332,7 @@ def run_bridging_experiment(
             "finetuned": agg_finetuned,
             "finetuned_validated": agg_finetuned_validated,
             "synthetic_only": agg_synthetic,
+            "synthetic_validated": agg_synthetic_validated,
             "rule_baseline": agg_rule,
         },
     }

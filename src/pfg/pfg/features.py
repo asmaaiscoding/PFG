@@ -1,8 +1,9 @@
-"""Frozen feature encoding for PFG nodes and edges.
+"""Feature encoding for PFG nodes and edges.
 
-DO NOT REORDER. The concat order is part of the model checkpoint contract.
+Do not reorder existing indices within a model family. The concat order is
+part of the model checkpoint contract and is stored with saved checkpoints.
 
-Node feature vector (28 dims total):
+Node feature vector (36 dims total):
   [0:4]   node_type  one-hot {endpoint, middleware, service, data_access}
   [4:9]   http_method one-hot {GET, POST, PUT, DELETE, PATCH}, all-zero if N/A
   [9]     requires_auth binary
@@ -15,10 +16,21 @@ Node feature vector (28 dims total):
   [25]    reachable_data_count normalized float (min(count,5)/5)
   [26]    has_id_flow binary (endpoint has identifier_flow edges)
   [27]    unprotected_data_reachable binary (reachable data_access w/o ownership)
+  [28]    role_check_present binary (endpoint-level)
+  [29]    model_permission_check_present binary (endpoint-level)
+  [30]    object_permission_check_present binary (endpoint-level)
+  [31]    tenant_check_present binary (endpoint-level)
+  [32]    has_tenant_scope binary (endpoint-level)
+  [33]    unscoped_tenant_data_reachable binary (endpoint-level)
+  [34]    object_permission_data_reachable binary (endpoint-level)
+  [35]    data_access tenant/object guard signal:
+          0.33 has_tenant_predicate, 0.66 has_object_permission_check,
+          1.0 both; 0.0 otherwise
 
-Edge feature vector (2 dims):
+Edge feature vector (3 dims):
   [0] call
   [1] identifier_flow
+  [2] tenant_flow
 """
 
 from __future__ import annotations
@@ -38,8 +50,8 @@ from pfg.pfg.nodes import (
     Role,
 )
 
-NODE_FEATURE_DIM: Final[int] = 28
-EDGE_FEATURE_DIM: Final[int] = 2
+NODE_FEATURE_DIM: Final[int] = 36
+EDGE_FEATURE_DIM: Final[int] = 3
 
 _NODE_TYPES: Final[tuple[str, ...]] = (
     NodeType.ENDPOINT.value,
@@ -81,7 +93,7 @@ def _onehot(values: tuple[str, ...], v: str | None) -> list[float]:
 
 
 def encode_node(node: Node) -> list[float]:
-    """Return the 28-dim feature vector for a single node."""
+    """Return the 36-dim feature vector for a single node."""
     feats: list[float] = []
     feats += _onehot(_NODE_TYPES, node.type)
 
@@ -97,6 +109,14 @@ def encode_node(node: Node) -> list[float]:
     reachable_data_count = 0.0
     has_id_flow = 0.0
     unprotected_data_reachable = 0.0
+    role_check_present = 0.0
+    model_permission_check_present = 0.0
+    object_permission_check_present = 0.0
+    tenant_check_present = 0.0
+    has_tenant_scope = 0.0
+    unscoped_tenant_data_reachable = 0.0
+    object_permission_data_reachable = 0.0
+    tenant_object_guard_signal = 0.0
 
     attrs = node.attrs
     if isinstance(attrs, EndpointAttrs):
@@ -108,11 +128,24 @@ def encode_node(node: Node) -> list[float]:
         reachable_data_count = min(float(attrs.reachable_data_count), 5.0) / 5.0
         has_id_flow = 1.0 if attrs.has_id_flow else 0.0
         unprotected_data_reachable = 1.0 if attrs.unprotected_data_reachable else 0.0
+        role_check_present = 1.0 if attrs.role_check_present else 0.0
+        model_permission_check_present = 1.0 if attrs.model_permission_check_present else 0.0
+        object_permission_check_present = 1.0 if attrs.object_permission_check_present else 0.0
+        tenant_check_present = 1.0 if attrs.tenant_check_present else 0.0
+        has_tenant_scope = 1.0 if attrs.has_tenant_scope else 0.0
+        unscoped_tenant_data_reachable = 1.0 if attrs.unscoped_tenant_data_reachable else 0.0
+        object_permission_data_reachable = 1.0 if attrs.object_permission_data_reachable else 0.0
     elif isinstance(attrs, MiddlewareAttrs):
         guard_type = attrs.guard_type if isinstance(attrs.guard_type, str) else attrs.guard_type.value
     elif isinstance(attrs, DataAccessAttrs):
         op = attrs.operation if isinstance(attrs.operation, str) else attrs.operation.value
         has_ownership_predicate = 1.0 if attrs.has_ownership_predicate else 0.0
+        if attrs.has_tenant_predicate and attrs.has_object_permission_check:
+            tenant_object_guard_signal = 1.0
+        elif attrs.has_object_permission_check:
+            tenant_object_guard_signal = 0.66
+        elif attrs.has_tenant_predicate:
+            tenant_object_guard_signal = 0.33
 
     feats += _onehot(_HTTP_METHODS, http_method)
     feats.append(requires_auth)
@@ -125,6 +158,14 @@ def encode_node(node: Node) -> list[float]:
     feats.append(reachable_data_count)
     feats.append(has_id_flow)
     feats.append(unprotected_data_reachable)
+    feats.append(role_check_present)
+    feats.append(model_permission_check_present)
+    feats.append(object_permission_check_present)
+    feats.append(tenant_check_present)
+    feats.append(has_tenant_scope)
+    feats.append(unscoped_tenant_data_reachable)
+    feats.append(object_permission_data_reachable)
+    feats.append(tenant_object_guard_signal)
 
     assert len(feats) == NODE_FEATURE_DIM, f"node feature dim mismatch: {len(feats)}"
     return feats
@@ -135,6 +176,7 @@ def encode_edge(edge_type: str | EdgeType) -> list[float]:
     return [
         1.0 if v == EdgeType.CALL.value else 0.0,
         1.0 if v == EdgeType.IDENTIFIER_FLOW.value else 0.0,
+        1.0 if v == EdgeType.TENANT_FLOW.value else 0.0,
     ]
 
 
@@ -178,7 +220,7 @@ def enrich_endpoint_features(pfg: object) -> None:
         # BFS via call edges to find reachable data_access nodes
         visited: set[str] = set()
         stack = [node.id]
-        reachable_da: list[object] = []
+        reachable_da: list[DataAccessAttrs] = []
         while stack:
             nid = stack.pop()
             if nid in visited:
@@ -193,4 +235,15 @@ def enrich_endpoint_features(pfg: object) -> None:
         a.reachable_data_count = len(reachable_da)
         a.unprotected_data_reachable = any(
             not da.has_ownership_predicate for da in reachable_da
+        )
+        a.has_tenant_scope = any(
+            da.requires_tenant_isolation or da.has_tenant_predicate for da in reachable_da
+        )
+        a.unscoped_tenant_data_reachable = any(
+            da.requires_tenant_isolation and not da.has_tenant_predicate
+            for da in reachable_da
+        )
+        a.object_permission_data_reachable = any(
+            da.requires_object_permission and not da.has_object_permission_check
+            for da in reachable_da
         )

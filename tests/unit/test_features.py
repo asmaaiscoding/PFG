@@ -56,11 +56,12 @@ def test_data_access_feature_snapshot(golden_dir: Path) -> None:
     assert v[19:23] == [1.0, 0.0, 0.0, 0.0]
     # has_ownership_predicate=False
     assert v[23] == 0.0
-    # non-endpoint nodes get zeros for structural features
-    assert v[24:28] == [0.0, 0.0, 0.0, 0.0]
+    # non-endpoint nodes get zeros for endpoint structural features
+    assert v[24:35] == [0.0] * 11
 
 
 def test_edge_feature() -> None:
-    assert encode_edge("call") == [1.0, 0.0]
-    assert encode_edge("identifier_flow") == [0.0, 1.0]
-    assert EDGE_FEATURE_DIM == 2
+    assert encode_edge("call") == [1.0, 0.0, 0.0]
+    assert encode_edge("identifier_flow") == [0.0, 1.0, 0.0]
+    assert encode_edge("tenant_flow") == [0.0, 0.0, 1.0]
+    assert EDGE_FEATURE_DIM == 3

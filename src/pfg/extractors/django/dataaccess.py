@@ -66,7 +66,26 @@ _DELETE_METHODS = frozenset({"delete"})
 _ALL_ORM_METHODS = _READ_METHODS | _WRITE_METHODS | _UPDATE_METHODS | _DELETE_METHODS
 
 _G404_FUNCS = frozenset({"get_object_or_404", "get_list_or_404"})
-_OWNER_PARAM_NAMES = frozenset({"user", "owner", "account", "tenant", "organization", "org"})
+_OWNER_PARAM_NAMES = frozenset({"user", "owner", "created_by", "account"})
+_TENANT_PARAM_NAMES = frozenset(
+    {
+        "tenant",
+        "tenant_id",
+        "organization",
+        "organization_id",
+        "org",
+        "org_id",
+        "workspace",
+        "workspace_id",
+        "workspace_slug",
+        "realm",
+        "realm_id",
+        "project",
+        "project_id",
+        "account",
+        "account_id",
+    }
+)
 _WRITE_FILE_MODES = frozenset({"w", "a", "x", "+"})
 
 
@@ -79,6 +98,10 @@ class DataAccess:
     has_ownership_predicate: bool
     ownership_predicate_type: str  # "DIRECT" | "INDIRECT" | "NONE"
     lineno: int
+    has_tenant_predicate: bool = False
+    requires_tenant_isolation: bool = False
+    requires_object_permission: bool = False
+    has_object_permission_check: bool = False
 
 
 # --- helpers --------------------------------------------------------------
@@ -127,6 +150,17 @@ def _references_owner_param(expr: ast.AST, owner_param_names: set[str]) -> bool:
     return False
 
 
+def _references_tenant_context(expr: ast.AST, tenant_param_names: set[str]) -> bool:
+    for node in ast.walk(expr):
+        if isinstance(node, ast.Name) and node.id in tenant_param_names:
+            return True
+        if isinstance(node, ast.Attribute):
+            attr = node.attr.lower()
+            if attr in _TENANT_PARAM_NAMES:
+                return True
+    return False
+
+
 def _ownership_from_kwargs(call: ast.Call, owner_param_names: set[str]) -> tuple[bool, str]:
     """Inspect ``call.keywords`` for an ownership-predicate kwarg."""
     indirect_seen = False
@@ -145,6 +179,26 @@ def _ownership_from_kwargs(call: ast.Call, owner_param_names: set[str]) -> tuple
     if indirect_seen:
         return True, "INDIRECT"
     return False, "NONE"
+
+
+def _tenant_from_kwargs(call: ast.Call, tenant_param_names: set[str]) -> bool:
+    for kw in call.keywords:
+        if kw.arg is None:
+            continue
+        key = kw.arg.lower()
+        if any(term in key for term in _TENANT_PARAM_NAMES):
+            return True
+        if _references_tenant_context(kw.value, tenant_param_names):
+            return True
+    return False
+
+
+def _requires_tenant_by_target(target_entity: str) -> bool:
+    lowered = target_entity.lower()
+    return any(
+        term in lowered
+        for term in ("tenant", "organization", "organisation", "workspace", "realm", "project")
+    )
 
 
 def _orm_target_entity(call: ast.Call) -> str | None:
@@ -260,6 +314,11 @@ def detect_data_accesses(fn: ast.FunctionDef | ast.AsyncFunctionDef) -> list[Dat
         for arg in [*fn.args.posonlyargs, *fn.args.args, *fn.args.kwonlyargs]
         if arg.arg in _OWNER_PARAM_NAMES or arg.arg.endswith("_user")
     }
+    tenant_param_names = {
+        arg.arg
+        for arg in [*fn.args.posonlyargs, *fn.args.args, *fn.args.kwonlyargs]
+        if arg.arg in _TENANT_PARAM_NAMES or any(term in arg.arg for term in _TENANT_PARAM_NAMES)
+    }
 
     # Pre-compute g404 variable names that are later validated against request.user.
     g404_validated: set[str] = set()
@@ -287,6 +346,10 @@ def detect_data_accesses(fn: ast.FunctionDef | ast.AsyncFunctionDef) -> list[Dat
                         target_entity="filesystem",
                         has_ownership_predicate=False,
                         ownership_predicate_type="NONE",
+                        has_tenant_predicate=False,
+                        requires_tenant_isolation=False,
+                        requires_object_permission=False,
+                        has_object_permission_check=False,
                         lineno=node.lineno,
                     ),
                 )
@@ -301,6 +364,7 @@ def detect_data_accesses(fn: ast.FunctionDef | ast.AsyncFunctionDef) -> list[Dat
             if op is None:
                 continue
             owned, otype = _ownership_from_kwargs(node, owner_param_names)
+            has_tenant = _tenant_from_kwargs(node, tenant_param_names)
             collected.append(
                 (
                     sort_key,
@@ -309,6 +373,10 @@ def detect_data_accesses(fn: ast.FunctionDef | ast.AsyncFunctionDef) -> list[Dat
                         target_entity=target,
                         has_ownership_predicate=owned,
                         ownership_predicate_type=otype,
+                        has_tenant_predicate=has_tenant,
+                        requires_tenant_isolation=_requires_tenant_by_target(target),
+                        requires_object_permission=False,
+                        has_object_permission_check=False,
                         lineno=node.lineno,
                     ),
                 )
@@ -319,6 +387,7 @@ def detect_data_accesses(fn: ast.FunctionDef | ast.AsyncFunctionDef) -> list[Dat
         g_target = _g404_target(node)
         if g_target is not None:
             owned, otype = _ownership_from_kwargs(node, owner_param_names)
+            has_tenant = _tenant_from_kwargs(node, tenant_param_names)
             if not owned:
                 assigned_to = _enclosing_assignment_target(fn, node)
                 if assigned_to is not None and assigned_to in g404_validated:
@@ -331,6 +400,10 @@ def detect_data_accesses(fn: ast.FunctionDef | ast.AsyncFunctionDef) -> list[Dat
                         target_entity=g_target,
                         has_ownership_predicate=owned,
                         ownership_predicate_type=otype,
+                        has_tenant_predicate=has_tenant,
+                        requires_tenant_isolation=_requires_tenant_by_target(g_target),
+                        requires_object_permission=False,
+                        has_object_permission_check=False,
                         lineno=node.lineno,
                     ),
                 )

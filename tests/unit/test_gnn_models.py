@@ -9,7 +9,7 @@ pyg = pytest.importorskip("torch_geometric")
 from torch_geometric.loader import DataLoader  # noqa: E402
 
 from pfg.models import PathAnalyzer, PfgAnomalyDetector  # noqa: E402
-from pfg.synthetic import generate_dataset, samples_to_pyg  # noqa: E402
+from pfg.synthetic import NUM_SUBTYPES, generate_dataset, samples_to_pyg  # noqa: E402
 from pfg.training import train_anomaly_detector, train_path_analyzer  # noqa: E402
 
 
@@ -28,10 +28,10 @@ def test_path_analyzer_forward_shape() -> None:
     samples = generate_dataset(8, seed=0)
     data = samples_to_pyg(samples)
     loader = DataLoader(data, batch_size=4)
-    model = PathAnalyzer(hidden_dim=16, num_layers=2, heads=2, num_classes=6)
+    model = PathAnalyzer(hidden_dim=16, num_layers=2, heads=2, num_classes=NUM_SUBTYPES)
     for batch in loader:
         out = model(batch)
-        assert out.shape == (batch.num_graphs, 6)
+        assert out.shape == (batch.num_graphs, NUM_SUBTYPES)
         break
 
 
@@ -55,5 +55,5 @@ def test_path_analyzer_learns_synthetic() -> None:
         heads=2,
         seed=2,
     )
-    # 6-class classification on a deliberately easy synthetic distribution.
+    # Multi-class classification on a deliberately easy synthetic distribution.
     assert metrics.test_macro_f1 >= 0.5, f"f1={metrics.test_macro_f1:.3f}"

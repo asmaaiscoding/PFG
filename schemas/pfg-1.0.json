@@ -67,12 +67,19 @@
                     "enum": ["NONE", "USER", "MODERATOR", "ADMIN", "SUPERADMIN"]
                   },
                   "ownership_check_present": { "type": "boolean" },
+                  "role_check_present": { "type": "boolean" },
+                  "model_permission_check_present": { "type": "boolean" },
+                  "object_permission_check_present": { "type": "boolean" },
+                  "tenant_check_present": { "type": "boolean" },
                   "is_intentionally_public": { "type": "boolean" },
                   "source_location": { "type": "string" },
                   "has_route_params": { "type": "boolean" },
                   "reachable_data_count": { "type": "integer" },
                   "has_id_flow": { "type": "boolean" },
-                  "unprotected_data_reachable": { "type": "boolean" }
+                  "unprotected_data_reachable": { "type": "boolean" },
+                  "has_tenant_scope": { "type": "boolean" },
+                  "unscoped_tenant_data_reachable": { "type": "boolean" },
+                  "object_permission_data_reachable": { "type": "boolean" }
                 }
               }
             }
@@ -88,7 +95,13 @@
                 "additionalProperties": false,
                 "properties": {
                   "guard_type": {
-                    "enum": ["AUTHENTICATION", "ROLE_CHECK", "OWNERSHIP_CHECK"]
+                    "enum": [
+                      "AUTHENTICATION",
+                      "ROLE_CHECK",
+                      "OWNERSHIP_CHECK",
+                      "TENANT_CHECK",
+                      "OBJECT_PERMISSION_CHECK"
+                    ]
                   },
                   "condition": { "type": "string" },
                   "position": { "enum": ["BEFORE_HANDLER", "INLINE"] },
@@ -139,6 +152,10 @@
                   "ownership_predicate_type": {
                     "enum": ["DIRECT", "INDIRECT", "NONE"]
                   },
+                  "has_tenant_predicate": { "type": "boolean" },
+                  "requires_tenant_isolation": { "type": "boolean" },
+                  "requires_object_permission": { "type": "boolean" },
+                  "has_object_permission_check": { "type": "boolean" },
                   "user_controlled_params_in_query": {
                     "type": "array",
                     "items": { "type": "string" }
@@ -158,7 +175,7 @@
       "properties": {
         "src": { "type": "string" },
         "dst": { "type": "string" },
-        "type": { "enum": ["call", "identifier_flow"] },
+        "type": { "enum": ["call", "identifier_flow", "tenant_flow"] },
         "param": { "type": "string" }
       }
     },
@@ -169,7 +186,14 @@
       "properties": {
         "label": { "enum": ["SAFE", "VULNERABLE", "INTENTIONALLY_PUBLIC"] },
         "subtype": {
-          "enum": ["MISSING_AUTH", "MISSING_ROLE", "IDOR", "COMBINED"]
+          "enum": [
+            "MISSING_AUTH",
+            "MISSING_ROLE",
+            "IDOR",
+            "TENANT_ISOLATION_FAILURE",
+            "OBJECT_LEVEL_PERMISSION_BYPASS",
+            "COMBINED"
+          ]
         },
         "cwe": { "type": "string" },
         "notes": { "type": "string" }

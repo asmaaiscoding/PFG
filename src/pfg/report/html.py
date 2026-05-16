@@ -61,6 +61,8 @@ _HTML_TEMPLATE = """<!doctype html>
   .pill-MISSING_AUTH {{ background:#3a1d22; color:var(--bad); }}
   .pill-MISSING_ROLE {{ background:#3a2a16; color:var(--warn); }}
   .pill-IDOR        {{ background:#3a1d22; color:var(--bad); }}
+  .pill-TENANT_ISOLATION_FAILURE {{ background:#2a233a; color:var(--bad); }}
+  .pill-OBJECT_LEVEL_PERMISSION_BYPASS {{ background:#1e2f32; color:var(--bad); }}
   .pill-COMBINED    {{ background:#3a1d22; color:var(--bad); }}
   .pill-SAFE        {{ background:#1f2a1c; color:var(--ok); }}
   details {{ background:var(--card); border:1px solid var(--border);

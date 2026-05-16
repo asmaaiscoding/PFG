@@ -17,7 +17,7 @@ def test_generator_is_deterministic() -> None:
 
 
 def test_class_distribution_balanced() -> None:
-    samples = generate_dataset(60, seed=0)
+    samples = generate_dataset(64, seed=0)
     counts: Counter[str] = Counter()
     for s in samples:
         if s.label.label == LabelKind.SAFE.value:
@@ -27,16 +27,18 @@ def test_class_distribution_balanced() -> None:
         else:
             assert s.label.subtype is not None
             counts[s.label.subtype] += 1
-    # 60 / 6 = 10 per class.
+    # 64 / 8 = 8 per class.
     for k in (
         "SAFE",
         VulnSubtype.MISSING_AUTH.value,
         VulnSubtype.MISSING_ROLE.value,
         VulnSubtype.IDOR.value,
+        VulnSubtype.TENANT_ISOLATION_FAILURE.value,
+        VulnSubtype.OBJECT_LEVEL_PERMISSION_BYPASS.value,
         VulnSubtype.COMBINED.value,
         "PUBLIC",
     ):
-        assert counts[k] == 10, f"class {k}: {counts[k]} != 10"
+        assert counts[k] == 8, f"class {k}: {counts[k]} != 8"
 
 
 def test_all_samples_validate_against_schema(tmp_path) -> None:
@@ -46,16 +48,18 @@ def test_all_samples_validate_against_schema(tmp_path) -> None:
 
 
 def test_label_to_targets_mapping() -> None:
-    samples = generate_dataset(6, seed=0)
+    samples = generate_dataset(8, seed=0)
     seen = {label_to_targets(s) for s in samples}
     # SAFE=(0,0), MISSING_AUTH=(1,1), MISSING_ROLE=(1,2), IDOR=(1,3),
-    # COMBINED=(1,4), PUBLIC=(0,5)
+    # TENANT=(1,4), OBJECT=(1,5), COMBINED=(1,6), PUBLIC=(0,7)
     assert (0, 0) in seen
     assert (1, 1) in seen
     assert (1, 2) in seen
     assert (1, 3) in seen
     assert (1, 4) in seen
-    assert (0, 5) in seen
+    assert (1, 5) in seen
+    assert (1, 6) in seen
+    assert (0, 7) in seen
 
 
 def test_rule_baseline_recall_on_synthetic() -> None:

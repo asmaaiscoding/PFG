@@ -63,7 +63,7 @@ def gnn_detector(model: Any, *, threshold: float = 0.5) -> Detector:
 
     For each endpoint node in the PFG we build a single-graph PyG `Data` with
     `target_mask` set on that endpoint, run the model, and emit a prediction
-    iff the argmax class is one of the four vulnerability subtypes (1..4) and
+    iff the argmax class is one of the vulnerability subtypes and
     its softmax probability exceeds `threshold`. SAFE / INTENTIONALLY_PUBLIC
     are not emitted.
     """
@@ -117,7 +117,7 @@ def gnn_detector(model: Any, *, threshold: float = 0.5) -> Detector:
                 cls = int(probs.argmax().item())
                 conf = float(probs[cls].item())
                 name = inv_subtype.get(cls, "SAFE")
-                if name in {"MISSING_AUTH", "MISSING_ROLE", "IDOR", "COMBINED"} and conf >= threshold:
+                if name not in {"SAFE", "INTENTIONALLY_PUBLIC"} and conf >= threshold:
                     preds.add((ep_id, name))
         return preds
 
@@ -130,11 +130,17 @@ def validated_gnn_detector(model: Any, *, threshold: float = 0.5) -> Detector:
     Applies the same model as ``gnn_detector`` but suppresses predictions
     that lack structural evidence:
 
-    * MISSING_AUTH / MISSING_ROLE: suppressed unless the endpoint reaches
-      at least one ``data_access`` node via call edges.
+    * MISSING_AUTH: suppressed unless the endpoint reaches at least one
+      ``data_access`` node via call edges.
+    * MISSING_ROLE: suppressed unless the endpoint reaches a privileged
+      mutation without an endpoint role/role middleware.
     * IDOR: suppressed unless the endpoint has route params AND an
       ``identifier_flow`` edge reaches a ``data_access`` node without
       an ownership predicate.
+    * TENANT_ISOLATION_FAILURE: suppressed unless tenant-scoped data is
+      reachable without a tenant predicate.
+    * OBJECT_LEVEL_PERMISSION_BYPASS: suppressed unless model-level permission
+      evidence exists and object-level permission evidence is absent.
 
     This hybridises the GNN's learned patterns with the rule baseline's
     structural constraints, keeping the GNN's recall advantage while
@@ -142,7 +148,15 @@ def validated_gnn_detector(model: Any, *, threshold: float = 0.5) -> Detector:
     """
     from collections import deque
 
-    from pfg.pfg.nodes import EdgeType, NodeType
+    from pfg.pfg.nodes import (
+        DataAccessAttrs,
+        EdgeType,
+        EndpointAttrs,
+        GuardType,
+        MiddlewareAttrs,
+        NodeType,
+        OperationType,
+    )
 
     base = gnn_detector(model, threshold=threshold)
 
@@ -166,7 +180,6 @@ def validated_gnn_detector(model: Any, *, threshold: float = 0.5) -> Detector:
         ep = idx.get(ep_id)
         if ep is None:
             return False
-        from pfg.pfg.nodes import EndpointAttrs
         if not isinstance(ep.attrs, EndpointAttrs) or not ep.attrs.route_params:
             return False
         # BFS via identifier_flow
@@ -183,8 +196,88 @@ def validated_gnn_detector(model: Any, *, threshold: float = 0.5) -> Detector:
             n = idx.get(nid)
             if n is None or n.type != NodeType.DATA_ACCESS.value:
                 continue
-            from pfg.pfg.nodes import DataAccessAttrs
-            if isinstance(n.attrs, DataAccessAttrs) and not n.attrs.has_ownership_predicate:
+            if (
+                isinstance(n.attrs, DataAccessAttrs)
+                and not n.attrs.has_ownership_predicate
+                and not n.attrs.requires_tenant_isolation
+                and not n.attrs.requires_object_permission
+            ):
+                return True
+        return False
+
+    def _has_missing_role_shape(pfg: PFG, ep_id: str) -> bool:
+        idx = pfg.node_index()
+        ep = idx.get(ep_id)
+        if ep is None or not isinstance(ep.attrs, EndpointAttrs):
+            return False
+        if ep.attrs.role_check_present or ep.attrs.required_role not in {"NONE", None}:
+            return False
+        reached = _reachable_call_nodes(pfg, ep_id)
+        privileged = {OperationType.WRITE.value, OperationType.UPDATE.value, OperationType.DELETE.value}
+        for nid in reached:
+            n = idx.get(nid)
+            if n is None:
+                continue
+            if isinstance(n.attrs, MiddlewareAttrs) and n.attrs.guard_type == GuardType.ROLE_CHECK.value:
+                return False
+            if isinstance(n.attrs, DataAccessAttrs):
+                op = n.attrs.operation if isinstance(n.attrs.operation, str) else n.attrs.operation.value
+                if op in privileged:
+                    return True
+        return False
+
+    def _reachable_call_nodes(pfg: PFG, ep_id: str) -> set[str]:
+        seen: set[str] = {ep_id}
+        q: deque[str] = deque([ep_id])
+        while q:
+            cur = q.popleft()
+            for e in pfg.edges:
+                if e.src == cur and e.type == EdgeType.CALL.value and e.dst not in seen:
+                    seen.add(e.dst)
+                    q.append(e.dst)
+        return seen
+
+    def _has_unscoped_tenant_access(pfg: PFG, ep_id: str) -> bool:
+        idx = pfg.node_index()
+        ep = idx.get(ep_id)
+        if ep is None or not isinstance(ep.attrs, EndpointAttrs):
+            return False
+        if ep.attrs.tenant_check_present:
+            return False
+        for nid in _reachable_call_nodes(pfg, ep_id):
+            n = idx.get(nid)
+            attrs = getattr(n, "attrs", None)
+            if isinstance(attrs, MiddlewareAttrs) and attrs.guard_type == GuardType.TENANT_CHECK.value:
+                return False
+            if (
+                isinstance(attrs, DataAccessAttrs)
+                and attrs.requires_tenant_isolation
+                and not attrs.has_tenant_predicate
+            ):
+                return True
+        return False
+
+    def _has_object_permission_bypass_shape(pfg: PFG, ep_id: str) -> bool:
+        idx = pfg.node_index()
+        ep = idx.get(ep_id)
+        if ep is None or not isinstance(ep.attrs, EndpointAttrs):
+            return False
+        if not ep.attrs.model_permission_check_present:
+            return False
+        if ep.attrs.object_permission_check_present:
+            return False
+        if not ep.attrs.route_params:
+            return False
+        for nid in _reachable_call_nodes(pfg, ep_id):
+            n = idx.get(nid)
+            attrs = getattr(n, "attrs", None)
+            if isinstance(attrs, MiddlewareAttrs) and attrs.guard_type == GuardType.OBJECT_PERMISSION_CHECK.value:
+                return False
+            if (
+                isinstance(attrs, DataAccessAttrs)
+                and attrs.requires_object_permission
+                and not attrs.has_object_permission_check
+            ):
                 return True
         return False
 
@@ -192,15 +285,29 @@ def validated_gnn_detector(model: Any, *, threshold: float = 0.5) -> Detector:
         raw = base(pfg)
         validated: set[Prediction] = set()
         for ep_id, subtype in raw:
-            if subtype in {"MISSING_AUTH", "MISSING_ROLE"}:
+            if subtype == "MISSING_AUTH":
                 if _reaches_data_access(pfg, ep_id):
+                    validated.add((ep_id, subtype))
+            elif subtype == "MISSING_ROLE":
+                if _has_missing_role_shape(pfg, ep_id):
                     validated.add((ep_id, subtype))
             elif subtype == "IDOR":
                 if _has_unprotected_id_flow(pfg, ep_id):
                     validated.add((ep_id, subtype))
+            elif subtype == "TENANT_ISOLATION_FAILURE":
+                if _has_unscoped_tenant_access(pfg, ep_id):
+                    validated.add((ep_id, subtype))
+            elif subtype == "OBJECT_LEVEL_PERMISSION_BYPASS":
+                if _has_object_permission_bypass_shape(pfg, ep_id):
+                    validated.add((ep_id, subtype))
             else:
                 # COMBINED: keep if either condition is met
-                if _reaches_data_access(pfg, ep_id) or _has_unprotected_id_flow(pfg, ep_id):
+                if (
+                    _reaches_data_access(pfg, ep_id)
+                    or _has_unprotected_id_flow(pfg, ep_id)
+                    or _has_unscoped_tenant_access(pfg, ep_id)
+                    or _has_object_permission_bypass_shape(pfg, ep_id)
+                ):
                     validated.add((ep_id, subtype))
         return validated
 
@@ -229,8 +336,7 @@ def _score_one(
     """Compute (tp, fp, fn, notes). Predictions on intentional_public are dropped.
 
     Match key is (endpoint_id, subtype). COMBINED matches in either direction
-    against MISSING_AUTH or MISSING_ROLE on the same endpoint (a COMBINED
-    prediction satisfies a MISSING_AUTH expected finding and vice versa).
+    against any concrete vulnerability subtype on the same endpoint.
     """
     intentional = set(intentional_public)
     predicted = {p for p in predicted if p[0] not in intentional}
@@ -247,12 +353,17 @@ def _score_one(
             matched_predicted.add(p)
 
     # 2) COMBINED-flexibility: a COMBINED on endpoint X matches any expected
-    #    MISSING_AUTH/MISSING_ROLE/IDOR on X. Symmetric.
+    #    concrete vulnerability subtype on X. Symmetric.
     def _combined_match(a: Prediction, b: Prediction) -> bool:
         if a[0] != b[0]:
             return False
         return "COMBINED" in {a[1], b[1]} and {a[1], b[1]} <= {
-            "COMBINED", "MISSING_AUTH", "MISSING_ROLE", "IDOR"
+            "COMBINED",
+            "MISSING_AUTH",
+            "MISSING_ROLE",
+            "IDOR",
+            "TENANT_ISOLATION_FAILURE",
+            "OBJECT_LEVEL_PERMISSION_BYPASS",
         }
 
     for p in predicted - matched_predicted:

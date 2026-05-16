@@ -41,6 +41,8 @@ class GuardType(StrEnum):
     AUTHENTICATION = "AUTHENTICATION"
     ROLE_CHECK = "ROLE_CHECK"
     OWNERSHIP_CHECK = "OWNERSHIP_CHECK"
+    TENANT_CHECK = "TENANT_CHECK"
+    OBJECT_PERMISSION_CHECK = "OBJECT_PERMISSION_CHECK"
 
 
 class GuardPosition(StrEnum):
@@ -64,6 +66,7 @@ class OwnershipPredicateType(StrEnum):
 class EdgeType(StrEnum):
     CALL = "call"
     IDENTIFIER_FLOW = "identifier_flow"
+    TENANT_FLOW = "tenant_flow"
 
 
 class LabelKind(StrEnum):
@@ -76,6 +79,8 @@ class VulnSubtype(StrEnum):
     MISSING_AUTH = "MISSING_AUTH"
     MISSING_ROLE = "MISSING_ROLE"
     IDOR = "IDOR"
+    TENANT_ISOLATION_FAILURE = "TENANT_ISOLATION_FAILURE"
+    OBJECT_LEVEL_PERMISSION_BYPASS = "OBJECT_LEVEL_PERMISSION_BYPASS"
     COMBINED = "COMBINED"
 
 
@@ -93,6 +98,10 @@ class EndpointAttrs(_Base):
     requires_auth: bool
     required_role: Role
     ownership_check_present: bool = False
+    role_check_present: bool = False
+    model_permission_check_present: bool = False
+    object_permission_check_present: bool = False
+    tenant_check_present: bool = False
     is_intentionally_public: bool = False
     source_location: str | None = None
     # Derived structural features (computed post-build via enrich_endpoint_features).
@@ -100,6 +109,9 @@ class EndpointAttrs(_Base):
     reachable_data_count: int = 0
     has_id_flow: bool = False
     unprotected_data_reachable: bool = False
+    has_tenant_scope: bool = False
+    unscoped_tenant_data_reachable: bool = False
+    object_permission_data_reachable: bool = False
 
 
 class MiddlewareAttrs(_Base):
@@ -122,6 +134,10 @@ class DataAccessAttrs(_Base):
     target_entity: str
     has_ownership_predicate: bool
     ownership_predicate_type: OwnershipPredicateType = OwnershipPredicateType.NONE
+    has_tenant_predicate: bool = False
+    requires_tenant_isolation: bool = False
+    requires_object_permission: bool = False
+    has_object_permission_check: bool = False
     user_controlled_params_in_query: list[str] = Field(default_factory=list)
     source_location: str | None = None
 

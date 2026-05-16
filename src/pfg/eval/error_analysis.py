@@ -34,7 +34,14 @@ from pfg.pfg.graph import PFG
 
 ErrorCategory = str  # "extraction_error" | "intentional_public" | "label_noise" | "model_error"
 
-_VULN_SUBTYPES = {"MISSING_AUTH", "MISSING_ROLE", "IDOR", "COMBINED"}
+_VULN_SUBTYPES = {
+    "MISSING_AUTH",
+    "MISSING_ROLE",
+    "IDOR",
+    "TENANT_ISOLATION_FAILURE",
+    "OBJECT_LEVEL_PERMISSION_BYPASS",
+    "COMBINED",
+}
 
 
 @dataclass(frozen=True)
@@ -111,6 +118,8 @@ def _label_consistent_with_pfg(pfg: PFG, endpoint_id: str, subtype: str) -> bool
     requires_auth = bool(attrs.get("requires_auth", True))
     required_role = str(attrs.get("required_role", "NONE"))
     has_owner = bool(attrs.get("ownership_check_present", False))
+    has_tenant = bool(attrs.get("tenant_check_present", False))
+    has_object_perm = bool(attrs.get("object_permission_check_present", False))
 
     if subtype == "MISSING_AUTH":
         return not requires_auth
@@ -118,6 +127,10 @@ def _label_consistent_with_pfg(pfg: PFG, endpoint_id: str, subtype: str) -> bool
         return required_role in {"NONE", ""} or not requires_auth
     if subtype == "IDOR":
         return _has_idflow_to(pfg, endpoint_id) and not has_owner
+    if subtype == "TENANT_ISOLATION_FAILURE":
+        return attrs.get("has_tenant_scope", False) or not has_tenant
+    if subtype == "OBJECT_LEVEL_PERMISSION_BYPASS":
+        return _has_idflow_to(pfg, endpoint_id) and not has_object_perm
     if subtype == "COMBINED":
         return (not requires_auth) or _has_idflow_to(pfg, endpoint_id)
     return True
@@ -200,6 +213,8 @@ def _matched_pairs(score: AppScore) -> tuple[set[tuple[str, str]], set[tuple[str
             "MISSING_AUTH",
             "MISSING_ROLE",
             "IDOR",
+            "TENANT_ISOLATION_FAILURE",
+            "OBJECT_LEVEL_PERMISSION_BYPASS",
         }
 
     for p in predicted - matched_pred:

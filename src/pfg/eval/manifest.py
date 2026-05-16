@@ -13,7 +13,7 @@ The schema is a tight subset of what the thesis evaluation needs:
     Reproduces CVE-2024-XXXXX on /api/orders/<id>/
   expected_findings:                  # required (may be empty list)
     - endpoint_id: ep_orders_detail
-      subtype: IDOR                   # MISSING_AUTH | MISSING_ROLE | IDOR | COMBINED
+      subtype: IDOR                   # access-control subtype
       url_pattern: /api/orders/<id>/  # informational
       cve: CVE-2024-XXXXX             # optional
   intentional_public_endpoints:       # optional (counted as TN, not FP)
@@ -28,7 +28,14 @@ from typing import Any
 
 import yaml
 
-_VALID_SUBTYPES = {"MISSING_AUTH", "MISSING_ROLE", "IDOR", "COMBINED"}
+_VALID_SUBTYPES = {
+    "MISSING_AUTH",
+    "MISSING_ROLE",
+    "IDOR",
+    "TENANT_ISOLATION_FAILURE",
+    "OBJECT_LEVEL_PERMISSION_BYPASS",
+    "COMBINED",
+}
 
 
 @dataclass

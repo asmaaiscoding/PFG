@@ -10,6 +10,8 @@ Output is a sequence of `(PFG, Label)` pairs where the label is one of:
     VULNERABLE / MISSING_AUTH
     VULNERABLE / MISSING_ROLE
     VULNERABLE / IDOR
+    VULNERABLE / TENANT_ISOLATION_FAILURE
+    VULNERABLE / OBJECT_LEVEL_PERMISSION_BYPASS
     VULNERABLE / COMBINED
     INTENTIONALLY_PUBLIC
 
@@ -54,7 +56,9 @@ class Sample:
 _HTTP_METHODS = ("GET", "POST", "PUT", "PATCH", "DELETE")
 _ROLES = ("NONE", "USER", "MODERATOR", "ADMIN", "SUPERADMIN")
 _ENTITIES = ("Invoice", "User", "Order", "Comment", "Post", "Document", "Booking")
+_TENANT_ENTITIES = ("Workspace", "Organization", "TenantAccount", "Project", "Realm")
 _PARAM_NAMES = ("pk", "id", "slug", "uid")
+_TENANT_PARAM_NAMES = ("workspace_slug", "organization_id", "tenant_id", "project_id", "realm_id")
 
 
 def _rand_route(rng: random.Random, with_param: bool) -> tuple[str, list[str]]:
@@ -64,6 +68,14 @@ def _rand_route(rng: random.Random, with_param: bool) -> tuple[str, list[str]]:
         param = rng.choice(_PARAM_NAMES)
         return f"/{base}/{seg}/{{{param}}}/", [param]
     return f"/{base}/{seg}/", []
+
+
+def _rand_tenant_route(rng: random.Random) -> tuple[str, list[str]]:
+    base = rng.choice(["api", "app", "v1", "internal"])
+    seg = rng.choice(["workspaces", "organizations", "tenants", "projects", "realms"])
+    param = rng.choice(_TENANT_PARAM_NAMES)
+    child = rng.choice(["members", "addons", "events", "files", "settings"])
+    return f"/{base}/{seg}/{{{param}}}/{child}/", [param]
 
 
 def _safe_id(s: str) -> str:
@@ -95,6 +107,7 @@ def _mk_endpoint(
             "requires_auth": requires_auth,
             "required_role": role,
             "ownership_check_present": False,
+            "role_check_present": role != "NONE",
             "is_intentionally_public": is_public,
         },
     }
@@ -123,8 +136,13 @@ def _mk_data_access(
     operation: str,
     has_owner: bool,
     user_params: list[str],
+    tenant_entity: bool = False,
+    has_tenant: bool = False,
+    requires_tenant: bool = False,
+    requires_object_permission: bool = False,
+    has_object_permission: bool = False,
 ) -> tuple[dict[str, Any], str]:
-    entity = rng.choice(_ENTITIES)
+    entity = rng.choice(_TENANT_ENTITIES if tenant_entity else _ENTITIES)
     did = _safe_id(f"data__{operation}__{entity}__{suffix}")
     node = {
         "id": did,
@@ -134,6 +152,10 @@ def _mk_data_access(
             "target_entity": entity,
             "has_ownership_predicate": has_owner,
             "ownership_predicate_type": ("DIRECT" if has_owner else "NONE"),
+            "has_tenant_predicate": has_tenant,
+            "requires_tenant_isolation": requires_tenant,
+            "requires_object_permission": requires_object_permission,
+            "has_object_permission_check": has_object_permission,
             "user_controlled_params_in_query": list(user_params),
         },
     }
@@ -146,15 +168,17 @@ def _mk_data_access(
 def _generate_one(rng: random.Random, idx: int) -> Sample:
     """Generate a single labeled PFG by choosing a class then sampling.
 
-    Class distribution (uniform across 6 buckets):
+    Class distribution (uniform across 8 buckets):
       0  SAFE — auth + role + ownership
       1  MISSING_AUTH — no auth, but reaches data
       2  MISSING_ROLE — auth on, no role, mutation
       3  IDOR — auth on, route param flows to data access without ownership
-      4  COMBINED — no auth + IDOR-style flow
-      5  INTENTIONALLY_PUBLIC — explicitly public, public-route prefix
+      4  TENANT_ISOLATION_FAILURE — tenant-scoped route/data without tenant predicate
+      5  OBJECT_LEVEL_PERMISSION_BYPASS — model permission but no object check
+      6  COMBINED — no auth + IDOR-style flow
+      7  INTENTIONALLY_PUBLIC — explicitly public, public-route prefix
     """
-    cls = idx % 6
+    cls = idx % 8
     suffix = f"s{idx}"
     nodes: list[dict[str, Any]] = []
     edges: list[dict[str, Any]] = []
@@ -167,6 +191,11 @@ def _generate_one(rng: random.Random, idx: int) -> Sample:
         )
         op = rng.choice(["READ", "WRITE", "UPDATE", "DELETE"])
         has_owner = True
+        has_tenant = False
+        requires_tenant = False
+        requires_object_permission = False
+        has_object_permission = False
+        tenant_entity = False
         user_params: list[str] = list(params)
         label = Label(label=LabelKind.SAFE)
         add_id_flow = bool(params)
@@ -177,6 +206,11 @@ def _generate_one(rng: random.Random, idx: int) -> Sample:
         )
         op = rng.choice(["READ", "WRITE", "UPDATE", "DELETE"])
         has_owner = False
+        has_tenant = False
+        requires_tenant = False
+        requires_object_permission = False
+        has_object_permission = False
+        tenant_entity = False
         user_params = []
         label = Label(label=LabelKind.VULNERABLE, subtype=VulnSubtype.MISSING_AUTH, cwe="CWE-862")
         add_id_flow = False
@@ -187,6 +221,11 @@ def _generate_one(rng: random.Random, idx: int) -> Sample:
         )
         op = rng.choice(["WRITE", "UPDATE", "DELETE"])
         has_owner = False
+        has_tenant = False
+        requires_tenant = False
+        requires_object_permission = False
+        has_object_permission = False
+        tenant_entity = False
         user_params = []
         label = Label(label=LabelKind.VULNERABLE, subtype=VulnSubtype.MISSING_ROLE, cwe="CWE-863")
         add_id_flow = False
@@ -197,16 +236,72 @@ def _generate_one(rng: random.Random, idx: int) -> Sample:
         )
         op = rng.choice(["READ", "UPDATE", "DELETE"])
         has_owner = False
+        has_tenant = False
+        requires_tenant = False
+        requires_object_permission = False
+        has_object_permission = False
+        tenant_entity = False
         user_params = list(params)
         label = Label(label=LabelKind.VULNERABLE, subtype=VulnSubtype.IDOR, cwe="CWE-639")
         add_id_flow = True
-    elif cls == 4:  # COMBINED
+    elif cls == 4:  # TENANT_ISOLATION_FAILURE
+        route, params = _rand_tenant_route(rng)
+        method = rng.choice(_HTTP_METHODS)
+        eid = _safe_id(f"endpoint__{method}__{route}__{suffix}")
+        ep_node = {
+            "id": eid,
+            "type": "endpoint",
+            "attrs": {
+                "http_method": method,
+                "route": route,
+                "route_params": params,
+                "requires_auth": True,
+                "required_role": "USER",
+                "ownership_check_present": True,
+                "role_check_present": True,
+                "tenant_check_present": False,
+                "is_intentionally_public": False,
+            },
+        }
+        op = rng.choice(["READ", "UPDATE", "DELETE"])
+        has_owner = True
+        has_tenant = False
+        requires_tenant = True
+        requires_object_permission = False
+        has_object_permission = False
+        tenant_entity = True
+        user_params = list(params)
+        label = Label(label=LabelKind.VULNERABLE, subtype=VulnSubtype.TENANT_ISOLATION_FAILURE, cwe="CWE-284")
+        add_id_flow = True
+    elif cls == 5:  # OBJECT_LEVEL_PERMISSION_BYPASS
+        ep_node, eid, params = _mk_endpoint(
+            rng, requires_auth=True, role="USER", is_public=False,
+            with_param=True, suffix=suffix,
+        )
+        ep_node["attrs"]["model_permission_check_present"] = True
+        ep_node["attrs"]["object_permission_check_present"] = False
+        op = rng.choice(["READ", "UPDATE", "DELETE"])
+        has_owner = False
+        has_tenant = False
+        requires_tenant = False
+        requires_object_permission = True
+        has_object_permission = False
+        tenant_entity = False
+        user_params = list(params)
+        label = Label(label=LabelKind.VULNERABLE, subtype=VulnSubtype.OBJECT_LEVEL_PERMISSION_BYPASS, cwe="CWE-284")
+        add_id_flow = True
+    elif cls == 6:  # COMBINED
         ep_node, eid, params = _mk_endpoint(
             rng, requires_auth=False, role="NONE", is_public=False,
             with_param=True, suffix=suffix,
         )
         op = rng.choice(["UPDATE", "DELETE"])
         has_owner = False
+        has_tenant = False
+        requires_tenant = False
+        requires_object_permission = False
+        has_object_permission = False
+        tenant_entity = False
         user_params = list(params)
         label = Label(label=LabelKind.VULNERABLE, subtype=VulnSubtype.COMBINED, cwe="CWE-862")
         add_id_flow = True
@@ -230,6 +325,11 @@ def _generate_one(rng: random.Random, idx: int) -> Sample:
         params = []
         op = "READ"
         has_owner = False
+        has_tenant = False
+        requires_tenant = False
+        requires_object_permission = False
+        has_object_permission = False
+        tenant_entity = False
         user_params = []
         label = Label(label=LabelKind.INTENTIONALLY_PUBLIC)
         add_id_flow = False
@@ -249,7 +349,18 @@ def _generate_one(rng: random.Random, idx: int) -> Sample:
         last_service_id = sid
 
     # Data access leaf attached to last service.
-    dnode, did = _mk_data_access(rng, suffix, operation=op, has_owner=has_owner, user_params=user_params)
+    dnode, did = _mk_data_access(
+        rng,
+        suffix,
+        operation=op,
+        has_owner=has_owner,
+        user_params=user_params,
+        tenant_entity=tenant_entity,
+        has_tenant=has_tenant,
+        requires_tenant=requires_tenant,
+        requires_object_permission=requires_object_permission,
+        has_object_permission=has_object_permission,
+    )
     nodes.append(dnode)
     assert last_service_id is not None
     edges.append({"src": last_service_id, "dst": did, "type": "call"})
@@ -259,6 +370,8 @@ def _generate_one(rng: random.Random, idx: int) -> Sample:
         edges.append(
             {"src": eid, "dst": did, "type": "identifier_flow", "param": params[0]}
         )
+        if requires_tenant:
+            edges.append({"src": eid, "dst": did, "type": "tenant_flow", "param": params[0]})
 
     pfg = PFG.model_validate(
         {

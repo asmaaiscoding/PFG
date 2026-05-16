@@ -60,6 +60,10 @@ _DRF_PERM_CLASSES: dict[str, tuple[bool, Role, bool]] = {
     "DjangoObjectPermissions": (True, Role.USER, False),
 }
 
+_ADMIN_NAME_HINTS = ("Admin", "Staff", "Superuser", "Billing", "Owner")
+_MODEL_PERMISSION_HINTS = ("Permission", "DjangoModelPermissions")
+_OBJECT_PERMISSION_HINTS = ("ObjectPermission", "ObjectPermissions", "DjangoObjectPermissions")
+
 _PUBLIC_ROUTE_PREFIXES: tuple[str, ...] = ("/public/",)
 _PUBLIC_ROUTE_EXACT: frozenset[str] = frozenset(
     {
@@ -89,6 +93,10 @@ class EndpointAuth:
     requires_auth: bool
     required_role: Role
     is_intentionally_public: bool
+    role_check_present: bool = False
+    model_permission_check_present: bool = False
+    object_permission_check_present: bool = False
+    tenant_check_present: bool = False
 
 
 # --- helpers --------------------------------------------------------------
@@ -192,12 +200,77 @@ def _class_uses_request_user(cls: ast.ClassDef) -> bool:
     return False
 
 
+def _attr_chain(node: ast.AST) -> str | None:
+    parts: list[str] = []
+    cur: ast.AST = node
+    while isinstance(cur, ast.Attribute):
+        parts.append(cur.attr)
+        cur = cur.value
+    if isinstance(cur, ast.Name):
+        parts.append(cur.id)
+        return ".".join(reversed(parts))
+    return None
+
+
+def _call_name(call: ast.Call) -> str | None:
+    if isinstance(call.func, ast.Name):
+        return call.func.id
+    if isinstance(call.func, ast.Attribute):
+        return call.func.attr
+    return None
+
+
+def _function_permission_signals(fn: ast.AST | None) -> tuple[bool, bool, bool]:
+    """Return (model_permission, object_permission, tenant_check) signals."""
+    if fn is None:
+        return False, False, False
+    model_permission = False
+    object_permission = False
+    tenant_check = False
+    for node in ast.walk(fn):
+        if isinstance(node, ast.Call):
+            name = _call_name(node)
+            if name in {"check_object_permissions", "has_object_permission"}:
+                object_permission = True
+            if name == "has_perm":
+                if len(node.args) >= 2:
+                    object_permission = True
+                else:
+                    model_permission = True
+            if name in {"filter", "get", "get_object_or_404"}:
+                for kw in getattr(node, "keywords", []):
+                    if kw.arg and any(
+                        term in kw.arg.lower()
+                        for term in ("tenant", "organization", "org", "workspace", "realm", "project")
+                    ):
+                        tenant_check = True
+        elif isinstance(node, ast.Attribute):
+            chain = _attr_chain(node) or ""
+            if any(term in chain.lower() for term in ("request.user.organization", "request.user.tenant", "request.user.workspace")):
+                tenant_check = True
+    return model_permission, object_permission, tenant_check
+
+
+def _class_permission_signals(cls: ast.ClassDef) -> tuple[bool, bool, bool]:
+    model_permission = False
+    object_permission = False
+    tenant_check = False
+    for node in cls.body:
+        if not isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            continue
+        m, o, t = _function_permission_signals(node)
+        model_permission = model_permission or m
+        object_permission = object_permission or o
+        tenant_check = tenant_check or t
+    return model_permission, object_permission, tenant_check
+
+
 # --- core resolution ------------------------------------------------------
 
 
 def _from_perm_classes(
     names: list[str], http_method: str
-) -> tuple[bool, Role, bool] | None:
+) -> EndpointAuth | None:
     """Resolve a list of DRF permission class names to (auth, role, public).
 
     Multiple classes are AND-ed by DRF; we pick the strictest auth requirement
@@ -210,25 +283,47 @@ def _from_perm_classes(
         return None
     role_order = {Role.NONE: 0, Role.USER: 1, Role.ADMIN: 2}
     if names == ["AllowAny"]:
-        return False, Role.NONE, True
+        return EndpointAuth(False, Role.NONE, True)
     requires_auth = False
     role = Role.NONE
+    role_check_present = False
+    model_permission = False
+    object_permission = False
     for n in names:
         spec = _DRF_PERM_CLASSES.get(n)
         if spec is None:
-            # Unknown custom permission class: assume USER-tier auth.
+            # Unknown custom permission class: assume USER-tier auth and
+            # infer role/object/model semantics from conventional names.
             requires_auth = True
-            if role_order[role] < role_order[Role.USER]:
-                role = Role.USER
+            inferred_role = Role.ADMIN if any(h in n for h in _ADMIN_NAME_HINTS) else Role.USER
+            if role_order[inferred_role] > role_order[role]:
+                role = inferred_role
+            role_check_present = role_check_present or inferred_role != Role.USER
+            model_permission = model_permission or any(h in n for h in _MODEL_PERMISSION_HINTS)
+            object_permission = object_permission or any(h in n for h in _OBJECT_PERMISSION_HINTS)
             continue
         a, r, _ = spec
         if n == "IsAuthenticatedOrReadOnly":
             a = http_method.upper() not in _SAFE_HTTP_METHODS
         if a:
             requires_auth = True
+        if n in {"IsAdminUser"}:
+            role_check_present = True
+        if n in {"DjangoModelPermissions", "DjangoModelPermissionsOrAnonReadOnly"}:
+            model_permission = True
+        if n == "DjangoObjectPermissions":
+            model_permission = True
+            object_permission = True
         if role_order[r] > role_order[role]:
             role = r
-    return requires_auth, role, False
+    return EndpointAuth(
+        requires_auth,
+        role,
+        False,
+        role_check_present=role_check_present,
+        model_permission_check_present=model_permission,
+        object_permission_check_present=object_permission,
+    )
 
 
 def _annotate_function(
@@ -239,6 +334,10 @@ def _annotate_function(
     role = Role.NONE
     public = False
     matched = False
+    role_check_present = False
+    model_permission = False
+    object_permission = False
+    tenant_check = False
 
     api_view_present = False
     perm_class_names: list[str] = []
@@ -258,23 +357,43 @@ def _annotate_function(
             requires_auth = True
             if role == Role.NONE:
                 role = Role.USER
+            if name == "permission_required":
+                model_permission = True
             matched = True
         elif name in _DECORATORS_AUTH_ADMIN:
             requires_auth = True
             role = Role.ADMIN
+            role_check_present = True
             matched = True
+
+    fn_model, fn_object, fn_tenant = _function_permission_signals(fn)
+    if fn_model or fn_object or fn_tenant:
+        requires_auth = True
+        if role == Role.NONE:
+            role = Role.USER
+        model_permission = model_permission or fn_model
+        object_permission = object_permission or fn_object
+        tenant_check = tenant_check or fn_tenant
+        matched = True
 
     if api_view_present:
         spec = _from_perm_classes(perm_class_names, http_method)
         if spec is None:
             # DRF default if not configured = AllowAny (settings-dependent).
             return EndpointAuth(False, Role.NONE, True)
-        a, r, p = spec
-        return EndpointAuth(a, r, p)
+        return spec
 
     if not matched:
         return None
-    return EndpointAuth(requires_auth, role, public)
+    return EndpointAuth(
+        requires_auth,
+        role,
+        public,
+        role_check_present=role_check_present,
+        model_permission_check_present=model_permission,
+        object_permission_check_present=object_permission,
+        tenant_check_present=tenant_check,
+    )
 
 
 def _annotate_class(
@@ -286,12 +405,22 @@ def _annotate_class(
     role = Role.NONE
     public = False
     matched = False
+    role_check_present = False
+    model_permission = False
+    object_permission = False
+    tenant_check = False
 
     for b in bases:
         if b in _MIXINS_AUTH_USER or "Owner" in b or "Permission" in b:
             requires_auth = True
             if role == Role.NONE:
                 role = Role.USER
+            model_permission = model_permission or b == "PermissionRequiredMixin" or "Permission" in b
+            matched = True
+        if any(h in b for h in _ADMIN_NAME_HINTS):
+            requires_auth = True
+            role = Role.ADMIN
+            role_check_present = True
             matched = True
 
     if _class_uses_request_user(cls):
@@ -300,20 +429,41 @@ def _annotate_class(
             role = Role.USER
         matched = True
 
+    cls_model, cls_object, cls_tenant = _class_permission_signals(cls)
+    if cls_model or cls_object or cls_tenant:
+        requires_auth = True
+        if role == Role.NONE:
+            role = Role.USER
+        model_permission = model_permission or cls_model
+        object_permission = object_permission or cls_object
+        tenant_check = tenant_check or cls_tenant
+        matched = True
+
     perm_attr = _class_attr_assign(cls, "permission_classes")
     if perm_attr is not None:
         names = _list_names(perm_attr)
         spec = _from_perm_classes(names, http_method)
         if spec is not None:
-            a, r, p = spec
-            requires_auth = a
-            role = r
-            public = p
+            requires_auth = spec.requires_auth
+            role = spec.required_role
+            public = spec.is_intentionally_public
+            role_check_present = role_check_present or spec.role_check_present
+            model_permission = model_permission or spec.model_permission_check_present
+            object_permission = object_permission or spec.object_permission_check_present
+            tenant_check = tenant_check or spec.tenant_check_present
             matched = True
 
     if not matched:
         return None
-    return EndpointAuth(requires_auth, role, public)
+    return EndpointAuth(
+        requires_auth,
+        role,
+        public,
+        role_check_present=role_check_present,
+        model_permission_check_present=model_permission,
+        object_permission_check_present=object_permission,
+        tenant_check_present=tenant_check,
+    )
 
 
 # --- public API -----------------------------------------------------------
@@ -358,8 +508,7 @@ def resolve_default_permission_classes(project_root: Path) -> EndpointAuth | Non
             class_name = m.group(1).rsplit(".", 1)[-1]
             spec = _from_perm_classes([class_name], "GET")
             if spec is not None:
-                a, r, p = spec
-                return EndpointAuth(a, r, p)
+                return spec
     return None
 
 
@@ -400,7 +549,13 @@ def annotate_endpoint(
         fallback = EndpointAuth(False, Role.NONE, True)
     elif default_auth is not None and public_by_route:
         fallback = EndpointAuth(
-            default_auth.requires_auth, default_auth.required_role, True
+            default_auth.requires_auth,
+            default_auth.required_role,
+            True,
+            role_check_present=default_auth.role_check_present,
+            model_permission_check_present=default_auth.model_permission_check_present,
+            object_permission_check_present=default_auth.object_permission_check_present,
+            tenant_check_present=default_auth.tenant_check_present,
         )
 
     if tree is None:
@@ -440,4 +595,12 @@ def annotate_endpoint(
     # Public-route heuristic: don't override an explicit auth requirement, but
     # do mark obviously-public routes (health/login) as such for FP suppression.
     public = chosen.is_intentionally_public or (public_by_route and not chosen.requires_auth)
-    return EndpointAuth(chosen.requires_auth, chosen.required_role, public)
+    return EndpointAuth(
+        chosen.requires_auth,
+        chosen.required_role,
+        public,
+        role_check_present=chosen.role_check_present,
+        model_permission_check_present=chosen.model_permission_check_present,
+        object_permission_check_present=chosen.object_permission_check_present,
+        tenant_check_present=chosen.tenant_check_present,
+    )

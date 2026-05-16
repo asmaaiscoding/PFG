@@ -1,0 +1,3910 @@
+{
+  "experiment": "bridging_synthetic_pretrain_mixed_finetune",
+  "config": {
+    "synth_model_path": "artifacts/synthetic-v6/path_analyzer_synthetic.pt",
+    "n_synth_apps": 5,
+    "synth_vuln_ratio": 0.8,
+    "synth_vuln_anchors": 84,
+    "epochs": 15,
+    "lr": 5e-05,
+    "focal_gamma": 2.0,
+    "batch_size": 16,
+    "hidden_dim": 64,
+    "num_layers": 3,
+    "heads": 4,
+    "gnn_threshold": 0.5,
+    "seed": 0
+  },
+  "folds": [
+    {
+      "fold": "django-mdeditor",
+      "n_train_real": 372,
+      "n_train_synth_vuln": 84,
+      "n_train_total": 456,
+      "n_val": 94,
+      "n_test": 5,
+      "finetuned": {
+        "detector": "gnn_finetuned",
+        "micro_precision": 0.0,
+        "micro_recall": 0.0,
+        "micro_f1": 0.0,
+        "apps": [
+          {
+            "application": "django-mdeditor-cve-2025-13030",
+            "tp": 0,
+            "fp": 1,
+            "fn": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "predictions": [
+              {
+                "endpoint_id": "endpoint__GET___show__pk__",
+                "subtype": "COMBINED"
+              }
+            ],
+            "expected": [
+              {
+                "endpoint_id": "endpoint__POST___mdeditor_uploads_",
+                "subtype": "MISSING_AUTH"
+              }
+            ],
+            "notes": []
+          }
+        ]
+      },
+      "finetuned_validated": {
+        "detector": "gnn_finetuned_validated",
+        "micro_precision": 0.0,
+        "micro_recall": 0.0,
+        "micro_f1": 0.0,
+        "apps": [
+          {
+            "application": "django-mdeditor-cve-2025-13030",
+            "tp": 0,
+            "fp": 0,
+            "fn": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "predictions": [],
+            "expected": [
+              {
+                "endpoint_id": "endpoint__POST___mdeditor_uploads_",
+                "subtype": "MISSING_AUTH"
+              }
+            ],
+            "notes": []
+          }
+        ]
+      },
+      "synthetic_only": {
+        "detector": "gnn_synthetic_only",
+        "micro_precision": 0.2,
+        "micro_recall": 1.0,
+        "micro_f1": 0.33333333333333337,
+        "apps": [
+          {
+            "application": "django-mdeditor-cve-2025-13030",
+            "tp": 1,
+            "fp": 4,
+            "fn": 0,
+            "precision": 0.2,
+            "recall": 1.0,
+            "f1": 0.33333333333333337,
+            "predictions": [
+              {
+                "endpoint_id": "endpoint__GET___",
+                "subtype": "COMBINED"
+              },
+              {
+                "endpoint_id": "endpoint__GET___admin_",
+                "subtype": "COMBINED"
+              },
+              {
+                "endpoint_id": "endpoint__GET___model_",
+                "subtype": "COMBINED"
+              },
+              {
+                "endpoint_id": "endpoint__GET___show__pk__",
+                "subtype": "COMBINED"
+              },
+              {
+                "endpoint_id": "endpoint__POST___mdeditor_uploads_",
+                "subtype": "COMBINED"
+              }
+            ],
+            "expected": [
+              {
+                "endpoint_id": "endpoint__POST___mdeditor_uploads_",
+                "subtype": "MISSING_AUTH"
+              }
+            ],
+            "notes": [
+              "matched ('endpoint__POST___mdeditor_uploads_', 'COMBINED') <-> ('endpoint__POST___mdeditor_uploads_', 'MISSING_AUTH') via COMBINED rule"
+            ]
+          }
+        ]
+      },
+      "synthetic_validated": {
+        "detector": "gnn_synthetic_validated",
+        "micro_precision": 1.0,
+        "micro_recall": 1.0,
+        "micro_f1": 1.0,
+        "apps": [
+          {
+            "application": "django-mdeditor-cve-2025-13030",
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "predictions": [
+              {
+                "endpoint_id": "endpoint__POST___mdeditor_uploads_",
+                "subtype": "COMBINED"
+              }
+            ],
+            "expected": [
+              {
+                "endpoint_id": "endpoint__POST___mdeditor_uploads_",
+                "subtype": "MISSING_AUTH"
+              }
+            ],
+            "notes": [
+              "matched ('endpoint__POST___mdeditor_uploads_', 'COMBINED') <-> ('endpoint__POST___mdeditor_uploads_', 'MISSING_AUTH') via COMBINED rule"
+            ]
+          }
+        ]
+      },
+      "rule_baseline": {
+        "detector": "rule_baseline",
+        "micro_precision": 1.0,
+        "micro_recall": 1.0,
+        "micro_f1": 1.0,
+        "apps": [
+          {
+            "application": "django-mdeditor-cve-2025-13030",
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "predictions": [
+              {
+                "endpoint_id": "endpoint__POST___mdeditor_uploads_",
+                "subtype": "MISSING_AUTH"
+              }
+            ],
+            "expected": [
+              {
+                "endpoint_id": "endpoint__POST___mdeditor_uploads_",
+                "subtype": "MISSING_AUTH"
+              }
+            ],
+            "notes": []
+          }
+        ]
+      },
+      "finetuned_train_result": {
+        "test_accuracy": 0.0,
+        "test_macro_f1": 0.0,
+        "best_val_loss": 1.421451893258602
+      }
+    },
+    {
+      "fold": "nautobot",
+      "n_train_real": 230,
+      "n_train_synth_vuln": 84,
+      "n_train_total": 314,
+      "n_val": 58,
+      "n_test": 183,
+      "finetuned": {
+        "detector": "gnn_finetuned",
+        "micro_precision": 0.012658227848101266,
+        "micro_recall": 1.0,
+        "micro_f1": 0.024999999999999998,
+        "apps": [
+          {
+            "application": "nautobot-cve-2023-50263",
+            "tp": 2,
+            "fp": 156,
+            "fn": 0,
+            "precision": 0.012658227848101266,
+            "recall": 1.0,
+            "f1": 0.024999999999999998,
+            "predictions": [
+              {
+                "endpoint_id": "endpoint__GET___",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___admin_",
+                "subtype": "COMBINED"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_docs_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___circuits_circuits__circuit__terminations_add_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___circuits_circuits__pk__terminations_swap_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_cables__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_cables__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_console_ports__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_console_ports__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_console_server_ports__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_console_server_ports__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_device_bays__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_device_bays__pk__depopulate_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_device_bays__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_device_bays__pk__populate_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_device_types__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_device_types__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_devices__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_front_ports__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_front_ports__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_interfaces__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_interfaces__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_inventory_items__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_inventory_items__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_location_types__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_location_types__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_locations__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_locations__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_manufacturers__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_manufacturers__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_platforms__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_platforms__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_power_feeds__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_power_feeds__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_power_outlets__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_power_outlets__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_power_panels__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_power_panels__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_power_ports__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_power_ports__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_rack_groups__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_rack_groups__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_rack_reservations__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_rack_reservations__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_racks__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_racks__pk__dynamic_groups_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_racks__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_rear_ports__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_rear_ports__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_virtual_chassis__pk__add_member_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_virtual_chassis__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_virtual_chassis__pk__edit_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_virtual_chassis__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_virtual_chassis_members__pk__delete_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_computed_fields__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_computed_fields__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_config_context_schemas__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_config_context_schemas__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_config_contexts__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_config_contexts__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_custom_fields__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_custom_fields__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_custom_links__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_custom_links__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_dynamic_groups__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_dynamic_groups__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_export_templates__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_export_templates__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_git_repositories__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_git_repositories__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_graphql_queries__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_graphql_queries__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_job_hooks__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_job_results__pk__log_table_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_jobs__class_path__run_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_jobs__pk__run_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_notes__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_object_changes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_relationships__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_relationships__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_secrets__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_secrets__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_secrets_groups__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_secrets_groups__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_secrets_provider__provider_slug__form_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_statuses__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_statuses__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_tags__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_tags__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_webhooks__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_webhooks__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___files_download_",
+                "subtype": "COMBINED"
+              },
+              {
+                "endpoint_id": "endpoint__GET___files_get_",
+                "subtype": "COMBINED"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_ip_addresses__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_ip_addresses__pk__dynamic_groups_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_ip_addresses__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_ip_addresses_assign_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_ip_addresses_merge_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_prefixes__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_prefixes__pk__dynamic_groups_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_prefixes__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_rirs__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_rirs__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_route_targets__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_route_targets__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_services__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_services__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_vlan_groups__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_vlan_groups__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_vlans__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_vlans__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_vrfs__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_vrfs__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___login_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___logout_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___media__path_",
+                "subtype": "COMBINED"
+              },
+              {
+                "endpoint_id": "endpoint__GET___media_failure_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___search_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___tenancy_tenant_groups__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___tenancy_tenant_groups__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___tenancy_tenants__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___tenancy_tenants__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___user_api_tokens__pk__edit_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___user_api_tokens_add_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___virtualization_cluster_groups__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___virtualization_cluster_groups__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___virtualization_cluster_types__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___virtualization_cluster_types__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___virtualization_clusters__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___virtualization_clusters__pk__devices_add_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___virtualization_clusters__pk__dynamic_groups_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___virtualization_clusters__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___virtualization_interfaces__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___virtualization_interfaces__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___virtualization_virtual_machines__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___virtualization_virtual_machines__pk__dynamic_groups_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___virtualization_virtual_machines__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_graphql_",
+                "subtype": "COMBINED"
+              },
+              {
+                "endpoint_id": "endpoint__POST___circuits_circuits__circuit__terminations_add_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___circuits_circuits__pk__terminations_swap_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___dcim_device_bays__pk__depopulate_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___dcim_device_bays__pk__populate_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___dcim_virtual_chassis__pk__add_member_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___dcim_virtual_chassis__pk__edit_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___dcim_virtual_chassis_members__pk__delete_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___extras_git_repositories__pk__dry_run_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___extras_git_repositories__pk__sync_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___extras_job_button__pk__run_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___extras_jobs__class_path__run_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___extras_jobs__pk__run_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___extras_jobs_scheduled_jobs_approval_queue__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___ipam_ip_addresses_assign_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___login_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___user_api_tokens__pk__edit_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___user_api_tokens_add_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___virtualization_clusters__pk__devices_add_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___virtualization_clusters__pk__devices_remove_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              }
+            ],
+            "expected": [
+              {
+                "endpoint_id": "endpoint__GET___files_get_",
+                "subtype": "MISSING_AUTH"
+              },
+              {
+                "endpoint_id": "endpoint__GET___files_download_",
+                "subtype": "MISSING_AUTH"
+              }
+            ],
+            "notes": [
+              "matched ('endpoint__GET___files_download_', 'COMBINED') <-> ('endpoint__GET___files_download_', 'MISSING_AUTH') via COMBINED rule",
+              "matched ('endpoint__GET___files_get_', 'COMBINED') <-> ('endpoint__GET___files_get_', 'MISSING_AUTH') via COMBINED rule"
+            ]
+          }
+        ]
+      },
+      "finetuned_validated": {
+        "detector": "gnn_finetuned_validated",
+        "micro_precision": 0.25,
+        "micro_recall": 1.0,
+        "micro_f1": 0.4,
+        "apps": [
+          {
+            "application": "nautobot-cve-2023-50263",
+            "tp": 2,
+            "fp": 6,
+            "fn": 0,
+            "precision": 0.25,
+            "recall": 1.0,
+            "f1": 0.4,
+            "predictions": [
+              {
+                "endpoint_id": "endpoint__GET___files_download_",
+                "subtype": "COMBINED"
+              },
+              {
+                "endpoint_id": "endpoint__GET___files_get_",
+                "subtype": "COMBINED"
+              },
+              {
+                "endpoint_id": "endpoint__POST___dcim_virtual_chassis__pk__edit_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___dcim_virtual_chassis_members__pk__delete_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___extras_git_repositories__pk__dry_run_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___extras_git_repositories__pk__sync_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___extras_job_button__pk__run_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___extras_jobs_scheduled_jobs_approval_queue__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              }
+            ],
+            "expected": [
+              {
+                "endpoint_id": "endpoint__GET___files_get_",
+                "subtype": "MISSING_AUTH"
+              },
+              {
+                "endpoint_id": "endpoint__GET___files_download_",
+                "subtype": "MISSING_AUTH"
+              }
+            ],
+            "notes": [
+              "matched ('endpoint__GET___files_get_', 'COMBINED') <-> ('endpoint__GET___files_get_', 'MISSING_AUTH') via COMBINED rule",
+              "matched ('endpoint__GET___files_download_', 'COMBINED') <-> ('endpoint__GET___files_download_', 'MISSING_AUTH') via COMBINED rule"
+            ]
+          }
+        ]
+      },
+      "synthetic_only": {
+        "detector": "gnn_synthetic_only",
+        "micro_precision": 0.011560693641618497,
+        "micro_recall": 1.0,
+        "micro_f1": 0.022857142857142854,
+        "apps": [
+          {
+            "application": "nautobot-cve-2023-50263",
+            "tp": 2,
+            "fp": 171,
+            "fn": 0,
+            "precision": 0.011560693641618497,
+            "recall": 1.0,
+            "f1": 0.022857142857142854,
+            "predictions": [
+              {
+                "endpoint_id": "endpoint__GET___",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___admin_",
+                "subtype": "COMBINED"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_docs_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___circuits_circuit_terminations__termination_a_id__connect__termination_b_type__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__GET___circuits_circuits__circuit__terminations_add_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___circuits_circuits__pk__terminations_swap_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_cables__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_cables__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_console_ports__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_console_ports__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_console_ports__termination_a_id__connect__termination_b_type__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_console_server_ports__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_console_server_ports__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_console_server_ports__termination_a_id__connect__termination_b_type__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_device_bays__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_device_bays__pk__depopulate_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_device_bays__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_device_bays__pk__populate_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_device_types__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_device_types__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_devices__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_front_ports__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_front_ports__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_front_ports__termination_a_id__connect__termination_b_type__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_interfaces__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_interfaces__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_interfaces__termination_a_id__connect__termination_b_type__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_inventory_items__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_inventory_items__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_location_types__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_location_types__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_locations__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_locations__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_manufacturers__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_manufacturers__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_platforms__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_platforms__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_power_feeds__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_power_feeds__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_power_feeds__termination_a_id__connect__termination_b_type__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_power_outlets__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_power_outlets__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_power_outlets__termination_a_id__connect__termination_b_type__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_power_panels__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_power_panels__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_power_ports__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_power_ports__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_power_ports__termination_a_id__connect__termination_b_type__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_rack_groups__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_rack_groups__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_rack_reservations__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_rack_reservations__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_racks__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_racks__pk__dynamic_groups_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_racks__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_rear_ports__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_rear_ports__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_rear_ports__termination_a_id__connect__termination_b_type__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_virtual_chassis__pk__add_member_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_virtual_chassis__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_virtual_chassis__pk__edit_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_virtual_chassis__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_virtual_chassis_members__pk__delete_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_computed_fields__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_computed_fields__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_config_context_schemas__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_config_context_schemas__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_config_contexts__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_config_contexts__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_custom_fields__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_custom_fields__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_custom_links__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_custom_links__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_dynamic_groups__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_dynamic_groups__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_export_templates__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_export_templates__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_git_repositories__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_git_repositories__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_graphql_queries__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_graphql_queries__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_job_hooks__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_job_results__pk__log_table_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_jobs__class_path__run_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_jobs__pk__run_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_notes__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_object_changes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_relationships__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_relationships__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_secrets__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_secrets__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_secrets_groups__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_secrets_groups__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_secrets_provider__provider_slug__form_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_statuses__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_statuses__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_tags__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_tags__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_webhooks__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_webhooks__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___files_download_",
+                "subtype": "COMBINED"
+              },
+              {
+                "endpoint_id": "endpoint__GET___files_get_",
+                "subtype": "COMBINED"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_ip_addresses__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_ip_addresses__pk__dynamic_groups_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_ip_addresses__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_ip_addresses_assign_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_ip_addresses_merge_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_prefixes__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_prefixes__pk__dynamic_groups_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_prefixes__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_rirs__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_rirs__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_route_targets__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_route_targets__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_services__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_services__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_vlan_groups__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_vlan_groups__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_vlans__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_vlans__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_vrfs__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_vrfs__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___login_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___logout_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___media__path_",
+                "subtype": "COMBINED"
+              },
+              {
+                "endpoint_id": "endpoint__GET___media_failure_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___search_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___tenancy_tenant_groups__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___tenancy_tenant_groups__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___tenancy_tenants__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___tenancy_tenants__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___user_api_tokens__pk__edit_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___user_api_tokens_add_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___virtualization_cluster_groups__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___virtualization_cluster_groups__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___virtualization_cluster_types__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___virtualization_cluster_types__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___virtualization_clusters__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___virtualization_clusters__pk__devices_add_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___virtualization_clusters__pk__dynamic_groups_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___virtualization_clusters__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___virtualization_interfaces__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___virtualization_interfaces__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___virtualization_virtual_machines__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___virtualization_virtual_machines__pk__dynamic_groups_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___virtualization_virtual_machines__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_graphql_",
+                "subtype": "COMBINED"
+              },
+              {
+                "endpoint_id": "endpoint__POST___circuits_circuits__circuit__terminations_add_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___circuits_circuits__pk__terminations_swap_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___dcim_device_bays__pk__depopulate_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___dcim_device_bays__pk__populate_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___dcim_virtual_chassis__pk__add_member_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___dcim_virtual_chassis__pk__edit_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___dcim_virtual_chassis_members__pk__delete_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___extras_custom_fields__pk__edit_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___extras_dynamic_groups__pk__edit_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___extras_git_repositories__pk__dry_run_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___extras_git_repositories__pk__sync_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___extras_job_button__pk__run_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___extras_jobs__class_path__run_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___extras_jobs__pk__run_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___extras_jobs_scheduled_jobs_approval_queue__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___extras_secrets_groups__pk__edit_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___ipam_ip_addresses_assign_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___login_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___user_api_tokens__pk__delete_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___user_api_tokens__pk__edit_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___user_api_tokens_add_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___user_password_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___user_preferences_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___virtualization_clusters__pk__devices_add_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___virtualization_clusters__pk__devices_remove_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              }
+            ],
+            "expected": [
+              {
+                "endpoint_id": "endpoint__GET___files_get_",
+                "subtype": "MISSING_AUTH"
+              },
+              {
+                "endpoint_id": "endpoint__GET___files_download_",
+                "subtype": "MISSING_AUTH"
+              }
+            ],
+            "notes": [
+              "matched ('endpoint__GET___files_download_', 'COMBINED') <-> ('endpoint__GET___files_download_', 'MISSING_AUTH') via COMBINED rule",
+              "matched ('endpoint__GET___files_get_', 'COMBINED') <-> ('endpoint__GET___files_get_', 'MISSING_AUTH') via COMBINED rule"
+            ]
+          }
+        ]
+      },
+      "synthetic_validated": {
+        "detector": "gnn_synthetic_validated",
+        "micro_precision": 0.25,
+        "micro_recall": 1.0,
+        "micro_f1": 0.4,
+        "apps": [
+          {
+            "application": "nautobot-cve-2023-50263",
+            "tp": 2,
+            "fp": 6,
+            "fn": 0,
+            "precision": 0.25,
+            "recall": 1.0,
+            "f1": 0.4,
+            "predictions": [
+              {
+                "endpoint_id": "endpoint__GET___files_download_",
+                "subtype": "COMBINED"
+              },
+              {
+                "endpoint_id": "endpoint__GET___files_get_",
+                "subtype": "COMBINED"
+              },
+              {
+                "endpoint_id": "endpoint__POST___dcim_virtual_chassis__pk__edit_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___dcim_virtual_chassis_members__pk__delete_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___extras_git_repositories__pk__dry_run_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___extras_git_repositories__pk__sync_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___extras_job_button__pk__run_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___extras_jobs_scheduled_jobs_approval_queue__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              }
+            ],
+            "expected": [
+              {
+                "endpoint_id": "endpoint__GET___files_get_",
+                "subtype": "MISSING_AUTH"
+              },
+              {
+                "endpoint_id": "endpoint__GET___files_download_",
+                "subtype": "MISSING_AUTH"
+              }
+            ],
+            "notes": [
+              "matched ('endpoint__GET___files_get_', 'COMBINED') <-> ('endpoint__GET___files_get_', 'MISSING_AUTH') via COMBINED rule",
+              "matched ('endpoint__GET___files_download_', 'COMBINED') <-> ('endpoint__GET___files_download_', 'MISSING_AUTH') via COMBINED rule"
+            ]
+          }
+        ]
+      },
+      "rule_baseline": {
+        "detector": "rule_baseline",
+        "micro_precision": 0.2857142857142857,
+        "micro_recall": 1.0,
+        "micro_f1": 0.4444444444444445,
+        "apps": [
+          {
+            "application": "nautobot-cve-2023-50263",
+            "tp": 2,
+            "fp": 5,
+            "fn": 0,
+            "precision": 0.2857142857142857,
+            "recall": 1.0,
+            "f1": 0.4444444444444445,
+            "predictions": [
+              {
+                "endpoint_id": "endpoint__GET___files_download_",
+                "subtype": "MISSING_AUTH"
+              },
+              {
+                "endpoint_id": "endpoint__GET___files_get_",
+                "subtype": "MISSING_AUTH"
+              },
+              {
+                "endpoint_id": "endpoint__POST___dcim_virtual_chassis__pk__edit_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___dcim_virtual_chassis_members__pk__delete_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___extras_git_repositories__pk__dry_run_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___extras_git_repositories__pk__sync_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___extras_job_button__pk__run_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              }
+            ],
+            "expected": [
+              {
+                "endpoint_id": "endpoint__GET___files_get_",
+                "subtype": "MISSING_AUTH"
+              },
+              {
+                "endpoint_id": "endpoint__GET___files_download_",
+                "subtype": "MISSING_AUTH"
+              }
+            ],
+            "notes": []
+          }
+        ]
+      },
+      "finetuned_train_result": {
+        "test_accuracy": 0.1366120218579235,
+        "test_macro_f1": 0.030339805825242722,
+        "best_val_loss": 2.0004731868875436
+      }
+    },
+    {
+      "fold": "wger",
+      "n_train_real": 150,
+      "n_train_synth_vuln": 84,
+      "n_train_total": 234,
+      "n_val": 38,
+      "n_test": 283,
+      "finetuned": {
+        "detector": "gnn_finetuned",
+        "micro_precision": 0.014018691588785047,
+        "micro_recall": 1.0,
+        "micro_f1": 0.027649769585253458,
+        "apps": [
+          {
+            "application": "wger-cve-2026-27839",
+            "tp": 3,
+            "fp": 211,
+            "fn": 0,
+            "precision": 0.014018691588785047,
+            "recall": 1.0,
+            "f1": 0.027649769585253458,
+            "predictions": [
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_day__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_daysofweek__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_equipment__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_exercisebaseinfo__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_exercisecategory__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_exerciseinfo__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_gallery__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_ingredient__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_ingredientinfo__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_ingredientweightunit__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_language__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_license__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_meal__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_mealitem__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_measurement__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_measurement_category__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_muscle__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_nutritiondiary__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_nutritionplan__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_nutritionplaninfo__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_public_templates__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_schedule__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_schedulestep__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_set__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_setting__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_setting_repetitionunit__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_setting_weightunit__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_templates__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_userprofile__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_weightentry__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_weightunit__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_workout__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_workoutlog__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_workoutsession__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__GET___",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET____pk__edit_",
+                "subtype": "COMBINED"
+              },
+              {
+                "endpoint_id": "endpoint__GET___add_",
+                "subtype": "COMBINED"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_check_permission_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_day__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_daysofweek_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_daysofweek__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_equipment_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_equipment__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_exercisebaseinfo_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_exercisebaseinfo__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_exercisecategory_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_exercisecategory__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_exerciseimage__pk__thumbnails_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_exerciseinfo_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_exerciseinfo__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_gallery_",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_gallery__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_ingredient_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_ingredient__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_ingredientinfo_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_ingredientinfo__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_ingredientweightunit_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_ingredientweightunit__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_language_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_language__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_license_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_license__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_meal__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_meal__pk__nutritional_values_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_mealitem__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_mealitem__pk__nutritional_values_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_measurement_",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_measurement__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_measurement_category_",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_measurement_category__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_min_app_version_",
+                "subtype": "COMBINED"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_muscle_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_muscle__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_nutritiondiary__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_nutritiondiary__pk__nutritional_values_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_nutritionplan_",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_nutritionplan__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_nutritionplan__pk__nutritional_values_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_nutritionplaninfo_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_nutritionplaninfo__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_public_templates_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_public_templates__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_schedule_",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_schedule__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_schedulestep__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_set__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_set__pk__computed_settings_",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_set__pk__smart_text_",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_setting__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_setting_repetitionunit_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_setting_repetitionunit__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_setting_weightunit_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_setting_weightunit__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_templates_",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_templates__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_userprofile_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_userprofile__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_userprofile_verify_email_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_version_",
+                "subtype": "COMBINED"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_weightentry_",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_weightentry__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_weightunit_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_weightunit__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_workout_",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_workout__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_workout__pk__canonical_representation_",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_workout__pk__log_data_",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_workoutlog__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_workoutsession__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__GET___features",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___import_csv_",
+                "subtype": "COMBINED"
+              },
+              {
+                "endpoint_id": "endpoint__GET___sitemap__section__xml",
+                "subtype": "COMBINED"
+              },
+              {
+                "endpoint_id": "endpoint__GET___sitemap_xml",
+                "subtype": "COMBINED"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_day__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_daysofweek__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_equipment__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_exercise__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_exercise_base__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_exercise_translation__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_exercisealias__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_exercisebaseinfo__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_exercisecategory__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_exercisecomment__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_exerciseimage__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_exerciseinfo__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_gallery__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_ingredient__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_ingredientinfo__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_ingredientweightunit__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_language__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_license__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_meal__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_mealitem__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_measurement__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_measurement_category__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_muscle__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_nutritiondiary__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_nutritionplan__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_nutritionplaninfo__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_public_templates__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_schedule__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_schedulestep__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_set__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_setting__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_setting_repetitionunit__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_setting_weightunit__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_templates__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_userprofile__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_variation__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_video__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_weightentry__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_weightunit__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_workout__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_workoutlog__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_workoutsession__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_daysofweek_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_equipment_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_exercisebaseinfo_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_exercisecategory_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_exerciseinfo_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_gallery_",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_ingredient_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_ingredientinfo_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_ingredientweightunit_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_language_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_license_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_measurement_",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_measurement_category_",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_muscle_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_nutritionplan_",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_nutritionplaninfo_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_public_templates_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_schedule_",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_setting_repetitionunit_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_setting_weightunit_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_templates_",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_userprofile_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_weightentry_",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_weightunit_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_workout_",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_day__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_daysofweek__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_equipment__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_exercisebaseinfo__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_exercisecategory__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_exerciseinfo__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_gallery__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_ingredient__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_ingredientinfo__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_ingredientweightunit__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_language__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_license__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_meal__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_mealitem__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_measurement__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_measurement_category__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_muscle__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_nutritiondiary__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_nutritionplan__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_nutritionplaninfo__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_public_templates__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_schedule__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_schedulestep__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_set__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_setting__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_setting_repetitionunit__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_setting_weightunit__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_templates__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_userprofile__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_weightentry__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_weightunit__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_workout__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_workoutlog__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_workoutsession__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              }
+            ],
+            "expected": [
+              {
+                "endpoint_id": "endpoint__GET___api_v2_nutritionplan__pk__nutritional_values_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_meal__pk__nutritional_values_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_mealitem__pk__nutritional_values_",
+                "subtype": "IDOR"
+              }
+            ],
+            "notes": []
+          }
+        ]
+      },
+      "finetuned_validated": {
+        "detector": "gnn_finetuned_validated",
+        "micro_precision": 0.75,
+        "micro_recall": 1.0,
+        "micro_f1": 0.8571428571428571,
+        "apps": [
+          {
+            "application": "wger-cve-2026-27839",
+            "tp": 3,
+            "fp": 1,
+            "fn": 0,
+            "precision": 0.75,
+            "recall": 1.0,
+            "f1": 0.8571428571428571,
+            "predictions": [
+              {
+                "endpoint_id": "endpoint__GET___api_v2_exerciseimage__pk__thumbnails_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_meal__pk__nutritional_values_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_mealitem__pk__nutritional_values_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_nutritionplan__pk__nutritional_values_",
+                "subtype": "IDOR"
+              }
+            ],
+            "expected": [
+              {
+                "endpoint_id": "endpoint__GET___api_v2_nutritionplan__pk__nutritional_values_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_meal__pk__nutritional_values_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_mealitem__pk__nutritional_values_",
+                "subtype": "IDOR"
+              }
+            ],
+            "notes": []
+          }
+        ]
+      },
+      "synthetic_only": {
+        "detector": "gnn_synthetic_only",
+        "micro_precision": 0.012295081967213115,
+        "micro_recall": 1.0,
+        "micro_f1": 0.0242914979757085,
+        "apps": [
+          {
+            "application": "wger-cve-2026-27839",
+            "tp": 3,
+            "fp": 241,
+            "fn": 0,
+            "precision": 0.012295081967213115,
+            "recall": 1.0,
+            "f1": 0.0242914979757085,
+            "predictions": [
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_day__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_daysofweek__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_equipment__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_exercise__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_exercise_base__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_exercise_translation__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_exercisealias__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_exercisebaseinfo__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_exercisecategory__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_exercisecomment__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_exerciseimage__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_exerciseinfo__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_gallery__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_ingredient__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_ingredientinfo__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_ingredientweightunit__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_language__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_license__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_meal__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_mealitem__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_measurement__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_measurement_category__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_muscle__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_nutritiondiary__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_nutritionplan__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_nutritionplaninfo__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_public_templates__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_schedule__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_schedulestep__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_set__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_setting__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_setting_repetitionunit__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_setting_weightunit__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_templates__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_userprofile__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_variation__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_video__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_weightentry__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_weightunit__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_workout__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_workoutlog__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__DELETE___api_v2_workoutsession__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__GET___",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET____pk__edit_",
+                "subtype": "COMBINED"
+              },
+              {
+                "endpoint_id": "endpoint__GET___add_",
+                "subtype": "COMBINED"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_check_permission_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_day__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_daysofweek_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_daysofweek__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_equipment_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_equipment__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_exercise_search_",
+                "subtype": "COMBINED"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_exercisebaseinfo_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_exercisebaseinfo__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_exercisecategory_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_exercisecategory__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_exerciseimage__pk__thumbnails_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_exerciseinfo_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_exerciseinfo__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_exerciseinfo_search_",
+                "subtype": "COMBINED"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_gallery_",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_gallery__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_ingredient_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_ingredient__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_ingredient__pk__get_values_",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_ingredient_search_",
+                "subtype": "COMBINED"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_ingredientinfo_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_ingredientinfo__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_ingredientweightunit_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_ingredientweightunit__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_language_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_language__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_license_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_license__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_meal__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_meal__pk__nutritional_values_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_mealitem__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_mealitem__pk__nutritional_values_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_measurement_",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_measurement__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_measurement_category_",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_measurement_category__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_min_app_version_",
+                "subtype": "COMBINED"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_muscle_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_muscle__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_nutritiondiary__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_nutritiondiary__pk__nutritional_values_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_nutritionplan_",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_nutritionplan__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_nutritionplan__pk__nutritional_values_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_nutritionplaninfo_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_nutritionplaninfo__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_public_templates_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_public_templates__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_schedule_",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_schedule__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_schedulestep__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_set__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_set__pk__computed_settings_",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_set__pk__smart_text_",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_setting__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_setting_repetitionunit_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_setting_repetitionunit__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_setting_weightunit_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_setting_weightunit__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_templates_",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_templates__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_userprofile_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_userprofile__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_userprofile_verify_email_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_version_",
+                "subtype": "COMBINED"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_weightentry_",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_weightentry__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_weightunit_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_weightunit__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_workout_",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_workout__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_workout__pk__canonical_representation_",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_workout__pk__log_data_",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_workoutlog__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_workoutsession__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__GET___features",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___import_csv_",
+                "subtype": "COMBINED"
+              },
+              {
+                "endpoint_id": "endpoint__GET___sitemap__section__xml",
+                "subtype": "COMBINED"
+              },
+              {
+                "endpoint_id": "endpoint__GET___sitemap_xml",
+                "subtype": "COMBINED"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_day__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_daysofweek__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_equipment__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_exercise__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_exercise_base__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_exercise_translation__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_exercisealias__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_exercisebaseinfo__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_exercisecategory__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_exercisecomment__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_exerciseimage__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_exerciseinfo__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_gallery__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_ingredient__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_ingredientinfo__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_ingredientweightunit__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_language__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_license__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_meal__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_mealitem__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_measurement__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_measurement_category__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_muscle__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_nutritiondiary__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_nutritionplan__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_nutritionplaninfo__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_public_templates__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_schedule__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_schedulestep__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_set__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_setting__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_setting_repetitionunit__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_setting_weightunit__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_templates__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_userprofile__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_variation__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_video__pk__",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_weightentry__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_weightunit__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_workout__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_workoutlog__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__PATCH___api_v2_workoutsession__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_daysofweek_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_equipment_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_exercise_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_exercise_base_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_exercise_translation_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_exercisealias_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_exercisebaseinfo_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_exercisecategory_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_exercisecomment_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_exerciseimage_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_exerciseinfo_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_gallery_",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_ingredient_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_ingredientinfo_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_ingredientweightunit_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_language_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_license_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_login_",
+                "subtype": "COMBINED"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_measurement_",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_measurement_category_",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_muscle_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_nutritionplan_",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_nutritionplaninfo_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_public_templates_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_register_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_schedule_",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_setting_repetitionunit_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_setting_weightunit_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_templates_",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_userprofile_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_variation_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_video_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_weightentry_",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_weightunit_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_workout_",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_day__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_daysofweek__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_equipment__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_exercise__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_exercise_base__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_exercise_translation__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_exercisealias__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_exercisebaseinfo__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_exercisecategory__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_exercisecomment__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_exerciseimage__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_exerciseinfo__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_gallery__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_ingredient__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_ingredientinfo__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_ingredientweightunit__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_language__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_license__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_meal__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_mealitem__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_measurement__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_measurement_category__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_muscle__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_nutritiondiary__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_nutritionplan__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_nutritionplaninfo__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_public_templates__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_schedule__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_schedulestep__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_set__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_setting__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_setting_repetitionunit__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_setting_weightunit__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_templates__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_userprofile__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_variation__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_video__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_weightentry__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_weightunit__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_workout__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_workoutlog__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              },
+              {
+                "endpoint_id": "endpoint__PUT___api_v2_workoutsession__pk__",
+                "subtype": "TENANT_ISOLATION_FAILURE"
+              }
+            ],
+            "expected": [
+              {
+                "endpoint_id": "endpoint__GET___api_v2_nutritionplan__pk__nutritional_values_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_meal__pk__nutritional_values_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_mealitem__pk__nutritional_values_",
+                "subtype": "IDOR"
+              }
+            ],
+            "notes": []
+          }
+        ]
+      },
+      "synthetic_validated": {
+        "detector": "gnn_synthetic_validated",
+        "micro_precision": 0.375,
+        "micro_recall": 1.0,
+        "micro_f1": 0.5454545454545454,
+        "apps": [
+          {
+            "application": "wger-cve-2026-27839",
+            "tp": 3,
+            "fp": 5,
+            "fn": 0,
+            "precision": 0.375,
+            "recall": 1.0,
+            "f1": 0.5454545454545454,
+            "predictions": [
+              {
+                "endpoint_id": "endpoint__GET___api_v2_exercise_search_",
+                "subtype": "COMBINED"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_exerciseimage__pk__thumbnails_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_exerciseinfo_search_",
+                "subtype": "COMBINED"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_ingredient_search_",
+                "subtype": "COMBINED"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_meal__pk__nutritional_values_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_mealitem__pk__nutritional_values_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_nutritionplan__pk__nutritional_values_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_login_",
+                "subtype": "COMBINED"
+              }
+            ],
+            "expected": [
+              {
+                "endpoint_id": "endpoint__GET___api_v2_nutritionplan__pk__nutritional_values_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_meal__pk__nutritional_values_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_mealitem__pk__nutritional_values_",
+                "subtype": "IDOR"
+              }
+            ],
+            "notes": []
+          }
+        ]
+      },
+      "rule_baseline": {
+        "detector": "rule_baseline",
+        "micro_precision": 0.75,
+        "micro_recall": 1.0,
+        "micro_f1": 0.8571428571428571,
+        "apps": [
+          {
+            "application": "wger-cve-2026-27839",
+            "tp": 3,
+            "fp": 1,
+            "fn": 0,
+            "precision": 0.75,
+            "recall": 1.0,
+            "f1": 0.8571428571428571,
+            "predictions": [
+              {
+                "endpoint_id": "endpoint__GET___api_v2_exerciseimage__pk__thumbnails_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_meal__pk__nutritional_values_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_mealitem__pk__nutritional_values_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_nutritionplan__pk__nutritional_values_",
+                "subtype": "IDOR"
+              }
+            ],
+            "expected": [
+              {
+                "endpoint_id": "endpoint__GET___api_v2_nutritionplan__pk__nutritional_values_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_meal__pk__nutritional_values_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_mealitem__pk__nutritional_values_",
+                "subtype": "IDOR"
+              }
+            ],
+            "notes": []
+          }
+        ]
+      },
+      "finetuned_train_result": {
+        "test_accuracy": 0.24028268551236748,
+        "test_macro_f1": 0.09397644927536232,
+        "best_val_loss": 1.3927292321857654
+      }
+    }
+  ],
+  "aggregate": {
+    "finetuned": {
+      "tp": 5,
+      "fp": 368,
+      "fn": 1,
+      "precision": 0.013404825737265416,
+      "recall": 0.8333333333333334,
+      "f1": 0.02638522427440633
+    },
+    "finetuned_validated": {
+      "tp": 5,
+      "fp": 7,
+      "fn": 1,
+      "precision": 0.4166666666666667,
+      "recall": 0.8333333333333334,
+      "f1": 0.5555555555555556
+    },
+    "synthetic_only": {
+      "tp": 6,
+      "fp": 416,
+      "fn": 0,
+      "precision": 0.014218009478672985,
+      "recall": 1.0,
+      "f1": 0.02803738317757009
+    },
+    "synthetic_validated": {
+      "tp": 6,
+      "fp": 11,
+      "fn": 0,
+      "precision": 0.35294117647058826,
+      "recall": 1.0,
+      "f1": 0.5217391304347826
+    },
+    "rule_baseline": {
+      "tp": 6,
+      "fp": 6,
+      "fn": 0,
+      "precision": 0.5,
+      "recall": 1.0,
+      "f1": 0.6666666666666666
+    }
+  }
+}

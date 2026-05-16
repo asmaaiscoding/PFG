@@ -121,6 +121,80 @@ urlpatterns = [
     )
 
 
+def test_build_pfg_detects_tenant_isolation_shape(tmp_path: Path) -> None:
+    (tmp_path / "views.py").write_text(
+        """
+class Event:
+    objects = None
+
+def event_detail(request, workspace_slug, pk):
+    return Event.objects.get(pk=pk)
+""",
+        encoding="utf-8",
+    )
+    (tmp_path / "urls.py").write_text(
+        """
+from django.urls import path
+from .views import event_detail
+
+urlpatterns = [
+    path("workspaces/<str:workspace_slug>/events/<int:pk>/", event_detail),
+]
+""",
+        encoding="utf-8",
+    )
+
+    from pfg.detectors.rule_baseline import detect_all
+
+    pfg = build_pfg(tmp_path, application="tenant_case")
+    findings = {(f.endpoint_id, f.subtype.value) for f in detect_all(pfg)}
+
+    assert (
+        _endpoint_id("GET", "/workspaces/{workspace_slug}/events/{pk}/"),
+        "TENANT_ISOLATION_FAILURE",
+    ) in findings
+
+
+def test_build_pfg_detects_object_permission_bypass_shape(tmp_path: Path) -> None:
+    (tmp_path / "views.py").write_text(
+        """
+class Event:
+    objects = None
+
+def permission_required(name):
+    def decorator(fn):
+        return fn
+    return decorator
+
+@permission_required("app.view_event")
+def event_detail(request, pk):
+    return Event.objects.get(pk=pk)
+""",
+        encoding="utf-8",
+    )
+    (tmp_path / "urls.py").write_text(
+        """
+from django.urls import path
+from .views import event_detail
+
+urlpatterns = [
+    path("events/<int:pk>/", event_detail),
+]
+""",
+        encoding="utf-8",
+    )
+
+    from pfg.detectors.rule_baseline import detect_all
+
+    pfg = build_pfg(tmp_path, application="object_permission_case")
+    findings = {(f.endpoint_id, f.subtype.value) for f in detect_all(pfg)}
+
+    assert (
+        _endpoint_id("GET", "/events/{pk}/"),
+        "OBJECT_LEVEL_PERMISSION_BYPASS",
+    ) in findings
+
+
 def test_to_dot_emits_valid_dot() -> None:
     pfg = build_pfg(REF_CG, application="ref_callgraph")
     dot = to_dot(pfg)

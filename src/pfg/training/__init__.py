@@ -40,6 +40,11 @@ from pfg.training.trainer import (
     train_path_analyzer,
     train_path_analyzer_split,
 )
+from pfg.training.weak_supervision import (
+    WeakSupervisionConfig,
+    pseudo_labeled_samples_from_manifest,
+    pseudo_labeled_samples_from_manifests,
+)
 
 __all__ = [
     "AblationKind",
@@ -51,12 +56,15 @@ __all__ = [
     "SweepEntry",
     "SweepReport",
     "TrainResult",
+    "WeakSupervisionConfig",
     "apply_ablation",
     "augmented_samples_from_manifest",
     "augmented_samples_from_manifests",
     "augmented_samples_from_pfg",
     "evaluate_rule_baseline",
     "final_outputs_to_dict",
+    "pseudo_labeled_samples_from_manifest",
+    "pseudo_labeled_samples_from_manifests",
     "report_to_dict",
     "run_ablations",
     "run_experiment",

@@ -176,4 +176,11 @@ def test_gnn_detector_and_checkpoint_roundtrip(tmp_path: Path) -> None:
     preds = det(samples[0].pfg)
     assert isinstance(preds, set)
     for ep, sub in preds:
-        assert isinstance(ep, str) and sub in {"MISSING_AUTH", "MISSING_ROLE", "IDOR", "COMBINED"}
+        assert isinstance(ep, str) and sub in {
+            "MISSING_AUTH",
+            "MISSING_ROLE",
+            "IDOR",
+            "TENANT_ISOLATION_FAILURE",
+            "OBJECT_LEVEL_PERMISSION_BYPASS",
+            "COMBINED",
+        }

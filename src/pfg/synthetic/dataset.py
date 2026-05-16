@@ -9,7 +9,9 @@ Two graph-level label heads are produced per sample:
   y_binary   : 0 = not vulnerable, 1 = vulnerable
                  (INTENTIONALLY_PUBLIC counts as not-vulnerable)
   y_subtype  : 0 SAFE, 1 MISSING_AUTH, 2 MISSING_ROLE, 3 IDOR,
-               4 COMBINED, 5 INTENTIONALLY_PUBLIC
+               4 TENANT_ISOLATION_FAILURE,
+               5 OBJECT_LEVEL_PERMISSION_BYPASS,
+               6 COMBINED, 7 INTENTIONALLY_PUBLIC
 
 A node-level mask `target_mask` (1 on the target endpoint, else 0) is also
 attached so Model B (path-wise) can pool around it.
@@ -32,10 +34,12 @@ _SUBTYPE_INDEX = {
     VulnSubtype.MISSING_AUTH.value: 1,
     VulnSubtype.MISSING_ROLE.value: 2,
     VulnSubtype.IDOR.value: 3,
-    VulnSubtype.COMBINED.value: 4,
-    LabelKind.INTENTIONALLY_PUBLIC.value: 5,
+    VulnSubtype.TENANT_ISOLATION_FAILURE.value: 4,
+    VulnSubtype.OBJECT_LEVEL_PERMISSION_BYPASS.value: 5,
+    VulnSubtype.COMBINED.value: 6,
+    LabelKind.INTENTIONALLY_PUBLIC.value: 7,
 }
-NUM_SUBTYPES = 6
+NUM_SUBTYPES = 8
 
 
 def label_to_targets(sample: Sample) -> tuple[int, int]:

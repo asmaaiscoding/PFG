@@ -489,6 +489,8 @@ def train_corpus_cmd(
 @click.option("--heads", default=4, show_default=True, type=int)
 @click.option("--focal-gamma", default=2.0, show_default=True, type=float)
 @click.option("--augmentation-cap", default=10, show_default=True, type=int)
+@click.option("--weak-supervision/--no-weak-supervision", default=False, show_default=True)
+@click.option("--weak-supervision-cap", default=32, show_default=True, type=int)
 @click.option("--contrastive-pairs", default=150, show_default=True, type=int)
 @click.option(
     "--out-dir",
@@ -520,6 +522,8 @@ def final_experiment_cmd(
     heads: int,
     focal_gamma: float,
     augmentation_cap: int,
+    weak_supervision: bool,
+    weak_supervision_cap: int,
     contrastive_pairs: int,
     out_dir: Path,
     semgrep_findings: Path | None,
@@ -541,6 +545,8 @@ def final_experiment_cmd(
             heads=heads,
             focal_gamma=focal_gamma,
             augmentation_cap=augmentation_cap,
+            weak_supervision=weak_supervision,
+            weak_supervision_cap=weak_supervision_cap,
             contrastive_pairs=contrastive_pairs,
             out_dir=out_dir,
             semgrep_findings=semgrep_findings,
@@ -718,7 +724,7 @@ def bridging_experiment_cmd(
     click.echo(f"Synth vuln anchors: {cfg['synth_vuln_anchors']} samples")
     click.echo("")
     click.echo("Aggregate (leave-one-app-out):")
-    for name, key in [("Fine-tuned", "finetuned"), ("FT+validated", "finetuned_validated"), ("Synth-only", "synthetic_only"), ("Rule", "rule_baseline")]:
+    for name, key in [("Fine-tuned", "finetuned"), ("FT+validated", "finetuned_validated"), ("Synth-only", "synthetic_only"), ("Synth+valid", "synthetic_validated"), ("Rule", "rule_baseline")]:
         a = agg[key]
         click.echo(f"  {name:12s}  TP={a['tp']}  FP={a['fp']}  FN={a['fn']}  "
                     f"P={a['precision']:.3f}  R={a['recall']:.3f}  F1={a['f1']:.3f}")
@@ -727,7 +733,7 @@ def bridging_experiment_cmd(
         click.echo(f"Fold holdout={fold['fold']} "
                     f"(real={fold['n_train_real']}+synth={fold['n_train_synth_vuln']}, "
                     f"val={fold['n_val']}, test={fold['n_test']}):")
-        for sys_key, label in [("finetuned", "FT"), ("finetuned_validated", "FT+val"), ("synthetic_only", "Syn"), ("rule_baseline", "Rule")]:
+        for sys_key, label in [("finetuned", "FT"), ("finetuned_validated", "FT+val"), ("synthetic_only", "Syn"), ("synthetic_validated", "Syn+v"), ("rule_baseline", "Rule")]:
             for app in fold[sys_key]["apps"]:
                 click.echo(f"  {label:5s} {app['application']}: TP={app['tp']} FP={app['fp']} FN={app['fn']}")
 

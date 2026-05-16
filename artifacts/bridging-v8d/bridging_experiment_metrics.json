@@ -1,0 +1,2022 @@
+{
+  "experiment": "bridging_synthetic_pretrain_mixed_finetune",
+  "config": {
+    "synth_model_path": "artifacts/synthetic-v5/path_analyzer_synthetic.pt",
+    "n_synth_apps": 5,
+    "synth_vuln_ratio": 0.8,
+    "synth_vuln_anchors": 79,
+    "epochs": 15,
+    "lr": 5e-05,
+    "focal_gamma": 2.0,
+    "batch_size": 16,
+    "hidden_dim": 64,
+    "num_layers": 3,
+    "heads": 4,
+    "gnn_threshold": 0.5,
+    "seed": 42
+  },
+  "folds": [
+    {
+      "fold": "django-mdeditor",
+      "n_train_real": 372,
+      "n_train_synth_vuln": 79,
+      "n_train_total": 451,
+      "n_val": 94,
+      "n_test": 5,
+      "finetuned": {
+        "detector": "gnn_finetuned",
+        "micro_precision": 0.2,
+        "micro_recall": 1.0,
+        "micro_f1": 0.33333333333333337,
+        "apps": [
+          {
+            "application": "django-mdeditor-cve-2025-13030",
+            "tp": 1,
+            "fp": 4,
+            "fn": 0,
+            "precision": 0.2,
+            "recall": 1.0,
+            "f1": 0.33333333333333337,
+            "predictions": [
+              {
+                "endpoint_id": "endpoint__GET___",
+                "subtype": "MISSING_AUTH"
+              },
+              {
+                "endpoint_id": "endpoint__GET___admin_",
+                "subtype": "MISSING_AUTH"
+              },
+              {
+                "endpoint_id": "endpoint__GET___model_",
+                "subtype": "MISSING_AUTH"
+              },
+              {
+                "endpoint_id": "endpoint__GET___show__pk__",
+                "subtype": "MISSING_AUTH"
+              },
+              {
+                "endpoint_id": "endpoint__POST___mdeditor_uploads_",
+                "subtype": "MISSING_AUTH"
+              }
+            ],
+            "expected": [
+              {
+                "endpoint_id": "endpoint__POST___mdeditor_uploads_",
+                "subtype": "MISSING_AUTH"
+              }
+            ],
+            "notes": []
+          }
+        ]
+      },
+      "finetuned_validated": {
+        "detector": "gnn_finetuned_validated",
+        "micro_precision": 1.0,
+        "micro_recall": 1.0,
+        "micro_f1": 1.0,
+        "apps": [
+          {
+            "application": "django-mdeditor-cve-2025-13030",
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "predictions": [
+              {
+                "endpoint_id": "endpoint__POST___mdeditor_uploads_",
+                "subtype": "MISSING_AUTH"
+              }
+            ],
+            "expected": [
+              {
+                "endpoint_id": "endpoint__POST___mdeditor_uploads_",
+                "subtype": "MISSING_AUTH"
+              }
+            ],
+            "notes": []
+          }
+        ]
+      },
+      "synthetic_only": {
+        "detector": "gnn_synthetic_only",
+        "micro_precision": 0.2,
+        "micro_recall": 1.0,
+        "micro_f1": 0.33333333333333337,
+        "apps": [
+          {
+            "application": "django-mdeditor-cve-2025-13030",
+            "tp": 1,
+            "fp": 4,
+            "fn": 0,
+            "precision": 0.2,
+            "recall": 1.0,
+            "f1": 0.33333333333333337,
+            "predictions": [
+              {
+                "endpoint_id": "endpoint__GET___",
+                "subtype": "MISSING_AUTH"
+              },
+              {
+                "endpoint_id": "endpoint__GET___admin_",
+                "subtype": "MISSING_AUTH"
+              },
+              {
+                "endpoint_id": "endpoint__GET___model_",
+                "subtype": "MISSING_AUTH"
+              },
+              {
+                "endpoint_id": "endpoint__GET___show__pk__",
+                "subtype": "MISSING_AUTH"
+              },
+              {
+                "endpoint_id": "endpoint__POST___mdeditor_uploads_",
+                "subtype": "MISSING_AUTH"
+              }
+            ],
+            "expected": [
+              {
+                "endpoint_id": "endpoint__POST___mdeditor_uploads_",
+                "subtype": "MISSING_AUTH"
+              }
+            ],
+            "notes": []
+          }
+        ]
+      },
+      "rule_baseline": {
+        "detector": "rule_baseline",
+        "micro_precision": 1.0,
+        "micro_recall": 1.0,
+        "micro_f1": 1.0,
+        "apps": [
+          {
+            "application": "django-mdeditor-cve-2025-13030",
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "predictions": [
+              {
+                "endpoint_id": "endpoint__POST___mdeditor_uploads_",
+                "subtype": "MISSING_AUTH"
+              }
+            ],
+            "expected": [
+              {
+                "endpoint_id": "endpoint__POST___mdeditor_uploads_",
+                "subtype": "MISSING_AUTH"
+              }
+            ],
+            "notes": []
+          }
+        ]
+      },
+      "finetuned_train_result": {
+        "test_accuracy": 0.2,
+        "test_macro_f1": 0.04166666666666667,
+        "best_val_loss": 3.5544706101113177
+      }
+    },
+    {
+      "fold": "nautobot",
+      "n_train_real": 230,
+      "n_train_synth_vuln": 79,
+      "n_train_total": 309,
+      "n_val": 58,
+      "n_test": 183,
+      "finetuned": {
+        "detector": "gnn_finetuned",
+        "micro_precision": 0.011560693641618497,
+        "micro_recall": 1.0,
+        "micro_f1": 0.022857142857142854,
+        "apps": [
+          {
+            "application": "nautobot-cve-2023-50263",
+            "tp": 2,
+            "fp": 171,
+            "fn": 0,
+            "precision": 0.011560693641618497,
+            "recall": 1.0,
+            "f1": 0.022857142857142854,
+            "predictions": [
+              {
+                "endpoint_id": "endpoint__GET___",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___admin_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_docs_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___circuits_circuit_terminations__termination_a_id__connect__termination_b_type__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___circuits_circuits__circuit__terminations_add_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___circuits_circuits__pk__terminations_swap_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_cables__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_cables__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_console_ports__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_console_ports__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_console_ports__termination_a_id__connect__termination_b_type__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_console_server_ports__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_console_server_ports__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_console_server_ports__termination_a_id__connect__termination_b_type__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_device_bays__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_device_bays__pk__depopulate_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_device_bays__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_device_bays__pk__populate_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_device_types__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_device_types__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_devices__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_front_ports__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_front_ports__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_front_ports__termination_a_id__connect__termination_b_type__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_interfaces__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_interfaces__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_interfaces__termination_a_id__connect__termination_b_type__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_inventory_items__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_inventory_items__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_location_types__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_location_types__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_locations__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_locations__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_manufacturers__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_manufacturers__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_platforms__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_platforms__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_power_feeds__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_power_feeds__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_power_feeds__termination_a_id__connect__termination_b_type__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_power_outlets__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_power_outlets__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_power_outlets__termination_a_id__connect__termination_b_type__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_power_panels__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_power_panels__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_power_ports__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_power_ports__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_power_ports__termination_a_id__connect__termination_b_type__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_rack_groups__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_rack_groups__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_rack_reservations__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_rack_reservations__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_racks__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_racks__pk__dynamic_groups_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_racks__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_rear_ports__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_rear_ports__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_rear_ports__termination_a_id__connect__termination_b_type__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_virtual_chassis__pk__add_member_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_virtual_chassis__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_virtual_chassis__pk__edit_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_virtual_chassis__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_virtual_chassis_members__pk__delete_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_computed_fields__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_computed_fields__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_config_context_schemas__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_config_context_schemas__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_config_contexts__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_config_contexts__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_custom_fields__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_custom_fields__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_custom_links__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_custom_links__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_dynamic_groups__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_dynamic_groups__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_export_templates__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_export_templates__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_git_repositories__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_git_repositories__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_graphql_queries__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_graphql_queries__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_job_hooks__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_job_results__pk__log_table_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_jobs__class_path__run_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_jobs__pk__run_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_notes__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_object_changes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_relationships__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_relationships__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_secrets__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_secrets__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_secrets_groups__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_secrets_groups__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_secrets_provider__provider_slug__form_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_statuses__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_statuses__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_tags__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_tags__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_webhooks__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_webhooks__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___files_download_",
+                "subtype": "COMBINED"
+              },
+              {
+                "endpoint_id": "endpoint__GET___files_get_",
+                "subtype": "COMBINED"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_ip_addresses__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_ip_addresses__pk__dynamic_groups_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_ip_addresses__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_ip_addresses_assign_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_ip_addresses_merge_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_prefixes__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_prefixes__pk__dynamic_groups_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_prefixes__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_rirs__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_rirs__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_route_targets__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_route_targets__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_services__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_services__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_vlan_groups__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_vlan_groups__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_vlans__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_vlans__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_vrfs__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_vrfs__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___login_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___logout_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___media__path_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___media_failure_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___search_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___tenancy_tenant_groups__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___tenancy_tenant_groups__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___tenancy_tenants__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___tenancy_tenants__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___user_api_tokens__pk__delete_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___user_api_tokens__pk__edit_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___user_api_tokens_add_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___virtualization_cluster_groups__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___virtualization_cluster_groups__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___virtualization_cluster_types__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___virtualization_cluster_types__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___virtualization_clusters__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___virtualization_clusters__pk__devices_add_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___virtualization_clusters__pk__dynamic_groups_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___virtualization_clusters__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___virtualization_interfaces__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___virtualization_interfaces__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___virtualization_virtual_machines__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___virtualization_virtual_machines__pk__dynamic_groups_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___virtualization_virtual_machines__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_graphql_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___circuits_circuits__circuit__terminations_add_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___circuits_circuits__pk__terminations_swap_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___dcim_device_bays__pk__depopulate_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___dcim_device_bays__pk__populate_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___dcim_virtual_chassis__pk__add_member_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___dcim_virtual_chassis__pk__edit_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___dcim_virtual_chassis_members__pk__delete_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___extras_custom_fields__pk__edit_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___extras_dynamic_groups__pk__edit_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___extras_git_repositories__pk__dry_run_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___extras_git_repositories__pk__sync_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___extras_job_button__pk__run_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___extras_jobs__class_path__run_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___extras_jobs__pk__run_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___extras_jobs_scheduled_jobs_approval_queue__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___extras_secrets_groups__pk__edit_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___ipam_ip_addresses_assign_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___ipam_ip_addresses_merge_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___login_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___user_api_tokens__pk__delete_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___user_api_tokens__pk__edit_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___user_api_tokens_add_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___virtualization_clusters__pk__devices_add_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___virtualization_clusters__pk__devices_remove_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              }
+            ],
+            "expected": [
+              {
+                "endpoint_id": "endpoint__GET___files_get_",
+                "subtype": "MISSING_AUTH"
+              },
+              {
+                "endpoint_id": "endpoint__GET___files_download_",
+                "subtype": "MISSING_AUTH"
+              }
+            ],
+            "notes": [
+              "matched ('endpoint__GET___files_download_', 'COMBINED') <-> ('endpoint__GET___files_download_', 'MISSING_AUTH') via COMBINED rule",
+              "matched ('endpoint__GET___files_get_', 'COMBINED') <-> ('endpoint__GET___files_get_', 'MISSING_AUTH') via COMBINED rule"
+            ]
+          }
+        ]
+      },
+      "finetuned_validated": {
+        "detector": "gnn_finetuned_validated",
+        "micro_precision": 0.25,
+        "micro_recall": 1.0,
+        "micro_f1": 0.4,
+        "apps": [
+          {
+            "application": "nautobot-cve-2023-50263",
+            "tp": 2,
+            "fp": 6,
+            "fn": 0,
+            "precision": 0.25,
+            "recall": 1.0,
+            "f1": 0.4,
+            "predictions": [
+              {
+                "endpoint_id": "endpoint__GET___files_download_",
+                "subtype": "COMBINED"
+              },
+              {
+                "endpoint_id": "endpoint__GET___files_get_",
+                "subtype": "COMBINED"
+              },
+              {
+                "endpoint_id": "endpoint__POST___dcim_virtual_chassis__pk__edit_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___dcim_virtual_chassis_members__pk__delete_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___extras_git_repositories__pk__dry_run_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___extras_git_repositories__pk__sync_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___extras_job_button__pk__run_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___extras_jobs_scheduled_jobs_approval_queue__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              }
+            ],
+            "expected": [
+              {
+                "endpoint_id": "endpoint__GET___files_get_",
+                "subtype": "MISSING_AUTH"
+              },
+              {
+                "endpoint_id": "endpoint__GET___files_download_",
+                "subtype": "MISSING_AUTH"
+              }
+            ],
+            "notes": [
+              "matched ('endpoint__GET___files_download_', 'COMBINED') <-> ('endpoint__GET___files_download_', 'MISSING_AUTH') via COMBINED rule",
+              "matched ('endpoint__GET___files_get_', 'COMBINED') <-> ('endpoint__GET___files_get_', 'MISSING_AUTH') via COMBINED rule"
+            ]
+          }
+        ]
+      },
+      "synthetic_only": {
+        "detector": "gnn_synthetic_only",
+        "micro_precision": 0.011560693641618497,
+        "micro_recall": 1.0,
+        "micro_f1": 0.022857142857142854,
+        "apps": [
+          {
+            "application": "nautobot-cve-2023-50263",
+            "tp": 2,
+            "fp": 171,
+            "fn": 0,
+            "precision": 0.011560693641618497,
+            "recall": 1.0,
+            "f1": 0.022857142857142854,
+            "predictions": [
+              {
+                "endpoint_id": "endpoint__GET___",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___admin_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_docs_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___circuits_circuit_terminations__termination_a_id__connect__termination_b_type__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___circuits_circuits__circuit__terminations_add_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___circuits_circuits__pk__terminations_swap_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_cables__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_cables__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_console_ports__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_console_ports__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_console_ports__termination_a_id__connect__termination_b_type__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_console_server_ports__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_console_server_ports__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_console_server_ports__termination_a_id__connect__termination_b_type__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_device_bays__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_device_bays__pk__depopulate_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_device_bays__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_device_bays__pk__populate_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_device_types__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_device_types__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_devices__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_front_ports__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_front_ports__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_front_ports__termination_a_id__connect__termination_b_type__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_interfaces__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_interfaces__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_interfaces__termination_a_id__connect__termination_b_type__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_inventory_items__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_inventory_items__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_location_types__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_location_types__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_locations__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_locations__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_manufacturers__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_manufacturers__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_platforms__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_platforms__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_power_feeds__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_power_feeds__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_power_feeds__termination_a_id__connect__termination_b_type__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_power_outlets__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_power_outlets__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_power_outlets__termination_a_id__connect__termination_b_type__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_power_panels__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_power_panels__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_power_ports__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_power_ports__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_power_ports__termination_a_id__connect__termination_b_type__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_rack_groups__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_rack_groups__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_rack_reservations__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_rack_reservations__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_racks__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_racks__pk__dynamic_groups_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_racks__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_rear_ports__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_rear_ports__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_rear_ports__termination_a_id__connect__termination_b_type__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_virtual_chassis__pk__add_member_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_virtual_chassis__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_virtual_chassis__pk__edit_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_virtual_chassis__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___dcim_virtual_chassis_members__pk__delete_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_computed_fields__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_computed_fields__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_config_context_schemas__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_config_context_schemas__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_config_contexts__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_config_contexts__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_custom_fields__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_custom_fields__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_custom_links__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_custom_links__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_dynamic_groups__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_dynamic_groups__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_export_templates__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_export_templates__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_git_repositories__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_git_repositories__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_graphql_queries__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_graphql_queries__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_job_hooks__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_job_results__pk__log_table_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_jobs__class_path__run_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_jobs__pk__run_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_notes__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_object_changes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_relationships__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_relationships__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_secrets__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_secrets__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_secrets_groups__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_secrets_groups__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_secrets_provider__provider_slug__form_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_statuses__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_statuses__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_tags__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_tags__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_webhooks__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___extras_webhooks__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___files_download_",
+                "subtype": "COMBINED"
+              },
+              {
+                "endpoint_id": "endpoint__GET___files_get_",
+                "subtype": "COMBINED"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_ip_addresses__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_ip_addresses__pk__dynamic_groups_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_ip_addresses__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_ip_addresses_assign_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_ip_addresses_merge_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_prefixes__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_prefixes__pk__dynamic_groups_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_prefixes__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_rirs__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_rirs__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_route_targets__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_route_targets__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_services__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_services__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_vlan_groups__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_vlan_groups__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_vlans__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_vlans__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_vrfs__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___ipam_vrfs__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___login_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___logout_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___media__path_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___media_failure_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___search_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___tenancy_tenant_groups__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___tenancy_tenant_groups__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___tenancy_tenants__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___tenancy_tenants__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___user_api_tokens__pk__delete_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___user_api_tokens__pk__edit_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___user_api_tokens_add_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___virtualization_cluster_groups__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___virtualization_cluster_groups__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___virtualization_cluster_types__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___virtualization_cluster_types__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___virtualization_clusters__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___virtualization_clusters__pk__devices_add_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___virtualization_clusters__pk__dynamic_groups_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___virtualization_clusters__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___virtualization_interfaces__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___virtualization_interfaces__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___virtualization_virtual_machines__pk__changelog_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___virtualization_virtual_machines__pk__dynamic_groups_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__GET___virtualization_virtual_machines__pk__notes_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_graphql_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___circuits_circuits__circuit__terminations_add_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___circuits_circuits__pk__terminations_swap_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___dcim_device_bays__pk__depopulate_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___dcim_device_bays__pk__populate_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___dcim_virtual_chassis__pk__add_member_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___dcim_virtual_chassis__pk__edit_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___dcim_virtual_chassis_members__pk__delete_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___extras_custom_fields__pk__edit_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___extras_dynamic_groups__pk__edit_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___extras_git_repositories__pk__dry_run_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___extras_git_repositories__pk__sync_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___extras_job_button__pk__run_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___extras_jobs__class_path__run_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___extras_jobs__pk__run_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___extras_jobs_scheduled_jobs_approval_queue__pk__",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___extras_secrets_groups__pk__edit_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___ipam_ip_addresses_assign_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___ipam_ip_addresses_merge_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___login_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___user_api_tokens__pk__delete_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__POST___user_api_tokens__pk__edit_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___user_api_tokens_add_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___virtualization_clusters__pk__devices_add_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___virtualization_clusters__pk__devices_remove_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              }
+            ],
+            "expected": [
+              {
+                "endpoint_id": "endpoint__GET___files_get_",
+                "subtype": "MISSING_AUTH"
+              },
+              {
+                "endpoint_id": "endpoint__GET___files_download_",
+                "subtype": "MISSING_AUTH"
+              }
+            ],
+            "notes": [
+              "matched ('endpoint__GET___files_download_', 'COMBINED') <-> ('endpoint__GET___files_download_', 'MISSING_AUTH') via COMBINED rule",
+              "matched ('endpoint__GET___files_get_', 'COMBINED') <-> ('endpoint__GET___files_get_', 'MISSING_AUTH') via COMBINED rule"
+            ]
+          }
+        ]
+      },
+      "rule_baseline": {
+        "detector": "rule_baseline",
+        "micro_precision": 0.2857142857142857,
+        "micro_recall": 1.0,
+        "micro_f1": 0.4444444444444445,
+        "apps": [
+          {
+            "application": "nautobot-cve-2023-50263",
+            "tp": 2,
+            "fp": 5,
+            "fn": 0,
+            "precision": 0.2857142857142857,
+            "recall": 1.0,
+            "f1": 0.4444444444444445,
+            "predictions": [
+              {
+                "endpoint_id": "endpoint__GET___files_download_",
+                "subtype": "MISSING_AUTH"
+              },
+              {
+                "endpoint_id": "endpoint__GET___files_get_",
+                "subtype": "MISSING_AUTH"
+              },
+              {
+                "endpoint_id": "endpoint__POST___dcim_virtual_chassis__pk__edit_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___dcim_virtual_chassis_members__pk__delete_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___extras_git_repositories__pk__dry_run_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___extras_git_repositories__pk__sync_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              },
+              {
+                "endpoint_id": "endpoint__POST___extras_job_button__pk__run_",
+                "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+              }
+            ],
+            "expected": [
+              {
+                "endpoint_id": "endpoint__GET___files_get_",
+                "subtype": "MISSING_AUTH"
+              },
+              {
+                "endpoint_id": "endpoint__GET___files_download_",
+                "subtype": "MISSING_AUTH"
+              }
+            ],
+            "notes": []
+          }
+        ]
+      },
+      "finetuned_train_result": {
+        "test_accuracy": 0.03825136612021858,
+        "test_macro_f1": 0.009308510638297872,
+        "best_val_loss": 0.33907553656347866
+      }
+    },
+    {
+      "fold": "wger",
+      "n_train_real": 150,
+      "n_train_synth_vuln": 79,
+      "n_train_total": 229,
+      "n_val": 38,
+      "n_test": 283,
+      "finetuned": {
+        "detector": "gnn_finetuned",
+        "micro_precision": 0.0,
+        "micro_recall": 0.0,
+        "micro_f1": 0.0,
+        "apps": [
+          {
+            "application": "wger-cve-2026-27839",
+            "tp": 0,
+            "fp": 4,
+            "fn": 3,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "predictions": [
+              {
+                "endpoint_id": "endpoint__GET___api_v2_exercise_search_",
+                "subtype": "MISSING_AUTH"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_exerciseinfo_search_",
+                "subtype": "MISSING_AUTH"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_ingredient_search_",
+                "subtype": "MISSING_AUTH"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_login_",
+                "subtype": "MISSING_AUTH"
+              }
+            ],
+            "expected": [
+              {
+                "endpoint_id": "endpoint__GET___api_v2_nutritionplan__pk__nutritional_values_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_meal__pk__nutritional_values_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_mealitem__pk__nutritional_values_",
+                "subtype": "IDOR"
+              }
+            ],
+            "notes": []
+          }
+        ]
+      },
+      "finetuned_validated": {
+        "detector": "gnn_finetuned_validated",
+        "micro_precision": 0.0,
+        "micro_recall": 0.0,
+        "micro_f1": 0.0,
+        "apps": [
+          {
+            "application": "wger-cve-2026-27839",
+            "tp": 0,
+            "fp": 4,
+            "fn": 3,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "predictions": [
+              {
+                "endpoint_id": "endpoint__GET___api_v2_exercise_search_",
+                "subtype": "MISSING_AUTH"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_exerciseinfo_search_",
+                "subtype": "MISSING_AUTH"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_ingredient_search_",
+                "subtype": "MISSING_AUTH"
+              },
+              {
+                "endpoint_id": "endpoint__POST___api_v2_login_",
+                "subtype": "MISSING_AUTH"
+              }
+            ],
+            "expected": [
+              {
+                "endpoint_id": "endpoint__GET___api_v2_nutritionplan__pk__nutritional_values_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_meal__pk__nutritional_values_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_mealitem__pk__nutritional_values_",
+                "subtype": "IDOR"
+              }
+            ],
+            "notes": []
+          }
+        ]
+      },
+      "synthetic_only": {
+        "detector": "gnn_synthetic_only",
+        "micro_precision": 0.2,
+        "micro_recall": 0.3333333333333333,
+        "micro_f1": 0.25,
+        "apps": [
+          {
+            "application": "wger-cve-2026-27839",
+            "tp": 1,
+            "fp": 4,
+            "fn": 2,
+            "precision": 0.2,
+            "recall": 0.3333333333333333,
+            "f1": 0.25,
+            "predictions": [
+              {
+                "endpoint_id": "endpoint__GET___api_v2_exercise_search_",
+                "subtype": "MISSING_AUTH"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_exerciseimage__pk__thumbnails_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_exerciseinfo_search_",
+                "subtype": "MISSING_AUTH"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_ingredient_search_",
+                "subtype": "MISSING_AUTH"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_nutritionplan__pk__nutritional_values_",
+                "subtype": "IDOR"
+              }
+            ],
+            "expected": [
+              {
+                "endpoint_id": "endpoint__GET___api_v2_nutritionplan__pk__nutritional_values_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_meal__pk__nutritional_values_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_mealitem__pk__nutritional_values_",
+                "subtype": "IDOR"
+              }
+            ],
+            "notes": []
+          }
+        ]
+      },
+      "rule_baseline": {
+        "detector": "rule_baseline",
+        "micro_precision": 0.75,
+        "micro_recall": 1.0,
+        "micro_f1": 0.8571428571428571,
+        "apps": [
+          {
+            "application": "wger-cve-2026-27839",
+            "tp": 3,
+            "fp": 1,
+            "fn": 0,
+            "precision": 0.75,
+            "recall": 1.0,
+            "f1": 0.8571428571428571,
+            "predictions": [
+              {
+                "endpoint_id": "endpoint__GET___api_v2_exerciseimage__pk__thumbnails_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_meal__pk__nutritional_values_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_mealitem__pk__nutritional_values_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_nutritionplan__pk__nutritional_values_",
+                "subtype": "IDOR"
+              }
+            ],
+            "expected": [
+              {
+                "endpoint_id": "endpoint__GET___api_v2_nutritionplan__pk__nutritional_values_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_meal__pk__nutritional_values_",
+                "subtype": "IDOR"
+              },
+              {
+                "endpoint_id": "endpoint__GET___api_v2_mealitem__pk__nutritional_values_",
+                "subtype": "IDOR"
+              }
+            ],
+            "notes": []
+          }
+        ]
+      },
+      "finetuned_train_result": {
+        "test_accuracy": 0.9575971731448764,
+        "test_macro_f1": 0.12229241877256317,
+        "best_val_loss": 5.277157030607524
+      }
+    }
+  ],
+  "aggregate": {
+    "finetuned": {
+      "tp": 3,
+      "fp": 179,
+      "fn": 3,
+      "precision": 0.016483516483516484,
+      "recall": 0.5,
+      "f1": 0.031914893617021274
+    },
+    "finetuned_validated": {
+      "tp": 3,
+      "fp": 10,
+      "fn": 3,
+      "precision": 0.23076923076923078,
+      "recall": 0.5,
+      "f1": 0.3157894736842105
+    },
+    "synthetic_only": {
+      "tp": 4,
+      "fp": 179,
+      "fn": 2,
+      "precision": 0.02185792349726776,
+      "recall": 0.6666666666666666,
+      "f1": 0.042328042328042326
+    },
+    "rule_baseline": {
+      "tp": 6,
+      "fp": 6,
+      "fn": 0,
+      "precision": 0.5,
+      "recall": 1.0,
+      "f1": 0.6666666666666666
+    }
+  }
+}

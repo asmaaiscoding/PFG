@@ -24,13 +24,16 @@ source_root: src/
 cwe:
   - CWE-862    # Missing Authorization
   - CWE-639    # Authorization Bypass Through User-Controlled Key (IDOR)
+  - CWE-284    # Improper Access Control / object or tenant permission failure
 
 notes: |
   Reproduces CVE-XXXX-NNNNN on /api/orders/<id>/. The view does not
   check ownership of the order and returns it for any authenticated user.
 
 # Ground truth: every endpoint that is *expected* to be flagged.
-# subtype must be one of: MISSING_AUTH | MISSING_ROLE | IDOR | COMBINED
+# subtype must be one of:
+#   MISSING_AUTH | MISSING_ROLE | IDOR | TENANT_ISOLATION_FAILURE |
+#   OBJECT_LEVEL_PERMISSION_BYPASS | COMBINED
 expected_findings:
   - endpoint_id: ep_orders_detail
     subtype: IDOR

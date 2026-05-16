@@ -142,6 +142,40 @@ def _function_references_request_user(fn: ast.AST) -> bool:
     return False
 
 
+def _function_has_tenant_scope(fn: ast.AST) -> bool:
+    tenant_terms = ("tenant", "organization", "org", "workspace", "realm", "project")
+    for node in ast.walk(fn):
+        if (
+            isinstance(node, ast.keyword)
+            and node.arg
+            and any(term in node.arg.lower() for term in tenant_terms)
+        ):
+            return True
+        if isinstance(node, ast.Attribute):
+            chain = _attr_chain(node)
+            text = ".".join(chain).lower() if chain else node.attr.lower()
+            if any(term in text for term in tenant_terms) and "request" in text:
+                return True
+    return False
+
+
+def _function_has_object_permission_check(fn: ast.AST) -> bool:
+    for node in ast.walk(fn):
+        if not isinstance(node, ast.Call):
+            continue
+        func = node.func
+        name: str | None = None
+        if isinstance(func, ast.Name):
+            name = func.id
+        elif isinstance(func, ast.Attribute):
+            name = func.attr
+        if name in {"check_object_permissions", "has_object_permission"}:
+            return True
+        if name == "has_perm" and len(node.args) >= 2:
+            return True
+    return False
+
+
 def _function_calls_self_get_object(fn: ast.AST) -> bool:
     for node in ast.walk(fn):
         if not isinstance(node, ast.Call):
@@ -166,6 +200,20 @@ def _class_get_queryset_uses_user(tree: ast.AST, class_name: str) -> bool:
                 isinstance(body, (ast.FunctionDef, ast.AsyncFunctionDef))
                 and body.name == "get_queryset"
                 and _function_references_request_user(body)
+            ):
+                return True
+    return False
+
+
+def _class_get_queryset_has_tenant_scope(tree: ast.AST, class_name: str) -> bool:
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.ClassDef) or node.name != class_name:
+            continue
+        for body in node.body:
+            if (
+                isinstance(body, (ast.FunctionDef, ast.AsyncFunctionDef))
+                and body.name in {"get_queryset", "get_object"}
+                and _function_has_tenant_scope(body)
             ):
                 return True
     return False
@@ -230,6 +278,30 @@ def _handler_ownership_check_present(project_root: Path, qual: str) -> bool:
     return False
 
 
+def _handler_tenant_check_present(project_root: Path, qual: str) -> bool:
+    resolved = _resolve_function(project_root, qual)
+    if resolved is not None:
+        tree, fn = resolved
+        if _function_has_tenant_scope(fn):
+            return True
+        parts = qual.split(".")
+        return len(parts) >= 3 and _class_get_queryset_has_tenant_scope(tree, parts[-2])
+
+    resolved_class = _resolve_class_module(project_root, qual)
+    if resolved_class is not None:
+        tree, class_name = resolved_class
+        return _class_get_queryset_has_tenant_scope(tree, class_name)
+    return False
+
+
+def _handler_object_permission_check_present(project_root: Path, qual: str) -> bool:
+    resolved = _resolve_function(project_root, qual)
+    if resolved is not None:
+        _, fn = resolved
+        return _function_has_object_permission_check(fn)
+    return False
+
+
 # --- main entry -----------------------------------------------------------
 
 
@@ -286,6 +358,12 @@ def build_pfg(
                     "requires_auth": auth.requires_auth,
                     "required_role": auth.required_role,
                     "ownership_check_present": _handler_ownership_check_present(root, ep.handler_qualname),
+                    "role_check_present": auth.role_check_present,
+                    "model_permission_check_present": auth.model_permission_check_present,
+                    "object_permission_check_present": auth.object_permission_check_present
+                    or _handler_object_permission_check_present(root, ep.handler_qualname),
+                    "tenant_check_present": auth.tenant_check_present
+                    or _handler_tenant_check_present(root, ep.handler_qualname),
                     "is_intentionally_public": auth.is_intentionally_public,
                     "source_location": ep.source_location,
                 },
@@ -341,6 +419,10 @@ def build_pfg(
                         "target_entity": target_entity,
                         "has_ownership_predicate": False,
                         "ownership_predicate_type": "NONE",
+                        "has_tenant_predicate": False,
+                        "requires_tenant_isolation": False,
+                        "requires_object_permission": False,
+                        "has_object_permission_check": False,
                         "user_controlled_params_in_query": [],
                     },
                 }
@@ -366,6 +448,10 @@ def build_pfg(
                         "target_entity": da.target_entity,
                         "has_ownership_predicate": da.has_ownership_predicate,
                         "ownership_predicate_type": da.ownership_predicate_type,
+                        "has_tenant_predicate": da.has_tenant_predicate,
+                        "requires_tenant_isolation": da.requires_tenant_isolation,
+                        "requires_object_permission": da.requires_object_permission,
+                        "has_object_permission_check": da.has_object_permission_check,
                         "user_controlled_params_in_query": [],
                     },
                 }
@@ -405,6 +491,9 @@ def build_pfg(
                 for did in data_targets:
                     add_edge(eid, did, "identifier_flow", param=sink.source)
                     _annotate_dataaccess_user_param_by_id(nodes, did, sink.source)
+                    _annotate_dataaccess_context(nodes, eid, did, ep)
+                    if _endpoint_param_is_tenant_scoped(ep, sink.source):
+                        add_edge(eid, did, "tenant_flow", param=sink.source)
             else:
                 add_edge(eid, _service_id(target_qual), "identifier_flow", param=sink.source)
             # If sink hits a data access with matching kwarg, annotate it.
@@ -419,6 +508,9 @@ def build_pfg(
             for did, _ in da_by_qual.get(ep.handler_qualname, []):
                 add_edge(eid, did, "identifier_flow", param=sink.source)
                 _annotate_dataaccess_user_param_by_id(nodes, did, sink.source)
+                _annotate_dataaccess_context(nodes, eid, did, ep)
+                if _endpoint_param_is_tenant_scoped(ep, sink.source):
+                    add_edge(eid, did, "tenant_flow", param=sink.source)
 
     pfg = PFG.model_validate(
         {
@@ -485,6 +577,54 @@ def _annotate_dataaccess_user_param_by_id(
         if param_name not in params:
             params.append(param_name)
         return
+
+
+_TENANT_ROUTE_TERMS = (
+    "tenant",
+    "organization",
+    "organisation",
+    "org",
+    "workspace",
+    "realm",
+    "project",
+)
+
+
+def _endpoint_param_is_tenant_scoped(ep: object, param_name: str) -> bool:
+    params = [str(p).lower() for p in getattr(ep, "route_params", ())]
+    pname = param_name.lower()
+    if any(term in pname for term in _TENANT_ROUTE_TERMS):
+        return True
+    return any(term in p for p in params for term in _TENANT_ROUTE_TERMS)
+
+
+def _target_entity_is_tenant_scoped(target_entity: str) -> bool:
+    lowered = target_entity.lower()
+    return any(term in lowered for term in _TENANT_ROUTE_TERMS)
+
+
+def _annotate_dataaccess_context(
+    nodes: list[dict[str, Any]],
+    endpoint_id: str,
+    data_access_id: str,
+    ep: object,
+) -> None:
+    endpoint_node = next((n for n in nodes if n["id"] == endpoint_id), None)
+    data_node = next((n for n in nodes if n["id"] == data_access_id), None)
+    if endpoint_node is None or data_node is None:
+        return
+    ep_attrs = endpoint_node["attrs"]
+    da_attrs = data_node["attrs"]
+
+    if _endpoint_param_is_tenant_scoped(ep, "") or _target_entity_is_tenant_scoped(da_attrs.get("target_entity", "")):
+        da_attrs["requires_tenant_isolation"] = True
+        if ep_attrs.get("tenant_check_present"):
+            da_attrs["has_tenant_predicate"] = True
+
+    if ep_attrs.get("model_permission_check_present"):
+        da_attrs["requires_object_permission"] = True
+    if ep_attrs.get("object_permission_check_present"):
+        da_attrs["has_object_permission_check"] = True
 
 
 def _data_access_ids_reachable_from(

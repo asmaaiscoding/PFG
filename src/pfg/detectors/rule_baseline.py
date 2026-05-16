@@ -4,7 +4,7 @@ This is the mandatory baseline (Phase 1, Gate G1) that the GNN models must
 beat on synthetic data. It also serves as the fallback detection path if the
 GNN underperforms (Gate G3 pivot).
 
-Three rules:
+Rules:
   R1 MISSING_AUTH:  endpoint with requires_auth=False that reaches a
                     data-access node (excluding intentionally-public endpoints).
   R2 MISSING_ROLE:  endpoint reaches a data-access op on a privileged entity
@@ -16,6 +16,13 @@ Three rules:
                     and no node on any call-edge path performs an ownership
                     check (no middleware OWNERSHIP_CHECK and the data-access
                     has_ownership_predicate=False).
+  R4 TENANT_ISOLATION_FAILURE:
+                    tenant/workspace/org-scoped data is reachable but neither
+                    the endpoint/path nor data-access node enforces tenant
+                    scoping.
+  R5 OBJECT_LEVEL_PERMISSION_BYPASS:
+                    model-level permission evidence exists, but route-param
+                    object access lacks an object-level permission check.
 """
 
 from __future__ import annotations
@@ -37,6 +44,17 @@ from pfg.pfg.nodes import (
     Role,
     VulnSubtype,
 )
+
+_TENANT_TERMS = {
+    "tenant",
+    "organization",
+    "organisation",
+    "org",
+    "workspace",
+    "realm",
+    "project",
+    "account",
+}
 
 
 @dataclass(frozen=True)
@@ -121,6 +139,68 @@ def _path_has_ownership_check(pfg: PFG, path: list[str]) -> bool:
     return False
 
 
+def _path_has_guard(pfg: PFG, path: list[str], guard_type: GuardType) -> bool:
+    idx = pfg.node_index()
+    wanted = guard_type.value
+    for nid in path:
+        n = idx.get(nid)
+        if n is None:
+            continue
+        if n.type == NodeType.MIDDLEWARE.value and isinstance(n.attrs, MiddlewareAttrs):
+            gt = n.attrs.guard_type
+            gt_v = gt.value if hasattr(gt, "value") else gt
+            if gt_v == wanted:
+                return True
+    return False
+
+
+def _path_has_tenant_check(pfg: PFG, path: list[str]) -> bool:
+    idx = pfg.node_index()
+    for nid in path:
+        n = idx.get(nid)
+        if n is None:
+            continue
+        if (
+            n.type == NodeType.ENDPOINT.value
+            and isinstance(n.attrs, EndpointAttrs)
+            and n.attrs.tenant_check_present
+        ):
+            return True
+        if _path_has_guard(pfg, [nid], GuardType.TENANT_CHECK):
+            return True
+    return False
+
+
+def _path_has_object_permission_check(pfg: PFG, path: list[str]) -> bool:
+    idx = pfg.node_index()
+    for nid in path:
+        n = idx.get(nid)
+        if n is None:
+            continue
+        if (
+            n.type == NodeType.ENDPOINT.value
+            and isinstance(n.attrs, EndpointAttrs)
+            and n.attrs.object_permission_check_present
+        ):
+            return True
+        if _path_has_guard(pfg, [nid], GuardType.OBJECT_PERMISSION_CHECK):
+            return True
+    return False
+
+
+def _looks_tenant_scoped(ep_attrs: EndpointAttrs, da_attrs: DataAccessAttrs) -> bool:
+    param_and_entity = " ".join(
+        [
+            *ep_attrs.route_params,
+            da_attrs.target_entity,
+            *da_attrs.user_controlled_params_in_query,
+        ]
+    ).lower()
+    return da_attrs.requires_tenant_isolation or any(
+        term in param_and_entity for term in _TENANT_TERMS
+    )
+
+
 def _path_has_role_check(pfg: PFG, path: list[str], required: Role) -> bool:
     """True if the path enforces at least `required` role."""
     idx = pfg.node_index()
@@ -197,7 +277,7 @@ def detect_missing_role(pfg: PFG) -> list[Finding]:
             continue
         ep_role = attrs.required_role
         ep_role_v = ep_role.value if hasattr(ep_role, "value") else ep_role
-        if ep_role_v != Role.NONE.value:
+        if ep_role_v != Role.NONE.value or attrs.role_check_present:
             continue  # has *some* role; missing-auth rule covers requires_auth=False separately
         if not attrs.requires_auth:
             continue  # MISSING_AUTH already covers this
@@ -244,6 +324,10 @@ def detect_idor(pfg: PFG) -> list[Finding]:
             if n.type != NodeType.DATA_ACCESS.value:
                 continue
             da = _da_attrs(n)
+            if _looks_tenant_scoped(attrs, da):
+                continue
+            if da.requires_object_permission or attrs.model_permission_check_present:
+                continue
             if da.has_ownership_predicate:
                 continue
             # Need a call-graph path from ep -> data_access.
@@ -279,10 +363,97 @@ def detect_idor(pfg: PFG) -> list[Finding]:
     return out
 
 
+def detect_tenant_isolation_failure(pfg: PFG) -> list[Finding]:
+    """Tenant/org/workspace-scoped data reachable without tenant scoping."""
+    out: list[Finding] = []
+    idx = pfg.node_index()
+    for ep in pfg.endpoints():
+        attrs = _ep_attrs(ep)
+        if _is_intentionally_public(ep) or attrs.tenant_check_present:
+            continue
+        reached = _reachable_via(pfg, ep.id, [EdgeType.CALL])
+        for nid in reached:
+            n = idx[nid]
+            if n.type != NodeType.DATA_ACCESS.value:
+                continue
+            da = _da_attrs(n)
+            if not _looks_tenant_scoped(attrs, da):
+                continue
+            if da.has_tenant_predicate:
+                continue
+            paths = _all_paths(pfg, ep.id, nid, max_depth=8)
+            if paths and any(_path_has_tenant_check(pfg, p) for p in paths):
+                continue
+            out.append(
+                Finding(
+                    endpoint_id=ep.id,
+                    subtype=VulnSubtype.TENANT_ISOLATION_FAILURE,
+                    data_access_id=nid,
+                    explanation=(
+                        f"Endpoint {attrs.route} reaches tenant-scoped "
+                        f"{da.target_entity} without a tenant predicate."
+                    ),
+                )
+            )
+            break
+    return out
+
+
+def detect_object_level_permission_bypass(pfg: PFG) -> list[Finding]:
+    """Model-level permission is present but object-level authorization is absent."""
+    out: list[Finding] = []
+    idx = pfg.node_index()
+    for ep in pfg.endpoints():
+        attrs = _ep_attrs(ep)
+        if _is_intentionally_public(ep):
+            continue
+        if not attrs.route_params or not attrs.model_permission_check_present:
+            continue
+        if attrs.object_permission_check_present:
+            continue
+        flow_targets = _reachable_via(pfg, ep.id, [EdgeType.IDENTIFIER_FLOW])
+        for nid in flow_targets:
+            if nid == ep.id:
+                continue
+            n = idx[nid]
+            if n.type != NodeType.DATA_ACCESS.value:
+                continue
+            da = _da_attrs(n)
+            if _looks_tenant_scoped(attrs, da):
+                continue
+            if da.has_object_permission_check or da.has_ownership_predicate:
+                continue
+            paths = _all_paths(pfg, ep.id, nid, max_depth=8)
+            if paths and any(_path_has_object_permission_check(pfg, p) for p in paths):
+                continue
+            if not da.requires_object_permission and not attrs.model_permission_check_present:
+                continue
+            out.append(
+                Finding(
+                    endpoint_id=ep.id,
+                    subtype=VulnSubtype.OBJECT_LEVEL_PERMISSION_BYPASS,
+                    data_access_id=nid,
+                    explanation=(
+                        f"Endpoint {attrs.route} has model-level permission evidence "
+                        f"but route param {attrs.route_params} reaches {da.target_entity} "
+                        "without object-level permission enforcement."
+                    ),
+                )
+            )
+            break
+    return out
+
+
 def detect_all(pfg: PFG) -> list[Finding]:
     """Run all rules; return findings deduplicated by (endpoint_id, subtype)."""
     found: dict[tuple[str, str], Finding] = {}
-    for f in (*detect_missing_auth(pfg), *detect_missing_role(pfg), *detect_idor(pfg)):
+    for f in (
+        *detect_missing_auth(pfg),
+        *detect_missing_role(pfg),
+        *detect_idor(pfg),
+        *detect_tenant_isolation_failure(pfg),
+        *detect_object_level_permission_bypass(pfg),
+    ):
         key = (f.endpoint_id, f.subtype.value)
         found.setdefault(key, f)
     return list(found.values())

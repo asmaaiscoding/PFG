@@ -30,8 +30,9 @@ def test_apply_ablation_no_auth_zeros_auth_features() -> None:
     pyg = samples_to_pyg(samples)
     ablated = apply_ablation(pyg, "no_auth_annotations")
     for d in ablated:
-        # Auth features live at indices 9..19 (frozen contract).
+        # Auth features live at indices 9..19 plus endpoint guard summaries.
         assert d.x[:, 9:19].abs().sum().item() == 0.0
+        assert d.x[:, 28:32].abs().sum().item() == 0.0
 
 
 def test_run_hparam_sweep_smoke() -> None:

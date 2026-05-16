@@ -9,8 +9,9 @@ Design:
   * Mini-app topology: 8-20 endpoints sharing services and data-access nodes.
   * Each vulnerable sample has a "hard negative" safe twin with the same
     graph structure but flipped security feature.
-  * Middleware guard nodes (AUTHENTICATION, OWNERSHIP_CHECK) are placed on
-    safe paths so the GNN can learn that guards = safe.
+  * Middleware guard nodes (AUTHENTICATION, OWNERSHIP_CHECK, TENANT_CHECK,
+    OBJECT_PERMISSION_CHECK) are placed on safe paths so the GNN can learn
+    that guards = safe.
 """
 
 from __future__ import annotations
@@ -25,7 +26,9 @@ from pfg.synthetic.generator import Sample
 
 _HTTP_METHODS = ("GET", "POST", "PUT", "PATCH", "DELETE")
 _ENTITIES = ("Invoice", "User", "Order", "Comment", "Post", "Document", "Booking")
+_TENANT_ENTITIES = ("Workspace", "Organization", "TenantAccount", "Project", "Realm")
 _PARAM_NAMES = ("pk", "id", "slug", "uid")
+_TENANT_PARAM_NAMES = ("workspace_slug", "organization_id", "tenant_id", "project_id", "realm_id")
 _OPERATIONS = ("READ", "WRITE", "UPDATE", "DELETE")
 
 
@@ -67,6 +70,7 @@ def _mk_endpoint(
             "requires_auth": requires_auth,
             "required_role": role,
             "ownership_check_present": ownership_check,
+            "role_check_present": role != "NONE",
             "is_intentionally_public": is_public,
         },
     }
@@ -89,8 +93,13 @@ def _mk_data_access(
     operation: str,
     has_owner: bool,
     user_params: list[str],
+    tenant_entity: bool = False,
+    has_tenant: bool = False,
+    requires_tenant: bool = False,
+    requires_object_permission: bool = False,
+    has_object_permission: bool = False,
 ) -> tuple[dict[str, Any], str]:
-    entity = rng.choice(_ENTITIES)
+    entity = rng.choice(_TENANT_ENTITIES if tenant_entity else _ENTITIES)
     did = _sid(f"data__{operation}__{entity}__{idx}")
     return {
         "id": did,
@@ -100,6 +109,10 @@ def _mk_data_access(
             "target_entity": entity,
             "has_ownership_predicate": has_owner,
             "ownership_predicate_type": "DIRECT" if has_owner else "NONE",
+            "has_tenant_predicate": has_tenant,
+            "requires_tenant_isolation": requires_tenant,
+            "requires_object_permission": requires_object_permission,
+            "has_object_permission_check": has_object_permission,
             "user_controlled_params_in_query": list(user_params),
         },
     }, did
@@ -313,6 +326,137 @@ def _pair_missing_role(
     return vuln, safe
 
 
+def _pair_tenant_isolation(
+    rng: random.Random, app_idx: int, pair_idx: int
+) -> tuple[Sample, Sample]:
+    """TENANT_ISOLATION_FAILURE vulnerable + safe twin with tenant guard."""
+    idx_v = f"a{app_idx}_p{pair_idx}_tenant_v"
+    idx_s = f"a{app_idx}_p{pair_idx}_tenant_s"
+    op = rng.choice(["READ", "UPDATE", "DELETE"])
+    param_v = rng.choice(_TENANT_PARAM_NAMES)
+    param_s = rng.choice(_TENANT_PARAM_NAMES)
+
+    ep_v, eid_v, _ = _mk_endpoint(
+        rng, idx_v, requires_auth=True, role="USER",
+        is_public=False, with_param=False, ownership_check=True,
+    )
+    ep_v["attrs"]["route"] = f"/api/workspaces/{{{param_v}}}/events/"
+    ep_v["attrs"]["route_params"] = [param_v]
+    ep_s, eid_s, _ = _mk_endpoint(
+        rng, idx_s, requires_auth=True, role="USER",
+        is_public=False, with_param=False, ownership_check=True,
+    )
+    ep_s["attrs"]["route"] = f"/api/workspaces/{{{param_s}}}/events/"
+    ep_s["attrs"]["route_params"] = [param_s]
+    ep_s["attrs"]["tenant_check_present"] = True
+
+    svc_v, svid_v = _mk_service(idx_v, "handler", da=True, mut=op != "READ")
+    svc_s, svid_s = _mk_service(idx_s, "handler", da=True, mut=op != "READ")
+    da_v, did_v = _mk_data_access(
+        rng, idx_v, operation=op, has_owner=True, user_params=[param_v],
+        tenant_entity=True, has_tenant=False, requires_tenant=True,
+    )
+    da_s, did_s = _mk_data_access(
+        rng, idx_s, operation=op, has_owner=True, user_params=[param_s],
+        tenant_entity=True, has_tenant=True, requires_tenant=True,
+    )
+    mw_s, mwid_s = _mk_middleware(idx_s, "TENANT_CHECK")
+
+    nodes_v = [ep_v, svc_v, da_v]
+    edges_v = [
+        {"src": eid_v, "dst": svid_v, "type": "call"},
+        {"src": svid_v, "dst": did_v, "type": "call"},
+        {"src": eid_v, "dst": did_v, "type": "identifier_flow", "param": param_v},
+        {"src": eid_v, "dst": did_v, "type": "tenant_flow", "param": param_v},
+    ]
+    nodes_s = [ep_s, mw_s, svc_s, da_s]
+    edges_s = [
+        {"src": eid_s, "dst": mwid_s, "type": "call"},
+        {"src": mwid_s, "dst": svid_s, "type": "call"},
+        {"src": svid_s, "dst": did_s, "type": "call"},
+        {"src": eid_s, "dst": did_s, "type": "identifier_flow", "param": param_s},
+        {"src": eid_s, "dst": did_s, "type": "tenant_flow", "param": param_s},
+    ]
+
+    pfg_v = PFG.model_validate({
+        "schema_version": "1.0", "application": f"contrastive_{app_idx}",
+        "framework": "synthetic", "nodes": nodes_v, "edges": edges_v,
+    })
+    pfg_s = PFG.model_validate({
+        "schema_version": "1.0", "application": f"contrastive_{app_idx}",
+        "framework": "synthetic", "nodes": nodes_s, "edges": edges_s,
+    })
+    enrich_endpoint_features(pfg_v)
+    enrich_endpoint_features(pfg_s)
+
+    vuln = Sample(pfg=pfg_v, label=Label(label=LabelKind.VULNERABLE, subtype=VulnSubtype.TENANT_ISOLATION_FAILURE, cwe="CWE-284"), target_endpoint_id=eid_v)
+    safe = Sample(pfg=pfg_s, label=Label(label=LabelKind.SAFE), target_endpoint_id=eid_s)
+    return vuln, safe
+
+
+def _pair_object_permission_bypass(
+    rng: random.Random, app_idx: int, pair_idx: int
+) -> tuple[Sample, Sample]:
+    """OBJECT_LEVEL_PERMISSION_BYPASS vulnerable + safe twin with object check."""
+    idx_v = f"a{app_idx}_p{pair_idx}_obj_v"
+    idx_s = f"a{app_idx}_p{pair_idx}_obj_s"
+    op = rng.choice(["READ", "UPDATE", "DELETE"])
+
+    ep_v, eid_v, params_v = _mk_endpoint(
+        rng, idx_v, requires_auth=True, role="USER",
+        is_public=False, with_param=True, ownership_check=False,
+    )
+    ep_v["attrs"]["model_permission_check_present"] = True
+    ep_v["attrs"]["object_permission_check_present"] = False
+    ep_s, eid_s, params_s = _mk_endpoint(
+        rng, idx_s, requires_auth=True, role="USER",
+        is_public=False, with_param=True, ownership_check=False,
+    )
+    ep_s["attrs"]["model_permission_check_present"] = True
+    ep_s["attrs"]["object_permission_check_present"] = True
+
+    svc_v, svid_v = _mk_service(idx_v, "handler", da=True, mut=op != "READ")
+    svc_s, svid_s = _mk_service(idx_s, "handler", da=True, mut=op != "READ")
+    da_v, did_v = _mk_data_access(
+        rng, idx_v, operation=op, has_owner=False, user_params=list(params_v),
+        requires_object_permission=True, has_object_permission=False,
+    )
+    da_s, did_s = _mk_data_access(
+        rng, idx_s, operation=op, has_owner=False, user_params=list(params_s),
+        requires_object_permission=True, has_object_permission=True,
+    )
+    mw_s, mwid_s = _mk_middleware(idx_s, "OBJECT_PERMISSION_CHECK")
+
+    nodes_v = [ep_v, svc_v, da_v]
+    edges_v = [
+        {"src": eid_v, "dst": svid_v, "type": "call"},
+        {"src": svid_v, "dst": did_v, "type": "call"},
+        {"src": eid_v, "dst": did_v, "type": "identifier_flow", "param": params_v[0]},
+    ]
+    nodes_s = [ep_s, mw_s, svc_s, da_s]
+    edges_s = [
+        {"src": eid_s, "dst": mwid_s, "type": "call"},
+        {"src": mwid_s, "dst": svid_s, "type": "call"},
+        {"src": svid_s, "dst": did_s, "type": "call"},
+        {"src": eid_s, "dst": did_s, "type": "identifier_flow", "param": params_s[0]},
+    ]
+
+    pfg_v = PFG.model_validate({
+        "schema_version": "1.0", "application": f"contrastive_{app_idx}",
+        "framework": "synthetic", "nodes": nodes_v, "edges": edges_v,
+    })
+    pfg_s = PFG.model_validate({
+        "schema_version": "1.0", "application": f"contrastive_{app_idx}",
+        "framework": "synthetic", "nodes": nodes_s, "edges": edges_s,
+    })
+    enrich_endpoint_features(pfg_v)
+    enrich_endpoint_features(pfg_s)
+
+    vuln = Sample(pfg=pfg_v, label=Label(label=LabelKind.VULNERABLE, subtype=VulnSubtype.OBJECT_LEVEL_PERMISSION_BYPASS, cwe="CWE-284"), target_endpoint_id=eid_v)
+    safe = Sample(pfg=pfg_s, label=Label(label=LabelKind.SAFE), target_endpoint_id=eid_s)
+    return vuln, safe
+
+
 def _pair_combined(
     rng: random.Random, app_idx: int, pair_idx: int
 ) -> tuple[Sample, Sample]:
@@ -437,10 +581,12 @@ def generate_contrastive_dataset(
 
     # Pair types and their proportions
     pair_types = [
-        (_pair_idor, 0.30),
-        (_pair_missing_auth, 0.30),
-        (_pair_missing_role, 0.20),
-        (_pair_combined, 0.20),
+        (_pair_idor, 0.24),
+        (_pair_missing_auth, 0.22),
+        (_pair_missing_role, 0.16),
+        (_pair_tenant_isolation, 0.16),
+        (_pair_object_permission_bypass, 0.14),
+        (_pair_combined, 0.08),
     ]
 
     app_idx = 0

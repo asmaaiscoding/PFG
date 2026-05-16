@@ -39,11 +39,15 @@ _DEFAULT_SEMGREP_RULE_TO_SUBTYPE: Mapping[str, str] = {
     "python.django.security.audit.unvalidated-objects-pk": "IDOR",
     "python.django.security.audit.missing-authentication": "MISSING_AUTH",
     "python.django.security.audit.missing-permission-class": "MISSING_ROLE",
-    "python.django.security.audit.broken-object-level-authorization": "IDOR",
+    "python.django.security.audit.broken-object-level-authorization": "OBJECT_LEVEL_PERMISSION_BYPASS",
+    "python.django.security.audit.missing-object-permission": "OBJECT_LEVEL_PERMISSION_BYPASS",
+    "python.django.security.audit.tenant-isolation": "TENANT_ISOLATION_FAILURE",
+    "python.django.security.audit.cross-tenant-access": "TENANT_ISOLATION_FAILURE",
     # Generic CWE-based fall-throughs.
     "cwe-639": "IDOR",
     "cwe-862": "MISSING_AUTH",
     "cwe-863": "MISSING_ROLE",
+    "cwe-284": "OBJECT_LEVEL_PERMISSION_BYPASS",
 }
 
 _DEFAULT_CODEQL_RULE_TO_SUBTYPE: Mapping[str, str] = {
@@ -52,9 +56,14 @@ _DEFAULT_CODEQL_RULE_TO_SUBTYPE: Mapping[str, str] = {
     "py/missing-authorization": "MISSING_ROLE",
     "py/idor": "IDOR",
     "py/insecure-direct-object-reference": "IDOR",
+    "py/broken-object-level-authorization": "OBJECT_LEVEL_PERMISSION_BYPASS",
+    "py/missing-object-permission": "OBJECT_LEVEL_PERMISSION_BYPASS",
+    "py/tenant-isolation": "TENANT_ISOLATION_FAILURE",
+    "py/cross-tenant-access": "TENANT_ISOLATION_FAILURE",
     "py/cwe-639": "IDOR",
     "py/cwe-862": "MISSING_AUTH",
     "py/cwe-863": "MISSING_ROLE",
+    "py/cwe-284": "OBJECT_LEVEL_PERMISSION_BYPASS",
 }
 
 

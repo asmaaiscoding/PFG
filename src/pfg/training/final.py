@@ -28,16 +28,22 @@ from pfg.synthetic.generator import Sample
 from pfg.training.augmentation import AugmentationConfig, augmented_samples_from_manifests
 from pfg.training.corpus import samples_from_manifests, split_manifests_by_group
 from pfg.training.trainer import TrainResult, pretrain_path_analyzer, train_path_analyzer_split
+from pfg.training.weak_supervision import (
+    WeakSupervisionConfig,
+    pseudo_labeled_samples_from_manifests,
+)
 
 CLASS_NAMES = [
     "SAFE",
     "MISSING_AUTH",
     "MISSING_ROLE",
     "IDOR",
+    "TENANT_ISOLATION_FAILURE",
+    "OBJECT_LEVEL_PERMISSION_BYPASS",
     "COMBINED",
     "INTENTIONALLY_PUBLIC",
 ]
-VULNERABLE_CLASS_IDS = {1, 2, 3, 4}
+VULNERABLE_CLASS_IDS = {1, 2, 3, 4, 5, 6}
 
 
 @dataclass(frozen=True)
@@ -59,6 +65,11 @@ def _class_counts(samples: list[Sample]) -> dict[str, int]:
 
 
 def _metrics_from_confusion(cm: list[list[int]]) -> dict[str, Any]:
+    if len(cm) < len(CLASS_NAMES):
+        width = max((len(row) for row in cm), default=0)
+        padded = [row + [0] * (len(CLASS_NAMES) - len(row)) for row in cm]
+        padded.extend([[0] * max(len(CLASS_NAMES), width) for _ in range(len(CLASS_NAMES) - len(cm))])
+        cm = [row[: len(CLASS_NAMES)] for row in padded]
     per_class: dict[str, dict[str, float | int]] = {}
     total = sum(sum(row) for row in cm)
     correct = sum(cm[i][i] for i in range(len(cm)))
@@ -303,6 +314,8 @@ def run_final_experiment(
     heads: int = 4,
     focal_gamma: float = 2.0,
     augmentation_cap: int = 10,
+    weak_supervision: bool = False,
+    weak_supervision_cap: int = 32,
     contrastive_pairs: int = 150,
     out_dir: str | Path = "artifacts",
     semgrep_findings: str | Path | None = None,
@@ -323,6 +336,13 @@ def run_final_experiment(
     augmented_train_samples = augmented_samples_from_manifests(
         train_m, config=AugmentationConfig(max_per_manifest=augmentation_cap)
     )
+    weak_train_samples = pseudo_labeled_samples_from_manifests(
+        train_m,
+        config=WeakSupervisionConfig(
+            enabled=weak_supervision,
+            max_per_manifest=weak_supervision_cap,
+        ),
+    )
 
     # --- Model 1: real-only (baseline) ---
     real_only_model, real_only_result = train_path_analyzer_split(
@@ -339,7 +359,7 @@ def run_final_experiment(
 
     # --- Model 2: real + augmented with focal loss ---
     augmented_model, augmented_result = train_path_analyzer_split(
-        [*train_samples, *augmented_train_samples],
+        [*train_samples, *augmented_train_samples, *weak_train_samples],
         val_samples,
         test_samples,
         epochs=epochs,
@@ -366,7 +386,7 @@ def run_final_experiment(
         focal_gamma=focal_gamma,
     )
     twostage_model, twostage_result = train_path_analyzer_split(
-        [*train_samples, *augmented_train_samples],
+        [*train_samples, *augmented_train_samples, *weak_train_samples],
         val_samples,
         test_samples,
         epochs=epochs,
@@ -443,6 +463,8 @@ def run_final_experiment(
             "heads": heads,
             "focal_gamma": focal_gamma,
             "augmentation_cap": augmentation_cap,
+            "weak_supervision": weak_supervision,
+            "weak_supervision_cap": weak_supervision_cap,
             "contrastive_pairs": contrastive_pairs,
         },
         "warnings": warnings,
@@ -452,6 +474,7 @@ def run_final_experiment(
             "test_groups": sorted({m.dataset_split_group or m.application for m in test_m}),
             "n_train_real_samples": len(train_samples),
             "n_train_augmented_samples": len(augmented_train_samples),
+            "n_train_weak_supervision_samples": len(weak_train_samples),
             "n_synthetic_contrastive_samples": len(synthetic_samples),
             "n_val_real_samples": len(val_samples),
             "n_test_real_samples": len(test_samples),
@@ -460,6 +483,7 @@ def run_final_experiment(
         "class_distribution": {
             "train_real": _class_counts(train_samples),
             "train_augmented": _class_counts(augmented_train_samples),
+            "train_weak_supervision": _class_counts(weak_train_samples),
             "synthetic_contrastive": _class_counts(synthetic_samples),
             "val_real": _class_counts(val_samples),
             "test_real": _class_counts(test_samples),
@@ -502,6 +526,8 @@ def run_final_experiment(
                 "remove_auth_guard",
                 "remove_role_guard",
                 "remove_ownership_predicate",
+                "remove_tenant_predicate",
+                "remove_object_permission_check",
             ],
             "sample_metadata_keys": [
                 "augmented",
@@ -509,6 +535,16 @@ def run_final_experiment(
                 "origin_endpoint_id",
                 "augmentation_type",
             ],
+        },
+        "weak_supervision": {
+            "enabled": weak_supervision,
+            "policy": (
+                "PFG rule pseudo-labels are generated from training manifests only; "
+                "validation and test remain real advisory-backed samples."
+            ),
+            "held_out_test_contains_pseudo_labels": False,
+            "max_per_manifest": weak_supervision_cap,
+            "n_samples": len(weak_train_samples),
         },
     }
 
@@ -560,6 +596,7 @@ def _render_markdown_report(metrics: dict[str, Any]) -> str:
             f"- Test groups: {', '.join(split['test_groups'])}",
             f"- Real train samples: {split['n_train_real_samples']}",
             f"- Augmented train samples: {split['n_train_augmented_samples']}",
+            f"- Weak-supervision train samples: {split.get('n_train_weak_supervision_samples', 0)}",
             f"- Synthetic contrastive samples: {split.get('n_synthetic_contrastive_samples', 'N/A')}",
             f"- Real validation samples: {split['n_val_real_samples']}",
             f"- Real test samples: {split['n_test_real_samples']}",

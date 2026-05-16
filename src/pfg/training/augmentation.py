@@ -22,6 +22,8 @@ class AugmentationConfig:
     include_missing_auth: bool = True
     include_missing_role: bool = True
     include_idor: bool = True
+    include_tenant_isolation: bool = True
+    include_object_permission_bypass: bool = True
     max_per_manifest: int = 48
 
 
@@ -72,8 +74,11 @@ def _copy_with_metadata(
         "origin_manifest": manifest.application,
         "origin_endpoint_id": endpoint_id,
     }
+    pfg = PFG.model_validate(pfg_data)
+    from pfg.pfg.features import enrich_endpoint_features
+    enrich_endpoint_features(pfg)
     return Sample(
-        pfg=PFG.model_validate(pfg_data),
+        pfg=pfg,
         label=_label(subtype, cwe),
         target_endpoint_id=endpoint_id,
         metadata={
@@ -191,6 +196,93 @@ def _mutate_idor(pfg: PFG, manifest: Manifest) -> list[Sample]:
     return out
 
 
+def _mutate_tenant_isolation(pfg: PFG, manifest: Manifest) -> list[Sample]:
+    out: list[Sample] = []
+    base = pfg.to_dict()
+    for node in base["nodes"]:
+        if node["type"] != NodeType.ENDPOINT.value:
+            continue
+        endpoint_id = node["id"]
+        data_ids = _reachable_data_access_ids(base, endpoint_id)
+        scoped = [
+            n["id"]
+            for n in base["nodes"]
+            if n["id"] in data_ids
+            and n["attrs"].get("requires_tenant_isolation")
+            and n["attrs"].get("has_tenant_predicate")
+        ]
+        if not scoped:
+            continue
+        mutated = deepcopy(base)
+        target = next(n for n in mutated["nodes"] if n["id"] == endpoint_id)
+        target["attrs"]["tenant_check_present"] = False
+        for da_id in scoped:
+            da = next(n for n in mutated["nodes"] if n["id"] == da_id)
+            da["attrs"]["has_tenant_predicate"] = False
+        out.append(
+            _copy_with_metadata(
+                mutated,
+                manifest=manifest,
+                endpoint_id=endpoint_id,
+                subtype=VulnSubtype.TENANT_ISOLATION_FAILURE,
+                augmentation_type="remove_tenant_predicate",
+                cwe="CWE-284",
+            )
+        )
+    return out
+
+
+def _mutate_object_permission_bypass(pfg: PFG, manifest: Manifest) -> list[Sample]:
+    out: list[Sample] = []
+    base = pfg.to_dict()
+    for node in base["nodes"]:
+        if node["type"] != NodeType.ENDPOINT.value:
+            continue
+        endpoint_id = node["id"]
+        params = node["attrs"].get("route_params") or []
+        if not params:
+            continue
+        data_ids = _reachable_data_access_ids(base, endpoint_id)
+        protected = [
+            n["id"]
+            for n in base["nodes"]
+            if n["id"] in data_ids
+            and (
+                n["attrs"].get("requires_object_permission")
+                or n["attrs"].get("has_object_permission_check")
+                or node["attrs"].get("object_permission_check_present")
+            )
+        ]
+        if not protected:
+            continue
+        mutated = deepcopy(base)
+        target = next(n for n in mutated["nodes"] if n["id"] == endpoint_id)
+        target["attrs"]["model_permission_check_present"] = True
+        target["attrs"]["object_permission_check_present"] = False
+        for da_id in protected:
+            da = next(n for n in mutated["nodes"] if n["id"] == da_id)
+            da["attrs"]["requires_object_permission"] = True
+            da["attrs"]["has_object_permission_check"] = False
+            da["attrs"]["has_ownership_predicate"] = False
+            da["attrs"]["ownership_predicate_type"] = "NONE"
+            if params[0] not in da["attrs"]["user_controlled_params_in_query"]:
+                da["attrs"]["user_controlled_params_in_query"].append(params[0])
+            flow = {"src": endpoint_id, "dst": da_id, "type": "identifier_flow", "param": params[0]}
+            if flow not in mutated["edges"]:
+                mutated["edges"].append(flow)
+        out.append(
+            _copy_with_metadata(
+                mutated,
+                manifest=manifest,
+                endpoint_id=endpoint_id,
+                subtype=VulnSubtype.OBJECT_LEVEL_PERMISSION_BYPASS,
+                augmentation_type="remove_object_permission_check",
+                cwe="CWE-284",
+            )
+        )
+    return out
+
+
 def augmented_samples_from_pfg(
     pfg: PFG,
     manifest: Manifest,
@@ -205,6 +297,10 @@ def augmented_samples_from_pfg(
         out.extend(_mutate_missing_role(pfg, manifest))
     if cfg.include_idor:
         out.extend(_mutate_idor(pfg, manifest))
+    if cfg.include_tenant_isolation:
+        out.extend(_mutate_tenant_isolation(pfg, manifest))
+    if cfg.include_object_permission_bypass:
+        out.extend(_mutate_object_permission_bypass(pfg, manifest))
     return out[: cfg.max_per_manifest]
 
 

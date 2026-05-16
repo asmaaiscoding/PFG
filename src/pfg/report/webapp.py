@@ -100,6 +100,8 @@ tr.finding-row:hover td{background:#161b26;cursor:pointer;}
 .MISSING_AUTH{background:#3a1620;color:var(--bad);}.MISSING_AUTH::before{background:var(--bad);}
 .MISSING_ROLE{background:#2d1a0e;color:var(--warn);}.MISSING_ROLE::before{background:var(--warn);}
 .IDOR{background:#3a1620;color:var(--bad);}.IDOR::before{background:var(--bad);}
+.TENANT_ISOLATION_FAILURE{background:#2a233a;color:var(--bad);}.TENANT_ISOLATION_FAILURE::before{background:var(--bad);}
+.OBJECT_LEVEL_PERMISSION_BYPASS{background:#1e2f32;color:var(--bad);}.OBJECT_LEVEL_PERMISSION_BYPASS::before{background:var(--bad);}
 .COMBINED{background:#3a1620;color:var(--bad);}.COMBINED::before{background:var(--bad);}
 .SAFE{background:#0e2218;color:var(--ok);}.SAFE::before{background:var(--ok);}
 .INTENTIONALLY_PUBLIC{background:#0a1a2a;color:var(--accent2);}.INTENTIONALLY_PUBLIC::before{background:var(--accent2);}
@@ -698,6 +700,8 @@ def _run_analysis(req: dict[str, object]) -> dict[str, object]:
             "MISSING_AUTH": "Endpoint has no authentication guard but reaches a data-access node.",
             "MISSING_ROLE": "Endpoint reaches a privileged data-access op without a role check.",
             "IDOR": "Route parameter flows into a data-access query without an ownership predicate.",
+            "TENANT_ISOLATION_FAILURE": "Tenant/org/workspace-scoped data is reachable without a tenant predicate.",
+            "OBJECT_LEVEL_PERMISSION_BYPASS": "Model-level permission exists but object-level authorization is missing.",
             "COMBINED": "Multiple privilege-flow violations along the same path.",
         }
 

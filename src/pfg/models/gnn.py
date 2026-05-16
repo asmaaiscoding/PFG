@@ -7,12 +7,13 @@ Two architectures contribute jointly to the thesis:
     Backbone: GINEConv stack -> global mean+max pool -> MLP head.
 
   Model B (Path Analyzer)
-    Graph + target-node-aware multi-class classifier over 6 subtypes.
+    Graph + target-node-aware multi-class classifier over the configured
+    access-control taxonomy.
     Backbone: GATv2Conv stack -> attention pool around target endpoint
     -> MLP head over the joint (target, graph) representation.
 
 Both consume the same `Data` produced by `pfg.synthetic.dataset.pfg_to_pyg`,
-which guarantees a frozen 28-dim node + 2-dim edge feature contract.
+which guarantees a consistent node + edge feature contract.
 
 Implementation notes
 --------------------
@@ -65,7 +66,7 @@ if _TORCH_AVAILABLE:
         """Model A — graph-level binary classifier (vulnerable vs benign).
 
         Architecture:
-          Linear projection (24 -> H)
+          Linear projection (NODE_FEATURE_DIM -> H)
           [GINEConv(H, H) + ReLU + Dropout] x num_layers, edge_dim=2
           mean+max pool -> Linear(2H -> 2)
         """
@@ -108,7 +109,7 @@ if _TORCH_AVAILABLE:
         """Model B — target-aware multi-class subtype classifier.
 
         Architecture:
-          Linear (24 -> H)
+          Linear (NODE_FEATURE_DIM -> H)
           [GATv2Conv(H -> H, heads=4 -> concat -> H projection)] x num_layers
           attention pool around target endpoint:
             score_i = w^T tanh(W [h_i ; h_target])
@@ -122,7 +123,7 @@ if _TORCH_AVAILABLE:
             hidden_dim: int = 64,
             num_layers: int = 3,
             heads: int = 4,
-            num_classes: int = 6,
+            num_classes: int = 8,
             dropout: float = 0.1,
         ) -> None:
             super().__init__()

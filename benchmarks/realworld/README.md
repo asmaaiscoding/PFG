@@ -57,7 +57,8 @@ and unlabeled rule-baseline findings.
 Every `expected_findings` entry must identify:
 
 - endpoint id produced by the extractor,
-- subtype: `MISSING_AUTH`, `MISSING_ROLE`, `IDOR`, or `COMBINED`,
+- subtype: `MISSING_AUTH`, `MISSING_ROLE`, `IDOR`,
+  `TENANT_ISOLATION_FAILURE`, `OBJECT_LEVEL_PERMISSION_BYPASS`, or `COMBINED`,
 - URL pattern,
 - CVE/advisory source,
 - fixed commit or fixed version when available.
@@ -132,7 +133,8 @@ The GNN uses a bridging strategy: pre-train on synthetic data (774 samples),
 then fine-tune on real data with leave-one-app-out cross-validation. Structural
 post-validation (`validated_gnn_detector`) suppresses predictions that lack
 necessary graph-level evidence (e.g., IDOR without route params + id_flow,
-MISSING_AUTH without reachable data access).
+tenant isolation without tenant-scoped params/data, MISSING_AUTH without
+reachable data access).
 
 The explicit holdout/seed shown above gives a non-empty augmented training set
 with the current minimum corpus. For final thesis evidence, run one pass per

@@ -35,6 +35,7 @@ _ENTITIES = (
     "Profile", "Notification", "Message", "Setting", "Token", "Log",
 )
 _PARAM_NAMES = ("pk", "id", "slug", "uid", "uuid", "obj_id")
+_TENANT_PARAM_NAMES = ("workspace_slug", "organization_id", "tenant_id", "project_id", "realm_id")
 _OPERATIONS_READ = ("READ",)
 _OPERATIONS_WRITE = ("WRITE", "UPDATE", "DELETE")
 _ROLES = ("NONE", "USER", "ADMIN")
@@ -204,6 +205,13 @@ class _AppBuilder:
             return f"/{prefix}/{seg}/{{{param}}}/", [param]
         return f"/{prefix}/{seg}/", []
 
+    def _gen_tenant_route(self, idx: int) -> tuple[str, list[str]]:
+        prefix = self.rng.choice(_ROUTE_PREFIXES)
+        seg = self.rng.choice(["workspaces", "organizations", "tenants", "projects", "realms"])
+        child = self.rng.choice(_ROUTE_SEGMENTS)
+        param = self.rng.choice(_TENANT_PARAM_NAMES)
+        return f"/{prefix}/{seg}/{{{param}}}/{child}/", [param]
+
     def _make_endpoint(
         self,
         idx: int,
@@ -214,7 +222,12 @@ class _AppBuilder:
         rng = self.rng
 
         # Decide topology
-        with_param = vuln_type in ("IDOR", "COMBINED") or (
+        with_param = vuln_type in (
+            "IDOR",
+            "TENANT_ISOLATION_FAILURE",
+            "OBJECT_LEVEL_PERMISSION_BYPASS",
+            "COMBINED",
+        ) or (
             vuln_type is None and rng.random() < 0.3
         )
         method = rng.choice(_WRITE_METHODS if vuln_type in ("MISSING_ROLE", "COMBINED") else _HTTP_METHODS)
@@ -233,9 +246,24 @@ class _AppBuilder:
             ownership_check = False
         elif vuln_type == "IDOR":
             requires_auth = True
-            role = rng.choice(["NONE", "USER"])
+            # IDOR typically occurs in authenticated endpoints that DO have
+            # role/auth checks but LACK ownership checks. Bias toward having
+            # a role_check to match real-world patterns (e.g. wger ViewSets
+            # with IsAuthenticated but no get_object() override).
+            role = rng.choice(["USER", "USER", "USER", "ADMIN", "NONE"])
             is_public = False
             ownership_check = False  # key: no ownership check
+        elif vuln_type == "TENANT_ISOLATION_FAILURE":
+            route, params = self._gen_tenant_route(idx)
+            requires_auth = True
+            role = "USER"
+            is_public = False
+            ownership_check = True
+        elif vuln_type == "OBJECT_LEVEL_PERMISSION_BYPASS":
+            requires_auth = True
+            role = "USER"
+            is_public = False
+            ownership_check = False
         elif vuln_type == "COMBINED":
             requires_auth = False
             role = "NONE"
@@ -294,34 +322,91 @@ class _AppBuilder:
                 "requires_auth": requires_auth,
                 "required_role": role,
                 "ownership_check_present": ownership_check,
+                "role_check_present": role != "NONE",
+                "model_permission_check_present": vuln_type == "OBJECT_LEVEL_PERMISSION_BYPASS",
+                "object_permission_check_present": False,
+                "tenant_check_present": False,
                 "is_intentionally_public": is_public,
             },
         })
 
-        # Service chain
-        chain = self._pick_service_chain()
-        if chain:
-            self._add_edge(eid, chain[0], "call")
-            for i in range(len(chain) - 1):
-                self._add_edge(chain[i], chain[i + 1], "call")
-
-        # Find reachable data-access nodes
-        reachable_data = self._reachable_data(chain)
+        # Service chain — IDOR/COMBINED use a private chain to avoid
+        # inheriting tenant/object-permission signals from shared data nodes.
+        if vuln_type in ("IDOR", "COMBINED"):
+            # Create a private 2-service chain for IDOR isolation
+            handler_sid = _sid(f"service__handler__{self.app_name}_{idx}")
+            repo_sid = _sid(f"service__repo__{self.app_name}_{idx}")
+            self._add_node({"id": handler_sid, "type": "service", "attrs": {"name": f"handler_{idx}"}})
+            self._add_node({"id": repo_sid, "type": "service", "attrs": {"name": f"repo_{idx}"}})
+            self._add_edge(eid, handler_sid, "call")
+            self._add_edge(handler_sid, repo_sid, "call")
+            chain = [handler_sid, repo_sid]
+            reachable_data = []  # will be populated by dedicated node below
+        else:
+            chain = self._pick_service_chain()
+            if chain:
+                self._add_edge(eid, chain[0], "call")
+                for i in range(len(chain) - 1):
+                    self._add_edge(chain[i], chain[i + 1], "call")
+            # Find reachable data-access nodes
+            reachable_data = self._reachable_data(chain)
         # For vulns that need data access, ensure we have some
-        if vuln_type in ("MISSING_AUTH", "MISSING_ROLE", "IDOR", "COMBINED") and not reachable_data and self._data_pool and chain:
+        # (skip IDOR/COMBINED — they create dedicated isolated nodes below)
+        if vuln_type in (
+            "MISSING_AUTH",
+            "MISSING_ROLE",
+            "TENANT_ISOLATION_FAILURE",
+            "OBJECT_LEVEL_PERMISSION_BYPASS",
+        ) and not reachable_data and self._data_pool and chain:
             did, _ = rng.choice(self._data_pool)
             self._add_edge(chain[-1], did, "call")
             reachable_data = [did]
 
-        # IDOR / COMBINED: identifier_flow + ownership predicate handling
-        if vuln_type in ("IDOR", "COMBINED") and params and reachable_data:
+        # IDOR-style vulnerable flows: route identifier reaches data without
+        # the subtype-specific guard.
+        if vuln_type in ("IDOR", "COMBINED") and params:
+            # For pure IDOR/COMBINED, use a dedicated data node to avoid
+            # shared-pool contamination (safe endpoints may later overwrite
+            # has_ownership_predicate on shared nodes).
+            entity = rng.choice(_ENTITIES)
+            op = rng.choice(["READ", "WRITE", "UPDATE", "DELETE"])
+            dedicated_did = _sid(f"data__{self.app_name}__idor_{entity}__ep{idx}")
+            self._add_node({
+                "id": dedicated_did,
+                "type": "data_access",
+                "attrs": {
+                    "operation": op,
+                    "target_entity": entity,
+                    "has_ownership_predicate": False,
+                    "ownership_predicate_type": "NONE",
+                    "user_controlled_params_in_query": [params[0]],
+                },
+            })
+            # Wire into service chain so it's reachable via call edges
+            if chain:
+                self._add_edge(chain[-1], dedicated_did, "call")
+            else:
+                self._add_edge(eid, dedicated_did, "call")
+            self._add_edge(eid, dedicated_did, "identifier_flow", param=params[0])
+        elif vuln_type in (
+            "TENANT_ISOLATION_FAILURE",
+            "OBJECT_LEVEL_PERMISSION_BYPASS",
+        ) and params and reachable_data:
             for did in reachable_data[:2]:
                 self._add_edge(eid, did, "identifier_flow", param=params[0])
-                # Vulnerable: data has NO ownership predicate
                 for n in self.nodes:
                     if n["id"] == did:
-                        n["attrs"]["has_ownership_predicate"] = False
-                        n["attrs"]["ownership_predicate_type"] = "NONE"
+                        if vuln_type == "TENANT_ISOLATION_FAILURE":
+                            n["attrs"]["has_ownership_predicate"] = True
+                            n["attrs"]["ownership_predicate_type"] = "DIRECT"
+                            n["attrs"]["requires_tenant_isolation"] = True
+                            n["attrs"]["has_tenant_predicate"] = False
+                            self._add_edge(eid, did, "tenant_flow", param=params[0])
+                        elif vuln_type == "OBJECT_LEVEL_PERMISSION_BYPASS":
+                            n["attrs"]["has_ownership_predicate"] = False
+                            n["attrs"]["ownership_predicate_type"] = "NONE"
+                            n["attrs"]["requires_object_permission"] = True
+                            n["attrs"]["has_object_permission_check"] = False
                         if params[0] not in n["attrs"]["user_controlled_params_in_query"]:
                             n["attrs"]["user_controlled_params_in_query"].append(params[0])
 
@@ -386,6 +471,10 @@ class _AppBuilder:
             self.labels[eid] = Label(label=LabelKind.VULNERABLE, subtype=VulnSubtype.MISSING_ROLE, cwe="CWE-863")
         elif vuln_type == "IDOR":
             self.labels[eid] = Label(label=LabelKind.VULNERABLE, subtype=VulnSubtype.IDOR, cwe="CWE-639")
+        elif vuln_type == "TENANT_ISOLATION_FAILURE":
+            self.labels[eid] = Label(label=LabelKind.VULNERABLE, subtype=VulnSubtype.TENANT_ISOLATION_FAILURE, cwe="CWE-284")
+        elif vuln_type == "OBJECT_LEVEL_PERMISSION_BYPASS":
+            self.labels[eid] = Label(label=LabelKind.VULNERABLE, subtype=VulnSubtype.OBJECT_LEVEL_PERMISSION_BYPASS, cwe="CWE-284")
         elif vuln_type == "COMBINED":
             self.labels[eid] = Label(label=LabelKind.VULNERABLE, subtype=VulnSubtype.COMBINED, cwe="CWE-862")
         elif is_public:
@@ -403,15 +492,19 @@ class _AppBuilder:
         n_public = max(2, self.n_endpoints // 15)
         n_safe = self.n_endpoints - n_vuln - n_public
 
-        # Distribute vulns: heavy on IDOR
+        # Distribute vulns across the access-control taxonomy.
         vuln_assignments: list[str] = []
-        n_idor = max(1, int(n_vuln * 0.40))
-        n_missing_auth = max(1, int(n_vuln * 0.25))
-        n_missing_role = max(1, int(n_vuln * 0.20))
-        n_combined = max(0, n_vuln - n_idor - n_missing_auth - n_missing_role)
+        n_idor = max(1, int(n_vuln * 0.30))
+        n_missing_auth = max(1, int(n_vuln * 0.20))
+        n_missing_role = max(1, int(n_vuln * 0.15))
+        n_tenant = max(1, int(n_vuln * 0.15))
+        n_object = max(1, int(n_vuln * 0.15))
+        n_combined = max(0, n_vuln - n_idor - n_missing_auth - n_missing_role - n_tenant - n_object)
         vuln_assignments.extend(["IDOR"] * n_idor)
         vuln_assignments.extend(["MISSING_AUTH"] * n_missing_auth)
         vuln_assignments.extend(["MISSING_ROLE"] * n_missing_role)
+        vuln_assignments.extend(["TENANT_ISOLATION_FAILURE"] * n_tenant)
+        vuln_assignments.extend(["OBJECT_LEVEL_PERMISSION_BYPASS"] * n_object)
         vuln_assignments.extend(["COMBINED"] * n_combined)
         self.rng.shuffle(vuln_assignments)
 

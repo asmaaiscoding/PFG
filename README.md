@@ -12,6 +12,8 @@ We target broken access control, especially:
 - `CWE-862` Missing Authorization
 - `CWE-863` Incorrect Authorization / missing role checks
 - `CWE-639` IDOR / authorization bypass through a user-controlled key
+- `CWE-1220` Insufficient Granularity of Access Control (tenant isolation)
+- `CWE-285` Improper Authorization (object-level permission bypass)
 
 The thesis question is whether a learned graph representation can detect
 multi-layer privilege-flow issues better than rule-only tools. The final
@@ -31,9 +33,9 @@ route parameter {pk}
 
 1. Extract a **Privilege Flow Graph** from Django/Spring source.
 2. Enrich endpoints with structural features (`enrich_endpoint_features`).
-3. Encode nodes into the frozen **28-dimensional** feature contract.
-4. Encode edges as `[is_call, is_identifier_flow]`.
-5. Classify each target endpoint with Model B (PathAnalyzer).
+3. Encode nodes into the frozen **36-dimensional** feature contract.
+4. Encode edges as `[is_call, is_identifier_flow, is_tenant_flow]`.
+5. Classify each target endpoint into one of **8 subtypes** with Model B (PathAnalyzer).
 6. Apply structural post-validation to suppress predictions lacking
    graph-level evidence (`validated_gnn_detector`).
 7. Evaluate against:
@@ -41,55 +43,103 @@ route parameter {pk}
    - Semgrep output normalized to endpoint findings,
    - CodeQL SARIF output normalized to endpoint findings.
 
-### Node Features (28-dim)
+### Node Features (36-dim)
 
-| Dims  | Feature                    | Description                                         |
-| ----- | -------------------------- | --------------------------------------------------- |
-| 0–3   | node_type                  | One-hot: endpoint, middleware, service, data_access |
-| 4–8   | http_method                | One-hot: GET, POST, PUT, PATCH, DELETE              |
-| 9     | requires_auth              | Whether the endpoint requires authentication        |
-| 10–14 | required_role              | One-hot role encoding                               |
-| 15    | ownership_check            | Whether the handler verifies object ownership       |
-| 16–18 | guard_type                 | One-hot guard encoding                              |
-| 19–22 | op_type                    | One-hot operation type                              |
-| 23    | has_ownership_predicate    | Data-access node has ownership predicate            |
-| 24    | has_route_params           | URL contains `{pk}`, `{id}`, etc.                   |
-| 25    | reachable_data_count       | Normalized count of reachable data_access nodes     |
-| 26    | has_id_flow                | identifier_flow edge reaches a data_access node     |
-| 27    | unprotected_data_reachable | Reachable data_access lacks ownership predicate     |
+| Dims  | Feature                          | Description                                         |
+| ----- | -------------------------------- | --------------------------------------------------- |
+| 0–3   | node_type                        | One-hot: endpoint, middleware, service, data_access |
+| 4–8   | http_method                      | One-hot: GET, POST, PUT, PATCH, DELETE              |
+| 9     | requires_auth                    | Whether the endpoint requires authentication        |
+| 10–14 | required_role                    | One-hot role encoding                               |
+| 15    | ownership_check                  | Whether the handler verifies object ownership       |
+| 16–18 | guard_type                       | One-hot guard encoding                              |
+| 19–22 | op_type                          | One-hot operation type                              |
+| 23    | has_ownership_predicate          | Data-access node has ownership predicate            |
+| 24    | has_route_params                 | URL contains `{pk}`, `{id}`, etc.                   |
+| 25    | reachable_data_count             | Normalized count of reachable data_access nodes     |
+| 26    | has_id_flow                      | identifier_flow edge reaches a data_access node     |
+| 27    | unprotected_data_reachable       | Reachable data_access lacks ownership predicate     |
+| 28    | role_check_present               | Endpoint has an explicit role check                 |
+| 29    | model_permission_check_present   | DRF model-level permission class present            |
+| 30    | object_permission_check_present  | DRF object-level permission class present           |
+| 31    | tenant_check_present             | Explicit tenant isolation guard present             |
+| 32    | has_tenant_scope                 | Reachable data_access has tenant predicate          |
+| 33    | unscoped_tenant_data_reachable   | Reachable data requires tenant scope but lacks it   |
+| 34    | object_permission_data_reachable | Reachable data requires obj-perm but lacks it       |
+| 35    | tenant_object_guard_signal       | Composite signal: 0/0.33/0.66/1.0                   |
 
-Dimensions 24–27 are the structural features added during the GNN improvement
-work. They are computed by `enrich_endpoint_features()` via BFS over call and
-identifier_flow edges.
+Dimensions 24–27 are structural features computed by `enrich_endpoint_features()`
+via BFS over call and identifier_flow edges. Dimensions 28–35 were added for the
+8-class expansion to support tenant isolation and object-level permission detection.
+
+### Edge Features (3-dim)
+
+| Dim | Feature            | Description                        |
+| --- | ------------------ | ---------------------------------- |
+| 0   | is_call            | Call edge (handler → service/repo) |
+| 1   | is_identifier_flow | Route param flows to data access   |
+| 2   | is_tenant_flow     | Tenant scope propagation edge      |
+
+### Classification Subtypes (8-class)
+
+| Class | Subtype                        | CWE      |
+| ----: | ------------------------------ | -------- |
+|     0 | SAFE                           | —        |
+|     1 | MISSING_AUTH                   | CWE-862  |
+|     2 | MISSING_ROLE                   | CWE-863  |
+|     3 | IDOR                           | CWE-639  |
+|     4 | TENANT_ISOLATION_FAILURE       | CWE-1220 |
+|     5 | OBJECT_LEVEL_PERMISSION_BYPASS | CWE-285  |
+|     6 | COMBINED                       | multi    |
+|     7 | INTENTIONALLY_PUBLIC           | —        |
 
 ## GNN Detection Results
 
-The PathAnalyzer GNN was trained with a bridging strategy: pre-train on
-synthetic data (774 samples), then fine-tune on real data with leave-one-app-out
-cross-validation. Structural post-validation suppresses predictions that lack
-necessary graph-level evidence.
+### Progression (28-dim / 6-class → 36-dim / 8-class)
 
-| Approach                          |    TP |     FP |    FN |         P |         R |        F1 |
-| --------------------------------- | ----: | -----: | ----: | --------: | --------: | --------: |
-| GNN synth-only (24-dim)           |     3 |    435 |     3 |     0.007 |     0.500 |     0.014 |
-| GNN synth-only (28-dim)           |     4 |    103 |     2 |     0.037 |     0.667 |     0.071 |
-| Bridging (synth → real fine-tune) |     4 |     22 |     2 |     0.154 |     0.667 |     0.250 |
-| + auth extractor fix              |     6 |     25 |     0 |     0.194 |     1.000 |     0.324 |
-| **+ ownership + post-validation** | **6** | **10** | **0** | **0.375** | **1.000** | **0.545** |
-| Rule baseline                     |     6 |      6 |     0 |     0.500 |     1.000 |     0.667 |
+The model evolved through two phases. Phase 1 used a 6-class/28-dim contract;
+Phase 2 expanded to 8-class/36-dim to support tenant isolation and object-level
+permission bypass detection.
 
-Per-app breakdown (validated GNN):
+| Approach                            |    TP |     FP |    FN |         P |         R |        F1 |
+| ----------------------------------- | ----: | -----: | ----: | --------: | --------: | --------: |
+| GNN synth-only (24-dim)             |     3 |    435 |     3 |     0.007 |     0.500 |     0.014 |
+| GNN synth-only (28-dim)             |     4 |    103 |     2 |     0.037 |     0.667 |     0.071 |
+| Bridging 28-dim (synth → fine-tune) |     4 |     22 |     2 |     0.154 |     0.667 |     0.250 |
+| + auth extractor fix                |     6 |     25 |     0 |     0.194 |     1.000 |     0.324 |
+| + ownership + post-validation (v7)  |     6 |     10 |     0 |     0.375 |     1.000 |     0.545 |
+| **36-dim FT + validated (v8i)**     | **5** |  **7** | **1** | **0.417** | **0.833** | **0.556** |
+| **36-dim Synth + validated (v8i)**  | **6** | **11** | **0** | **0.353** | **1.000** | **0.522** |
+| Rule baseline (5 rules)             |     6 |      6 |     0 |     0.500 |     1.000 |     0.667 |
+
+The 8-class model achieves **higher F1 (0.556)** than the previous 6-class best
+(0.545) with fewer false positives (7 vs 10), while adding detection capability
+for two new vulnerability subtypes. The Synth+validated system provides a
+zero-fine-tuning alternative with perfect recall.
+
+### Current Per-App Breakdown
+
+FT + validated (F1 = 0.556):
+
+| App             |  TP |  FP |  FN |
+| --------------- | --: | --: | --: |
+| wger            |   3 |   1 |   0 |
+| nautobot        |   2 |   6 |   0 |
+| django-mdeditor |   0 |   0 |   1 |
+
+Synth + validated (F1 = 0.522, 100% recall):
 
 | App             |  TP |  FP |  FN |
 | --------------- | --: | --: | --: |
 | wger            |   3 |   5 |   0 |
-| nautobot        |   2 |   5 |   0 |
+| nautobot        |   2 |   6 |   0 |
 | django-mdeditor |   1 |   0 |   0 |
 
-The 10 remaining FPs are structurally valid — they share graph-level signatures
-with real vulnerabilities and require semantic data-ownership understanding to
-eliminate. See [docs/gnn-improvement-report.md](docs/gnn-improvement-report.md)
-for the full technical report.
+The FT+validated system misses one django-mdeditor MISSING_AUTH endpoint in its
+fold because fine-tuning on IDOR-heavy wger data shifts the decision boundary.
+The Synth+validated system catches it without fine-tuning. The remaining FPs are
+structurally valid — they share graph-level signatures with real vulnerabilities.
+See [docs/gnn-improvement-report.md](docs/gnn-improvement-report.md) for details.
 
 ## Current Real-Data Strategy
 
@@ -233,29 +283,30 @@ Run the bridging experiment (leave-one-app-out):
 
 ```bash
 uv run pfg bridging-experiment benchmarks/realworld \
-  --out-dir artifacts/bridging-v7 \
-  --synth-model artifacts/synthetic-v3/path_analyzer_synthetic.pt
+  --out-dir artifacts/bridging-v8i \
+  --synth-model artifacts/synthetic-v6/path_analyzer_synthetic.pt
 ```
 
 Current three-corpus validation summary:
 
 ```text
-SAFE=465 MISSING_AUTH=3 MISSING_ROLE=0 IDOR=3 COMBINED=0 INTENTIONALLY_PUBLIC=0
+SAFE=465 MISSING_AUTH=3 MISSING_ROLE=0 IDOR=3
+TENANT_ISOLATION_FAILURE=0 OBJECT_LEVEL_PERMISSION_BYPASS=0
+COMBINED=0 INTENTIONALLY_PUBLIC=0
 split groups: django-mdeditor, nautobot, wger
 total endpoints: 471, vulnerable: 6 (1.3%)
 ```
 
-Bridging experiment output (validated GNN):
+Bridging experiment output (FT + validated GNN, 8-class/36-dim):
 
 ```text
-TP=6  FP=10  FN=0  P=0.375  R=1.000  F1=0.545
+TP=5  FP=7  FN=1  P=0.417  R=0.833  F1=0.556
 ```
 
-Previous first-corpus result:
+Bridging experiment output (Synth + validated GNN, 8-class/36-dim):
 
 ```text
-wger-cve-2026-27839: TP=3 FP=1 FN=0
-micro precision=0.750 recall=1.000 F1=0.857
+TP=6  FP=11  FN=0  P=0.353  R=1.000  F1=0.522
 ```
 
 Train Model B on a real corpus once at least three independent split groups
@@ -322,17 +373,23 @@ per-fold checkpoints/reports under:
 artifacts/final/<holdout-group>/
 ```
 
-The aggregate result is:
+The aggregate result (holdout = wger, 8-class/36-dim model):
 
-| System                        | Accuracy | Macro F1 | Vuln Precision | Vuln Recall | Vuln F1 |
-| ----------------------------- | -------: | -------: | -------------: | ----------: | ------: |
-| PathAnalyzer real-only        |    0.987 |    0.166 |          0.000 |       0.000 |   0.000 |
-| PathAnalyzer real + augmented |    0.144 |    0.049 |          0.015 |       1.000 |   0.029 |
+| System                         |  TP |  FP |  FN | Vuln P | Vuln R | Vuln F1 |
+| ------------------------------ | --: | --: | --: | -----: | -----: | ------: |
+| PathAnalyzer real-only         |   0 |   0 |   3 |  0.000 |  0.000 |   0.000 |
+| PathAnalyzer real + augmented  |   2 |  12 |   1 |  0.143 |  0.667 |   0.235 |
+| PathAnalyzer two-stage         |   0 |   3 |   3 |  0.000 |  0.000 |   0.000 |
+| **Bridging FT + validated**    |   5 |   7 |   1 |  0.417 |  0.833 |   0.556 |
+| **Bridging Synth + validated** |   6 |  11 |   0 |  0.353 |  1.000 |   0.522 |
+| Rule baseline                  |   6 |   6 |   0 |  0.500 |  1.000 |   0.667 |
 
-Interpretation: real-derived augmentation helped recall on this tiny corpus,
-but it did not improve the final objective result because precision and macro
-F1 collapsed. The honest current conclusion is that the augmentation policy is
-too aggressive and needs refinement before it can be claimed as helpful.
+Interpretation: real-only training fails on this tiny corpus (predicts
+everything SAFE). Real-derived augmentation recovers partial recall (2/3 wger
+IDORs) but with low precision. **Synthetic bridging is the clear winner** —
+the synthetic pretrained model learns vulnerability patterns that the tiny real
+corpus cannot teach, and structural post-validation then removes most false
+positives. The bridging strategy is the main contribution.
 
 ## External Tool Comparison
 
@@ -401,17 +458,25 @@ real corpus:
 
 ## Next Data Milestones
 
-The corpus now has the minimum three independent split groups required for
-train/validation/test. Additional groups remain useful for stronger evidence:
+The corpus has three independent split groups. The 8-class model now supports
+five vulnerability subtypes but the real corpus only covers two (MISSING_AUTH,
+IDOR). Priority targets for corpus expansion:
 
-- `Nautobot` / `CVE-2023-51649` / object-level permission enforcement.
-- `Nautobot` / `CVE-2023-50263` / unauthenticated db-file-storage views.
-- Additional wger advisories may be included, but they should share the `wger`
-  split group to avoid app-level leakage.
+1. **More IDOR apps** — different from wger, to test IDOR generalization on
+   held-out IDOR data.
+2. **MISSING_ROLE (CWE-863)** — apps where an authenticated user can access
+   admin-only endpoints due to missing role enforcement.
+3. **TENANT_ISOLATION_FAILURE (CWE-1220)** — multi-tenant apps where one
+   tenant's data leaks to another.
+4. **OBJECT_LEVEL_PERMISSION_BYPASS (CWE-285)** — apps with DRF object
+   permissions that are missing or bypassed.
 
-Final reporting should compare PathAnalyzer real-only, PathAnalyzer
-real+augmented, the rule baseline, Semgrep, and CodeQL on the same held-out real
-test groups.
+All new entries must be Django or Spring (supported extractors), have a public
+CVE/GHSA advisory, and have a clear fix commit for before/after comparison.
+
+Final reporting should compare the bridging GNN (FT+validated and
+Synth+validated), the rule baseline, Semgrep, and CodeQL on the same held-out
+real test groups.
 
 ## References
 

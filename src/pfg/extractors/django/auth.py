@@ -62,7 +62,29 @@ _DRF_PERM_CLASSES: dict[str, tuple[bool, Role, bool]] = {
 
 _ADMIN_NAME_HINTS = ("Admin", "Staff", "Superuser", "Billing", "Owner")
 _MODEL_PERMISSION_HINTS = ("Permission", "DjangoModelPermissions")
-_OBJECT_PERMISSION_HINTS = ("ObjectPermission", "ObjectPermissions", "DjangoObjectPermissions")
+_OBJECT_PERMISSION_HINTS = (
+    "ObjectPermission",
+    "ObjectPermissions",
+    "DjangoObjectPermissions",
+    "IsOwner",
+    "IsObjectOwner",
+    "IsCreator",
+    "IsAuthor",
+    "OwnerOnly",
+    "OwnedBy",
+    "BelongsTo",
+)
+# Broader ownership indicators — if the class name contains these substrings
+# we treat it as an object-level permission (ownership) check.
+_OWNERSHIP_CLASS_SUBSTRINGS = (
+    "owner",
+    "owned",
+    "creator",
+    "author",
+    "belongs",
+    "object_perm",
+    "obj_perm",
+)
 
 _PUBLIC_ROUTE_PREFIXES: tuple[str, ...] = ("/public/",)
 _PUBLIC_ROUTE_EXACT: frozenset[str] = frozenset(
@@ -312,7 +334,10 @@ def _from_perm_classes(
                 role = inferred_role
             role_check_present = role_check_present or inferred_role != Role.USER
             model_permission = model_permission or any(h in n for h in _MODEL_PERMISSION_HINTS)
-            object_permission = object_permission or any(h in n for h in _OBJECT_PERMISSION_HINTS)
+            object_permission = object_permission or (
+                any(h in n for h in _OBJECT_PERMISSION_HINTS)
+                or any(s in n.lower() for s in _OWNERSHIP_CLASS_SUBSTRINGS)
+            )
             continue
         a, r, _ = spec
         if n == "IsAuthenticatedOrReadOnly":
@@ -518,10 +543,49 @@ def resolve_default_permission_classes(project_root: Path) -> EndpointAuth | Non
                 continue
             # Extract the class name (last dotted segment).
             class_name = m.group(1).rsplit(".", 1)[-1]
-            spec = _from_perm_classes([class_name], "GET")
+            # Resolve effective names: include base classes from project source.
+            effective_names = _resolve_permission_class_bases(
+                project_root, m.group(1), class_name
+            )
+            spec = _from_perm_classes(effective_names, "GET")
             if spec is not None:
                 return spec
     return None
+
+
+def _resolve_permission_class_bases(
+    project_root: Path, dotted_path: str, class_name: str
+) -> list[str]:
+    """Resolve a custom permission class to its effective names list.
+
+    If the class is defined in the project and inherits from known DRF
+    permission classes, include those base class names alongside the original.
+    """
+    # Convert dotted import path to module path
+    parts = dotted_path.rsplit(".", 1)
+    if len(parts) < 2:
+        return [class_name]
+    module_path = parts[0].replace(".", "/") + ".py"
+    # Search for the module file in the project
+    candidates = list(project_root.rglob(module_path.split("/")[-1]))
+    for cand in candidates:
+        rel = str(cand.relative_to(project_root))
+        if module_path in rel or rel.endswith(module_path.split("/")[-1]):
+            try:
+                tree = ast.parse(cand.read_text(encoding="utf-8"))
+            except (OSError, SyntaxError):
+                continue
+            for node in ast.walk(tree):
+                if isinstance(node, ast.ClassDef) and node.name == class_name:
+                    base_names = []
+                    for base in node.bases:
+                        if isinstance(base, ast.Name):
+                            base_names.append(base.id)
+                        elif isinstance(base, ast.Attribute):
+                            base_names.append(base.attr)
+                    if base_names:
+                        return [class_name] + base_names
+    return [class_name]
 
 
 def annotate_endpoint(

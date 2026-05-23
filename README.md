@@ -104,28 +104,29 @@ advisory-backed labels across 6 split groups).
 
 #### Phase 1 (3-app corpus: wger, nautobot, django-mdeditor)
 
-| Approach                            |    TP |     FP |    FN |         P |         R |        F1 |
-| ----------------------------------- | ----: | -----: | ----: | --------: | --------: | --------: |
-| GNN synth-only (24-dim)             |     3 |    435 |     3 |     0.007 |     0.500 |     0.014 |
-| GNN synth-only (28-dim)             |     4 |    103 |     2 |     0.037 |     0.667 |     0.071 |
-| Bridging 28-dim (synth → fine-tune) |     4 |     22 |     2 |     0.154 |     0.667 |     0.250 |
-| + auth extractor fix                |     6 |     25 |     0 |     0.194 |     1.000 |     0.324 |
-| + ownership + post-validation (v7)  |     6 |     10 |     0 |     0.375 |     1.000 |     0.545 |
-| 36-dim FT + validated (v8i)         |     5 |      7 |     1 |     0.417 |     0.833 |     0.556 |
-| 36-dim Synth + validated (v8i)      |     6 |     11 |     0 |     0.353 |     1.000 |     0.522 |
-| Rule baseline (5 rules)             |     6 |      6 |     0 |     0.500 |     1.000 |     0.667 |
+| Approach                            |  TP |  FP |  FN |     P |     R |    F1 |
+| ----------------------------------- | --: | --: | --: | ----: | ----: | ----: |
+| GNN synth-only (24-dim)             |   3 | 435 |   3 | 0.007 | 0.500 | 0.014 |
+| GNN synth-only (28-dim)             |   4 | 103 |   2 | 0.037 | 0.667 | 0.071 |
+| Bridging 28-dim (synth → fine-tune) |   4 |  22 |   2 | 0.154 | 0.667 | 0.250 |
+| + auth extractor fix                |   6 |  25 |   0 | 0.194 | 1.000 | 0.324 |
+| + ownership + post-validation (v7)  |   6 |  10 |   0 | 0.375 | 1.000 | 0.545 |
+| 36-dim FT + validated (v8i)         |   5 |   7 |   1 | 0.417 | 0.833 | 0.556 |
+| 36-dim Synth + validated (v8i)      |   6 |  11 |   0 | 0.353 | 1.000 | 0.522 |
+| Rule baseline (5 rules)             |   6 |   6 |   0 | 0.500 | 1.000 | 0.667 |
 
 #### Phase 2 (8-app corpus, LOAO cross-validation)
 
-| System                          |    TP |     FP |    FN |       P |       R |      F1 |
-| ------------------------------- | ----: | -----: | ----: | ------: | ------: | ------: |
-| Synth raw GNN                   |    10 |  3,983 |     2 |   0.003 |   0.833 |   0.005 |
-| FT raw GNN                      |     5 |  1,377 |     7 |   0.004 |   0.417 |   0.007 |
-| FT + validated                  |     5 |     77 |     7 |   0.061 |   0.417 |   0.106 |
-| **Synth + validated**           |   **8** | **116** | **4** | **0.065** | **0.667** | **0.118** |
-| Rule baseline (5 rules)         |     8 |     81 |     4 |   0.090 |   0.667 |   0.158 |
+| System                  |    TP |      FP |    FN |         P |         R |        F1 |
+| ----------------------- | ----: | ------: | ----: | --------: | --------: | --------: |
+| Synth raw GNN           |    10 |   3,983 |     2 |     0.003 |     0.833 |     0.005 |
+| FT raw GNN              |     5 |   1,377 |     7 |     0.004 |     0.417 |     0.007 |
+| FT + validated          |     5 |      77 |     7 |     0.061 |     0.417 |     0.106 |
+| **Synth + validated**   | **8** | **116** | **4** | **0.065** | **0.667** | **0.118** |
+| Rule baseline (5 rules) |     8 |      81 |     4 |     0.090 |     0.667 |     0.158 |
 
 Key findings:
+
 - The GNN+validator system matches the rule baseline on recall (66.7%)
 - Structural post-validation reduces raw GNN FPs by **97%** (3,983 → 116)
 - Synthetic pre-training outperforms fine-tuning (8 vs 5 TP) — the tiny real
@@ -135,18 +136,19 @@ Key findings:
 
 ### Current Per-App Breakdown (8-app, Synth+validated)
 
-| App                    | CVE            | Subtype         |  TP |  FP |  FN |
-| ---------------------- | -------------- | --------------- | --: | --: | --: |
-| django-mdeditor        | CVE-2025-13030 | MISSING_AUTH    |   1 |   0 |   0 |
-| nautobot (50263)       | CVE-2023-50263 | IDOR            |   2 |  10 |   0 |
-| nautobot (51649)       | CVE-2023-51649 | IDOR            |   1 |   9 |   0 |
-| pretix                 | CVE-2025-14881 | IDOR            |   0 |  19 |   1 |
-| sentry                 | CVE-2026-26004 | MISSING_ROLE    |   1 |  34 |   0 |
-| weblate                | CVE-2026-27457 | TENANT/OBJ_PERM |   0 |   7 |   2 |
-| wger (27839)           | CVE-2026-27839 | IDOR            |   3 |  33 |   0 |
-| wger (40474)           | CVE-2026-40474 | MISSING_ROLE    |   0 |   4 |   1 |
+| App              | CVE            | Subtype         |  TP |  FP |  FN |
+| ---------------- | -------------- | --------------- | --: | --: | --: |
+| django-mdeditor  | CVE-2025-13030 | MISSING_AUTH    |   1 |   0 |   0 |
+| nautobot (50263) | CVE-2023-50263 | IDOR            |   2 |  10 |   0 |
+| nautobot (51649) | CVE-2023-51649 | IDOR            |   1 |   9 |   0 |
+| pretix           | CVE-2025-14881 | IDOR            |   0 |  19 |   1 |
+| sentry           | CVE-2026-26004 | MISSING_ROLE    |   1 |  34 |   0 |
+| weblate          | CVE-2026-27457 | TENANT/OBJ_PERM |   0 |   7 |   2 |
+| wger (27839)     | CVE-2026-27839 | IDOR            |   3 |  33 |   0 |
+| wger (40474)     | CVE-2026-40474 | MISSING_ROLE    |   0 |   4 |   1 |
 
 The undetected cases (FN):
+
 - **pretix**: IDOR where the identifier flow is non-trivial (nested organizer scope)
 - **weblate**: Tenant isolation failure on a list endpoint with no route params — the
   structural validator cannot distinguish `Addon.objects.all()` from a legitimate
@@ -180,16 +182,16 @@ The real corpus contains **8 advisory-backed Django targets** covering 5 CVE
 types across 6 independent split groups (4,232 endpoints, 12 labeled
 vulnerabilities).
 
-| Application         | CVE             | CWE      | Subtype                | Endpoints | Labels |
-| ------------------- | --------------- | -------- | ---------------------- | --------: | -----: |
-| wger (27839)        | CVE-2026-27839  | CWE-639  | IDOR                   |       494 |      3 |
-| wger (40474)        | CVE-2026-40474  | CWE-863  | MISSING_ROLE           |       494 |      1 |
-| nautobot (50263)    | CVE-2023-50263  | CWE-200  | IDOR                   |     1,716 |      2 |
-| nautobot (51649)    | CVE-2023-51649  | CWE-639  | IDOR                   |     1,716 |      1 |
-| django-mdeditor     | CVE-2025-13030  | CWE-306  | MISSING_AUTH           |         5 |      1 |
-| pretix              | CVE-2025-14881  | CWE-639  | IDOR                   |       808 |      1 |
-| sentry              | CVE-2026-26004  | CWE-863  | MISSING_ROLE           |       269 |      1 |
-| weblate             | CVE-2026-27457  | CWE-862  | TENANT/OBJ_PERM        |       296 |      2 |
+| Application      | CVE            | CWE     | Subtype         | Endpoints | Labels |
+| ---------------- | -------------- | ------- | --------------- | --------: | -----: |
+| wger (27839)     | CVE-2026-27839 | CWE-639 | IDOR            |       494 |      3 |
+| wger (40474)     | CVE-2026-40474 | CWE-863 | MISSING_ROLE    |       494 |      1 |
+| nautobot (50263) | CVE-2023-50263 | CWE-200 | IDOR            |     1,716 |      2 |
+| nautobot (51649) | CVE-2023-51649 | CWE-639 | IDOR            |     1,716 |      1 |
+| django-mdeditor  | CVE-2025-13030 | CWE-306 | MISSING_AUTH    |         5 |      1 |
+| pretix           | CVE-2025-14881 | CWE-639 | IDOR            |       808 |      1 |
+| sentry           | CVE-2026-26004 | CWE-863 | MISSING_ROLE    |       269 |      1 |
+| weblate          | CVE-2026-27457 | CWE-862 | TENANT/OBJ_PERM |       296 |      2 |
 
 ### wger CVE-2026-27839
 
@@ -400,13 +402,13 @@ artifacts/final/<holdout-group>/
 
 The aggregate result (8-app LOAO cross-validation, 36-dim/8-class model):
 
-| System                          |  TP |    FP |  FN | Vuln P | Vuln R | Vuln F1 |
-| ------------------------------- | --: | ----: | --: | -----: | -----: | ------: |
-| Synth raw GNN                   |  10 | 3,983 |   2 |  0.003 |  0.833 |   0.005 |
-| FT raw GNN                      |   5 | 1,377 |   7 |  0.004 |  0.417 |   0.007 |
-| FT + validated                  |   5 |    77 |   7 |  0.061 |  0.417 |   0.106 |
-| **Synth + validated**           |   8 |   116 |   4 |  0.065 |  0.667 |   0.118 |
-| Rule baseline                   |   8 |    81 |   4 |  0.090 |  0.667 |   0.158 |
+| System                |  TP |    FP |  FN | Vuln P | Vuln R | Vuln F1 |
+| --------------------- | --: | ----: | --: | -----: | -----: | ------: |
+| Synth raw GNN         |  10 | 3,983 |   2 |  0.003 |  0.833 |   0.005 |
+| FT raw GNN            |   5 | 1,377 |   7 |  0.004 |  0.417 |   0.007 |
+| FT + validated        |   5 |    77 |   7 |  0.061 |  0.417 |   0.106 |
+| **Synth + validated** |   8 |   116 |   4 |  0.065 |  0.667 |   0.118 |
+| Rule baseline         |   8 |    81 |   4 |  0.090 |  0.667 |   0.158 |
 
 Interpretation: The structural post-validator reduces GNN false positives by
 97% (3,983 → 116) while preserving 80% of true positives (10 → 8). Synthetic

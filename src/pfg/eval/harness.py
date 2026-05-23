@@ -297,7 +297,7 @@ def validated_gnn_detector(
             n = idx.get(nid)
             if n is None or n.type != NodeType.DATA_ACCESS.value:
                 continue
-            if isinstance(n.attrs, DataAccessAttrs) and not n.attrs.has_ownership_predicate:
+            if isinstance(n.attrs, DataAccessAttrs) and not n.attrs.has_ownership_predicate and not n.attrs.has_object_permission_check:
                 return True
         return False
 

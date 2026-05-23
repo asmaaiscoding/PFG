@@ -249,6 +249,109 @@ def _resolve_class_module(
     return None
 
 
+# --- model relationship analysis ------------------------------------------
+
+_TENANT_MODEL_NAMES = frozenset({
+    "organization", "organisation", "org", "tenant",
+    "workspace", "realm", "project", "team", "company",
+    "account",
+})
+
+_FK_FIELD_TYPES = frozenset({
+    "ForeignKey", "OneToOneField",
+})
+
+
+def _scan_tenant_scoped_models(project_root: Path) -> set[str]:
+    """Scan Django model definitions to find models with FK to tenant-scoped models.
+
+    Returns a set of model class names that are transitively tenant-scoped
+    (i.e., they have a ForeignKey to a model whose name matches tenant terms).
+    """
+    # First pass: find directly tenant-scoped models (by name)
+    direct_tenant: set[str] = set()
+    # Track FK relationships: child_model -> set of parent_model names
+    fk_targets: dict[str, set[str]] = {}
+
+    for models_file in project_root.rglob("models.py"):
+        try:
+            tree = ast.parse(models_file.read_text(encoding="utf-8"), filename=str(models_file))
+        except (SyntaxError, UnicodeDecodeError):
+            continue
+        for node in ast.walk(tree):
+            if not isinstance(node, ast.ClassDef):
+                continue
+            model_name = node.name
+            # Check if model name itself is tenant-scoped
+            if model_name.lower() in _TENANT_MODEL_NAMES:
+                direct_tenant.add(model_name)
+            # Look for FK/O2O fields pointing to tenant models
+            for stmt in node.body:
+                if not isinstance(stmt, ast.Assign):
+                    continue
+                if not isinstance(stmt.value, ast.Call):
+                    continue
+                call = stmt.value
+                func_name = None
+                if isinstance(call.func, ast.Attribute):
+                    func_name = call.func.attr
+                elif isinstance(call.func, ast.Name):
+                    func_name = call.func.id
+                if func_name not in _FK_FIELD_TYPES:
+                    continue
+                # Get the FK target model name (first positional arg)
+                if not call.args:
+                    continue
+                target_arg = call.args[0]
+                target_name = None
+                if isinstance(target_arg, ast.Constant) and isinstance(target_arg.value, str):
+                    # "app.ModelName" or "ModelName"
+                    target_name = target_arg.value.rsplit(".", 1)[-1]
+                elif isinstance(target_arg, ast.Name):
+                    target_name = target_arg.id
+                elif isinstance(target_arg, ast.Attribute):
+                    target_name = target_arg.attr
+                if target_name:
+                    fk_targets.setdefault(model_name, set()).add(target_name)
+
+    # Second pass: transitively resolve tenant-scoped models (1 level deep)
+    tenant_scoped: set[str] = set(direct_tenant)
+    for model_name, targets in fk_targets.items():
+        for target in targets:
+            if target.lower() in _TENANT_MODEL_NAMES or target in direct_tenant:
+                tenant_scoped.add(model_name)
+                break
+
+    return tenant_scoped
+
+
+def _scan_object_permission_classes(project_root: Path) -> set[str]:
+    """Scan project for DRF permission classes that define has_object_permission.
+
+    Returns a set of class names that implement object-level permission checks.
+    """
+    obj_perm_classes: set[str] = set()
+    for py_file in project_root.rglob("*.py"):
+        if "migrations" in py_file.parts or "test" in py_file.name.lower():
+            continue
+        try:
+            tree = ast.parse(py_file.read_text(encoding="utf-8"), filename=str(py_file))
+        except (SyntaxError, UnicodeDecodeError):
+            continue
+        for node in ast.walk(tree):
+            if not isinstance(node, ast.ClassDef):
+                continue
+            # Check if this class defines has_object_permission method
+            has_hop = any(
+                isinstance(stmt, (ast.FunctionDef, ast.AsyncFunctionDef))
+                and stmt.name == "has_object_permission"
+                for stmt in node.body
+            )
+            if has_hop:
+                obj_perm_classes.add(node.name)
+    return obj_perm_classes
+
+
 def _handler_ownership_check_present(project_root: Path, qual: str) -> bool:
     resolved = _resolve_function(project_root, qual)
     if resolved is not None:
@@ -302,6 +405,43 @@ def _handler_object_permission_check_present(project_root: Path, qual: str) -> b
     return False
 
 
+def _handler_uses_obj_perm_class(
+    project_root: Path, qual: str, obj_perm_classes: set[str]
+) -> bool:
+    """Check if the handler's view class uses a permission_classes containing
+    a class from obj_perm_classes (which define has_object_permission)."""
+    if not obj_perm_classes:
+        return False
+    resolved_class = _resolve_class_module(project_root, qual)
+    if resolved_class is None:
+        return False
+    tree, class_name = resolved_class
+    cls = None
+    for node in ast.walk(tree):
+        if isinstance(node, ast.ClassDef) and node.name == class_name:
+            cls = node
+            break
+    if cls is None:
+        return False
+    # Look for permission_classes = [...] attribute
+    for stmt in cls.body:
+        if isinstance(stmt, ast.Assign):
+            for target in stmt.targets:
+                if isinstance(target, ast.Name) and target.id == "permission_classes":
+                    # Extract class names from the list/tuple
+                    val = stmt.value
+                    if isinstance(val, (ast.List, ast.Tuple)):
+                        for elt in val.elts:
+                            name = None
+                            if isinstance(elt, ast.Name):
+                                name = elt.id
+                            elif isinstance(elt, ast.Attribute):
+                                name = elt.attr
+                            if name and name in obj_perm_classes:
+                                return True
+    return False
+
+
 # --- main entry -----------------------------------------------------------
 
 
@@ -318,6 +458,45 @@ def build_pfg(
 
     # Resolve project-wide DRF DEFAULT_PERMISSION_CLASSES from settings.
     default_auth = resolve_default_permission_classes(root)
+
+    # Scan model definitions for tenant-scoped relationships.
+    tenant_scoped_models = _scan_tenant_scoped_models(root)
+
+    # Scan for custom permission classes with has_object_permission.
+    obj_perm_classes = _scan_object_permission_classes(root)
+
+    # If the default permission class defines has_object_permission, upgrade
+    # default_auth to reflect that (handles cases like WgerPermission which
+    # inherits from BasePermission but defines has_object_permission directly).
+    if default_auth is not None and not default_auth.object_permission_check_present:
+        from pfg.extractors.django.auth import EndpointAuth as _EA
+        _dpc_re = __import__("re").compile(
+            r"""['"]DEFAULT_PERMISSION_CLASSES['"]\s*:\s*[\(\[\{]\s*['"]([^'"]+)['"]"""
+        )
+        _settings_names = ("settings.py", "settings_global.py", "conf/settings.py")
+        for settings_rel in _settings_names:
+            for candidate in root.rglob(settings_rel):
+                try:
+                    text = candidate.read_text(encoding="utf-8")
+                except (OSError, UnicodeDecodeError):
+                    continue
+                m = _dpc_re.search(text)
+                if m is not None:
+                    cls_name = m.group(1).rsplit(".", 1)[-1]
+                    if cls_name in obj_perm_classes:
+                        default_auth = _EA(
+                            default_auth.requires_auth,
+                            default_auth.required_role,
+                            default_auth.is_intentionally_public,
+                            role_check_present=default_auth.role_check_present,
+                            model_permission_check_present=default_auth.model_permission_check_present,
+                            object_permission_check_present=True,
+                            tenant_check_present=default_auth.tenant_check_present,
+                        )
+                    break
+            else:
+                continue
+            break
 
     nodes: list[dict[str, Any]] = []
     edges: list[dict[str, Any]] = []
@@ -346,6 +525,12 @@ def build_pfg(
     endpoint_ids_by_handler: dict[str, list[str]] = {}
     for ep in discovered:
         auth = annotate_endpoint(ep, root, default_auth=default_auth)
+        # Check if handler's view uses a custom obj-perm class
+        has_obj_perm = (
+            auth.object_permission_check_present
+            or _handler_object_permission_check_present(root, ep.handler_qualname)
+            or _handler_uses_obj_perm_class(root, ep.handler_qualname, obj_perm_classes)
+        )
         eid = _endpoint_id(ep.http_method, ep.route)
         add_node(
             {
@@ -360,8 +545,7 @@ def build_pfg(
                     "ownership_check_present": _handler_ownership_check_present(root, ep.handler_qualname),
                     "role_check_present": auth.role_check_present,
                     "model_permission_check_present": auth.model_permission_check_present,
-                    "object_permission_check_present": auth.object_permission_check_present
-                    or _handler_object_permission_check_present(root, ep.handler_qualname),
+                    "object_permission_check_present": has_obj_perm,
                     "tenant_check_present": auth.tenant_check_present
                     or _handler_tenant_check_present(root, ep.handler_qualname),
                     "is_intentionally_public": auth.is_intentionally_public,
@@ -439,6 +623,10 @@ def build_pfg(
         accesses = detect_data_accesses(fn)
         for idx, da in enumerate(accesses):
             did = _data_id(qual, da, idx)
+            # Determine tenant isolation requirement from model relationships
+            requires_tenant = da.requires_tenant_isolation or (
+                da.target_entity in tenant_scoped_models
+            )
             add_node(
                 {
                     "id": did,
@@ -449,7 +637,7 @@ def build_pfg(
                         "has_ownership_predicate": da.has_ownership_predicate,
                         "ownership_predicate_type": da.ownership_predicate_type,
                         "has_tenant_predicate": da.has_tenant_predicate,
-                        "requires_tenant_isolation": da.requires_tenant_isolation,
+                        "requires_tenant_isolation": requires_tenant,
                         "requires_object_permission": da.requires_object_permission,
                         "has_object_permission_check": da.has_object_permission_check,
                         "user_controlled_params_in_query": [],
@@ -511,6 +699,13 @@ def build_pfg(
                 _annotate_dataaccess_context(nodes, eid, did, ep)
                 if _endpoint_param_is_tenant_scoped(ep, sink.source):
                     add_edge(eid, did, "tenant_flow", param=sink.source)
+
+    # Pass 8: Propagate endpoint-level ownership/permission signals to data
+    # access nodes. When a ViewSet overrides get_queryset() to filter by
+    # request.user, the endpoint has ownership_check_present=True — but
+    # individual data-access nodes in the call graph don't know this. We
+    # propagate the signal so validators correctly suppress false positives.
+    _propagate_endpoint_permissions_to_data(nodes, edges)
 
     pfg = PFG.model_validate(
         {
@@ -641,3 +836,62 @@ def _data_access_ids_reachable_from(
 def _looks_like_orm_sink(sink: FlowSink) -> bool:
     parts = sink.callee.split(".")
     return len(parts) >= 3 and parts[-2] == "objects"
+
+
+def _propagate_endpoint_permissions_to_data(
+    nodes: list[dict[str, Any]],
+    edges: list[dict[str, Any]],
+) -> None:
+    """Propagate endpoint-level ownership/permission signals to data_access nodes.
+
+    When a ViewSet has get_queryset() filtering by request.user, the endpoint
+    gets ownership_check_present=True. All data_access nodes reachable via
+    call edges from that endpoint should inherit has_ownership_predicate=True,
+    since the scoped queryset effectively enforces ownership on all lookups.
+
+    Similarly, if the endpoint has object_permission_check_present=True (from
+    DRF permission_classes like DjangoObjectPermissions or IsOwner), propagate
+    has_object_permission_check=True to reachable data nodes.
+    """
+    # Build call adjacency for BFS
+    call_adj: dict[str, list[str]] = {}
+    for e in edges:
+        etype = e.get("type", "")
+        if etype == "call":
+            call_adj.setdefault(e["src"], []).append(e["dst"])
+
+    # Index nodes by id
+    node_by_id: dict[str, dict[str, Any]] = {n["id"]: n for n in nodes}
+
+    for ep_node in nodes:
+        if ep_node.get("type") != "endpoint":
+            continue
+        ep_attrs = ep_node["attrs"]
+        has_ownership = ep_attrs.get("ownership_check_present", False)
+        has_obj_perm = ep_attrs.get("object_permission_check_present", False)
+        if not has_ownership and not has_obj_perm:
+            continue
+
+        # BFS from endpoint via call edges
+        visited: set[str] = set()
+        stack = [ep_node["id"]]
+        while stack:
+            nid = stack.pop()
+            if nid in visited:
+                continue
+            visited.add(nid)
+            for neighbor in call_adj.get(nid, []):
+                stack.append(neighbor)
+
+        # Propagate to reachable data_access nodes
+        for nid in visited:
+            n = node_by_id.get(nid)
+            if n is None or n.get("type") != "data_access":
+                continue
+            da_attrs = n["attrs"]
+            if has_ownership:
+                da_attrs["has_ownership_predicate"] = True
+                if da_attrs.get("ownership_predicate_type", "NONE") == "NONE":
+                    da_attrs["ownership_predicate_type"] = "INDIRECT"
+            if has_obj_perm:
+                da_attrs["has_object_permission_check"] = True

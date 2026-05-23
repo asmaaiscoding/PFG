@@ -36,6 +36,7 @@ from pfg.synthetic import NUM_SUBTYPES
 from pfg.synthetic.generator import Sample
 from pfg.synthetic.realistic import generate_realistic_dataset
 from pfg.training.corpus import (
+    PfgCache,
     samples_from_manifests,
 )
 from pfg.training.trainer import train_path_analyzer_split
@@ -61,6 +62,20 @@ def _app_groups(manifests: list[Manifest]) -> list[str]:
     return groups
 
 
+def _build_from_cache(cache: PfgCache):
+    """Return a build callback that reuses PFGs already loaded as samples."""
+    from pfg.extractors.django.build import build_pfg
+
+    def _build(root: Path):
+        resolved = str(Path(root).resolve())
+        for (cached_root, _application), pfg in cache.items():
+            if cached_root == resolved:
+                return pfg
+        return build_pfg(root)
+
+    return _build
+
+
 def _run_fold(
     fold_name: str,
     train_samples: list[Sample],
@@ -78,9 +93,11 @@ def _run_fold(
     heads: int,
     gnn_threshold: float,
     seed: int,
+    pfg_cache: PfgCache,
 ) -> dict[str, Any]:
     """Train + evaluate one leave-one-out fold."""
-    test_samples = samples_from_manifests(test_manifests)
+    test_samples = samples_from_manifests(test_manifests, cache=pfg_cache)
+    cached_build = _build_from_cache(pfg_cache)
 
     # Mix synthetic vulnerable samples into training to maintain vuln knowledge
     mixed_train = [*train_samples, *synth_vuln_samples]
@@ -108,16 +125,19 @@ def _run_fold(
         test_manifests,
         gnn_detector(finetuned_model, threshold=gnn_threshold),
         detector_name="gnn_finetuned",
+        build=cached_build,
     )
     ft_validated_report = evaluate_corpus(
         test_manifests,
         validated_gnn_detector(finetuned_model, threshold=gnn_threshold),
         detector_name="gnn_finetuned_validated",
+        build=cached_build,
     )
     rule_report = evaluate_corpus(
         test_manifests,
         rule_detector,
         detector_name="rule_baseline",
+        build=cached_build,
     )
 
     # --- Also run synthetic-only model on holdout ---
@@ -130,11 +150,13 @@ def _run_fold(
         test_manifests,
         gnn_detector(synth_model, threshold=gnn_threshold),
         detector_name="gnn_synthetic_only",
+        build=cached_build,
     )
     synth_validated_report = evaluate_corpus(
         test_manifests,
         validated_gnn_detector(synth_model, threshold=gnn_threshold),
         detector_name="gnn_synthetic_validated",
+        build=cached_build,
     )
 
     return {
@@ -162,8 +184,8 @@ def run_bridging_experiment(
     corpus_root: str | Path,
     *,
     synth_model_path: str | Path | None = None,
-    n_synth_apps: int = 5,
-    synth_vuln_ratio: float = 0.8,
+    n_synth_apps: int = 12,
+    synth_vuln_ratio: float = 0.85,
     epochs: int = 15,
     lr: float = 5e-5,
     focal_gamma: float = 2.0,
@@ -171,7 +193,7 @@ def run_bridging_experiment(
     hidden_dim: int = 64,
     num_layers: int = 3,
     heads: int = 4,
-    gnn_threshold: float = 0.5,
+    gnn_threshold: float = 0.35,
     seed: int = 0,
     out_dir: str | Path = "artifacts",
 ) -> BridgingExperimentOutputs:
@@ -201,11 +223,11 @@ def run_bridging_experiment(
     heads = hp.get("heads", heads)
 
     # --- Step 2: Generate synthetic vuln "anchors" ---
-    # Small set of synthetic apps with high vuln ratio — keeps vuln knowledge
+    # Larger set of synthetic apps with high vuln ratio — keeps vuln knowledge
     # alive during fine-tuning.  Only vulnerable samples are injected.
     all_synth = generate_realistic_dataset(
         n_apps=n_synth_apps,
-        endpoints_per_app=(15, 30),
+        endpoints_per_app=(25, 45),
         vuln_ratio=synth_vuln_ratio,
         seed=seed + 99,
     )
@@ -224,6 +246,7 @@ def run_bridging_experiment(
     best_fold_f1 = -1.0
     out = Path(out_dir)
     out.mkdir(parents=True, exist_ok=True)
+    pfg_cache: PfgCache = {}
 
     for holdout in groups:
         # Holdout app → test; remaining apps → sample-level 80/20 train/val
@@ -231,7 +254,7 @@ def run_bridging_experiment(
                          if (m.dataset_split_group or m.application) == holdout]
         rest_manifests = [m for m in all_manifests
                          if (m.dataset_split_group or m.application) != holdout]
-        rest_samples = samples_from_manifests(rest_manifests)
+        rest_samples = samples_from_manifests(rest_manifests, cache=pfg_cache)
         rng = __import__("random").Random(seed)
         rng.shuffle(rest_samples)
         n_train = max(1, int(len(rest_samples) * 0.8))
@@ -257,6 +280,7 @@ def run_bridging_experiment(
             heads=heads,
             gnn_threshold=gnn_threshold,
             seed=seed,
+            pfg_cache=pfg_cache,
         )
         model = fold_result.pop("model")
         folds.append(fold_result)
@@ -375,6 +399,7 @@ def _render_report(metrics: dict[str, Any]) -> str:
         ("Fine-tuned GNN", agg["finetuned"]),
         ("Fine-tuned GNN (validated)", agg["finetuned_validated"]),
         ("Synthetic-only GNN", agg["synthetic_only"]),
+        ("Synthetic-only GNN (validated)", agg["synthetic_validated"]),
         ("Rule baseline", agg["rule_baseline"]),
     ]:
         lines.append(
@@ -395,6 +420,7 @@ def _render_report(metrics: dict[str, Any]) -> str:
             ("finetuned", "Fine-tuned"),
             ("finetuned_validated", "FT+validated"),
             ("synthetic_only", "Synthetic-only"),
+            ("synthetic_validated", "Synth+validated"),
             ("rule_baseline", "Rule"),
         ]:
             r = fold[system_key]

@@ -48,6 +48,24 @@ _VIEWSET_ACTIONS: tuple[tuple[str, str, str], ...] = (
     ("destroy", "DELETE", "{pk}/"),
 )
 
+_GENERIC_CBV_METHODS: dict[str, tuple[str, ...]] = {
+    "ArchiveIndexView": ("get",),
+    "CreateView": ("get", "post"),
+    "DateDetailView": ("get",),
+    "DayArchiveView": ("get",),
+    "DeleteView": ("get", "post"),
+    "DetailView": ("get",),
+    "FormView": ("get", "post"),
+    "ListView": ("get",),
+    "MonthArchiveView": ("get",),
+    "RedirectView": ("get",),
+    "TemplateView": ("get",),
+    "TodayArchiveView": ("get",),
+    "UpdateView": ("get", "post"),
+    "WeekArchiveView": ("get",),
+    "YearArchiveView": ("get",),
+}
+
 _PATH_CONVERTER_RE = re.compile(r"<(?:[a-zA-Z_][a-zA-Z0-9_]*:)?([a-zA-Z_][a-zA-Z0-9_]*)>")
 _RE_NAMED_GROUP_RE = re.compile(r"\(\?P<([a-zA-Z_][a-zA-Z0-9_]*)>[^)]*\)")
 _RE_STRIP = re.compile(r"^\^|\$$")
@@ -232,7 +250,15 @@ def _cbv_methods(class_qualname: str, project_root: Path) -> list[str]:
         for node in cls.body
         if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and node.name in _HTTP_METHODS
     ]
-    return methods
+    if methods:
+        return methods
+    inherited: list[str] = []
+    for base in _class_bases(cls):
+        base_name = base.rsplit(".", 1)[-1]
+        for method in _GENERIC_CBV_METHODS.get(base_name, ()):
+            if method not in inherited:
+                inherited.append(method)
+    return inherited
 
 
 # --- view expression resolution ------------------------------------------
@@ -308,7 +334,7 @@ def _collect_routers(mod: _ModuleIndex) -> dict[str, _Router]:
             call = stmt.value
             if isinstance(call, ast.Call):
                 chain = _attr_chain(call.func)
-                if chain and chain[-1] in {"DefaultRouter", "SimpleRouter"}:
+                if chain and (chain[-1] in {"DefaultRouter", "SimpleRouter"} or chain[-1].endswith("Router")):
                     routers[stmt.targets[0].id] = _Router(stmt.targets[0].id, [])
         # router.register("prefix", ViewSet)
         if isinstance(stmt, ast.Expr) and isinstance(stmt.value, ast.Call):
@@ -492,29 +518,81 @@ def _parse_urls_module(
     aliases = _build_alias_map(tree, _module_dotted(project_root, file_path))
     mod = _ModuleIndex(file_path, package, tree, aliases)
     routers = _collect_routers(mod)
+    local_pattern_values = _local_pattern_values(tree)
 
     out: list[DiscoveredEndpoint] = []
 
     # urlpatterns may be `urlpatterns = [...]`, `i18n_patterns(...)`,
     # `urlpatterns += [...]`, or `[...] + router.urls`.
     assert isinstance(tree, ast.Module)
-    for stmt in tree.body:
-        val = _urlpatterns_value(stmt)
+    for stmt in _iter_urlpattern_statements(tree.body):
+        val = _urlpatterns_value(stmt, local_pattern_values)
         if val is None:
             continue
-        for rname in _router_url_names(val, routers):
-            out.extend(_emit_router_endpoints(routers[rname], prefix, project_root, file_path))
-        for sub in ast.walk(val):
-            if isinstance(sub, ast.Call):
-                out.extend(_parse_pattern_call(sub, prefix, mod, project_root, visited, routers))
+        pattern_exprs = _expand_pattern_expr(
+            val,
+            mod,
+            project_root,
+            local_pattern_values,
+            seen_pattern_refs=set(),
+        )
+        for pattern_expr, pattern_mod in pattern_exprs:
+            pattern_routers = routers if pattern_mod.path == mod.path else _collect_routers(pattern_mod)
+            for rname in _router_url_names(pattern_expr, pattern_routers):
+                out.extend(
+                    _emit_router_endpoints(
+                        pattern_routers[rname], prefix, project_root, pattern_mod.path
+                    )
+                )
+            for sub in ast.walk(pattern_expr):
+                if isinstance(sub, ast.Call):
+                    out.extend(
+                        _parse_pattern_call(
+                            sub, prefix, pattern_mod, project_root, visited, pattern_routers
+                        )
+                    )
 
     return out
 
 
-def _urlpatterns_value(stmt: ast.stmt) -> ast.AST | None:
+def _local_pattern_values(tree: ast.AST) -> dict[str, ast.AST]:
+    values: dict[str, ast.AST] = {}
+    if not isinstance(tree, ast.Module):
+        return values
+    for stmt in tree.body:
+        if isinstance(stmt, ast.Assign):
+            for target in stmt.targets:
+                if isinstance(target, ast.Name):
+                    values[target.id] = stmt.value
+        elif isinstance(stmt, ast.AnnAssign) and isinstance(stmt.target, ast.Name):
+            values[stmt.target.id] = stmt.value
+    return values
+
+
+def _iter_urlpattern_statements(stmts: list[ast.stmt]) -> list[ast.stmt]:
+    out: list[ast.stmt] = []
+    for stmt in stmts:
+        out.append(stmt)
+        if isinstance(stmt, ast.If):
+            out.extend(_iter_urlpattern_statements(stmt.body))
+            out.extend(_iter_urlpattern_statements(stmt.orelse))
+    return out
+
+
+def _urlpatterns_value(stmt: ast.stmt, local_values: dict[str, ast.AST] | None = None) -> ast.AST | None:
     if isinstance(stmt, ast.Assign) and any(
         isinstance(t, ast.Name) and t.id == "urlpatterns" for t in stmt.targets
     ):
+        if isinstance(stmt.value, ast.Name) and local_values is not None:
+            return local_values.get(stmt.value.id, stmt.value)
+        return stmt.value
+    if (
+        isinstance(stmt, ast.AnnAssign)
+        and isinstance(stmt.target, ast.Name)
+        and stmt.target.id == "urlpatterns"
+    ):
+        if isinstance(stmt.value, ast.Name) and local_values is not None:
+            return local_values.get(stmt.value.id, stmt.value)
         return stmt.value
     if (
         isinstance(stmt, ast.AugAssign)
@@ -523,6 +601,97 @@ def _urlpatterns_value(stmt: ast.stmt) -> ast.AST | None:
     ):
         return stmt.value
     return None
+
+
+def _expand_pattern_expr(
+    expr: ast.AST,
+    mod: _ModuleIndex,
+    project_root: Path,
+    local_values: dict[str, ast.AST],
+    *,
+    seen_pattern_refs: set[str],
+) -> list[tuple[ast.AST, _ModuleIndex]]:
+    """Expand URL pattern list aliases and concatenations into walkable AST nodes."""
+    if isinstance(expr, (ast.List, ast.Tuple)):
+        return [(elt, mod) for elt in expr.elts]
+    if isinstance(expr, ast.BinOp) and isinstance(expr.op, ast.Add):
+        return [
+            *_expand_pattern_expr(
+                expr.left,
+                mod,
+                project_root,
+                local_values,
+                seen_pattern_refs=seen_pattern_refs,
+            ),
+            *_expand_pattern_expr(
+                expr.right,
+                mod,
+                project_root,
+                local_values,
+                seen_pattern_refs=seen_pattern_refs,
+            ),
+        ]
+    if isinstance(expr, ast.Name):
+        if expr.id in local_values:
+            ref = f"{mod.package}.{expr.id}"
+            if ref in seen_pattern_refs:
+                return []
+            seen_pattern_refs.add(ref)
+            return _expand_pattern_expr(
+                local_values[expr.id],
+                mod,
+                project_root,
+                local_values,
+                seen_pattern_refs=seen_pattern_refs,
+            )
+        imported = mod.aliases.get(expr.id)
+        if imported is not None:
+            return _expand_imported_pattern_expr(
+                imported,
+                project_root,
+                seen_pattern_refs=seen_pattern_refs,
+            )
+    return [(expr, mod)]
+
+
+def _expand_imported_pattern_expr(
+    dotted_ref: str,
+    project_root: Path,
+    *,
+    seen_pattern_refs: set[str],
+) -> list[tuple[ast.AST, _ModuleIndex]]:
+    if dotted_ref in seen_pattern_refs:
+        return []
+    seen_pattern_refs.add(dotted_ref)
+
+    parts = dotted_ref.split(".")
+    for split_at in range(len(parts) - 1, 0, -1):
+        module_dotted = ".".join(parts[:split_at])
+        name = ".".join(parts[split_at:])
+        if "." in name:
+            continue
+        tree = _read_module(project_root, module_dotted)
+        if tree is None:
+            continue
+        values = _local_pattern_values(tree)
+        expr = values.get(name)
+        if expr is None:
+            continue
+        aliases = _build_alias_map(tree, module_dotted)
+        imported_mod = _ModuleIndex(
+            path=project_root / Path(*module_dotted.split(".")).with_suffix(".py"),
+            package=module_dotted.rsplit(".", 1)[0],
+            tree=tree,
+            aliases=aliases,
+        )
+        return _expand_pattern_expr(
+            expr,
+            imported_mod,
+            project_root,
+            values,
+            seen_pattern_refs=seen_pattern_refs,
+        )
+    return []
 
 
 def _parse_pattern_call(
@@ -560,7 +729,14 @@ def _parse_pattern_call(
             router = _router_from_include(second, routers)
             if router is not None:
                 return _emit_router_endpoints(router, full_route, project_root, mod.path)
-            return _handle_include(second, full_route, project_root, visited, source_file=mod.path)
+            return _handle_include(
+                second,
+                full_route,
+                project_root,
+                visited,
+                source_file=mod.path,
+                mod=mod,
+            )
 
     # Regular view reference.
     qual, is_class = _resolve_view_expr(second, mod)
@@ -622,11 +798,19 @@ def _handle_include(
     visited: set[Path],
     *,
     source_file: Path,
+    mod: _ModuleIndex | None = None,
 ) -> list[DiscoveredEndpoint]:
     if not call.args:
         return []
     arg = call.args[0]
-    dotted = _const_str(arg)
+    local_patterns = _local_patterns_from_include_arg(arg, mod)
+    if local_patterns is not None and mod is not None:
+        out: list[DiscoveredEndpoint] = []
+        for sub in ast.walk(local_patterns):
+            if isinstance(sub, ast.Call):
+                out.extend(_parse_pattern_call(sub, prefix, mod, project_root, visited, {}))
+        return out
+    dotted = _dotted_include_arg(arg, mod)
     if dotted is None:
         return []
     if dotted == "db_file_storage.urls":
@@ -668,7 +852,7 @@ def _included_urlconf_files(project_root: Path, urls_files: list[Path]) -> set[P
                 continue
             if not node.args:
                 continue
-            dotted = _const_str(node.args[0])
+            dotted = _dotted_include_arg(node.args[0], mod)
             if dotted is None:
                 continue
             rel = Path(*dotted.split("."))
@@ -688,6 +872,41 @@ def _router_from_include(call: ast.Call, routers: dict[str, _Router]) -> _Router
         base = arg.value
         if isinstance(base, ast.Name):
             return routers.get(base.id)
+    return None
+
+
+def _local_patterns_from_include_arg(arg: ast.AST, mod: _ModuleIndex | None) -> ast.AST | None:
+    """Resolve include((patterns_var, app_name), namespace=...) inside a URLConf."""
+    if mod is None or not isinstance(arg, ast.Tuple) or not arg.elts:
+        return None
+    first = arg.elts[0]
+    if not isinstance(first, ast.Name):
+        return None
+    assert isinstance(mod.tree, ast.Module)
+    for stmt in mod.tree.body:
+        if isinstance(stmt, ast.Assign) and any(
+            isinstance(target, ast.Name) and target.id == first.id for target in stmt.targets
+        ):
+            return stmt.value
+    return None
+
+
+def _dotted_include_arg(arg: ast.AST, mod: _ModuleIndex | None = None) -> str | None:
+    """Return the dotted URLConf from include("x.urls") or include(("x.urls", app))."""
+    dotted = _const_str(arg)
+    if dotted is not None:
+        return dotted
+    if isinstance(arg, ast.Tuple) and arg.elts:
+        return _dotted_include_arg(arg.elts[0], mod)
+    chain = _attr_chain(arg)
+    if chain is None:
+        return None
+    joined = ".".join(chain)
+    if mod is None:
+        return joined
+    if len(chain) == 1 and chain[0] in mod.aliases:
+        return mod.aliases[chain[0]]
+    return joined
     return None
 
 
@@ -728,7 +947,7 @@ def discover_endpoints(project_root: str | Path) -> list[DiscoveredEndpoint]:
     if top.exists():
         endpoints = _parse_urls_module(root, top, "", visited)
     else:
-        urls_files = sorted(root.rglob("urls.py"))
+        urls_files = sorted({*root.rglob("urls.py"), *root.rglob("*urlconf.py")})
         included_urlconfs = _included_urlconf_files(root, urls_files)
         root_urlconfs = [p for p in urls_files if p.resolve() not in included_urlconfs]
         if not root_urlconfs:

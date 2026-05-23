@@ -11,9 +11,9 @@ from dataclasses import dataclass
 
 from pfg.detectors.rule_baseline import detect_all
 from pfg.eval.manifest import Manifest
-from pfg.extractors.django.build import build_pfg
 from pfg.pfg.nodes import Label, LabelKind, NodeType, VulnSubtype
 from pfg.synthetic.generator import Sample
+from pfg.training.corpus import PfgCache, pfg_from_manifest
 
 
 @dataclass(frozen=True)
@@ -27,6 +27,7 @@ def pseudo_labeled_samples_from_manifest(
     manifest: Manifest,
     *,
     config: WeakSupervisionConfig | None = None,
+    cache: PfgCache | None = None,
 ) -> list[Sample]:
     """Return rule-derived vulnerable samples for one training manifest.
 
@@ -37,7 +38,7 @@ def pseudo_labeled_samples_from_manifest(
     cfg = config or WeakSupervisionConfig()
     if not cfg.enabled or manifest.framework != "django":
         return []
-    pfg = build_pfg(manifest.project_root, application=manifest.application)
+    pfg = pfg_from_manifest(manifest, cache=cache)
     expected = {finding.endpoint_id for finding in manifest.expected_findings}
     intentional = set(manifest.intentional_public_endpoints)
     endpoint_ids = {node.id for node in pfg.nodes if node.type == NodeType.ENDPOINT.value}
@@ -75,10 +76,11 @@ def pseudo_labeled_samples_from_manifests(
     manifests: list[Manifest],
     *,
     config: WeakSupervisionConfig | None = None,
+    cache: PfgCache | None = None,
 ) -> list[Sample]:
     samples: list[Sample] = []
     for manifest in manifests:
-        samples.extend(pseudo_labeled_samples_from_manifest(manifest, config=config))
+        samples.extend(pseudo_labeled_samples_from_manifest(manifest, config=config, cache=cache))
     return samples
 
 

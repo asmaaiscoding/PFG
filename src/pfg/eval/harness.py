@@ -124,27 +124,92 @@ def gnn_detector(model: Any, *, threshold: float = 0.5) -> Detector:
     return _detect
 
 
-def validated_gnn_detector(model: Any, *, threshold: float = 0.5) -> Detector:
-    """GNN detector with structural post-validation.
+def _gnn_detector_with_thresholds(
+    model: Any, *, thresholds: dict[str, float]
+) -> Detector:
+    """Like gnn_detector but uses per-subtype confidence thresholds."""
+    import torch
+    from torch.nn import functional as F  # noqa: N812
 
-    Applies the same model as ``gnn_detector`` but suppresses predictions
-    that lack structural evidence:
+    from pfg.pfg.features import EDGE_FEATURE_DIM, NODE_FEATURE_DIM, encode_edge, encode_node
+    from pfg.pfg.nodes import NodeType
+    from pfg.synthetic.dataset import _SUBTYPE_INDEX
 
-    * MISSING_AUTH: suppressed unless the endpoint reaches at least one
-      ``data_access`` node via call edges.
-    * MISSING_ROLE: suppressed unless the endpoint reaches a privileged
-      mutation without an endpoint role/role middleware.
-    * IDOR: suppressed unless the endpoint has route params AND an
-      ``identifier_flow`` edge reaches a ``data_access`` node without
-      an ownership predicate.
-    * TENANT_ISOLATION_FAILURE: suppressed unless tenant-scoped data is
-      reachable without a tenant predicate.
-    * OBJECT_LEVEL_PERMISSION_BYPASS: suppressed unless model-level permission
-      evidence exists and object-level permission evidence is absent.
+    inv_subtype = {v: k for k, v in _SUBTYPE_INDEX.items()}
+    default_threshold = 0.5
 
-    This hybridises the GNN's learned patterns with the rule baseline's
-    structural constraints, keeping the GNN's recall advantage while
-    reducing false positives.
+    def _detect(pfg: PFG) -> set[Prediction]:
+        if not pfg.nodes:
+            return set()
+        try:
+            from torch_geometric.data import Data
+        except ImportError as exc:  # pragma: no cover
+            raise RuntimeError("torch_geometric required for gnn_detector") from exc
+
+        node_id_to_idx = {n.id: i for i, n in enumerate(pfg.nodes)}
+        x = torch.tensor([encode_node(n) for n in pfg.nodes], dtype=torch.float32)
+        assert x.shape[1] == NODE_FEATURE_DIM
+        if pfg.edges:
+            src = [node_id_to_idx[e.src] for e in pfg.edges]
+            dst = [node_id_to_idx[e.dst] for e in pfg.edges]
+            edge_index = torch.tensor([src, dst], dtype=torch.long)
+            edge_attr = torch.tensor(
+                [encode_edge(e.type) for e in pfg.edges], dtype=torch.float32
+            )
+            assert edge_attr.shape[1] == EDGE_FEATURE_DIM
+        else:
+            edge_index = torch.zeros((2, 0), dtype=torch.long)
+            edge_attr = torch.zeros((0, EDGE_FEATURE_DIM), dtype=torch.float32)
+
+        endpoint_ids = [n.id for n in pfg.nodes if n.type == NodeType.ENDPOINT.value]
+        preds: set[Prediction] = set()
+        model.eval()
+        with torch.no_grad():
+            for ep_id in endpoint_ids:
+                target_mask = torch.zeros(len(pfg.nodes), dtype=torch.float32)
+                target_mask[node_id_to_idx[ep_id]] = 1.0
+                data = Data(
+                    x=x.clone(),
+                    edge_index=edge_index.clone(),
+                    edge_attr=edge_attr.clone(),
+                    target_mask=target_mask,
+                )
+                logits = model(data)
+                probs = F.softmax(logits, dim=-1).squeeze(0)
+                cls = int(probs.argmax().item())
+                conf = float(probs[cls].item())
+                name = inv_subtype.get(cls, "SAFE")
+                if name not in {"SAFE", "INTENTIONALLY_PUBLIC"}:
+                    subtype_threshold = thresholds.get(name, default_threshold)
+                    if conf >= subtype_threshold:
+                        preds.add((ep_id, name))
+        return preds
+
+    return _detect
+
+
+def validated_gnn_detector(
+    model: Any,
+    *,
+    threshold: float | None = None,
+    per_subtype_thresholds: dict[str, float] | None = None,
+) -> Detector:
+    """GNN detector with structural post-validation and per-subtype thresholds.
+
+    Applies the same model as ``gnn_detector`` but:
+    1. Uses per-subtype confidence thresholds (lower for rare subtypes).
+    2. Suppresses predictions that lack *minimal* structural evidence —
+       relaxed compared to the rule baseline to preserve GNN recall.
+
+    Structural filters (relaxed):
+    * MISSING_AUTH: endpoint reaches any data_access OR any service node.
+    * MISSING_ROLE: endpoint lacks role check AND reaches data (any op).
+    * IDOR: endpoint has route params AND reaches data_access via call OR
+      id_flow without ownership predicate.
+    * TENANT_ISOLATION_FAILURE: reachable data is tenant-scoped (by flag OR
+      name heuristic) without a tenant predicate.
+    * OBJECT_LEVEL_PERMISSION_BYPASS: endpoint has route params and reaches
+      data without object-level permission.
     """
     from collections import deque
 
@@ -158,9 +223,41 @@ def validated_gnn_detector(model: Any, *, threshold: float = 0.5) -> Detector:
         OperationType,
     )
 
-    base = gnn_detector(model, threshold=threshold)
+    # Default per-subtype thresholds: lower for rare/hard subtypes
+    _DEFAULT_THRESHOLDS: dict[str, float] = {
+        "MISSING_AUTH": 0.50,
+        "MISSING_ROLE": 0.40,
+        "IDOR": 0.45,
+        "TENANT_ISOLATION_FAILURE": 0.35,
+        "OBJECT_LEVEL_PERMISSION_BYPASS": 0.35,
+        "COMBINED": 0.45,
+    }
+    if per_subtype_thresholds is not None:
+        thresholds = {**_DEFAULT_THRESHOLDS, **per_subtype_thresholds}
+    elif threshold is not None:
+        thresholds = {k: threshold for k in _DEFAULT_THRESHOLDS}
+    else:
+        thresholds = _DEFAULT_THRESHOLDS
 
-    def _reaches_data_access(pfg: PFG, ep_id: str) -> bool:
+    # Tenant name heuristic (same as rule baseline)
+    _TENANT_TERMS = {
+        "tenant", "organization", "organisation", "org",
+        "workspace", "realm", "project", "account",
+    }
+
+    def _looks_tenant_scoped_validator(ep_attrs: EndpointAttrs, da_attrs: DataAccessAttrs) -> bool:
+        param_and_entity = " ".join([
+            *ep_attrs.route_params,
+            da_attrs.target_entity,
+            *da_attrs.user_controlled_params_in_query,
+        ]).lower()
+        return da_attrs.requires_tenant_isolation or any(
+            term in param_and_entity for term in _TENANT_TERMS
+        )
+
+    base = _gnn_detector_with_thresholds(model, thresholds=thresholds)
+
+    def _reaches_data_or_service(pfg: PFG, ep_id: str) -> bool:
         """True if ep_id reaches any data_access node via call edges."""
         call_types = {EdgeType.CALL.value}
         seen: set[str] = {ep_id}
@@ -172,48 +269,56 @@ def validated_gnn_detector(model: Any, *, threshold: float = 0.5) -> Detector:
                     seen.add(e.dst)
                     q.append(e.dst)
         idx = pfg.node_index()
-        return any(idx[n].type == NodeType.DATA_ACCESS.value for n in seen if n in idx)
+        return any(
+            idx[n].type == NodeType.DATA_ACCESS.value
+            for n in seen if n in idx and n != ep_id
+        )
 
     def _has_unprotected_id_flow(pfg: PFG, ep_id: str) -> bool:
-        """True if endpoint has route params and id_flow reaches data_access w/o ownership."""
+        """True if endpoint has route params and reaches data_access w/o ownership
+        via identifier_flow edges (strict — matches rule baseline logic)."""
         idx = pfg.node_index()
         ep = idx.get(ep_id)
         if ep is None:
             return False
         if not isinstance(ep.attrs, EndpointAttrs) or not ep.attrs.route_params:
             return False
-        # BFS via identifier_flow
+        # BFS via identifier_flow only
         flow_types = {EdgeType.IDENTIFIER_FLOW.value}
-        seen: set[str] = {ep_id}
+        seen_flow: set[str] = {ep_id}
         q: deque[str] = deque([ep_id])
         while q:
             cur = q.popleft()
             for e in pfg.edges:
-                if e.src == cur and e.type in flow_types and e.dst not in seen:
-                    seen.add(e.dst)
+                if e.src == cur and e.type in flow_types and e.dst not in seen_flow:
+                    seen_flow.add(e.dst)
                     q.append(e.dst)
-        for nid in seen:
+        for nid in seen_flow:
             n = idx.get(nid)
             if n is None or n.type != NodeType.DATA_ACCESS.value:
                 continue
-            if (
-                isinstance(n.attrs, DataAccessAttrs)
-                and not n.attrs.has_ownership_predicate
-                and not n.attrs.requires_tenant_isolation
-                and not n.attrs.requires_object_permission
-            ):
+            if isinstance(n.attrs, DataAccessAttrs) and not n.attrs.has_ownership_predicate:
                 return True
         return False
 
     def _has_missing_role_shape(pfg: PFG, ep_id: str) -> bool:
+        """Endpoint lacks role check and reaches a privileged data operation
+        OR endpoint performs a write-method HTTP operation reaching data."""
         idx = pfg.node_index()
         ep = idx.get(ep_id)
         if ep is None or not isinstance(ep.attrs, EndpointAttrs):
             return False
-        if ep.attrs.role_check_present or ep.attrs.required_role not in {"NONE", None}:
+        if ep.attrs.role_check_present:
+            return False
+        ep_role = ep.attrs.required_role
+        ep_role_v = ep_role.value if hasattr(ep_role, "value") else ep_role
+        if ep_role_v not in {"NONE", None}:
             return False
         reached = _reachable_call_nodes(pfg, ep_id)
         privileged = {OperationType.WRITE.value, OperationType.UPDATE.value, OperationType.DELETE.value}
+        http_method = ep.attrs.http_method
+        http_v = http_method.value if hasattr(http_method, "value") else http_method
+        is_mutation = http_v in {"POST", "PUT", "PATCH", "DELETE"}
         for nid in reached:
             n = idx.get(nid)
             if n is None:
@@ -223,6 +328,9 @@ def validated_gnn_detector(model: Any, *, threshold: float = 0.5) -> Detector:
             if isinstance(n.attrs, DataAccessAttrs):
                 op = n.attrs.operation if isinstance(n.attrs.operation, str) else n.attrs.operation.value
                 if op in privileged:
+                    return True
+                # Also flag if HTTP method is mutation and reaches any data
+                if is_mutation:
                     return True
         return False
 
@@ -238,31 +346,40 @@ def validated_gnn_detector(model: Any, *, threshold: float = 0.5) -> Detector:
         return seen
 
     def _has_unscoped_tenant_access(pfg: PFG, ep_id: str) -> bool:
+        """Uses flag-based detection + name heuristics with route-param guard."""
         idx = pfg.node_index()
         ep = idx.get(ep_id)
         if ep is None or not isinstance(ep.attrs, EndpointAttrs):
             return False
         if ep.attrs.tenant_check_present:
             return False
+        ep_attrs = ep.attrs
         for nid in _reachable_call_nodes(pfg, ep_id):
             n = idx.get(nid)
             attrs = getattr(n, "attrs", None)
             if isinstance(attrs, MiddlewareAttrs) and attrs.guard_type == GuardType.TENANT_CHECK.value:
                 return False
-            if (
-                isinstance(attrs, DataAccessAttrs)
-                and attrs.requires_tenant_isolation
-                and not attrs.has_tenant_predicate
-            ):
-                return True
+            if isinstance(attrs, DataAccessAttrs):
+                # Strict: flag-based (no route_params required)
+                if attrs.requires_tenant_isolation and not attrs.has_tenant_predicate:
+                    return True
+                # Heuristic: name-based tenant scoping without predicate
+                # Requires route params or user-controlled params to reduce FPs
+                if (
+                    not attrs.requires_tenant_isolation
+                    and _looks_tenant_scoped_validator(ep_attrs, attrs)
+                    and not attrs.has_tenant_predicate
+                    and (ep_attrs.route_params or attrs.user_controlled_params_in_query)
+                ):
+                    return True
         return False
 
     def _has_object_permission_bypass_shape(pfg: PFG, ep_id: str) -> bool:
+        """Relaxed: route params + reaches data without object permission.
+        Does NOT require model_permission_check_present on endpoint."""
         idx = pfg.node_index()
         ep = idx.get(ep_id)
         if ep is None or not isinstance(ep.attrs, EndpointAttrs):
-            return False
-        if not ep.attrs.model_permission_check_present:
             return False
         if ep.attrs.object_permission_check_present:
             return False
@@ -273,12 +390,12 @@ def validated_gnn_detector(model: Any, *, threshold: float = 0.5) -> Detector:
             attrs = getattr(n, "attrs", None)
             if isinstance(attrs, MiddlewareAttrs) and attrs.guard_type == GuardType.OBJECT_PERMISSION_CHECK.value:
                 return False
-            if (
-                isinstance(attrs, DataAccessAttrs)
-                and attrs.requires_object_permission
-                and not attrs.has_object_permission_check
-            ):
-                return True
+            if isinstance(attrs, DataAccessAttrs):
+                if attrs.requires_object_permission and not attrs.has_object_permission_check:
+                    return True
+                # Also flag if model_permission is on endpoint but no obj check
+                if ep.attrs.model_permission_check_present and not attrs.has_ownership_predicate:
+                    return True
         return False
 
     def _detect(pfg: PFG) -> set[Prediction]:
@@ -286,7 +403,7 @@ def validated_gnn_detector(model: Any, *, threshold: float = 0.5) -> Detector:
         validated: set[Prediction] = set()
         for ep_id, subtype in raw:
             if subtype == "MISSING_AUTH":
-                if _reaches_data_access(pfg, ep_id):
+                if _reaches_data_or_service(pfg, ep_id):
                     validated.add((ep_id, subtype))
             elif subtype == "MISSING_ROLE":
                 if _has_missing_role_shape(pfg, ep_id):
@@ -301,9 +418,9 @@ def validated_gnn_detector(model: Any, *, threshold: float = 0.5) -> Detector:
                 if _has_object_permission_bypass_shape(pfg, ep_id):
                     validated.add((ep_id, subtype))
             else:
-                # COMBINED: keep if either condition is met
+                # COMBINED: keep if any condition is met
                 if (
-                    _reaches_data_access(pfg, ep_id)
+                    _reaches_data_or_service(pfg, ep_id)
                     or _has_unprotected_id_flow(pfg, ep_id)
                     or _has_unscoped_tenant_access(pfg, ep_id)
                     or _has_object_permission_bypass_shape(pfg, ep_id)

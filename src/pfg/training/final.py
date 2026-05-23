@@ -26,7 +26,7 @@ from pfg.pfg.nodes import EndpointAttrs
 from pfg.synthetic import label_to_targets, pfg_to_pyg
 from pfg.synthetic.generator import Sample
 from pfg.training.augmentation import AugmentationConfig, augmented_samples_from_manifests
-from pfg.training.corpus import samples_from_manifests, split_manifests_by_group
+from pfg.training.corpus import PfgCache, samples_from_manifests, split_manifests_by_group
 from pfg.training.trainer import TrainResult, pretrain_path_analyzer, train_path_analyzer_split
 from pfg.training.weak_supervision import (
     WeakSupervisionConfig,
@@ -330,11 +330,20 @@ def run_final_experiment(
     if not train_m or not val_m or not test_m:
         raise ValueError("Need non-empty train/val/test split groups for final experiment")
 
-    train_samples = samples_from_manifests(train_m)
-    val_samples = samples_from_manifests(val_m)
-    test_samples = samples_from_manifests(test_m)
+    pfg_cache: PfgCache = {}
+
+    def cached_build(root: Path):
+        resolved = str(Path(root).resolve())
+        for (cached_root, _application), pfg in pfg_cache.items():
+            if cached_root == resolved:
+                return pfg
+        return build_pfg(root)
+
+    train_samples = samples_from_manifests(train_m, cache=pfg_cache)
+    val_samples = samples_from_manifests(val_m, cache=pfg_cache)
+    test_samples = samples_from_manifests(test_m, cache=pfg_cache)
     augmented_train_samples = augmented_samples_from_manifests(
-        train_m, config=AugmentationConfig(max_per_manifest=augmentation_cap)
+        train_m, config=AugmentationConfig(max_per_manifest=augmentation_cap), cache=pfg_cache
     )
     weak_train_samples = pseudo_labeled_samples_from_manifests(
         train_m,
@@ -342,6 +351,7 @@ def run_final_experiment(
             enabled=weak_supervision,
             max_per_manifest=weak_supervision_cap,
         ),
+        cache=pfg_cache,
     )
 
     # --- Model 1: real-only (baseline) ---
@@ -409,7 +419,9 @@ def run_final_experiment(
     save_model(augmented_model, augmented_model_path, kind="path", hparams=hparams)
     save_model(twostage_model, twostage_model_path, kind="path", hparams=hparams)
 
-    rule_report = evaluate_corpus(test_m, rule_detector, detector_name="rule_baseline")
+    rule_report = evaluate_corpus(
+        test_m, rule_detector, detector_name="rule_baseline", build=cached_build
+    )
     real_only_metrics = _train_result_to_dict(real_only_result)
     augmented_metrics = _train_result_to_dict(augmented_result)
     twostage_metrics = _train_result_to_dict(twostage_result)

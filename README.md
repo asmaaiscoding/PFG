@@ -97,9 +97,12 @@ via BFS over call and identifier_flow edges. Dimensions 28–35 were added for t
 
 ### Progression (28-dim / 6-class → 36-dim / 8-class)
 
-The model evolved through two phases. Phase 1 used a 6-class/28-dim contract;
-Phase 2 expanded to 8-class/36-dim to support tenant isolation and object-level
-permission bypass detection.
+The model evolved through two phases. Phase 1 used a 6-class/28-dim contract on
+a 3-app corpus; Phase 2 expanded to 8-class/36-dim with structural
+post-validation and was evaluated on an 8-app corpus (4,232 endpoints, 12
+advisory-backed labels across 6 split groups).
+
+#### Phase 1 (3-app corpus: wger, nautobot, django-mdeditor)
 
 | Approach                            |    TP |     FP |    FN |         P |         R |        F1 |
 | ----------------------------------- | ----: | -----: | ----: | --------: | --------: | --------: |
@@ -108,38 +111,48 @@ permission bypass detection.
 | Bridging 28-dim (synth → fine-tune) |     4 |     22 |     2 |     0.154 |     0.667 |     0.250 |
 | + auth extractor fix                |     6 |     25 |     0 |     0.194 |     1.000 |     0.324 |
 | + ownership + post-validation (v7)  |     6 |     10 |     0 |     0.375 |     1.000 |     0.545 |
-| **36-dim FT + validated (v8i)**     | **5** |  **7** | **1** | **0.417** | **0.833** | **0.556** |
-| **36-dim Synth + validated (v8i)**  | **6** | **11** | **0** | **0.353** | **1.000** | **0.522** |
+| 36-dim FT + validated (v8i)         |     5 |      7 |     1 |     0.417 |     0.833 |     0.556 |
+| 36-dim Synth + validated (v8i)      |     6 |     11 |     0 |     0.353 |     1.000 |     0.522 |
 | Rule baseline (5 rules)             |     6 |      6 |     0 |     0.500 |     1.000 |     0.667 |
 
-The 8-class model achieves **higher F1 (0.556)** than the previous 6-class best
-(0.545) with fewer false positives (7 vs 10), while adding detection capability
-for two new vulnerability subtypes. The Synth+validated system provides a
-zero-fine-tuning alternative with perfect recall.
+#### Phase 2 (8-app corpus, LOAO cross-validation)
 
-### Current Per-App Breakdown
+| System                          |    TP |     FP |    FN |       P |       R |      F1 |
+| ------------------------------- | ----: | -----: | ----: | ------: | ------: | ------: |
+| Synth raw GNN                   |    10 |  3,983 |     2 |   0.003 |   0.833 |   0.005 |
+| FT raw GNN                      |     5 |  1,377 |     7 |   0.004 |   0.417 |   0.007 |
+| FT + validated                  |     5 |     77 |     7 |   0.061 |   0.417 |   0.106 |
+| **Synth + validated**           |   **8** | **116** | **4** | **0.065** | **0.667** | **0.118** |
+| Rule baseline (5 rules)         |     8 |     81 |     4 |   0.090 |   0.667 |   0.158 |
 
-FT + validated (F1 = 0.556):
+Key findings:
+- The GNN+validator system matches the rule baseline on recall (66.7%)
+- Structural post-validation reduces raw GNN FPs by **97%** (3,983 → 116)
+- Synthetic pre-training outperforms fine-tuning (8 vs 5 TP) — the tiny real
+  corpus cannot teach vulnerability patterns, but synthetic pre-training can
+- The GNN achieves 75% of rule baseline F1 with identical recall
+- The GNN outperforms rules on individual apps (e.g., sentry: 34 FP vs 36)
 
-| App             |  TP |  FP |  FN |
-| --------------- | --: | --: | --: |
-| wger            |   3 |   1 |   0 |
-| nautobot        |   2 |   6 |   0 |
-| django-mdeditor |   0 |   0 |   1 |
+### Current Per-App Breakdown (8-app, Synth+validated)
 
-Synth + validated (F1 = 0.522, 100% recall):
+| App                    | CVE            | Subtype         |  TP |  FP |  FN |
+| ---------------------- | -------------- | --------------- | --: | --: | --: |
+| django-mdeditor        | CVE-2025-13030 | MISSING_AUTH    |   1 |   0 |   0 |
+| nautobot (50263)       | CVE-2023-50263 | IDOR            |   2 |  10 |   0 |
+| nautobot (51649)       | CVE-2023-51649 | IDOR            |   1 |   9 |   0 |
+| pretix                 | CVE-2025-14881 | IDOR            |   0 |  19 |   1 |
+| sentry                 | CVE-2026-26004 | MISSING_ROLE    |   1 |  34 |   0 |
+| weblate                | CVE-2026-27457 | TENANT/OBJ_PERM |   0 |   7 |   2 |
+| wger (27839)           | CVE-2026-27839 | IDOR            |   3 |  33 |   0 |
+| wger (40474)           | CVE-2026-40474 | MISSING_ROLE    |   0 |   4 |   1 |
 
-| App             |  TP |  FP |  FN |
-| --------------- | --: | --: | --: |
-| wger            |   3 |   5 |   0 |
-| nautobot        |   2 |   6 |   0 |
-| django-mdeditor |   1 |   0 |   0 |
-
-The FT+validated system misses one django-mdeditor MISSING_AUTH endpoint in its
-fold because fine-tuning on IDOR-heavy wger data shifts the decision boundary.
-The Synth+validated system catches it without fine-tuning. The remaining FPs are
-structurally valid — they share graph-level signatures with real vulnerabilities.
-See [docs/gnn-improvement-report.md](docs/gnn-improvement-report.md) for details.
+The undetected cases (FN):
+- **pretix**: IDOR where the identifier flow is non-trivial (nested organizer scope)
+- **weblate**: Tenant isolation failure on a list endpoint with no route params — the
+  structural validator cannot distinguish `Addon.objects.all()` from a legitimate
+  unscoped queryset without semantic understanding of model hierarchy
+- **wger-40474**: Missing role check on gym config edit — lacks distinguishing
+  structural signals (no privileged operation type, no write HTTP method)
 
 ## Current Real-Data Strategy
 
@@ -163,8 +176,20 @@ Third-party source code is not vendored in this repo. It is fetched into ignored
 
 ## Real Corpus Entries
 
-The real corpus currently contains three advisory-backed Django targets, with
-independent split groups for app-level evaluation.
+The real corpus contains **8 advisory-backed Django targets** covering 5 CVE
+types across 6 independent split groups (4,232 endpoints, 12 labeled
+vulnerabilities).
+
+| Application         | CVE             | CWE      | Subtype                | Endpoints | Labels |
+| ------------------- | --------------- | -------- | ---------------------- | --------: | -----: |
+| wger (27839)        | CVE-2026-27839  | CWE-639  | IDOR                   |       494 |      3 |
+| wger (40474)        | CVE-2026-40474  | CWE-863  | MISSING_ROLE           |       494 |      1 |
+| nautobot (50263)    | CVE-2023-50263  | CWE-200  | IDOR                   |     1,716 |      2 |
+| nautobot (51649)    | CVE-2023-51649  | CWE-639  | IDOR                   |     1,716 |      1 |
+| django-mdeditor     | CVE-2025-13030  | CWE-306  | MISSING_AUTH           |         5 |      1 |
+| pretix              | CVE-2025-14881  | CWE-639  | IDOR                   |       808 |      1 |
+| sentry              | CVE-2026-26004  | CWE-863  | MISSING_ROLE           |       269 |      1 |
+| weblate             | CVE-2026-27457  | CWE-862  | TENANT/OBJ_PERM        |       296 |      2 |
 
 ### wger CVE-2026-27839
 
@@ -283,30 +308,30 @@ Run the bridging experiment (leave-one-app-out):
 
 ```bash
 uv run pfg bridging-experiment benchmarks/realworld \
-  --out-dir artifacts/bridging-v8i \
-  --synth-model artifacts/synthetic-v6/path_analyzer_synthetic.pt
+  --out-dir artifacts/bridging-8class-v2 \
+  --synth-model artifacts/synthetic-8class-v2/path_analyzer_synthetic.pt
 ```
 
-Current three-corpus validation summary:
+Current eight-app corpus validation summary:
 
 ```text
-SAFE=465 MISSING_AUTH=3 MISSING_ROLE=0 IDOR=3
-TENANT_ISOLATION_FAILURE=0 OBJECT_LEVEL_PERMISSION_BYPASS=0
+SAFE=4220 MISSING_AUTH=1 MISSING_ROLE=2 IDOR=7
+TENANT_ISOLATION_FAILURE=1 OBJECT_LEVEL_PERMISSION_BYPASS=1
 COMBINED=0 INTENTIONALLY_PUBLIC=0
-split groups: django-mdeditor, nautobot, wger
-total endpoints: 471, vulnerable: 6 (1.3%)
+split groups: django-mdeditor, nautobot, wger, pretix, sentry, weblate
+total endpoints: 4232, vulnerable: 12 (0.28%)
 ```
 
-Bridging experiment output (FT + validated GNN, 8-class/36-dim):
+Bridging experiment output (Synth + validated GNN, 8-class/36-dim, LOAO CV):
 
 ```text
-TP=5  FP=7  FN=1  P=0.417  R=0.833  F1=0.556
+TP=8  FP=116  FN=4  P=0.065  R=0.667  F1=0.118
 ```
 
-Bridging experiment output (Synth + validated GNN, 8-class/36-dim):
+Bridging experiment output (FT + validated GNN, 8-class/36-dim, LOAO CV):
 
 ```text
-TP=6  FP=11  FN=0  P=0.353  R=1.000  F1=0.522
+TP=5  FP=77  FN=7  P=0.061  R=0.417  F1=0.106
 ```
 
 Train Model B on a real corpus once at least three independent split groups
@@ -373,23 +398,24 @@ per-fold checkpoints/reports under:
 artifacts/final/<holdout-group>/
 ```
 
-The aggregate result (holdout = wger, 8-class/36-dim model):
+The aggregate result (8-app LOAO cross-validation, 36-dim/8-class model):
 
-| System                         |  TP |  FP |  FN | Vuln P | Vuln R | Vuln F1 |
-| ------------------------------ | --: | --: | --: | -----: | -----: | ------: |
-| PathAnalyzer real-only         |   0 |   0 |   3 |  0.000 |  0.000 |   0.000 |
-| PathAnalyzer real + augmented  |   2 |  12 |   1 |  0.143 |  0.667 |   0.235 |
-| PathAnalyzer two-stage         |   0 |   3 |   3 |  0.000 |  0.000 |   0.000 |
-| **Bridging FT + validated**    |   5 |   7 |   1 |  0.417 |  0.833 |   0.556 |
-| **Bridging Synth + validated** |   6 |  11 |   0 |  0.353 |  1.000 |   0.522 |
-| Rule baseline                  |   6 |   6 |   0 |  0.500 |  1.000 |   0.667 |
+| System                          |  TP |    FP |  FN | Vuln P | Vuln R | Vuln F1 |
+| ------------------------------- | --: | ----: | --: | -----: | -----: | ------: |
+| Synth raw GNN                   |  10 | 3,983 |   2 |  0.003 |  0.833 |   0.005 |
+| FT raw GNN                      |   5 | 1,377 |   7 |  0.004 |  0.417 |   0.007 |
+| FT + validated                  |   5 |    77 |   7 |  0.061 |  0.417 |   0.106 |
+| **Synth + validated**           |   8 |   116 |   4 |  0.065 |  0.667 |   0.118 |
+| Rule baseline                   |   8 |    81 |   4 |  0.090 |  0.667 |   0.158 |
 
-Interpretation: real-only training fails on this tiny corpus (predicts
-everything SAFE). Real-derived augmentation recovers partial recall (2/3 wger
-IDORs) but with low precision. **Synthetic bridging is the clear winner** —
-the synthetic pretrained model learns vulnerability patterns that the tiny real
-corpus cannot teach, and structural post-validation then removes most false
-positives. The bridging strategy is the main contribution.
+Interpretation: The structural post-validator reduces GNN false positives by
+97% (3,983 → 116) while preserving 80% of true positives (10 → 8). Synthetic
+pre-training outperforms fine-tuning on this sparse real corpus (8 vs 5 TP)
+because the GNN learns vulnerability patterns from controlled synthetic graphs
+that the tiny real corpus cannot teach. **The Synth+validated system matches
+rule baseline recall (66.7%) and achieves 75% of its F1 score**, demonstrating
+that the PFG representation captures sufficient structure for learned
+vulnerability detection.
 
 ## External Tool Comparison
 
@@ -458,18 +484,16 @@ real corpus:
 
 ## Next Data Milestones
 
-The corpus has three independent split groups. The 8-class model now supports
-five vulnerability subtypes but the real corpus only covers two (MISSING_AUTH,
-IDOR). Priority targets for corpus expansion:
+The corpus covers 5 of 6 vulnerability subtypes with advisory-backed labels.
+Priority targets for further corpus expansion:
 
-1. **More IDOR apps** — different from wger, to test IDOR generalization on
-   held-out IDOR data.
-2. **MISSING_ROLE (CWE-863)** — apps where an authenticated user can access
-   admin-only endpoints due to missing role enforcement.
-3. **TENANT_ISOLATION_FAILURE (CWE-1220)** — multi-tenant apps where one
-   tenant's data leaks to another.
-4. **OBJECT_LEVEL_PERMISSION_BYPASS (CWE-285)** — apps with DRF object
-   permissions that are missing or bypassed.
+1. **More MISSING_ROLE apps** — diverse admin-bypass patterns beyond sentry/wger
+   to improve FT recall on this subtype.
+2. **TENANT apps with structural signals** — cases where tenant isolation
+   failure is detectable via route params or model flags (not just queryset
+   semantics).
+3. **Spring framework apps** — the Spring extractor is implemented but the real
+   corpus currently only contains Django targets.
 
 All new entries must be Django or Spring (supported extractors), have a public
 CVE/GHSA advisory, and have a clear fix commit for before/after comparison.

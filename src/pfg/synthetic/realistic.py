@@ -259,6 +259,11 @@ class _AppBuilder:
             role = "USER"
             is_public = False
             ownership_check = True
+            # Variant: some TENANT vulns DON'T use tenant routes but access
+            # tenant-scoped data via generic API endpoints (like weblate/sentry)
+            if rng.random() < 0.4:
+                route, params = self._gen_route(idx, True)  # generic route with pk
+                ownership_check = False
         elif vuln_type == "OBJECT_LEVEL_PERMISSION_BYPASS":
             requires_auth = True
             role = "USER"
@@ -391,16 +396,55 @@ class _AppBuilder:
         elif vuln_type in (
             "TENANT_ISOLATION_FAILURE",
             "OBJECT_LEVEL_PERMISSION_BYPASS",
-        ) and params and reachable_data:
+        ) and params:
+            # Create dedicated data node if no reachable_data exists
+            if not reachable_data:
+                tenant_entities = ["Organization", "Workspace", "Tenant", "Project"]
+                entity = rng.choice(tenant_entities) if vuln_type == "TENANT_ISOLATION_FAILURE" else rng.choice(_ENTITIES)
+                op = rng.choice(["READ", "WRITE"])
+                dedicated_did = _sid(f"data__{self.app_name}__{vuln_type.lower()}_{entity}__ep{idx}")
+                self._add_node({
+                    "id": dedicated_did,
+                    "type": "data_access",
+                    "attrs": {
+                        "operation": op,
+                        "target_entity": entity,
+                        "has_ownership_predicate": False,
+                        "ownership_predicate_type": "NONE",
+                        "user_controlled_params_in_query": [params[0]],
+                    },
+                })
+                if chain:
+                    self._add_edge(chain[-1], dedicated_did, "call")
+                else:
+                    self._add_edge(eid, dedicated_did, "call")
+                reachable_data = [dedicated_did]
             for did in reachable_data[:2]:
                 self._add_edge(eid, did, "identifier_flow", param=params[0])
                 for n in self.nodes:
                     if n["id"] == did:
                         if vuln_type == "TENANT_ISOLATION_FAILURE":
-                            n["attrs"]["has_ownership_predicate"] = True
-                            n["attrs"]["ownership_predicate_type"] = "DIRECT"
-                            n["attrs"]["requires_tenant_isolation"] = True
-                            n["attrs"]["has_tenant_predicate"] = False
+                            # Two sub-variants for TENANT:
+                            # A) requires_tenant_isolation flag is True (explicit)
+                            # B) entity/param name signals tenant scope (heuristic)
+                            use_flag = rng.random() < 0.6
+                            if use_flag:
+                                n["attrs"]["has_ownership_predicate"] = True
+                                n["attrs"]["ownership_predicate_type"] = "DIRECT"
+                                n["attrs"]["requires_tenant_isolation"] = True
+                                n["attrs"]["has_tenant_predicate"] = False
+                            else:
+                                # Name-heuristic variant: entity name contains
+                                # tenant terms but flag is NOT set.
+                                tenant_entities = [
+                                    "Organization", "Workspace", "Tenant",
+                                    "Project", "Realm", "Account",
+                                ]
+                                n["attrs"]["target_entity"] = rng.choice(tenant_entities)
+                                n["attrs"]["has_ownership_predicate"] = False
+                                n["attrs"]["ownership_predicate_type"] = "NONE"
+                                n["attrs"]["requires_tenant_isolation"] = False
+                                n["attrs"]["has_tenant_predicate"] = False
                             self._add_edge(eid, did, "tenant_flow", param=params[0])
                         elif vuln_type == "OBJECT_LEVEL_PERMISSION_BYPASS":
                             n["attrs"]["has_ownership_predicate"] = False

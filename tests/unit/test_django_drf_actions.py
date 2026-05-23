@@ -68,6 +68,41 @@ def test_drf_router_custom_actions_are_discovered_with_prefix(tmp_path: Path) ->
         "/api/v2/meal/{pk}/nutritional_values/",
         "app.views.MealViewSet.nutritional_values",
     ) in got
+
+
+def test_custom_drf_router_subclass_name_is_discovered(tmp_path: Path) -> None:
+    _write_project(tmp_path)
+    (tmp_path / "app" / "routers.py").write_text(
+        """
+class WeblateRouter:
+    pass
+""",
+        encoding="utf-8",
+    )
+    (tmp_path / "urls.py").write_text(
+        """
+from django.urls import include, path
+from app.routers import WeblateRouter
+from app import views
+
+router = WeblateRouter()
+router.register("meal", views.MealViewSet, basename="meal")
+
+urlpatterns = [
+    path("api/v2/", include(router.urls)),
+]
+""",
+        encoding="utf-8",
+    )
+
+    found = discover_endpoints(tmp_path)
+    got = {(e.http_method, e.route, e.handler_qualname) for e in found}
+
+    assert (
+        "GET",
+        "/api/v2/meal/{pk}/nutritional_values/",
+        "app.views.MealViewSet.nutritional_values",
+    ) in got
     assert (
         "POST",
         "/api/v2/meal/{pk}/recalculate/",
@@ -95,3 +130,51 @@ def test_self_get_object_action_marks_endpoint_ownership(tmp_path: Path) -> None
     endpoint = next(n for n in pfg.endpoints() if n.id == eid)
 
     assert endpoint.attrs.ownership_check_present is True
+
+
+def test_viewset_helper_permission_check_does_not_protect_inherited_retrieve(tmp_path: Path) -> None:
+    (tmp_path / "app").mkdir()
+    (tmp_path / "urls.py").write_text(
+        """
+from django.urls import include, path
+from rest_framework import routers
+from app import views
+
+router = routers.DefaultRouter()
+router.register("addons", views.AddonViewSet, basename="addon")
+
+urlpatterns = [
+    path("api/", include(router.urls)),
+]
+""",
+        encoding="utf-8",
+    )
+    (tmp_path / "app" / "__init__.py").write_text("", encoding="utf-8")
+    (tmp_path / "app" / "views.py").write_text(
+        """
+from rest_framework import viewsets
+
+
+class Addon:
+    objects = None
+
+
+class AddonViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Addon.objects.all()
+
+    def perm_check(self, request, instance):
+        if not request.user.has_perm("project.edit", instance.project):
+            self.permission_denied(request)
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perm_check(request, instance)
+""",
+        encoding="utf-8",
+    )
+
+    pfg = build_pfg(tmp_path, application="helper_permission")
+    retrieve_id = _endpoint_id("GET", "/api/addons/{pk}/")
+    retrieve = next(n for n in pfg.endpoints() if n.id == retrieve_id)
+
+    assert retrieve.attrs.object_permission_check_present is False

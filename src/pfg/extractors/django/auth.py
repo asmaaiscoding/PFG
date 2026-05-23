@@ -252,11 +252,23 @@ def _function_permission_signals(fn: ast.AST | None) -> tuple[bool, bool, bool]:
 
 
 def _class_permission_signals(cls: ast.ClassDef) -> tuple[bool, bool, bool]:
+    lifecycle_methods = {
+        "dispatch",
+        "initial",
+        "get_queryset",
+        "get_object",
+        "get_permissions",
+        "check_permissions",
+        "check_object_permissions",
+        "has_permission",
+    }
     model_permission = False
     object_permission = False
     tenant_check = False
     for node in cls.body:
         if not isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            continue
+        if node.name not in lifecycle_methods:
             continue
         m, o, t = _function_permission_signals(node)
         model_permission = model_permission or m

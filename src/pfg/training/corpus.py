@@ -3,13 +3,33 @@
 from __future__ import annotations
 
 import random
-from collections.abc import Sequence
+from collections.abc import MutableMapping, Sequence
 
 from pfg.eval.manifest import ExpectedFinding, Manifest
 from pfg.extractors.django.build import build_pfg
 from pfg.pfg.graph import PFG
 from pfg.pfg.nodes import Label, LabelKind, NodeType, VulnSubtype
 from pfg.synthetic.generator import Sample
+
+PfgCacheKey = tuple[str, str]
+PfgCache = MutableMapping[PfgCacheKey, PFG]
+
+
+def _manifest_cache_key(manifest: Manifest) -> PfgCacheKey:
+    return (str(manifest.project_root.resolve()), manifest.application)
+
+
+def pfg_from_manifest(manifest: Manifest, *, cache: PfgCache | None = None) -> PFG:
+    if manifest.framework != "django":
+        raise ValueError(f"{manifest.application}: only django corpus samples are supported")
+    if cache is None:
+        return build_pfg(manifest.project_root, application=manifest.application)
+    key = _manifest_cache_key(manifest)
+    pfg = cache.get(key)
+    if pfg is None:
+        pfg = build_pfg(manifest.project_root, application=manifest.application)
+        cache[key] = pfg
+    return pfg
 
 
 def _label_for_endpoint(
@@ -43,17 +63,16 @@ def samples_from_pfg(pfg: PFG, manifest: Manifest) -> list[Sample]:
     return samples
 
 
-def samples_from_manifest(manifest: Manifest) -> list[Sample]:
-    if manifest.framework != "django":
-        raise ValueError(f"{manifest.application}: only django corpus samples are supported")
-    pfg = build_pfg(manifest.project_root, application=manifest.application)
-    return samples_from_pfg(pfg, manifest)
+def samples_from_manifest(manifest: Manifest, *, cache: PfgCache | None = None) -> list[Sample]:
+    return samples_from_pfg(pfg_from_manifest(manifest, cache=cache), manifest)
 
 
-def samples_from_manifests(manifests: Sequence[Manifest]) -> list[Sample]:
+def samples_from_manifests(
+    manifests: Sequence[Manifest], *, cache: PfgCache | None = None
+) -> list[Sample]:
     samples: list[Sample] = []
     for manifest in manifests:
-        samples.extend(samples_from_manifest(manifest))
+        samples.extend(samples_from_manifest(manifest, cache=cache))
     return samples
 
 
@@ -117,6 +136,9 @@ def split_manifests_by_group(
 
 
 __all__ = [
+    "PfgCache",
+    "PfgCacheKey",
+    "pfg_from_manifest",
     "samples_from_manifest",
     "samples_from_manifests",
     "samples_from_pfg",

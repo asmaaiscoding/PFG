@@ -63,7 +63,7 @@ def fetch_manifest_source(manifest: Manifest, *, force: bool = False) -> Path:
 
     if not root.exists():
         root.parent.mkdir(parents=True, exist_ok=True)
-        _run_git(["clone", manifest.repo_url, str(root)])
+        _run_git(["clone", "--filter=blob:none", manifest.repo_url, str(root)])
     elif force:
         _run_git(["fetch", "--all", "--tags"], cwd=root)
 

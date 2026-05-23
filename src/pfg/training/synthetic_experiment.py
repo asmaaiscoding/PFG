@@ -22,11 +22,13 @@ from pfg.eval.harness import (
     rule_detector,
 )
 from pfg.eval.manifest import Manifest, discover_manifests
+from pfg.extractors.django.build import build_pfg
 from pfg.models.checkpoint import save_model
 from pfg.models.gnn import PathAnalyzer
 from pfg.synthetic import NUM_SUBTYPES, label_to_targets, pfg_to_pyg, samples_to_pyg
 from pfg.synthetic.generator import Sample
 from pfg.synthetic.realistic import generate_realistic_dataset
+from pfg.training.corpus import PfgCache, samples_from_manifests
 from pfg.training.trainer import TrainResult, _class_weights, _split, _train_loop
 
 CLASS_NAMES = [
@@ -148,10 +150,11 @@ def _predict_samples(model: PathAnalyzer, samples: list[Sample]) -> list[dict[st
 def _predict_real_samples(
     model: PathAnalyzer,
     manifests: list[Manifest],
+    *,
+    cache: PfgCache | None = None,
 ) -> list[dict[str, Any]]:
     """Run GNN predictions on all real endpoints from manifests."""
-    from pfg.training.corpus import samples_from_manifests
-    real_samples = samples_from_manifests(manifests)
+    real_samples = samples_from_manifests(manifests, cache=cache)
     return _predict_samples(model, real_samples)
 
 
@@ -242,15 +245,28 @@ def run_synthetic_experiment(
 
     # --- Step 5: Evaluate on ALL real data ---
     all_manifests = discover_manifests(corpus_root)
-    rule_report = evaluate_corpus(all_manifests, rule_detector, detector_name="rule_baseline")
+    pfg_cache: PfgCache = {}
+
+    def cached_build(root: Path):
+        resolved = str(Path(root).resolve())
+        for (cached_root, _application), pfg in pfg_cache.items():
+            if cached_root == resolved:
+                return pfg
+        return build_pfg(root)
+
+    # Also get per-endpoint predictions on real data. This loads each real PFG
+    # once and lets all detector evaluations reuse those parsed graphs.
+    real_predictions = _predict_real_samples(model, all_manifests, cache=pfg_cache)
+
+    rule_report = evaluate_corpus(
+        all_manifests, rule_detector, detector_name="rule_baseline", build=cached_build
+    )
     gnn_report = evaluate_corpus(
         all_manifests,
         gnn_detector(model, threshold=gnn_threshold),
         detector_name="gnn_synthetic",
+        build=cached_build,
     )
-
-    # Also get per-endpoint predictions on real data
-    real_predictions = _predict_real_samples(model, all_manifests)
 
     # --- Step 6: Assemble metrics ---
     synth_metrics = _train_result_to_dict(synth_result)

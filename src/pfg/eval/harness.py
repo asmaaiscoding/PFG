@@ -398,24 +398,83 @@ def validated_gnn_detector(
                     return True
         return False
 
+    def _structural_fallback(pfg: PFG, ep_id: str, subtype: str) -> bool:
+        """Trust GNN prediction based on endpoint-level features alone when
+        the call graph doesn't reach data nodes (reachable_data_count=0).
+
+        Very restrictive: only fires for high-confidence patterns to avoid
+        mass FP introduction on endpoints with unresolved call graphs.
+        """
+        idx = pfg.node_index()
+        ep = idx.get(ep_id)
+        if ep is None or not isinstance(ep.attrs, EndpointAttrs):
+            return False
+        attrs = ep.attrs
+        # Only apply fallback when no data nodes are reachable
+        if _reaches_data_or_service(pfg, ep_id):
+            return False
+        route = attrs.route.lower() if attrs.route else ""
+        if subtype == "IDOR":
+            # Only for top-level download/attachment routes (not admin panels or APIs)
+            _DOWNLOAD_TERMS = ("download", "attachment")
+            _EXCLUDED_PREFIXES = ("/control/", "/admin/", "/manage/", "/api/")
+            return (
+                bool(attrs.route_params)
+                and any(t in route for t in _DOWNLOAD_TERMS)
+                and not any(route.startswith(p) for p in _EXCLUDED_PREFIXES)
+                and not attrs.object_permission_check_present
+                and not attrs.ownership_check_present
+            )
+        if subtype == "MISSING_AUTH":
+            # Only for API endpoints that lack auth entirely
+            return (
+                route.startswith("/api/")
+                and not attrs.requires_auth
+                and not attrs.is_intentionally_public
+            )
+        if subtype in ("OBJECT_LEVEL_PERMISSION_BYPASS", "COMBINED"):
+            # API endpoints with route params but no auth at all — only for
+            # simple routes (few segments) to avoid admin-panel endpoints
+            segments = [s for s in route.split("/") if s and not s.startswith("{")]
+            return (
+                route.startswith("/api/")
+                and bool(attrs.route_params)
+                and not attrs.requires_auth
+                and not attrs.is_intentionally_public
+                and len(segments) <= 3
+            )
+        if subtype == "MISSING_ROLE":
+            # Write method to admin-sounding route without admin role
+            http_v = attrs.http_method
+            if hasattr(http_v, "value"):
+                http_v = http_v.value
+            _ADMIN_ROUTE_TERMS = ("admin", "config", "settings", "manage", "staff")
+            return (
+                attrs.requires_auth
+                and not attrs.role_check_present
+                and http_v in ("POST", "PUT", "PATCH", "DELETE")
+                and any(t in route for t in _ADMIN_ROUTE_TERMS)
+            )
+        return False
+
     def _detect(pfg: PFG) -> set[Prediction]:
         raw = base(pfg)
         validated: set[Prediction] = set()
         for ep_id, subtype in raw:
             if subtype == "MISSING_AUTH":
-                if _reaches_data_or_service(pfg, ep_id):
+                if _reaches_data_or_service(pfg, ep_id) or _structural_fallback(pfg, ep_id, subtype):
                     validated.add((ep_id, subtype))
             elif subtype == "MISSING_ROLE":
-                if _has_missing_role_shape(pfg, ep_id):
+                if _has_missing_role_shape(pfg, ep_id) or _structural_fallback(pfg, ep_id, subtype):
                     validated.add((ep_id, subtype))
             elif subtype == "IDOR":
-                if _has_unprotected_id_flow(pfg, ep_id):
+                if _has_unprotected_id_flow(pfg, ep_id) or _structural_fallback(pfg, ep_id, subtype):
                     validated.add((ep_id, subtype))
             elif subtype == "TENANT_ISOLATION_FAILURE":
-                if _has_unscoped_tenant_access(pfg, ep_id):
+                if _has_unscoped_tenant_access(pfg, ep_id) or _structural_fallback(pfg, ep_id, subtype):
                     validated.add((ep_id, subtype))
             elif subtype == "OBJECT_LEVEL_PERMISSION_BYPASS":
-                if _has_object_permission_bypass_shape(pfg, ep_id):
+                if _has_object_permission_bypass_shape(pfg, ep_id) or _structural_fallback(pfg, ep_id, subtype):
                     validated.add((ep_id, subtype))
             else:
                 # COMBINED: keep if any condition is met
@@ -424,6 +483,7 @@ def validated_gnn_detector(
                     or _has_unprotected_id_flow(pfg, ep_id)
                     or _has_unscoped_tenant_access(pfg, ep_id)
                     or _has_object_permission_bypass_shape(pfg, ep_id)
+                    or _structural_fallback(pfg, ep_id, subtype)
                 ):
                     validated.add((ep_id, subtype))
         return validated

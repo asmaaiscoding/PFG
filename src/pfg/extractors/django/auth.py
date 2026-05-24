@@ -58,6 +58,7 @@ _DRF_PERM_CLASSES: dict[str, tuple[bool, Role, bool]] = {
     "DjangoModelPermissions": (True, Role.USER, False),
     "DjangoModelPermissionsOrAnonReadOnly": (False, Role.USER, False),
     "DjangoObjectPermissions": (True, Role.USER, False),
+    "NoPermission": (True, Role.ADMIN, False),
 }
 
 _ADMIN_NAME_HINTS = ("Admin", "Staff", "Superuser", "Billing", "Owner")
@@ -518,6 +519,8 @@ _SETTINGS_FILES: tuple[str, ...] = (
     "settings.py",
     "settings_global.py",
     "conf/settings.py",
+    "conf/server.py",
+    "settings/base.py",
 )
 
 # Regex to match DEFAULT_PERMISSION_CLASSES in a REST_FRAMEWORK dict.

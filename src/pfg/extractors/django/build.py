@@ -473,7 +473,7 @@ def build_pfg(
         _dpc_re = __import__("re").compile(
             r"""['"]DEFAULT_PERMISSION_CLASSES['"]\s*:\s*[\(\[\{]\s*['"]([^'"]+)['"]"""
         )
-        _settings_names = ("settings.py", "settings_global.py", "conf/settings.py")
+        _settings_names = ("settings.py", "settings_global.py", "conf/settings.py", "conf/server.py", "settings/base.py")
         for settings_rel in _settings_names:
             for candidate in root.rglob(settings_rel):
                 try:

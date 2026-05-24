@@ -191,6 +191,40 @@ def _function_calls_self_get_object(fn: ast.AST) -> bool:
     return False
 
 
+def _function_has_ownership_guard(fn: ast.AST) -> bool:
+    """Detect FBV ownership patterns like `obj.user != request.user` or
+    `filter(user=request.user)` inside a function body."""
+    for node in ast.walk(fn):
+        # Pattern 1: comparison involving request.user and an object attribute
+        # e.g. `if set_obj.get_owner_object().user != request.user:`
+        if isinstance(node, ast.Compare):
+            all_parts = [node.left] + list(node.comparators)
+            has_request_user = False
+            has_obj_user = False
+            for part in all_parts:
+                src = ast.dump(part)
+                if "request" in src and "user" in src:
+                    has_request_user = True
+                elif "user" in src or "owner" in src or "author" in src:
+                    has_obj_user = True
+            if has_request_user and has_obj_user:
+                return True
+        # Pattern 2: ORM filter(user=request.user) or get(user=request.user)
+        if isinstance(node, ast.Call):
+            func = node.func
+            func_name = None
+            if isinstance(func, ast.Attribute):
+                func_name = func.attr
+            if func_name in ("filter", "get", "exclude", "get_object_or_404"):
+                for kw in node.keywords:
+                    if kw.arg and ("user" in kw.arg or "owner" in kw.arg or "author" in kw.arg):
+                        # Check if value references request.user
+                        val_src = ast.dump(kw.value)
+                        if "request" in val_src and "user" in val_src:
+                            return True
+    return False
+
+
 def _class_get_queryset_uses_user(tree: ast.AST, class_name: str) -> bool:
     for node in ast.walk(tree):
         if not isinstance(node, ast.ClassDef) or node.name != class_name:
@@ -199,8 +233,30 @@ def _class_get_queryset_uses_user(tree: ast.AST, class_name: str) -> bool:
             if (
                 isinstance(body, (ast.FunctionDef, ast.AsyncFunctionDef))
                 and body.name == "get_queryset"
-                and _function_references_request_user(body)
+                and (_function_references_request_user(body) or _function_filters_by_request(body))
             ):
+                return True
+    return False
+
+
+def _function_filters_by_request(fn: ast.AST) -> bool:
+    """True if the function uses self.request.* (beyond .user) as a filter
+    argument — indicates request-scoped queryset (e.g., self.request.event)."""
+    for node in ast.walk(fn):
+        if not isinstance(node, ast.Call):
+            continue
+        func = node.func
+        if not isinstance(func, ast.Attribute) or func.attr not in ("filter", "get", "exclude"):
+            continue
+        # Check keyword args: value references self.request.*
+        for kw in node.keywords:
+            val_src = ast.dump(kw.value)
+            if "self" in val_src and "request" in val_src:
+                return True
+        # Check positional args too (Q objects etc)
+        for arg in node.args:
+            arg_src = ast.dump(arg)
+            if "self" in arg_src and "request" in arg_src:
                 return True
     return False
 
@@ -358,6 +414,9 @@ def _handler_ownership_check_present(project_root: Path, qual: str) -> bool:
         tree, fn = resolved
         if _function_calls_self_get_object(fn):
             return True
+        # FBV ownership guard: obj.user != request.user or filter(user=request.user)
+        if _function_has_ownership_guard(fn):
+            return True
         parts = qual.split(".")
         if len(parts) >= 3:
             class_name = parts[-2]
@@ -471,9 +530,11 @@ def build_pfg(
     if default_auth is not None and not default_auth.object_permission_check_present:
         from pfg.extractors.django.auth import EndpointAuth as _EA
         _dpc_re = __import__("re").compile(
-            r"""['"]DEFAULT_PERMISSION_CLASSES['"]\s*:\s*[\(\[\{]\s*['"]([^'"]+)['"]"""
+            r"""['"]DEFAULT_PERMISSION_CLASSES['"]\s*:\s*[\(\[\{](?:\s*#[^\n]*)?\s*['"]([^'"]+)['"]"""
         )
         _settings_names = ("settings.py", "settings_global.py", "conf/settings.py", "conf/server.py", "settings/base.py")
+        # Try named settings files first, then all .py files as fallback
+        _found = False
         for settings_rel in _settings_names:
             for candidate in root.rglob(settings_rel):
                 try:
@@ -493,10 +554,33 @@ def build_pfg(
                             object_permission_check_present=True,
                             tenant_check_present=default_auth.tenant_check_present,
                         )
+                    _found = True
                     break
-            else:
-                continue
-            break
+            if _found:
+                break
+        if not _found:
+            _SKIP_DIRS = {"migrations", "tests", "test", "docs", "locale", "locales", "node_modules", ".tox"}
+            for py_file in root.rglob("*.py"):
+                if any(part in _SKIP_DIRS for part in py_file.parts):
+                    continue
+                try:
+                    text = py_file.read_text(encoding="utf-8")
+                except (OSError, UnicodeDecodeError):
+                    continue
+                m = _dpc_re.search(text)
+                if m is not None:
+                    cls_name = m.group(1).rsplit(".", 1)[-1]
+                    if cls_name in obj_perm_classes:
+                        default_auth = _EA(
+                            default_auth.requires_auth,
+                            default_auth.required_role,
+                            default_auth.is_intentionally_public,
+                            role_check_present=default_auth.role_check_present,
+                            model_permission_check_present=default_auth.model_permission_check_present,
+                            object_permission_check_present=True,
+                            tenant_check_present=default_auth.tenant_check_present,
+                        )
+                    break
 
     nodes: list[dict[str, Any]] = []
     edges: list[dict[str, Any]] = []

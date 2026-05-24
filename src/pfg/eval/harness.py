@@ -125,9 +125,15 @@ def gnn_detector(model: Any, *, threshold: float = 0.5) -> Detector:
 
 
 def _gnn_detector_with_thresholds(
-    model: Any, *, thresholds: dict[str, float]
+    model: Any, *, thresholds: dict[str, float], min_margin: float = 0.0
 ) -> Detector:
-    """Like gnn_detector but uses per-subtype confidence thresholds."""
+    """Like gnn_detector but uses per-subtype confidence thresholds and
+    logit-margin filtering.
+
+    min_margin: minimum difference between top logit and 2nd-best logit.
+    If the model is not confident enough (margin < min_margin), the
+    prediction is suppressed.
+    """
     import torch
     from torch.nn import functional as F  # noqa: N812
 
@@ -175,6 +181,13 @@ def _gnn_detector_with_thresholds(
                     target_mask=target_mask,
                 )
                 logits = model(data)
+                # Logit margin check: difference between top-2 logits
+                if min_margin > 0.0:
+                    logits_sq = logits.squeeze(0)
+                    top2_vals = logits_sq.topk(2).values
+                    margin = float((top2_vals[0] - top2_vals[1]).item())
+                    if margin < min_margin:
+                        continue  # model too uncertain
                 probs = F.softmax(logits, dim=-1).squeeze(0)
                 cls = int(probs.argmax().item())
                 conf = float(probs[cls].item())
@@ -193,12 +206,14 @@ def validated_gnn_detector(
     *,
     threshold: float | None = None,
     per_subtype_thresholds: dict[str, float] | None = None,
+    min_margin: float = 0.0,
 ) -> Detector:
     """GNN detector with structural post-validation and per-subtype thresholds.
 
     Applies the same model as ``gnn_detector`` but:
     1. Uses per-subtype confidence thresholds (lower for rare subtypes).
-    2. Suppresses predictions that lack *minimal* structural evidence —
+    2. Applies logit-margin filtering to suppress uncertain predictions.
+    3. Suppresses predictions that lack *minimal* structural evidence —
        relaxed compared to the rule baseline to preserve GNN recall.
 
     Structural filters (relaxed):
@@ -255,7 +270,7 @@ def validated_gnn_detector(
             term in param_and_entity for term in _TENANT_TERMS
         )
 
-    base = _gnn_detector_with_thresholds(model, thresholds=thresholds)
+    base = _gnn_detector_with_thresholds(model, thresholds=thresholds, min_margin=min_margin)
 
     def _reaches_data_or_service(pfg: PFG, ep_id: str) -> bool:
         """True if ep_id reaches any data_access node via call edges."""
@@ -415,9 +430,9 @@ def validated_gnn_detector(
             return False
         route = attrs.route.lower() if attrs.route else ""
         if subtype == "IDOR":
-            # Only for top-level download/attachment routes (not admin panels or APIs)
+            # Only for top-level download/attachment routes (not admin panels)
             _DOWNLOAD_TERMS = ("download", "attachment")
-            _EXCLUDED_PREFIXES = ("/control/", "/admin/", "/manage/", "/api/")
+            _EXCLUDED_PREFIXES = ("/control/", "/admin/", "/manage/")
             return (
                 bool(attrs.route_params)
                 and any(t in route for t in _DOWNLOAD_TERMS)
@@ -457,10 +472,73 @@ def validated_gnn_detector(
             )
         return False
 
+    # --- Phase 1d: known-safe route suppression ---
+    # Endpoints under these prefixes are staff-only admin panels or internal
+    # tooling — suppress findings to avoid FPs on protected admin routes.
+    _SAFE_ROUTE_PREFIXES = ("/control/", "/debug/", "/internal/", "/_/")
+
+    # Route params that serve as cryptographic authorization tokens — if ALL
+    # route params are token-like, the endpoint is self-authorizing.
+    _TOKEN_PARAM_NAMES = frozenset({
+        "token", "hash", "signed_data", "signature", "nonce", "key",
+        "confirmation_key", "uidb64", "activation_key",
+    })
+
+    # Verification/invite route keywords — when combined with a token param,
+    # the endpoint is self-authorizing (token IS the authorization).
+    _VERIFICATION_KEYWORDS = ("confirm", "recover", "invite", "activate", "verify", "reclaim")
+
+    # Routes that are inherently public (login, search, status).
+    _PUBLIC_ROUTE_SUFFIXES = ("/login/", "/login", "/search/", "/search")
+
+    # Webhook endpoints use shared secrets, not session-based auth.
+    _WEBHOOK_INDICATORS = ("webhook", "/hooks/", "/hooks")
+
+    def _is_known_safe_endpoint(pfg: PFG, ep_id: str) -> bool:
+        """Suppress findings for endpoints that are structurally safe."""
+        idx = pfg.node_index()
+        ep = idx.get(ep_id)
+        if ep is None or not isinstance(ep.attrs, EndpointAttrs):
+            return False
+        attrs = ep.attrs
+        route = attrs.route.lower() if attrs.route else ""
+
+        # Admin/internal panel prefixes
+        if any(route.startswith(p) for p in _SAFE_ROUTE_PREFIXES):
+            return True
+
+        # Token-verified routes: all route params are auth tokens
+        if attrs.route_params:
+            params_lower = {p.lower() for p in attrs.route_params}
+            if params_lower and params_lower.issubset(_TOKEN_PARAM_NAMES):
+                return True
+            # Mixed params: if ANY param is a token AND route indicates
+            # a verification/invite flow, suppress.
+            has_token_param = bool(params_lower & _TOKEN_PARAM_NAMES)
+            if has_token_param and any(kw in route for kw in _VERIFICATION_KEYWORDS):
+                return True
+
+        # Public endpoints (login, search)
+        if any(route.endswith(s) for s in _PUBLIC_ROUTE_SUFFIXES):
+            return True
+
+        # Webhook endpoints (use shared secrets, not session auth)
+        if any(indicator in route for indicator in _WEBHOOK_INDICATORS):
+            return True
+
+        # SDK loaders and static asset endpoints
+        if "sdk-loader" in route or "sdk_loader" in route:
+            return True
+
+        return False
+
     def _detect(pfg: PFG) -> set[Prediction]:
         raw = base(pfg)
         validated: set[Prediction] = set()
         for ep_id, subtype in raw:
+            # Phase 1d: suppress findings on known-safe endpoints
+            if _is_known_safe_endpoint(pfg, ep_id):
+                continue
             if subtype == "MISSING_AUTH":
                 if _reaches_data_or_service(pfg, ep_id) or _structural_fallback(pfg, ep_id, subtype):
                     validated.add((ep_id, subtype))

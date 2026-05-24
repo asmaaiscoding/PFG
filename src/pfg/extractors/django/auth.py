@@ -524,8 +524,9 @@ _SETTINGS_FILES: tuple[str, ...] = (
 )
 
 # Regex to match DEFAULT_PERMISSION_CLASSES in a REST_FRAMEWORK dict.
+# Handles optional Python comments between the bracket and the first string value.
 _DPC_RE = re.compile(
-    r"""['"]DEFAULT_PERMISSION_CLASSES['"]\s*:\s*[\(\[\{]\s*['"]([^'"]+)['"]""",
+    r"""['"]DEFAULT_PERMISSION_CLASSES['"]\s*:\s*[\(\[\{](?:\s*#[^\n]*)?\s*['"]([^'"]+)['"]""",
 )
 
 
@@ -533,8 +534,10 @@ def resolve_default_permission_classes(project_root: Path) -> EndpointAuth | Non
     """Scan settings files for REST_FRAMEWORK DEFAULT_PERMISSION_CLASSES.
 
     Returns an EndpointAuth to use as a project-wide fallback, or None if
-    no setting was found.
+    no setting was found.  Falls back to scanning all .py files if named
+    settings files don't contain the pattern.
     """
+    # First pass: check known settings file names.
     for settings_rel in _SETTINGS_FILES:
         for candidate in project_root.rglob(settings_rel):
             try:
@@ -544,15 +547,34 @@ def resolve_default_permission_classes(project_root: Path) -> EndpointAuth | Non
             m = _DPC_RE.search(text)
             if m is None:
                 continue
-            # Extract the class name (last dotted segment).
             class_name = m.group(1).rsplit(".", 1)[-1]
-            # Resolve effective names: include base classes from project source.
             effective_names = _resolve_permission_class_bases(
                 project_root, m.group(1), class_name
             )
             spec = _from_perm_classes(effective_names, "GET")
             if spec is not None:
                 return spec
+
+    # Fallback: scan ALL .py files for REST_FRAMEWORK dict containing
+    # DEFAULT_PERMISSION_CLASSES (handles unusual locations like spectacular.py).
+    _SKIP_DIRS = {"migrations", "tests", "test", "docs", "locale", "locales", "node_modules", ".tox"}
+    for py_file in project_root.rglob("*.py"):
+        if any(part in _SKIP_DIRS for part in py_file.parts):
+            continue
+        try:
+            text = py_file.read_text(encoding="utf-8")
+        except (OSError, UnicodeDecodeError):
+            continue
+        m = _DPC_RE.search(text)
+        if m is None:
+            continue
+        class_name = m.group(1).rsplit(".", 1)[-1]
+        effective_names = _resolve_permission_class_bases(
+            project_root, m.group(1), class_name
+        )
+        spec = _from_perm_classes(effective_names, "GET")
+        if spec is not None:
+            return spec
     return None
 
 

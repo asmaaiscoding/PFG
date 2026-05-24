@@ -1,0 +1,97 @@
+ghsa_id,cve_id,package,severity,subtype,summary,source_repo,has_fix_commit,published
+GHSA-p3hx-pwf3-j8wr,CVE-2026-44798,nautobot,high,UNKNOWN,Nautobot: GitRepository.current_head field should not be writable through REST API,https://github.com/nautobot/nautobot,yes,2026-05-13
+GHSA-c35q-vxrp-ph26,CVE-2026-44797,nautobot,high,UNKNOWN,Nautobot: Webhook definitions could be used for server-side request forgery (SSRF),https://github.com/nautobot/nautobot,yes,2026-05-13
+GHSA-wpxj-44w3-2j6x,CVE-2026-44794,nautobot,medium,MISSING_AUTH,Nautobot: REST API permits creation of GenericForeignKey references to objects that the user should not be able to refer,https://github.com/nautobot/nautobot,yes,2026-05-13
+GHSA-fqvv-jvhr-g5jc,CVE-2026-42864,firefighter-incident,critical,MISSING_AUTH,FireFighter has unauthenticated SSRF in its Raid jira_bot endpoint that allows IAM credential theft,https://github.com/ManoManoTech/firefighter-incident,yes,2026-05-05
+GHSA-rcmw-7mc7-3rj7,CVE-2026-42354,sentry,critical,UNKNOWN,Sentry's improper authentication on SAML SSO process allows user identity linking,https://github.com/getsentry/sentry,yes,2026-04-30
+GHSA-cwcx-382v-8m9g,CVE-2026-41654,weblate,medium,OBJECT_LEVEL_PERMISSION_BYPASS,Weblate Vulnerable to Authenticated SSRF via Project Backup Import bypassing validate_repo_url,https://github.com/WeblateOrg/weblate,yes,2026-04-30
+GHSA-qp2c-xqv6-phh6,CVE-2025-13030,django-mdeditor,low,MISSING_AUTH,django-mdeditor is Missing Authentication for Critical Function,https://github.com/pylixm/django-mdeditor,yes,2026-04-30
+GHSA-ggmg-cqg6-j45g,CVE-2026-27197,sentry,critical,UNKNOWN,Sentry: Improper authentication on SAML SSO process allows user identity linking,https://github.com/getsentry/sentry,yes,2026-04-17
+GHSA-3382-gw9x-477v,CVE-2026-34393,weblate,high,MISSING_ROLE,Weblate: Privilege escalation in the user API endpoint,https://github.com/WeblateOrg/weblate,yes,2026-04-16
+GHSA-xrwr-fcw6-fmq8,CVE-2026-34244,weblate,medium,MISSING_ROLE,Weblate: SSRF via Project-Level Machinery Configuration ,https://github.com/WeblateOrg/weblate,yes,2026-04-16
+GHSA-mqph-7h49-hqfm,CVE-2026-33220,weblate,medium,IDOR,Weblate: JavaScript localization CDN add-on allows arbitrary local file read outside the repository,https://github.com/WeblateOrg/weblate,yes,2026-04-16
+GHSA-mpf5-3vph-q75r,CVE-2026-33214,weblate,medium,MISSING_AUTH,Weblate: Improper access control for the translation memory in API,https://github.com/WeblateOrg/weblate,yes,2026-04-16
+GHSA-vj45-x3pj-f4w4,CVE-2026-33212,weblate,low,IDOR,Weblate: Improper access control for pending tasks in API,https://github.com/WeblateOrg/weblate,yes,2026-04-16
+GHSA-xppv-4jrx-qf8m,CVE-2026-40474,wger,high,MISSING_AUTH,wger has Broken Access Control in Global Gym Configuration Update Endpoint,https://github.com/wger-project/wger,yes,2026-04-16
+GHSA-xmpv-j7p2-j873,CVE-2026-34203,nautobot,low,OBJECT_LEVEL_PERMISSION_BYPASS,Nautobot: Management of users via REST API does not apply configured password validators,https://github.com/nautobot/nautobot,yes,2026-03-31
+GHSA-p4hh-mq57-gq8x,CVE-2025-70887,signify,high,UNKNOWN,Signify allows a remote attacker to escalate privileges via the signed_data.py and the context.py components,https://github.com/mtrojnar/osslsigncode,yes,2026-03-25
+GHSA-p5cm-246w-84jm,CVE-2026-28222,wagtail,medium,UNKNOWN,Wagtail Vulnerable to Cross-site Scripting in TableBlock class attributes,https://github.com/wagtail/wagtail,yes,2026-03-03
+GHSA-g8gc-6c4h-jg86,CVE-2026-27839,wger,medium,IDOR,wger: IDOR in nutritional_values endpoints exposes private dietary data via direct ORM lookup,https://github.com/wger-project/wger,yes,2026-02-26
+GHSA-42cr-w2gr-m54q,CVE-2026-27838,wger,low,IDOR,wger: IDOR via user-unscoped cache keys on routine API actions exposes workout data,https://github.com/wger-project/wger,yes,2026-02-26
+GHSA-xf68-8hjw-7mpm,CVE-2026-27835,wger,medium,IDOR,wger: IDOR in RepetitionsConfig and MaxRepetitionsConfig API leak other users' workout data,https://github.com/wger-project/wger,yes,2026-02-26
+GHSA-wppc-7cq7-cgfv,CVE-2026-27457,weblate,medium,MISSING_AUTH,Weblate: Missing access control for the AddonViewSet API exposes all addon configurations,https://github.com/WeblateOrg/weblate,yes,2026-02-26
+GHSA-mhr3-j7m5-c7c9,CVE-2026-27794,langgraph-checkpoint,medium,TENANT_ISOLATION_FAILURE,LangGraph: BaseCache Deserialization of Untrusted Data may lead to Remote Code Execution ,https://github.com/langchain-ai/langgraph,yes,2026-02-25
+GHSA-4qvv-g3vr-m348,CVE-2026-25517,wagtail,medium,MISSING_AUTH,Wagtail has improper permission handling on admin preview endpoints,https://github.com/wagtail/wagtail,yes,2026-02-03
+GHSA-339m-4qw5-j2g3,CVE-2026-23946,tendenci,medium,MISSING_ROLE,Tendenci Affected by Authenticated Remote Code Execution via Pickle Deserialization,https://github.com/tendenci/tendenci,yes,2026-01-21
+GHSA-3g2f-4rjg-9385,CVE-2026-21889,weblate,low,MISSING_AUTH,Weblate leaks information via screenshots,https://github.com/WeblateOrg/weblate,yes,2026-01-14
+GHSA-2mq9-hm29-8qch,CVE-2026-22033,label-studio,high,IDOR,Label Studio is vulnerable to full account takeover by chaining Stored XSS + IDOR in User Profile via custom_hotkeys fie,https://github.com/HumanSignal/label-studio,yes,2026-01-12
+GHSA-pmjj-h5jm-vxh4,CVE-2025-14882,pretix,low,IDOR,pretix has Broken Access Control Allowing Cross-User File Access via UUID,https://github.com/pretix/pretix,yes,2025-12-19
+GHSA-r2h2-g46h-8mx8,CVE-2025-14881,pretix,low,IDOR,pretix has Broken Access Control Allowing Cross-User File Access via UUID,https://github.com/pretix/pretix,yes,2025-12-19
+GHSA-3pmh-24wp-xpf4,CVE-2025-67715,Weblate,medium,IDOR,Weblate has Systematic User and Project Enumeration via Broken Authorization in REST API (IDOR),https://github.com/WeblateOrg/weblate,yes,2025-12-15
+GHSA-8m3c-c723-h4p4,CVE-2025-65431,django-allauth,medium,UNKNOWN,django-allauth's Okta and NetIQ implementations used a mutable identifier for authorization decisions,https://github.com/pennersr/django-allauth,yes,2025-12-15
+GHSA-rh67-4c8j-hjjh,CVE-2025-49143,nautobot,medium,MISSING_AUTH,Nautobot may allows uploaded media files to be accessible without authentication,https://github.com/nautobot/nautobot,yes,2025-06-10
+GHSA-wjw6-95h5-4jpx,CVE-2025-49142,nautobot,medium,OBJECT_LEVEL_PERMISSION_BYPASS,Nautobot vulnerable to secrets exposure and data manipulation through Jinja2 templating,https://github.com/nautobot/nautobot,yes,2025-06-10
+GHSA-g9wf-5777-gq43,CVE-2025-24370,django-unicorn,critical,UNKNOWN,"Django-Unicorn Class Pollution Vulnerability, Leading to XSS, DoS and Authentication Bypass",https://github.com/adamghill/django-unicorn,yes,2025-02-03
+GHSA-45rp-q25w-4426,CVE-2024-8113,pretix,high,MISSING_ROLE,pretix Stored Cross-site Scripting vulnerability,https://github.com/pretix/pretix,yes,2024-08-23
+GHSA-jmp3-39vp-fwg8,CVE-2024-39317,wagtail,high,MISSING_AUTH,Wagtail regular expression denial-of-service via search query parsing,https://github.com/wagtail/wagtail,yes,2024-07-11
+GHSA-jfgp-674x-6q4p,CVE-2024-39303,Weblate,low,MISSING_AUTH,Weblate vulnerable to improper sanitization of project backups,https://github.com/WeblateOrg/weblate,yes,2024-07-01
+GHSA-xxfm-vmcf-g33f,CVE-2024-35228,wagtail,medium,UNKNOWN,Improper Handling of Insufficient Permissions in `wagtail.contrib.settings`,https://github.com/wagtail/wagtail,yes,2024-06-02
+GHSA-qmjf-wc2h-6x3q,CVE-2024-36112,nautobot,medium,OBJECT_LEVEL_PERMISSION_BYPASS,Nautobot dynamic-group-members doesn't enforce permission restrictions on member objects,https://github.com/nautobot/nautobot,yes,2024-05-29
+GHSA-r2hr-4v48-fjv3,CVE-2024-34707,nautobot,high,MISSING_ROLE,Nautobot's BANNER_* configuration can be used to inject arbitrary HTML content into Nautobot pages,https://github.com/nautobot/nautobot,yes,2024-05-13
+GHSA-w2v8-php4-p8hc,CVE-2024-32882,wagtail,low,OBJECT_LEVEL_PERMISSION_BYPASS,Wagtail has permission check bypass when editing a model with per-field restrictions through `wagtail.contrib.settings` ,https://github.com/wagtail/wagtail,yes,2024-05-01
+GHSA-jxgr-gcj5-cqqg,CVE-2024-32979,nautobot,high,MISSING_ROLE,nautobot has reflected Cross-site Scripting potential in all object list views,https://github.com/nautobot/nautobot,yes,2024-05-01
+GHSA-m732-wvh2-7cq4,CVE-2024-29199,nautobot,low,MISSING_AUTH,Unauthenticated views may expose information to anonymous users,https://github.com/nautobot/nautobot,yes,2024-03-26
+GHSA-v4xv-795h-rv4h,CVE-2024-23345,nautobot,high,TENANT_ISOLATION_FAILURE,"XSS potential in rendered Markdown fields (comments, description, notes, etc.)",https://github.com/nautobot/nautobot,yes,2024-01-23
+GHSA-vf5m-xrhm-v999,CVE-2023-51649,nautobot,low,OBJECT_LEVEL_PERMISSION_BYPASS,Nautobot missing object-level permissions enforcement when running Job Buttons,https://github.com/nautobot/nautobot,yes,2023-12-22
+GHSA-75mc-3pjc-727q,CVE-2023-50263,nautobot,low,MISSING_AUTH,Unauthenticated db-file-storage views,https://github.com/nautobot/nautobot,yes,2023-12-13
+GHSA-cf9f-wmhp-v4pr,CVE-2023-48705,nautobot,high,OBJECT_LEVEL_PERMISSION_BYPASS,"Cross-site Scripting potential in custom links, job buttons, and computed fields",https://github.com/nautobot/nautobot,yes,2023-11-22
+GHSA-r2hw-74xv-4gqp,CVE-2023-46128,nautobot,high,UNKNOWN,Nautobot vulnerable to exposure of hashed user passwords via REST API,https://github.com/nautobot/nautobot,yes,2023-10-24
+GHSA-fc75-58r8-rm3h,CVE-2023-45809,wagtail,low,UNKNOWN,Wagtail vulnerable to disclosure of user names via admin bulk action views,https://github.com/wagtail/wagtail,yes,2023-10-19
+GHSA-33pv-vcgh-jfg9,CVE-2023-28837,wagtail,medium,UNKNOWN,Wagtail vulnerable to denial-of-service via memory exhaustion when uploading large files,https://github.com/wagtail/wagtail,yes,2023-04-03
+GHSA-5286-f2rf-35c2,CVE-2023-28836,wagtail,high,UNKNOWN,Wagtail vulnerable to stored Cross-site Scripting attack via ModelAdmin views,https://github.com/wagtail/wagtail,yes,2023-04-03
+GHSA-29pr-6jr8-q5jm,CVE-2023-28117,sentry-sdk,high,UNKNOWN,Sentry SDK leaks sensitive session information when `sendDefaultPII` is set to `True`,https://github.com/getsentry/sentry-python,yes,2023-03-21
+GHSA-r8qr-wwg3-2r85,CVE-2023-26051,Saleor,medium,MISSING_ROLE,Saleor has Staff-Authenticated Error Message Information Disclosure Vulnerability via Python Exceptions,https://github.com/saleor/saleor,yes,2023-03-03
+GHSA-46x4-9jmv-jc8p,CVE-2016-2048,django,high,OBJECT_LEVEL_PERMISSION_BYPASS,Django Access Restrictions Bypass ,https://github.com/django/django,yes,2022-05-17
+GHSA-2pqc-gv8q-pvqv,CVE-2015-5081,django-cms,high,UNKNOWN,django-cms CSRF Vulnerability,https://github.com/django-cms/django-cms,yes,2022-05-17
+GHSA-r7w6-p47g-vj53,CVE-2013-0305,Django,medium,UNKNOWN,Django Data leakage via admin history log,https://github.com/django/django,yes,2022-05-05
+GHSA-r5cj-wv24-92p5,CVE-2008-3909,django,high,MISSING_AUTH,Django cross-site request forgery (CSRF) vulnerability,https://github.com/django/django,yes,2022-05-02
+GHSA-mwv2-398h-v489,CVE-2007-0405,Django,medium,IDOR,Django Improper Access Control,https://github.com/django/django,yes,2022-05-01
+GHSA-mcgw-5fhw-3fq8,CVE-2022-0932,saleor,medium,MISSING_AUTH,saleor Missing Authorization vulnerability,https://github.com/saleor/saleor,yes,2022-03-12
+GHSA-xqxm-2rpm-3889,CVE-2022-21683,wagtail,medium,UNKNOWN,Comment reply notifications sent to incorrect users,https://github.com/wagtail/wagtail,yes,2022-01-21
+GHSA-v6rh-hp5x-86rv,CVE-2021-44420,Django,medium,IDOR,Potential bypass of an upstream access control based on URL paths in Django,https://github.com/django/django,yes,2021-12-09
+GHSA-rgcm-rpq9-9cgr,CVE-2020-7964,saleor,medium,MISSING_AUTH,Missing Authentication for Critical Function in Saleor,https://github.com/mirumee/saleor,yes,2021-07-28
+GHSA-p99v-5w3c-jqq9,CVE-2021-33571,Django,high,IDOR,"Django Access Control Bypass possibly leading to SSRF, RFI, and LFI attacks ",https://github.com/django/django,yes,2021-06-10
+GHSA-68w8-qjq3-2gfm,CVE-2021-33203,django,medium,MISSING_ROLE,Path Traversal in Django,https://github.com/django/django,yes,2021-06-10
+GHSA-m6gj-h9gm-gw44,CVE-2020-24583,Django,high,UNKNOWN,Django Incorrect Default Permissions,https://github.com/django/django,yes,2021-03-18
+GHSA-fr28-569j-53c4,CVE-2020-24584,django,medium,UNKNOWN,Django Incorrect Default Permissions,https://github.com/django/django,yes,2021-03-18
+GHSA-2473-9hgq-j7xw,CVE-2020-15118,wagtail,high,MISSING_ROLE,Cross-Site Scripting in Wagtail,https://github.com/wagtail/wagtail,yes,2020-07-20
+GHSA-v2wc-pfq2-5cm6,CVE-2020-11001,wagtail,medium,UNKNOWN,Possible XSS attack in Wagtail,https://github.com/wagtail/wagtail,yes,2020-04-14
+GHSA-hvmf-r92r-27hr,CVE-2019-19118,Django,high,UNKNOWN,Django allows unintended model editing,https://github.com/django/django,yes,2019-12-04
+GHSA-6mx3-3vqg-hpp2,CVE-2018-16984,django,medium,OBJECT_LEVEL_PERMISSION_BYPASS,Django allows unprivileged users to read the password hashes of arbitrary accounts,https://github.com/django/django,yes,2018-10-03
+GHSA-v25j-wqcw-fvhj,,wger,medium,UNKNOWN,wger has an Uncontrolled Resource Consumption issue,https://github.com/wger-project/wger,yes,2026-05-13
+GHSA-cpmr-mw4j-99r7,,label-studio,high,MISSING_AUTH,Nginx alias path traversal allows unauthenticated attackers to read all files on /label_studio/core/,https://github.com/heartexlabs/label-studio,yes,2023-03-24
+GHSA-9qpr-vc49-hqg2,CVE-2026-43978,wger,high,MISSING_ROLE,wger: Privilege escalation via trainer-login session chaining allows gym trainer to impersonate gym manager,https://github.com/wger-project/wger,no,2026-05-14
+GHSA-cj9g-27ph-4cgv,CVE-2026-43977,wger,high,IDOR,wger Vulnerable to IDOR: Authenticated Users Can Read Any User's Private Workout Session Data via Template Routine API,https://github.com/wger-project/wger,no,2026-05-14
+GHSA-67rv-mg8q-5pf3,CVE-2026-44200,wagtail,medium,UNKNOWN,Wagtail has improper permission handling when copying pages,https://github.com/wagtail/wagtail,no,2026-05-08
+GHSA-pwm3-7fv4-g6xx,CVE-2026-44199,wagtail,medium,UNKNOWN,Wagtail has improper permission handling when deleting form submissions,https://github.com/wagtail/wagtail,no,2026-05-08
+GHSA-c4mr-889m-vgf6,CVE-2026-44198,wagtail,medium,UNKNOWN,Wagtail has improper permission handling when viewing page history,https://github.com/wagtail/wagtail,no,2026-05-08
+GHSA-c6wj-9vcj-75pj,CVE-2026-44197,wagtail,medium,UNKNOWN,Wagtail has improper permission handling when comparing revisions,https://github.com/wagtail/wagtail,no,2026-05-08
+GHSA-mhc8-p3jx-84mm,CVE-2026-43948,wger,critical,TENANT_ISOLATION_FAILURE,wger: cross-tenant password reset and plaintext disclosure via gym=None bypass,https://github.com/wger-project/wger,no,2026-05-06
+GHSA-64cv-vxpr-j6vc,CVE-2026-42860,edx-enterprise,high,MISSING_ROLE,edx-enterprise has SSRF via SAML metadata URL in sync_provider_data endpoint,https://github.com/openedx/edx-enterprise,no,2026-05-05
+GHSA-6f54-qjvm-wwq3,CVE-2026-40353,wger,medium,MISSING_AUTH,wger has Stored XSS via Unescaped License Attribution Fields,https://github.com/wger-project/wger,no,2026-04-16
+GHSA-ffv6-jj46-x367,CVE-2026-31815,django-unicorn,medium,IDOR,django-unicorn affected by component state manipulation via unvalidated attribute access,https://github.com/django-commons/django-unicorn,no,2026-03-11
+GHSA-87x4-j8vh-p5qf,CVE-2026-30244,plane,high,MISSING_AUTH,Plane is Vulnerable to Unauthenticated Workspace Member Information Disclosure,https://github.com/makeplane/plane,no,2026-03-05
+GHSA-fpx8-73gf-7x73,CVE-2026-30242,plane,high,MISSING_ROLE,Plane has SSRF via Incomplete IP Validation in Webhook URL Serializer,https://github.com/makeplane/plane,no,2026-03-05
+GHSA-g48c-2wqr-h844,CVE-2026-28277,langgraph,medium,MISSING_AUTH,LangGraph checkpoint loading has unsafe msgpack deserialization,https://github.com/langchain-ai/langgraph,no,2026-03-05
+GHSA-3hvj-3cg9-v242,CVE-2023-26052,saleor,low,MISSING_AUTH,Saleor Unauthenticated Information Disclosure Vulnerability via Python Exceptions,https://github.com/saleor/saleor,no,2023-03-02
+GHSA-wr8q-c73g-m7gp,CVE-2026-5600,pretix,medium,MISSING_AUTH,pretix: API leaks check-in data between events of the same organizer,,no,2026-04-08
+GHSA-pwjp-ccjc-ghwg,CVE-2026-4277,Django,low,MISSING_AUTH,Django vulnerable to privilege abuse in GenericInlineModelAdmin,,no,2026-04-07
+GHSA-mmwr-2jhp-mc7j,CVE-2026-4292,Django,low,MISSING_AUTH,Django vulnerable to privilege abuse in ModelAdmin.list_editable,,no,2026-04-07
+GHSA-mjgh-79qc-68w3,CVE-2026-25674,Django,low,UNKNOWN,Django has a Race Condition vulnerability,,no,2026-03-03
+GHSA-9m5j-4xx9-44j9,CVE-2024-7143,pulpcore,high,MISSING_ROLE,Pulp incorrectly assigns RBAC permissions in tasks that create objects,,no,2024-08-07
+GHSA-wrw3-qmqw-4x9w,CVE-2023-38759,wger,high,UNKNOWN,wger Workout Manager Cross-Site Request Forgery vulnerability,,no,2023-08-08
+GHSA-8m9p-3926-gffr,CVE-2023-38758,wger,medium,UNKNOWN,wger Workout Manager Cross-site Scripting vulnerability,,no,2023-08-08
+GHSA-r76w-3wwq-jv6v,CVE-2023-27891,pretix,high,UNKNOWN,Insufficient Session Expiration in pretix,,no,2023-03-07
+GHSA-h95j-h2rv-qrg4,CVE-2011-4140,Django,high,MISSING_AUTH,Django Cross-Site Request Forgery vulnerability,,no,2018-07-23
+GHSA-mw8f-w6p8-xrf4,,wger,high,MISSING_AUTH,wger: cross-tenant account deletion / deactivation / activation by gym.manage_gym + gym=None,https://github.com/wger-project/wger,no,2026-05-20
+GHSA-v7qw-hx66-4w9x,,netbox-data-flows,high,UNKNOWN,netbox-data-flows has stored XSS in ObjectAlias names rendered inside DataFlow tables,https://github.com/Alef-Burzmali/netbox-data-flows,no,2026-05-07

@@ -1,0 +1,110 @@
+[
+  {
+    "cve": "CVE-2020-5206",
+    "ghsa": "GHSA-vmm6-w4cf-7f3x",
+    "summary": "Authentication Bypass For Endpoints With Anonymous Access in Opencast",
+    "fix_urls": [
+      "https://github.com/opencast/opencast/commit/b157e1fb3b35991ca7bf59f0730329fbe7ce82e8"
+    ],
+    "repo": "opencast/opencast"
+  },
+  {
+    "cve": "CVE-2020-5228",
+    "ghsa": "GHSA-6f54-3qr9-pjgj",
+    "summary": "Unauthenticated Access Via OAI-PMH",
+    "fix_urls": [],
+    "repo": "opencast/opencast"
+  },
+  {
+    "cve": "CVE-2022-29237",
+    "ghsa": "GHSA-qm6v-cg9v-53j3",
+    "summary": "Limited Authentication Bypass for Media Files",
+    "fix_urls": [
+      "https://github.com/opencast/opencast/commit/8d5ec1614eed109b812bc27b0c6d3214e456d4e7"
+    ],
+    "repo": "opencast/opencast"
+  },
+  {
+    "cve": "CVE-2021-43821",
+    "ghsa": "GHSA-59g4-hpg3-3gcp",
+    "summary": "Files Accessible to External Parties in Opencast",
+    "fix_urls": [
+      "https://github.com/opencast/opencast/commit/65c46b9d3e8f045c544881059923134571897764"
+    ],
+    "repo": "opencast/opencast"
+  },
+  {
+    "cve": "CVE-2023-48222",
+    "ghsa": "GHSA-phmw-jx86-x666",
+    "summary": "Authenticated Rundeck users can view or delete jobs they do not have authorization for.",
+    "fix_urls": [],
+    "repo": "rundeck/rundeck"
+  },
+  {
+    "cve": "CVE-2023-47112",
+    "ghsa": "GHSA-xvmv-4rx6-x6jx",
+    "summary": "Authenticated users can view job names and groups they do not have authorization to view",
+    "fix_urls": [
+      "https://github.com/rundeck/rundeck/commit/8992879036a1ddacfca78559d823be0424796e7e"
+    ],
+    "repo": "rundeck/rundeck"
+  },
+  {
+    "cve": "CVE-2020-11009",
+    "ghsa": "GHSA-5679-7qrc-5m7j",
+    "summary": "IDOR can reveal execution data and logs to unauthorized user in Rundeck",
+    "fix_urls": [],
+    "repo": "rundeck/rundeck"
+  },
+  {
+    "cve": "CVE-2026-23902",
+    "ghsa": "GHSA-72mv-wwvm-vgp5",
+    "summary": "Apache DolphinScheduler has an Incorrect Authorization Vulnerability",
+    "fix_urls": [],
+    "repo": "apache/dolphinscheduler"
+  },
+  {
+    "cve": "CVE-2024-43166",
+    "ghsa": "GHSA-rrpj-r8h7-rm7r",
+    "summary": "Apache DolphinScheduler Incorrect Default Permissions Vulnerability",
+    "fix_urls": [],
+    "repo": "apache/dolphinscheduler"
+  },
+  {
+    "cve": "CVE-2021-29441",
+    "ghsa": "GHSA-36hp-jr8h-556f",
+    "summary": "Authentication Bypass",
+    "fix_urls": [
+      "https://github.com/alibaba/nacos/pull/4703"
+    ],
+    "repo": "alibaba/nacos"
+  },
+  {
+    "cve": "CVE-2021-29442",
+    "ghsa": "GHSA-xv5h-v7jh-p2qh",
+    "summary": "Authentication bypass for specific endpoint",
+    "fix_urls": [
+      "https://github.com/alibaba/nacos/pull/4517"
+    ],
+    "repo": "alibaba/nacos"
+  },
+  {
+    "cve": "CVE-2025-53106",
+    "ghsa": "GHSA-3m86-c9x3-vwm9",
+    "summary": "Graylog vulnerable to privilege escalation through API tokens",
+    "fix_urls": [
+      "https://github.com/Graylog2/graylog2-server/commit/6936bd16a783c2944a3d2f1e83902062520f90e3",
+      "https://github.com/Graylog2/graylog2-server/commit/9215b8f1fd32566c31e6f7447ed864df3590c157"
+    ],
+    "repo": "Graylog2/graylog2-server"
+  },
+  {
+    "cve": "CVE-2025-30373",
+    "ghsa": "GHSA-q7g5-jq6p-6wvx",
+    "summary": "Graylog's Authenticated HTTP inputs ingest message even if Authorization header is missing or has wrong value",
+    "fix_urls": [
+      "https://github.com/Graylog2/graylog2-server/commit/31bc13d3cd6f550ec83473d0f8666cd3ebf50f10"
+    ],
+    "repo": "Graylog2/graylog2-server"
+  }
+]

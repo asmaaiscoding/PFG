@@ -1,0 +1,164 @@
+[
+  {
+    "cve": "CVE-2026-27835",
+    "repo": "wger-project/wger",
+    "git_ref": "4d2cbd0191a51f92dab480c7e9c463df3ca2684d",
+    "fixed_commit": "1fda5690b35706bb137850c8a084ec6a13317b64"
+  },
+  {
+    "cve": "CVE-2026-27838",
+    "repo": "wger-project/wger",
+    "git_ref": "035a66161dcbdbac8bbd03adbc1bdb071f233274",
+    "fixed_commit": "e964328784e2ee2830a1991d69fadbce86ac9fbf"
+  },
+  {
+    "cve": "CVE-2024-29199",
+    "repo": "nautobot/nautobot",
+    "git_ref": "64217c351cf2538778b70fff9fb9ac152a70877a",
+    "fixed_commit": "2fd95c365f8477b26e06d60b999ddd36882d5750"
+  },
+  {
+    "cve": "CVE-2024-36112",
+    "repo": "nautobot/nautobot",
+    "git_ref": "aea4154332ceba409cf46774b61229184d3350ba",
+    "fixed_commit": "3a63aa1327f943b2ac8452757ea2e4d403387ad6"
+  },
+  {
+    "cve": "CVE-2025-49143",
+    "repo": "nautobot/nautobot",
+    "git_ref": "06c6e0e4b6c2179d5a36f34357f280dbd65d6014",
+    "fixed_commit": "9c892dc300429948a4714f743c9c2879d8987340"
+  },
+  {
+    "cve": "CVE-2026-44794",
+    "repo": "nautobot/nautobot",
+    "git_ref": "98ffb8e450114485e4398c2fc47173c78346d181",
+    "fixed_commit": "36cde7148a207234de6212ec074f321dbc9d1b5b"
+  },
+  {
+    "cve": "CVE-2026-33214",
+    "repo": "WeblateOrg/weblate",
+    "git_ref": "e6623214229c823961f10401f0cc1cc088b0f86e",
+    "fixed_commit": "e8e033226a856a6f893c26a6a1886479023bd927"
+  },
+  {
+    "cve": "CVE-2026-33212",
+    "repo": "WeblateOrg/weblate",
+    "git_ref": "e6623214229c823961f10401f0cc1cc088b0f86e",
+    "fixed_commit": "e8e033226a856a6f893c26a6a1886479023bd927"
+  },
+  {
+    "cve": "CVE-2026-34393",
+    "repo": "WeblateOrg/weblate",
+    "git_ref": "64120441f70e295299c30f93813a0352f649cc0f",
+    "fixed_commit": "80e0426728791096caa11e997e68fabf03dc6e07"
+  },
+  {
+    "cve": "CVE-2025-67715",
+    "repo": "WeblateOrg/weblate",
+    "git_ref": "a63a2fd3aa40be591d47741b685cc42c9e7ca6ee",
+    "fixed_commit": "84e56f496989d08269b1496fc5e4d97dedb74b36"
+  },
+  {
+    "cve": "CVE-2026-21889",
+    "repo": "WeblateOrg/weblate",
+    "git_ref": "6969840f527ef605a069f49dccd21d2f1f682bd4",
+    "fixed_commit": "a6eb5fd0299780eca286be8ff187dc2d10feec47"
+  },
+  {
+    "cve": "CVE-2026-44263",
+    "repo": "WeblateOrg/weblate",
+    "git_ref": "b28c0991d851ce17d908bbc9f08dc3e9bfc450d6",
+    "fixed_commit": "6cf892c7bd50b667a65a99d716a90694f7d9f203"
+  },
+  {
+    "cve": "CVE-2025-14882",
+    "repo": "pretix/pretix",
+    "git_ref": "703be2ebb82c0d1cacb41fc76e55ba30561414d6",
+    "fixed_commit": "4b5651862c57c6e384822d1d23292342126c479a"
+  },
+  {
+    "cve": "CVE-2024-45605",
+    "repo": "getsentry/sentry",
+    "git_ref": "45ef94a2dd28ed506c4463e829f088ffec6d3fc0",
+    "fixed_commit": "590258255bcb3a5fa4c56f21297b6c99131cfb9d"
+  },
+  {
+    "cve": "CVE-2024-45606",
+    "repo": "getsentry/sentry",
+    "git_ref": "ca59242c563d2e006686a8b56e372d7f7ab0ae7e",
+    "fixed_commit": "e8e71708758e1f9f56ce815ace73fe60d9e608dc"
+  },
+  {
+    "cve": "CVE-2023-36826",
+    "repo": "getsentry/sentry",
+    "git_ref": "8e308bbb054ee8d834b81b60c4c442e334d308fd",
+    "fixed_commit": "e932b15435bf36239431eaa3790a6bcfa47046a9"
+  },
+  {
+    "cve": "CVE-2024-32882",
+    "repo": "wagtail/wagtail",
+    "git_ref": "70b9d98d53011a584c63aef4ca9c372116134856",
+    "fixed_commit": "fa0d4829f9c81eefb37cc058e2fa1b6a918741da"
+  },
+  {
+    "cve": "CVE-2026-25517",
+    "repo": "wagtail/wagtail",
+    "git_ref": "954c967ff50daaffbace0b18ac9341e35e54a918",
+    "fixed_commit": "01fd3477365a193e6a8270311defb76e890d2719"
+  },
+  {
+    "cve": "CVE-2026-44197",
+    "repo": "wagtail/wagtail",
+    "git_ref": "TODO",
+    "fixed_commit": "TODO"
+  },
+  {
+    "cve": "CVE-2026-44198",
+    "repo": "wagtail/wagtail",
+    "git_ref": "TODO",
+    "fixed_commit": "TODO"
+  },
+  {
+    "cve": "CVE-2026-44199",
+    "repo": "wagtail/wagtail",
+    "git_ref": "TODO",
+    "fixed_commit": "TODO"
+  },
+  {
+    "cve": "CVE-2026-44200",
+    "repo": "wagtail/wagtail",
+    "git_ref": "TODO",
+    "fixed_commit": "TODO"
+  },
+  {
+    "cve": "CVE-2023-0777",
+    "repo": "modoboa/modoboa",
+    "git_ref": "650e4d026286c8de8ee9c936b56be5f8a3fa9bc5",
+    "fixed_commit": "47d17ac6643f870719691073956a26e4be0a4806"
+  },
+  {
+    "cve": "CVE-2023-2227",
+    "repo": "modoboa/modoboa",
+    "git_ref": "0317c4c40698a560eb371877f6b340ae57de1e7c",
+    "fixed_commit": "7bcd3f6eb264d4e3e01071c97c2bac51cdd6fe97"
+  },
+  {
+    "cve": "CVE-2023-47117",
+    "repo": "HumanSignal/label-studio",
+    "git_ref": "de252f58c9f3ef76e907a5f181c49948a6b0362f",
+    "fixed_commit": "f931d9d129002f54a495995774ce7384174cef5c"
+  },
+  {
+    "cve": "CVE-2020-7964",
+    "repo": "saleor/saleor",
+    "git_ref": "0222f85b8b1600c19583f461e6fd7a3739899e63",
+    "fixed_commit": "233b8890c60fa6d90daf99e4d90fea85867732c3"
+  },
+  {
+    "cve": "CVE-2022-0932",
+    "repo": "saleor/saleor",
+    "git_ref": "035bf705cee15553c31fca5d918df5c438817e67",
+    "fixed_commit": "521dfd6394f3926a77c60d8633c058e16d0f916d"
+  }
+]

@@ -1,0 +1,3028 @@
+[
+  {
+    "cve_id": "CVE-2025-41232",
+    "ghsa_id": "GHSA-9pp5-9c7g-4r83",
+    "summary": "Spring Security authorization bypass for method security annotations on private methods",
+    "severity": "critical",
+    "packages": [
+      "org.springframework.security:spring-security-aspects >= 6.4.0, < 6.4.6",
+      "org.springframework.security:spring-security-core >= 6.4.0, < 6.4.6"
+    ],
+    "fix_urls": [
+      "https://github.com/spring-projects/spring-security/commit/bf2aaa1b1830e534ba651d422545ac08a115151b",
+      "https://github.com/spring-projects/spring-security/commit/c972de5369a1261ab674a3f5e3a80e8ce3e8cdfb"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2022-31692",
+    "ghsa_id": "GHSA-mmmh-wcxm-2wr4",
+    "summary": "Spring Security authorization rules can be bypassed via forward or include dispatcher types",
+    "severity": "critical",
+    "packages": [
+      "org.springframework.security:spring-security-core >= 5.7.0, < 5.7.5",
+      "org.springframework.security:spring-security-core >= 5.6.0, < 5.6.9"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": "CVE-2022-22978",
+    "ghsa_id": "GHSA-hh32-7344-cg2f",
+    "summary": "Authorization bypass in Spring Security",
+    "severity": "critical",
+    "packages": [
+      "org.springframework.security:spring-security-core >= 5.6.0, < 5.6.4",
+      "org.springframework.security:spring-security-core >= 5.5.0, < 5.5.7",
+      "org.springframework.security:spring-security-core < 5.4.11",
+      "org.springframework.security:spring-security-web >= 5.5.0, < 5.5.7",
+      "org.springframework.security:spring-security-web >= 5.6.0, < 5.6.4",
+      "org.springframework.security:spring-security-web < 5.4.11"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": "CVE-2014-3527",
+    "ghsa_id": "GHSA-wmv4-5w76-vp9g",
+    "summary": "Authorization Bypass in Spring Security",
+    "severity": "critical",
+    "packages": [
+      "org.springframework.security:spring-security-core < 3.1.7",
+      "org.springframework.security:spring-security-core >= 3.2.0, < 3.2.5"
+    ],
+    "fix_urls": [
+      "https://github.com/spring-projects/spring-security/commit/934937d9c1dc20c396b96c08310b72cfa627acb"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2024-38821",
+    "ghsa_id": "GHSA-c4q5-6c82-3qpw",
+    "summary": "Spring Security vulnerable to Authorization Bypass of Static Resources in WebFlux Applications",
+    "severity": "critical",
+    "packages": [
+      "org.springframework.security:spring-security-web < 5.7.13",
+      "org.springframework.security:spring-security-web >= 5.8.0, < 5.8.15",
+      "org.springframework.security:spring-security-web >= 6.2.0, < 6.2.7",
+      "org.springframework.security:spring-security-web >= 6.0.0, < 6.0.13",
+      "org.springframework.security:spring-security-web >= 6.1.0, < 6.1.11",
+      "org.springframework.security:spring-security-web >= 6.3.0, < 6.3.4"
+    ],
+    "fix_urls": [
+      "https://github.com/spring-projects/spring-security/commit/0e257b56ce35402558a260ffa6b368982f9a7934",
+      "https://github.com/spring-projects/spring-security/commit/4ce7cde15599c0447163fd46bac616e03318bf5b"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2019-14837",
+    "ghsa_id": "GHSA-cf8f-w2c5-p5jr",
+    "summary": "keycloak vulnerable to unauthorized login via mail server setup",
+    "severity": "critical",
+    "packages": [
+      "org.keycloak:keycloak-core < 8.0.0"
+    ],
+    "fix_urls": [
+      "https://github.com/keycloak/keycloak/commit/9a7c1a91a59ab85e7f8889a505be04a71580777f"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2021-20195",
+    "ghsa_id": "GHSA-q6w2-89hq-hq27",
+    "summary": "keycloak Self Stored Cross-site Scripting vulnerability",
+    "severity": "critical",
+    "packages": [
+      "org.keycloak:keycloak-core < 13.0.0"
+    ],
+    "fix_urls": [
+      "https://github.com/keycloak/keycloak/commit/717d9515fa131e3d8c8936e41b2e52270fdec976"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2022-1245",
+    "ghsa_id": "GHSA-75p6-52g3-rqc8",
+    "summary": "Keycloak vulnerable to privilege escalation on Token Exchange feature",
+    "severity": "critical",
+    "packages": [
+      "org.keycloak:keycloak-services < 18.0.0"
+    ],
+    "fix_urls": [
+      "https://github.com/keycloak/keycloak/commit/76d83f46fad94ebcbedaa49e6daad458e2894e52"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2024-23897",
+    "ghsa_id": "GHSA-6f9g-cxwr-q5jr",
+    "summary": "Arbitrary file read vulnerability through the Jenkins CLI can lead to RCE",
+    "severity": "critical",
+    "packages": [
+      "org.jenkins-ci.main:jenkins-core >= 1.606, <= 2.426.2",
+      "org.jenkins-ci.main:jenkins-core = 2.441",
+      "org.jenkins-ci.main:jenkins-core >= 2.427, < 2.440.1"
+    ],
+    "fix_urls": [
+      "https://github.com/jenkinsci/jenkins/commit/554f03782057c499c49bbb06575f0d28b5200edb"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2021-21686",
+    "ghsa_id": "GHSA-4g38-hrm4-rg94",
+    "summary": "Multiple vulnerabilities allow bypassing path filtering of agent-to-controller access control in Jenkins",
+    "severity": "critical",
+    "packages": [
+      "org.jenkins-ci.main:jenkins-core < 2.303.2",
+      "org.jenkins-ci.main:jenkins-core >= 2.304, <= 2.318"
+    ],
+    "fix_urls": [
+      "https://github.com/jenkinsci/jenkins/commit/104c751d907919dd53f5090f84d53c671a66457b",
+      "https://github.com/jenkinsci/jenkins/commit/5a245e42979abe4a26d41727c839521e36cedd74",
+      "https://github.com/jenkinsci/jenkins/commit/63cde2daadc705edf086f2213b48c8c547f98358"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2021-21690",
+    "ghsa_id": "GHSA-97c3-w9cr-6qc2",
+    "summary": "Multiple vulnerabilities allow bypassing path filtering of agent-to-controller access control in Jenkins",
+    "severity": "critical",
+    "packages": [
+      "org.jenkins-ci.main:jenkins-core >= 2.304, <= 2.318",
+      "org.jenkins-ci.main:jenkins-core <= 2.303.2"
+    ],
+    "fix_urls": [
+      "https://github.com/jenkinsci/jenkins/commit/104c751d907919dd53f5090f84d53c671a66457b",
+      "https://github.com/jenkinsci/jenkins/commit/5a245e42979abe4a26d41727c839521e36cedd74",
+      "https://github.com/jenkinsci/jenkins/commit/63cde2daadc705edf086f2213b48c8c547f98358"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2021-21685",
+    "ghsa_id": "GHSA-58xm-mxjf-254g",
+    "summary": "Multiple vulnerabilities allow bypassing path filtering of agent-to-controller access control in Jenkins",
+    "severity": "critical",
+    "packages": [
+      "org.jenkins-ci.main:jenkins-core < 2.303.2",
+      "org.jenkins-ci.main:jenkins-core >= 2.304, <= 2.318"
+    ],
+    "fix_urls": [
+      "https://github.com/jenkinsci/jenkins/commit/5a245e42979abe4a26d41727c839521e36cedd74",
+      "https://github.com/jenkinsci/jenkins/commit/63cde2daadc705edf086f2213b48c8c547f98358",
+      "https://github.com/jenkinsci/jenkins/commit/104c751d907919dd53f5090f84d53c671a66457b"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2021-21692",
+    "ghsa_id": "GHSA-8xg4-xq2v-v6j7",
+    "summary": "Multiple vulnerabilities allow bypassing path filtering of agent-to-controller access control in Jenkins",
+    "severity": "critical",
+    "packages": [
+      "org.jenkins-ci.main:jenkins-core >= 2.304, <= 2.318",
+      "org.jenkins-ci.main:jenkins-core <= 2.303.2"
+    ],
+    "fix_urls": [
+      "https://github.com/jenkinsci/jenkins/commit/104c751d907919dd53f5090f84d53c671a66457b",
+      "https://github.com/jenkinsci/jenkins/commit/5a245e42979abe4a26d41727c839521e36cedd74",
+      "https://github.com/jenkinsci/jenkins/commit/63cde2daadc705edf086f2213b48c8c547f98358"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2021-21687",
+    "ghsa_id": "GHSA-3q84-vrvx-rfvf",
+    "summary": "Multiple vulnerabilities allow bypassing path filtering of agent-to-controller access control in Jenkins",
+    "severity": "critical",
+    "packages": [
+      "org.jenkins-ci.main:jenkins-core >= 2.304, <= 2.318",
+      "org.jenkins-ci.main:jenkins-core <= 2.303.2"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": "CVE-2021-21693",
+    "ghsa_id": "GHSA-929w-q433-4h9x",
+    "summary": "Multiple vulnerabilities allow bypassing path filtering of agent-to-controller access control in Jenkins",
+    "severity": "critical",
+    "packages": [
+      "org.jenkins-ci.main:jenkins-core >= 2.304, <= 2.318",
+      "org.jenkins-ci.main:jenkins-core < 2.303.3"
+    ],
+    "fix_urls": [
+      "https://github.com/jenkinsci/jenkins/commit/104c751d907919dd53f5090f84d53c671a66457b",
+      "https://github.com/jenkinsci/jenkins/commit/5a245e42979abe4a26d41727c839521e36cedd74",
+      "https://github.com/jenkinsci/jenkins/commit/63cde2daadc705edf086f2213b48c8c547f98358"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2021-21688",
+    "ghsa_id": "GHSA-m9hr-259f-2v23",
+    "summary": "Multiple vulnerabilities allow bypassing path filtering of agent-to-controller access control in Jenkins",
+    "severity": "critical",
+    "packages": [
+      "org.jenkins-ci.main:jenkins-core >= 2.304, <= 2.318",
+      "org.jenkins-ci.main:jenkins-core <= 2.303.2"
+    ],
+    "fix_urls": [
+      "https://github.com/jenkinsci/jenkins/commit/104c751d907919dd53f5090f84d53c671a66457b",
+      "https://github.com/jenkinsci/jenkins/commit/5a245e42979abe4a26d41727c839521e36cedd74",
+      "https://github.com/jenkinsci/jenkins/commit/63cde2daadc705edf086f2213b48c8c547f98358"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2021-21694",
+    "ghsa_id": "GHSA-pgj6-jmj5-wqfx",
+    "summary": "Multiple vulnerabilities allow bypassing path filtering of agent-to-controller access control in Jenkins",
+    "severity": "critical",
+    "packages": [
+      "org.jenkins-ci.main:jenkins-core >= 2.304, <= 2.318",
+      "org.jenkins-ci.main:jenkins-core <= 2.303.2"
+    ],
+    "fix_urls": [
+      "https://github.com/jenkinsci/jenkins/commit/104c751d907919dd53f5090f84d53c671a66457b",
+      "https://github.com/jenkinsci/jenkins/commit/5a245e42979abe4a26d41727c839521e36cedd74",
+      "https://github.com/jenkinsci/jenkins/commit/63cde2daadc705edf086f2213b48c8c547f98358"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2021-21689",
+    "ghsa_id": "GHSA-j3cq-h6vh-gx7f",
+    "summary": "Multiple vulnerabilities allow bypassing path filtering of agent-to-controller access control in Jenkins",
+    "severity": "critical",
+    "packages": [
+      "org.jenkins-ci.main:jenkins-core >= 2.304, <= 2.318",
+      "org.jenkins-ci.main:jenkins-core < 2.303.3"
+    ],
+    "fix_urls": [
+      "https://github.com/jenkinsci/jenkins/commit/104c751d907919dd53f5090f84d53c671a66457b",
+      "https://github.com/jenkinsci/jenkins/commit/5a245e42979abe4a26d41727c839521e36cedd74",
+      "https://github.com/jenkinsci/jenkins/commit/63cde2daadc705edf086f2213b48c8c547f98358"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2021-21691",
+    "ghsa_id": "GHSA-2c79-h2h5-g3fw",
+    "summary": "Multiple vulnerabilities allow bypassing path filtering of agent-to-controller access control in Jenkins",
+    "severity": "critical",
+    "packages": [
+      "org.jenkins-ci.main:jenkins-core >= 2.304, <= 2.318",
+      "org.jenkins-ci.main:jenkins-core <= 2.303.2"
+    ],
+    "fix_urls": [
+      "https://github.com/jenkinsci/jenkins/commit/63cde2daadc705edf086f2213b48c8c547f98358"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2021-21695",
+    "ghsa_id": "GHSA-cvvm-4cr9-r436",
+    "summary": "Multiple vulnerabilities allow bypassing path filtering of agent-to-controller access control in Jenkins",
+    "severity": "critical",
+    "packages": [
+      "org.jenkins-ci.main:jenkins-core >= 2.304, <= 2.318",
+      "org.jenkins-ci.main:jenkins-core < 2.303.3"
+    ],
+    "fix_urls": [
+      "https://github.com/jenkinsci/jenkins/commit/63cde2daadc705edf086f2213b48c8c547f98358"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2021-21697",
+    "ghsa_id": "GHSA-cv2w-q8c3-xjv7",
+    "summary": "Agent-to-controller access control allows reading/writing most content of build directories in Jenkins",
+    "severity": "critical",
+    "packages": [
+      "org.jenkins-ci.main:jenkins-core >= 2.304, <= 2.318",
+      "org.jenkins-ci.main:jenkins-core <= 2.303.2"
+    ],
+    "fix_urls": [
+      "https://github.com/jenkinsci/jenkins/commit/cf388d2a04e6016d23eb93fa3cc804f2554b98f0",
+      "https://github.com/jenkinsci/jenkins/commit/eae33841b587da787f37d5b6c8451d483edc04d9"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2026-8178",
+    "ghsa_id": "GHSA-wmmv-vvg5-993q",
+    "summary": "Amazon Redshift Vulnerable to Remote Code Execution via Unsafe Class Loading",
+    "severity": "critical",
+    "packages": [
+      "com.amazon.redshift:redshift-jdbc42 < 2.2.2"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": "CVE-2026-27478",
+    "ghsa_id": "GHSA-qqcj-rghw-829x",
+    "summary": "Unity Catalog has a JWT Issuer Validation Bypass tht Allows Complete User Impersonation",
+    "severity": "critical",
+    "packages": [
+      "io.unitycatalog:unitycatalog-server <= 0.4.0"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": "CVE-2026-42555",
+    "ghsa_id": "GHSA-j7j9-5253-f7vh",
+    "summary": "Valtimo has SpEL injection via StandardEvaluationContext that allows Remote Code Execution by admin users",
+    "severity": "critical",
+    "packages": [
+      "com.ritense.valtimo:document >= 12.0.0, < 12.32.0",
+      "com.ritense.valtimo:case >= 13.0.0, < 13.23.0",
+      "com.ritense.valtimo:contract >= 13.4.0, < 13.23.0"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": "CVE-2026-44221",
+    "ghsa_id": "GHSA-fxc7-fm93-6q77",
+    "summary": "ArcadeDB vulnerable to cross-database authorization bypass and unsecured newly-created databases",
+    "severity": "critical",
+    "packages": [
+      "com.arcadedb:arcadedb-server < 26.4.2"
+    ],
+    "fix_urls": [
+      "https://github.com/ArcadeData/arcadedb/commit/04110c06315da55604ac107f71fe7182f3a3deb8"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2026-41901",
+    "ghsa_id": "GHSA-c9ph-gxww-7744",
+    "summary": "Sandboxed Thymeleaf expressions vulnerable to improper recognition of unauthorized syntax patterns",
+    "severity": "critical",
+    "packages": [
+      "org.thymeleaf:thymeleaf <= 3.1.4.RELEASE",
+      "org.thymeleaf:thymeleaf-spring5 <= 3.1.4.RELEASE",
+      "org.thymeleaf:thymeleaf-spring6 <= 3.1.4.RELEASE"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": "CVE-2026-41258",
+    "ghsa_id": "GHSA-xj4f-8jjg-vx4q",
+    "summary": "OpenMRS has Stored Velocity SSTI to RCE via ConceptReferenceRange",
+    "severity": "critical",
+    "packages": [
+      "org.openmrs.api:openmrs-api >= 2.7.0, < 2.7.9",
+      "org.openmrs.api:openmrs-api >= 2.8.0, < 2.8.6"
+    ],
+    "fix_urls": [
+      "https://github.com/openmrs/openmrs-core/commit/8d1c193"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2026-42811",
+    "ghsa_id": "GHSA-fc3h-c6h7-r83j",
+    "summary": "Apache Polaris has an Improper Input Validation issue",
+    "severity": "critical",
+    "packages": [
+      "org.apache.polaris:polaris-core < 1.4.1"
+    ],
+    "fix_urls": [
+      "https://github.com/apache/polaris/commit/f86ce44053e52f77331d212106a9ab6b83c5cace"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2026-42810",
+    "ghsa_id": "GHSA-vxgg-mqx2-3w59",
+    "summary": "Apache Polaris has an Improper Input Validation Issue",
+    "severity": "critical",
+    "packages": [
+      "org.apache.polaris:polaris-core < 1.4.1"
+    ],
+    "fix_urls": [
+      "https://github.com/apache/polaris/commit/da54eb15c2c42c59afedefacbe7a528856b07c0a"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2026-42523",
+    "ghsa_id": "GHSA-w22p-4x9f-486v",
+    "summary": "Jenkins GitHub Plugin has an XSS vulnerability",
+    "severity": "critical",
+    "packages": [
+      "org.jenkins-ci.plugins:git < 1.46.0.1"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": "CVE-2026-40976",
+    "ghsa_id": "GHSA-8v8j-3hxp-93wr",
+    "summary": "Spring Boot's default security filter chain has no authorization rule with Actuator but without Health",
+    "severity": "critical",
+    "packages": [
+      "org.springframework.boot:spring-boot >= 4.0.0, < 4.0.6"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": "CVE-2026-33453",
+    "ghsa_id": "GHSA-695c-x5gc-94gj",
+    "summary": "Apache camel-coap allows header injection that can lead to remote code execution",
+    "severity": "critical",
+    "packages": [
+      "org.apache.camel:camel-coap >= 4.14.0, <= 4.14.5",
+      "org.apache.camel:camel-coap >= 4.18.0, < 4.18.1"
+    ],
+    "fix_urls": [
+      "https://github.com/apache/camel/pull/22146",
+      "https://github.com/apache/camel/pull/22147",
+      "https://github.com/apache/camel/pull/22148",
+      "https://github.com/apache/camel/commit/05cffa5ec05ff2ec3c50a77825625da6e426e7a8",
+      "https://github.com/apache/camel/commit/3926ab2b7745e36da2cd8e0dc019018bc415aff9",
+      "https://github.com/apache/camel/commit/e074c01a719cccf3b1c2efbd2ff31e60fd6220ce"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2026-40478",
+    "ghsa_id": "GHSA-xjw8-8c5c-9r79",
+    "summary": "Improper neutralization of specific syntax patterns for unauthorized expressions in Thymeleaf",
+    "severity": "critical",
+    "packages": [
+      "org.thymeleaf:thymeleaf <= 3.1.3.RELEASE",
+      "org.thymeleaf:thymeleaf-spring5 <= 3.1.3.RELEASE",
+      "org.thymeleaf:thymeleaf-spring6 <= 3.1.3.RELEASE"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": "CVE-2026-39842",
+    "ghsa_id": "GHSA-7mqr-33rv-p3mp",
+    "summary": "Expression Injection in OpenRemote",
+    "severity": "critical",
+    "packages": [
+      "io.openremote:openremote-manager <= 1.21.0"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": "CVE-2026-35580",
+    "ghsa_id": "GHSA-3g6g-gq4r-xjm9",
+    "summary": "Emissary has GitHub Actions Shell Injection via Workflow Inputs",
+    "severity": "critical",
+    "packages": [
+      "gov.nsa.emissary:emissary < 8.39.0"
+    ],
+    "fix_urls": [
+      "https://github.com/NationalSecurityAgency/emissary/pull/1286",
+      "https://github.com/NationalSecurityAgency/emissary/pull/1288"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2026-34361",
+    "ghsa_id": "GHSA-vr79-8m62-wh98",
+    "summary": "FHIR Validator HTTP service has SSRF via /loadIG Chains with startsWith() Credential Leak for Authentication Token Theft",
+    "severity": "critical",
+    "packages": [
+      "ca.uhn.hapi.fhir:org.hl7.fhir.validation < 6.9.4"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": null,
+    "ghsa_id": "GHSA-h8w2-rv57-vc6f",
+    "summary": "splunk-otel-javaagent: Unsafe deserialization in RMI instrumentation may lead to Remote Code Execution",
+    "severity": "critical",
+    "packages": [
+      "com.splunk:splunk-otel-javaagent < 2.26.1"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": "CVE-2026-33728",
+    "ghsa_id": "GHSA-579q-h82j-r5v2",
+    "summary": "dd-trace-java: Unsafe deserialization in RMI instrumentation may lead to remote code execution",
+    "severity": "critical",
+    "packages": [
+      "com.datadoghq:dd-java-agent >= 0.40.0, < 1.60.3"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": "CVE-2026-33701",
+    "ghsa_id": "GHSA-xw7x-h9fj-p2c7",
+    "summary": "OpenTelemetry: Unsafe Deserialization in RMI Instrumentation may Lead to Remote Code Execution",
+    "severity": "critical",
+    "packages": [
+      "io.opentelemetry.javaagent:opentelemetry-javaagent < 2.26.1"
+    ],
+    "fix_urls": [
+      "https://github.com/open-telemetry/opentelemetry-java-instrumentation/commit/9cf4fbaaa9e79226142b2ed42a6f6b4ac0be2197"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2026-29000",
+    "ghsa_id": "GHSA-pm7g-w2cf-q238",
+    "summary": "pac4j-jwt: JwtAuthenticator Authentication Bypass via JWE-Wrapped PlainJWT",
+    "severity": "critical",
+    "packages": [
+      "org.pac4j:pac4j-jwt >= 6.0.4.1, < 6.3.3",
+      "org.pac4j:pac4j-jwt >= 5.0.0-RC1, < 5.7.9",
+      "org.pac4j:pac4j-jwt < 4.5.9"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": "CVE-2026-27446",
+    "ghsa_id": "GHSA-fw88-pf9m-p947",
+    "summary": "Apache Artemis and Apache ActiveMQ Artemis are Missing Authentication for Critical Functions",
+    "severity": "critical",
+    "packages": [
+      "org.apache.activemq:artemis-server >= 2.11.0, <= 2.44.0",
+      "org.apache.artemis:artemis-server >= 2.50.0, < 2.52.0"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": "CVE-2026-23552",
+    "ghsa_id": "GHSA-c3f3-cc42-xr9v",
+    "summary": "Apache Camel: KeycloakSecurityPolicy does not validate issuer of JWT tokens against configured realm",
+    "severity": "critical",
+    "packages": [
+      "org.apache.camel:camel-keycloak >= 4.15.0, < 4.18.0"
+    ],
+    "fix_urls": [
+      "https://github.com/apache/camel/commit/c1ed776e3a4fa23d15acf4b9a48fdf758d4316ff"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2025-13590",
+    "ghsa_id": "GHSA-p6jf-79j3-33f3",
+    "summary": "carbon-apimgt does not properly restrict uploaded files",
+    "severity": "critical",
+    "packages": [
+      "org.wso2.carbon.apimgt:org.wso2.carbon.apimgt.impl < 9.32.167"
+    ],
+    "fix_urls": [
+      "https://github.com/wso2/carbon-apimgt/pull/13560",
+      "https://github.com/wso2/carbon-apimgt/commit/49a6427b39a5d9552ce97430858bb4b1912a3044"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2026-23906",
+    "ghsa_id": "GHSA-q672-hfc7-g833",
+    "summary": "Apache Druid Vulnerable to Authentication Bypass",
+    "severity": "critical",
+    "packages": [
+      "org.apache.druid.extensions:druid-basic-security >= 0.17.0, < 36.0.0"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": "CVE-2026-25526",
+    "ghsa_id": "GHSA-gjx9-j8f8-7j74",
+    "summary": "JinJava Bypass through ForTag leads to Arbitrary Java Execution",
+    "severity": "critical",
+    "packages": [
+      "com.hubspot.jinjava:jinjava >= 2.8.0, < 2.8.3",
+      "com.hubspot.jinjava:jinjava < 2.7.6"
+    ],
+    "fix_urls": [
+      "https://github.com/HubSpot/jinjava/commit/3d02e504d8bbb13bf3fe019e9ca7b51dfce7a998",
+      "https://github.com/HubSpot/jinjava/commit/c7328dce6030ac718f88974196035edafef24441"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2025-14306",
+    "ghsa_id": "GHSA-j8r2-47rx-qhw4",
+    "summary": "Robocode vulnerable to Directory Traversal in recursivelyDelete Method",
+    "severity": "critical",
+    "packages": [
+      "net.sf.robocode:robocode.core < 1.9.5.6"
+    ],
+    "fix_urls": [
+      "https://github.com/robo-code/robocode/pull/67",
+      "https://github.com/robo-code/robocode/commit/26b6ba8ed5b2a11a646ce2d5da8d42cd53574b1f"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2025-14307",
+    "ghsa_id": "GHSA-2mxr-rc97-xrj2",
+    "summary": "Robocode has an insecure temporary file creation vulnerability in the AutoExtract component",
+    "severity": "critical",
+    "packages": [
+      "net.sf.robocode:robocode.battle < 1.9.5.6"
+    ],
+    "fix_urls": [
+      "https://github.com/robo-code/robocode/pull/68",
+      "https://github.com/robo-code/robocode/commit/9f882bba2a9cd91da57c16b98699f8cc9b354f3a"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2025-64408",
+    "ghsa_id": "GHSA-wq4c-57mh-5f7g",
+    "summary": "Apache Causeway vulnerable to deserialization in Java",
+    "severity": "critical",
+    "packages": [
+      "org.apache.causeway.commons:causeway-commons < 3.5.0",
+      "org.apache.causeway.core:causeway-applib < 3.5.0",
+      "org.apache.causeway.core:causeway-core < 3.5.0",
+      "org.apache.causeway.viewer:causeway-viewer-wicket < 3.5.0"
+    ],
+    "fix_urls": [
+      "https://github.com/apache/causeway/commit/bef00f58d2a2cba9a45230c9d117a0327e4c7038",
+      "https://github.com/apache/causeway/commit/e66290fe9be87aa0e4c5dc55bce1993a54330624",
+      "https://github.com/apache/causeway/commit/e6bf00c63c33cfa894a19d6122526a1aec227d14"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2025-12383",
+    "ghsa_id": "GHSA-7p63-w6x9-6gr7",
+    "summary": "Eclipse Jersey has a Race Condition",
+    "severity": "critical",
+    "packages": [
+      "org.glassfish.jersey.core:jersey-client = 2.45",
+      "org.glassfish.jersey.core:jersey-client = 3.0.16",
+      "org.glassfish.jersey.core:jersey-client = 3.1.9"
+    ],
+    "fix_urls": [
+      "https://github.com/eclipse-ee4j/jersey/pull/5749",
+      "https://github.com/eclipse-ee4j/jersey/pull/5794",
+      "https://github.com/eclipse-ee4j/jersey/commit/425bc883d8d623ef8d3c448fafd36729f7741bcb",
+      "https://github.com/eclipse-ee4j/jersey/commit/b2c7ba6d388cb9722f39073d7e82aa818fec49d5"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2025-58059",
+    "ghsa_id": "GHSA-w48j-pp7j-fj55",
+    "summary": "Valtimo scripting engine can be used to gain access to sensitive data or resources",
+    "severity": "critical",
+    "packages": [
+      "com.ritense.valtimo:core < 12.16.0.RELEASE",
+      "com.ritense.valtimo:core >= 13.0.0.RELEASE, < 13.1.2.RELEASE"
+    ],
+    "fix_urls": [
+      "https://github.com/valtimo-platform/valtimo-backend-libraries/commit/45eb60b0b2df5964fb9917295d0dceb1fff8dd85"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2025-53836",
+    "ghsa_id": "GHSA-32mf-57h2-64x9",
+    "summary": "XWiki Rendering is vulnerable to RCE attacks when processing nested macros",
+    "severity": "critical",
+    "packages": [
+      "org.xwiki.rendering:xwiki-rendering-transformation-macro >= 4.2-milestone-1, < 13.10.11",
+      "org.xwiki.rendering:xwiki-rendering-transformation-macro >= 14.0, < 14.4.7",
+      "org.xwiki.rendering:xwiki-rendering-transformation-macro >= 14.5, < 14.10"
+    ],
+    "fix_urls": [
+      "https://github.com/xwiki/xwiki-rendering/commit/c73fa3ccd4ac59057e48e5d4325f659e78e8f86d"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2024-34711",
+    "ghsa_id": "GHSA-mc43-4fqr-c965",
+    "summary": "GeoServer has improper ENTITY_RESOLUTION_ALLOWLIST URI validation in XML Processing (SSRF)",
+    "severity": "critical",
+    "packages": [
+      "org.geoserver.web:gs-web-app < 2.25.0",
+      "org.geoserver.main:gs-main < 2.25.0"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": "CVE-2025-47884",
+    "ghsa_id": "GHSA-q7c3-x7hm-qq72",
+    "summary": "Jenkins OpenID Connect Provider Plugin Incorrectly Validates Crafted Build ID Tokens",
+    "severity": "critical",
+    "packages": [
+      "io.jenkins.plugins:oidc-provider < 111.v29fd614b3617"
+    ],
+    "fix_urls": [
+      "https://github.com/jenkinsci/oidc-provider-plugin/commit/29fd614b36171048ddc78a995ce44bd12bd7997d"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2024-24780",
+    "ghsa_id": "GHSA-f4rq-f4j9-f6rm",
+    "summary": "Apache IoTDB Vulnerable to Remote Code Execution",
+    "severity": "critical",
+    "packages": [
+      "org.apache.iotdb:iotdb-core >= 1.0.0, < 1.3.4",
+      "apache-iotdb >= 1.0.0, < 1.3.4"
+    ],
+    "fix_urls": [
+      "https://github.com/apache/iotdb/pull/14365"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2025-45616",
+    "ghsa_id": "GHSA-w7xj-pj5f-8pwh",
+    "summary": "BRCC Incorrect Access Control vulnerability",
+    "severity": "critical",
+    "packages": [
+      "com.baidu.mapp:brcc-core <= 1.2.0"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": "CVE-2024-56325",
+    "ghsa_id": "GHSA-6jwp-4wvj-6597",
+    "summary": "Apache Pinot Vulnerable to Authentication Bypass",
+    "severity": "critical",
+    "packages": [
+      "org.apache.pinot:pinot-broker < 1.3.0",
+      "org.apache.pinot:pinot-common < 1.3.0",
+      "org.apache.pinot:pinot-controller < 1.3.0"
+    ],
+    "fix_urls": [
+      "https://github.com/apache/pinot/pull/14383",
+      "https://github.com/apache/pinot/commit/1b87488aeaf4836e3ef25b426ebbf1ad5a68e68f"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2025-29315",
+    "ghsa_id": "GHSA-x65v-g96x-c6gw",
+    "summary": "OpenDaylight SFC Allows Unauthorized Privileged Execution via Crafted Request",
+    "severity": "critical",
+    "packages": [
+      "org.opendaylight.sfc:sfc-parent <= 0.10.4"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": null,
+    "ghsa_id": "GHSA-vpxm-cr3r-pjp9",
+    "summary": "General OpenMRS Security Advisory, January 2025: Penetration Testing Results and Patches",
+    "severity": "critical",
+    "packages": [
+      "org.openmrs:openmrs < 2.6.11",
+      "org.openmrs.module:legacyui < 1.21.0",
+      "org.openmrs.module:idgen < 4.14.0",
+      "org.openmrs.module:addresshierarchy < 2.19.0",
+      "org.openmrs.module:attachments < 3.6.0",
+      "org.openmrs.module:patientflags < 3.0.8"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": "CVE-2025-23025",
+    "ghsa_id": "GHSA-rmm7-r7wr-xpfg",
+    "summary": "XWiki Realtime WYSIWYG Editor extension allows privilege escalation (PR) through realtime WYSIWYG editing",
+    "severity": "critical",
+    "packages": [
+      "org.xwiki.platform:xwiki-platform-realtime-wysiwyg-ui >= 13.9-rc-1, < 15.10.12",
+      "org.xwiki.platform:xwiki-platform-realtime-wysiwyg-ui >= 16.0.0-rc-1, < 16.4.1",
+      "org.xwiki.platform:xwiki-platform-realtime-wysiwyg-ui >= 16.5.0-rc-1, < 16.6.0-rc-1"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": "CVE-2024-38002",
+    "ghsa_id": "GHSA-3mfq-fp2f-vwqh",
+    "summary": "Liferay Portal and Liferay DXP Workflow Component Does Not Check User Permissions",
+    "severity": "critical",
+    "packages": [
+      "com.liferay.portal:release.portal.bom >= 7.3.2-ga3, < 7.4.3.112-ga112",
+      "com.liferay.portal:release.dxp.bom >= 2023.Q4.0, < 2023.Q4.6",
+      "com.liferay.portal:release.dxp.bom >= 2023.Q3.1, < 2023.Q3.9",
+      "com.liferay.portal:release.dxp.bom >= 7.3-ga, < 7.3.10.u36",
+      "com.liferay.portal:release.dxp.bom >= 7.4-ga, < 7.4.13.u92"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": "CVE-2025-41248",
+    "ghsa_id": "GHSA-8v5q-rhf3-jphm",
+    "summary": "Spring Security annotation detection mechanism has authorization bypass",
+    "severity": "high",
+    "packages": [
+      "org.springframework.security:spring-security-core >= 6.4.0, < 6.4.10",
+      "org.springframework.security:spring-security-core >= 6.5.0, < 6.5.4"
+    ],
+    "fix_urls": [
+      "https://github.com/spring-projects/spring-security/commit/d0f93fa6d8338149943ae640c53db07de827867f",
+      "https://github.com/spring-projects/spring-security/commit/e5694ac7b5e4394b920c6cab48b7bfbd871f84bd"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2024-22257",
+    "ghsa_id": "GHSA-f3jh-qvm4-mg39",
+    "summary": "Erroneous authentication pass in Spring Security",
+    "severity": "high",
+    "packages": [
+      "org.springframework.security:spring-security-core < 5.7.12",
+      "org.springframework.security:spring-security-core >= 5.8.0, < 5.8.11",
+      "org.springframework.security:spring-security-core >= 6.0.0, < 6.1.8",
+      "org.springframework.security:spring-security-core >= 6.2.0, < 6.2.3"
+    ],
+    "fix_urls": [
+      "https://github.com/spring-projects/spring-security/commit/5a7f12f1a9fdb4edaab6f61495f1d781a7273b61"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2024-22234",
+    "ghsa_id": "GHSA-w3w6-26f2-p474",
+    "summary": "Broken Access Control in Spring Security With Direct Use of isFullyAuthenticated",
+    "severity": "high",
+    "packages": [
+      "org.springframework.security:spring-security-core >= 6.1.0, < 6.1.7",
+      "org.springframework.security:spring-security-core >= 6.2.0, < 6.2.2"
+    ],
+    "fix_urls": [
+      "https://github.com/spring-projects/spring-security/commit/750cb30ce44d279c2f54c845d375e6a58bded569"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2021-22119",
+    "ghsa_id": "GHSA-w9jg-gvgr-354m",
+    "summary": "Resource Exhaustion in Spring Security",
+    "severity": "high",
+    "packages": [
+      "org.springframework.security:spring-security-core >= 5.5.0, < 5.5.1",
+      "org.springframework.security:spring-security-core >= 5.4.0, < 5.4.7",
+      "org.springframework.security:spring-security-oauth2-client >= 5.5.0, < 5.5.1",
+      "org.springframework.security:spring-security-oauth2-client >= 5.4.0, < 5.4.7",
+      "org.springframework.security:spring-security-core >= 5.3.0, <= 5.3.9",
+      "org.springframework.security:spring-security-core >= 5.2.0, <= 5.2.10",
+      "org.springframework.security:spring-security-oauth2-client >= 5.3.0, <= 5.3.9",
+      "org.springframework.security:spring-security-oauth2-client >= 5.2.0, <= 5.2.10"
+    ],
+    "fix_urls": [
+      "https://github.com/spring-projects/spring-security/pull/9513"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2018-15801",
+    "ghsa_id": "GHSA-27xw-p8v6-9jjr",
+    "summary": "Spring Security vulnerable to Authorization Bypass",
+    "severity": "high",
+    "packages": [
+      "org.springframework.security:spring-security-core >= 5.1.0, < 5.1.2",
+      "org.springframework.security:spring-security-oauth2-jose >= 5.1.0, < 5.1.2"
+    ],
+    "fix_urls": [
+      "https://github.com/spring-projects/spring-security/commit/c70b65c5df0e170a2d34d812b83db0b7bc71ea25"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2016-5007",
+    "ghsa_id": "GHSA-8crv-49fr-2h6j",
+    "summary": "Spring Security and Spring Framework may not recognize certain paths that should be protected",
+    "severity": "high",
+    "packages": [
+      "org.springframework:spring-core < 4.3.1",
+      "org.springframework.security:spring-security-core < 4.1.1"
+    ],
+    "fix_urls": [
+      "https://github.com/spring-projects/spring-framework/commit/a30ab30e4e9ae021fdda04e9abfc228476b846b5",
+      "https://github.com/spring-projects/spring-security/commit/e4c13e3c0ee7f06f59d3b43ca6734215ad7d8974"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2021-22112",
+    "ghsa_id": "GHSA-gq28-h5vg-8prx",
+    "summary": "Privilege escalation in spring security",
+    "severity": "high",
+    "packages": [
+      "org.springframework.security:spring-security-web < 5.2.9",
+      "org.springframework.security:spring-security-bom >= 5.4.0, < 5.4.4",
+      "org.springframework.security:spring-security-bom >= 5.3.0, < 5.3.8",
+      "org.springframework.security:spring-security-bom < 5.2.9",
+      "org.springframework.security:spring-security-web >= 5.4.0, < 5.4.4",
+      "org.springframework.security:spring-security-web >= 5.3.0, < 5.3.8"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": "CVE-2023-4918",
+    "ghsa_id": "GHSA-5q66-v53q-pm35",
+    "summary": "Keycloak vulnerable to Plaintext Storage of User Password",
+    "severity": "high",
+    "packages": [
+      "org.keycloak:keycloak-core = 22.0.2"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": "CVE-2021-20202",
+    "ghsa_id": "GHSA-6xp6-fmc8-pmmr",
+    "summary": "Temporary Directory Hijacking Vulnerability in Keycloak",
+    "severity": "high",
+    "packages": [
+      "org.keycloak:keycloak-core < 13.0.0"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": "CVE-2020-1714",
+    "ghsa_id": "GHSA-m6mm-q862-j366",
+    "summary": "Improper Input Validation in Keycloak",
+    "severity": "high",
+    "packages": [
+      "org.keycloak:keycloak-core < 11.0.0",
+      "org.keycloak:keycloak-common < 11.0.0"
+    ],
+    "fix_urls": [
+      "https://github.com/keycloak/keycloak/pull/7053",
+      "https://github.com/keycloak/keycloak/commit/33863ba16117844930a38ebde57a25258f5b80fd"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2020-14389",
+    "ghsa_id": "GHSA-c9x9-xv66-xp3v",
+    "summary": "Improper privilege management in Keycloak",
+    "severity": "high",
+    "packages": [
+      "org.keycloak:keycloak-core < 12.0.0"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": "CVE-2019-10170",
+    "ghsa_id": "GHSA-7m27-3587-83xf",
+    "summary": "Privilege Defined With Unsafe Actions in Keycloak",
+    "severity": "high",
+    "packages": [
+      "org.keycloak:keycloak-core < 8.0.0"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": "CVE-2026-4282",
+    "ghsa_id": "GHSA-hj93-h7pg-fh6v",
+    "summary": "Keycloak: Privilege escalation via forged authorization codes due to SingleUseObjectProvider isolation flaw",
+    "severity": "high",
+    "packages": [
+      "org.keycloak:keycloak-services < 26.5.7"
+    ],
+    "fix_urls": [
+      "https://github.com/keycloak/keycloak/commit/9046f201125a6fd6be9c116b99d348509d99d4a5"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2026-4636",
+    "ghsa_id": "GHSA-f2hx-5fx3-hmcv",
+    "summary": "Keycloak: UMA Policy Resource Injection Allows Unauthorized Cross-User Permission Grants",
+    "severity": "high",
+    "packages": [
+      "org.keycloak:keycloak-services < 26.5.7"
+    ],
+    "fix_urls": [
+      "https://github.com/keycloak/keycloak/commit/995832f8b74b02833d106c8788bb7a78634aa725"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2026-2092",
+    "ghsa_id": "GHSA-wmxr-6j5f-838p",
+    "summary": "Keycloak: Unauthorized access via improper validation of encrypted SAML assertions",
+    "severity": "high",
+    "packages": [
+      "org.keycloak:keycloak-saml-adapter-core < 26.2.14",
+      "org.keycloak:keycloak-saml-core >= 26.3.0, < 26.4.10",
+      "org.keycloak:keycloak-services >= 26.5.0, < 26.5.5",
+      "org.keycloak:keycloak-saml-adapter-core >= 26.3.0, < 26.4.10",
+      "org.keycloak:keycloak-saml-adapter-core >= 26.5.0, < 26.5.5",
+      "org.keycloak:keycloak-services < 26.2.14",
+      "org.keycloak:keycloak-services >= 26.3.0, < 26.4.10",
+      "org.keycloak:keycloak-saml-core < 26.2.14",
+      "org.keycloak:keycloak-saml-core >= 26.5.0, < 26.5.5"
+    ],
+    "fix_urls": [
+      "https://github.com/keycloak/keycloak/commit/b40a25908d937bb0563ea516487bc2c7c1d92508"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2026-2603",
+    "ghsa_id": "GHSA-x4p7-7chp-64hq",
+    "summary": "Keycloak: Unauthorized authentication via disabled SAML Identity Provider",
+    "severity": "high",
+    "packages": [
+      "org.keycloak:keycloak-services < 26.5.5",
+      "org.keycloak:keycloak-server-spi-private < 26.5.5"
+    ],
+    "fix_urls": [
+      "https://github.com/keycloak/keycloak/commit/8ed7e59dc08d79751a27c23aadb590f06b43f132",
+      "https://github.com/keycloak/keycloak/pull/46932",
+      "https://github.com/keycloak/keycloak/commit/4fd5367e6cc28cfa68fb2240fc459c12b1fdbf2a"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2026-3009",
+    "ghsa_id": "GHSA-m297-3jv9-m927",
+    "summary": "Keycloak allows authentication using an Identity Provider (IdP) even after it has been disabled by an administrator",
+    "severity": "high",
+    "packages": [
+      "org.keycloak:keycloak-services < 26.5.5"
+    ],
+    "fix_urls": [
+      "https://github.com/keycloak/keycloak/commit/4fd5367e6cc28cfa68fb2240fc459c12b1fdbf2a"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2026-1486",
+    "ghsa_id": "GHSA-37gf-gmxv-74wv",
+    "summary": "Keycloak fails to verify if an Identity Provider (IdP) is enabled before issuing tokens",
+    "severity": "high",
+    "packages": [
+      "org.keycloak:keycloak-services >= 26.5.0, < 26.5.3",
+      "org.keycloak:keycloak-services < 26.4.9"
+    ],
+    "fix_urls": [
+      "https://github.com/keycloak/keycloak/pull/46148",
+      "https://github.com/keycloak/keycloak/commit/176dc8902ce552056d3648c4601d519afc6fb043",
+      "https://github.com/keycloak/keycloak/commit/8316e8538f0037d9f998181e73122cff93a94035"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2026-1529",
+    "ghsa_id": "GHSA-hcvw-475w-8g7p",
+    "summary": "Keycloak affected by improper invitation token validation",
+    "severity": "high",
+    "packages": [
+      "org.keycloak:keycloak-services >= 26.5.0, < 26.5.3",
+      "org.keycloak:keycloak-services < 26.2.13",
+      "org.keycloak:keycloak-services >= 26.3.0, < 26.4.9"
+    ],
+    "fix_urls": [
+      "https://github.com/keycloak/keycloak/pull/46155",
+      "https://github.com/keycloak/keycloak/commit/8fc9a98026106a326f4faa98d4c9a48341ace2d7",
+      "https://github.com/keycloak/keycloak/commit/82cd7941d1dd28fa14a67a6e6b912301f1a5e1a1",
+      "https://github.com/keycloak/keycloak/commit/b2519756487b519f95c07aa8b10afe003e492119"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": null,
+    "ghsa_id": "GHSA-vvf8-2h68-9475",
+    "summary": "Duplicate Advisory: Keycloak Open Redirect vulnerability",
+    "severity": "high",
+    "packages": [
+      "org.keycloak:keycloak-services < 25.0.6"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": "CVE-2024-3656",
+    "ghsa_id": "GHSA-2cww-fgmg-4jqc",
+    "summary": "Keycloak's admin API allows low privilege users to use administrative functions",
+    "severity": "high",
+    "packages": [
+      "org.keycloak:keycloak-services < 24.0.5"
+    ],
+    "fix_urls": [
+      "https://github.com/keycloak/keycloak/commit/d9f0c84b797525eac55914db5f81a8133ef5f9b1"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2024-4540",
+    "ghsa_id": "GHSA-69fp-7c8p-crjr",
+    "summary": "Keycloak exposes sensitive information in Pushed Authorization Requests (PAR)",
+    "severity": "high",
+    "packages": [
+      "org.keycloak:keycloak-services < 24.0.5"
+    ],
+    "fix_urls": [
+      "https://github.com/keycloak/keycloak/commit/2191cc26ae6deb52eeaf74046027b65804d16fd0"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": null,
+    "ghsa_id": "GHSA-4vrx-8phj-x3mg",
+    "summary": "Duplicate Advisory: Keycloak exposes sensitive information in Pushed Authorization Requests (PAR)",
+    "severity": "high",
+    "packages": [
+      "org.keycloak:keycloak-services < 24.0.5"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": "CVE-2021-4133",
+    "ghsa_id": "GHSA-83x4-9cwr-5487",
+    "summary": "Improper Authorization in Keycloak",
+    "severity": "high",
+    "packages": [
+      "org.keycloak:keycloak-services < 15.1.1"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": "CVE-2026-33001",
+    "ghsa_id": "GHSA-r6qv-frpc-q66c",
+    "summary": "Jenkins has a link following vulnerability allows arbitrary file creation",
+    "severity": "high",
+    "packages": [
+      "org.jenkins-ci.main:jenkins-core <= 2.554"
+    ],
+    "fix_urls": [
+      "https://github.com/jenkinsci/jenkins/commit/6dc99937605d5bddfeaae43a4cd14c2571e23adc"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2026-27099",
+    "ghsa_id": "GHSA-85h6-5m3v-gx37",
+    "summary": "Jenkins has a stored XSS vulnerability in node offline cause description",
+    "severity": "high",
+    "packages": [
+      "org.jenkins-ci.main:jenkins-core >= 2.542, < 2.551",
+      "org.jenkins-ci.main:jenkins-core >= 2.483, < 2.541.2"
+    ],
+    "fix_urls": [
+      "https://github.com/jenkinsci/jenkins/commit/578c028e2cdfdc9e124d0ca389a80bb2bd231ab2"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2024-43044",
+    "ghsa_id": "GHSA-h856-ffvv-xvr4",
+    "summary": "Jenkins Remoting library arbitrary file read vulnerability",
+    "severity": "high",
+    "packages": [
+      "org.jenkins-ci.main:remoting < 3206.3208",
+      "org.jenkins-ci.main:remoting >= 3248, < 3248.3250",
+      "org.jenkins-ci.main:remoting >= 3256, < 3256.3258",
+      "org.jenkins-ci.main:jenkins-core < 2.452.4",
+      "org.jenkins-ci.main:jenkins-core >= 2.460, < 2.462.1",
+      "org.jenkins-ci.main:jenkins-core >= 2.470, < 2.471"
+    ],
+    "fix_urls": [
+      "https://github.com/jenkinsci/jenkins/commit/3f54c41b40db9e4ae7afa4209bc1ea91bb9175c0",
+      "https://github.com/jenkinsci/jenkins/commit/5d26b53ad3a5cd8c4a060eef4f56d75e65ca17a5",
+      "https://github.com/jenkinsci/jenkins/commit/cec49ce5d58048f66ac3fa88409a0d38dec09bf0",
+      "https://github.com/jenkinsci/remoting/commit/3277a8e88c9b807b9a989bd7e9176d2ec9834e47",
+      "https://github.com/jenkinsci/remoting/commit/409508a675ffc4ed9681e30bb46c8d9cb375b78c",
+      "https://github.com/jenkinsci/remoting/commit/858f3c9af69d4d216b26551ea51dde6e67479bb3"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2023-43496",
+    "ghsa_id": "GHSA-55wp-3pq4-w8p9",
+    "summary": "Jenkins temporary plugin file created with insecure permissions ",
+    "severity": "high",
+    "packages": [
+      "org.jenkins-ci.main:jenkins-core >= 2.50, < 2.414.2",
+      "org.jenkins-ci.main:jenkins-core >= 2.415, < 2.424"
+    ],
+    "fix_urls": [
+      "https://github.com/jenkinsci/jenkins/commit/df7c4ccda8976c06bf31b8fb9938f26fc38501ca"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2023-35141",
+    "ghsa_id": "GHSA-98fp-r22g-wpj7",
+    "summary": "Jenkins CSRF protection bypass vulnerability",
+    "severity": "high",
+    "packages": [
+      "org.jenkins-ci.main:jenkins-core < 2.400"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": "CVE-2023-27899",
+    "ghsa_id": "GHSA-hf9h-vv4m-2f33",
+    "summary": "Incorrect Authorization in Jenkins Core",
+    "severity": "high",
+    "packages": [
+      "org.jenkins-ci.main:jenkins-core < 2.375.4",
+      "org.jenkins-ci.main:jenkins-core >= 2.376, < 2.387.1",
+      "org.jenkins-ci.main:jenkins-core >= 2.388, < 2.394"
+    ],
+    "fix_urls": [
+      "https://github.com/jenkinsci/jenkins/commit/f39c11fa27b14923260c4c9b896f0f373e2a0a17"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2022-34175",
+    "ghsa_id": "GHSA-p3rc-946h-8cf5",
+    "summary": "Unauthorized view fragment access in Jenkins",
+    "severity": "high",
+    "packages": [
+      "org.jenkins-ci.main:jenkins-core >= 2.335, < 2.356"
+    ],
+    "fix_urls": [
+      "https://github.com/jenkinsci/jenkins/commit/37bd66a43ad561f670db7440f493d69518741d27"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2022-34173",
+    "ghsa_id": "GHSA-6g4r-q7qg-6qx6",
+    "summary": "Cross-site Scripting vulnerability in Jenkins",
+    "severity": "high",
+    "packages": [
+      "org.jenkins-ci.main:jenkins-core >= 2.340, < 2.356"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": "CVE-2022-34170",
+    "ghsa_id": "GHSA-62wf-24c4-8r76",
+    "summary": "Cross-site Scripting vulnerability in Jenkins",
+    "severity": "high",
+    "packages": [
+      "org.jenkins-ci.main:jenkins-core >= 2.350, < 2.356",
+      "org.jenkins-ci.main:jenkins-core >= 2.320, < 2.332.4",
+      "org.jenkins-ci.main:jenkins-core >= 2.346, < 2.346.1"
+    ],
+    "fix_urls": [
+      "https://github.com/jenkinsci/jenkins/commit/f71495a63f8b861e8ca3a5fcf5cc931fce55bc57"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2022-34171",
+    "ghsa_id": "GHSA-7f84-p6r5-jr6q",
+    "summary": "Cross-site Scripting vulnerability in Jenkins",
+    "severity": "high",
+    "packages": [
+      "org.jenkins-ci.main:jenkins-core >= 2.350, < 2.356",
+      "org.jenkins-ci.main:jenkins-core >= 2.346, < 2.346.1",
+      "org.jenkins-ci.main:jenkins-core < 2.332.4"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": "CVE-2022-34172",
+    "ghsa_id": "GHSA-mhp7-3393-pfqr",
+    "summary": "Cross-site Scripting vulnerability in Jenkins",
+    "severity": "high",
+    "packages": [
+      "org.jenkins-ci.main:jenkins-core >= 2.340, < 2.356",
+      "org.jenkins-ci.main:jenkins-core >= 2.332, < 2.332.4"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": "CVE-2021-21696",
+    "ghsa_id": "GHSA-c5r9-rx53-q3gf",
+    "summary": "Agent-to-controller access control allowed writing to sensitive directory used by Jenkins Pipeline: Shared Groovy Libraries Plugin",
+    "severity": "high",
+    "packages": [
+      "org.jenkins-ci.main:jenkins-core >= 2.304, <= 2.318",
+      "org.jenkins-ci.main:jenkins-core <= 2.303.2"
+    ],
+    "fix_urls": [
+      "https://github.com/jenkinsci/jenkins/commit/93451e20c20cfd84badeb0f37c38d4c0c7a5dad3"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2021-21605",
+    "ghsa_id": "GHSA-pxgq-gqr9-5gwx",
+    "summary": "Path traversal vulnerability in Jenkins agent names",
+    "severity": "high",
+    "packages": [
+      "org.jenkins-ci.main:jenkins-core < 2.263.2",
+      "org.jenkins-ci.main:jenkins-core >= 2.264, < 2.275"
+    ],
+    "fix_urls": [
+      "https://github.com/jenkinsci/jenkins/commit/b19b34db4b24b163d4edc53ccb84f41a3589cb08"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2021-21604",
+    "ghsa_id": "GHSA-qv6f-rcv6-6q3x",
+    "summary": "Improper handling of REST API XML deserialization errors in Jenkins",
+    "severity": "high",
+    "packages": [
+      "org.jenkins-ci.main:jenkins-core <= 2.263.1",
+      "org.jenkins-ci.main:jenkins-core >= 2.264, <= 2.274"
+    ],
+    "fix_urls": [
+      "https://github.com/jenkinsci/jenkins/commit/f1056bd814fc1f19ea241a101d649b8c143807e7"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2020-2230",
+    "ghsa_id": "GHSA-9g4m-ffx6-c29g",
+    "summary": "Jenkins Cross-site Scripting vulnerability in project naming strategy",
+    "severity": "high",
+    "packages": [
+      "org.jenkins-ci.main:jenkins-core <= 2.235.3",
+      "org.jenkins-ci.main:jenkins-core >= 2.236, <= 2.251"
+    ],
+    "fix_urls": [
+      "https://github.com/jenkinsci/jenkins/commit/e49f690939596acbc9a1be64128b2c7eaf91a6db"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2020-2223",
+    "ghsa_id": "GHSA-gfhj-524q-gcrm",
+    "summary": "Stored XSS vulnerability in Jenkins console links",
+    "severity": "high",
+    "packages": [
+      "org.jenkins-ci.main:jenkins-core <= 2.235.1",
+      "org.jenkins-ci.main:jenkins-core >= 2.236, <= 2.244"
+    ],
+    "fix_urls": [
+      "https://github.com/jenkinsci/jenkins/commit/11f4a351224ef04cfeb9c7636fb1590b67543f3c"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2026-46481",
+    "ghsa_id": "GHSA-9vmh-whc4-7phg",
+    "summary": "OpenMetadata: TEST_CONNECTION workflow leaks ingestion-bot JWT and database password to regular users",
+    "severity": "high",
+    "packages": [
+      "org.open-metadata:openmetadata-service < 1.12.4"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": "CVE-2026-45300",
+    "ghsa_id": "GHSA-fmxf-pm6p-7xgm",
+    "summary": "async-http-client: Cookie header not stripped on cross-origin redirect",
+    "severity": "high",
+    "packages": [
+      "org.asynchttpclient:async-http-client >= 3.0.0.Beta1, < 3.0.10",
+      "org.asynchttpclient:async-http-client >= 2.0.0, < 2.15.0"
+    ],
+    "fix_urls": [
+      "https://github.com/AsyncHttpClient/async-http-client/commit/3b0e3e9e"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2026-45609",
+    "ghsa_id": "GHSA-qjp4-4jvr-xqg3",
+    "summary": "Spring AI MCP Security: Unvalidated URL Fetching (SSRF)",
+    "severity": "high",
+    "packages": [
+      "org.springaicommunity:mcp-client-security < 0.1.9"
+    ],
+    "fix_urls": [
+      "https://github.com/spring-ai-community/mcp-security/pull/68",
+      "https://github.com/spring-ai-community/mcp-security/commit/e6b67d8a67cd7acbee6e4c0741c385d62e3ed576"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2026-35194",
+    "ghsa_id": "GHSA-2f54-v4hm-fx73",
+    "summary": "Apache Flink: Remote code execution via SQL injection in code generation",
+    "severity": "high",
+    "packages": [
+      "org.apache.flink:flink-table-planner_2.12 >= 1.15.0, < 1.20.4",
+      "org.apache.flink:flink-table-planner_2.12 >= 2.0.0, < 2.0.2",
+      "org.apache.flink:flink-table-planner_2.12 >= 2.1.0, < 2.1.2",
+      "org.apache.flink:flink-table-planner_2.12 >= 2.2.0, < 2.2.1",
+      "org.apache.flink:flink-table-api-java >= 1.15.0, < 1.20.4",
+      "org.apache.flink:flink-table-api-java >= 2.0.0, < 2.0.2",
+      "org.apache.flink:flink-table-api-java >= 2.1.0, < 2.1.2",
+      "org.apache.flink:flink-table-api-java >= 2.2.0, < 2.2.1",
+      "org.apache.flink:flink-table-runtime >= 1.15.0, < 1.20.4",
+      "org.apache.flink:flink-table-runtime >= 2.0.0, < 2.0.2",
+      "org.apache.flink:flink-table-runtime >= 2.1.0, < 2.1.2",
+      "org.apache.flink:flink-table-runtime >= 2.2.0, < 2.2.1"
+    ],
+    "fix_urls": [
+      "https://github.com/apache/flink/commit/64007b131d689158af90ca1c1b71b018129a85c5",
+      "https://github.com/apache/flink/commit/8db22cf8fbc4c785f6ffd41c2fd3e8b64a9688cd"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2026-44516",
+    "ghsa_id": "GHSA-3jh5-rr2q-xfv7",
+    "summary": "Valtimo has sensitive data exposure through HTTP request/response logging in LoggingRestClientCustomizer",
+    "severity": "high",
+    "packages": [
+      "com.ritense.valtimo:web >= 12.4.0, < 12.33.0",
+      "com.ritense.valtimo:web >= 13.0.0, < 13.26.0"
+    ],
+    "fix_urls": [
+      "https://github.com/valtimo-platform/valtimo/pull/599",
+      "https://github.com/valtimo-platform/valtimo/pull/600"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2026-39816",
+    "ghsa_id": "GHSA-2j9m-25xv-mp6r",
+    "summary": "Apache NiFi is missing the Restricted annotation with the Execute Code Required Permission",
+    "severity": "high",
+    "packages": [
+      "org.apache.nifi:nifi-other-graph-services-nar >= 2.0.0-M1, <= 2.8.0"
+    ],
+    "fix_urls": [
+      "https://github.com/apache/nifi/pull/11108",
+      "https://github.com/apache/nifi/commit/72fab7dde74edfd1063b57e87b0334340c1fbe93"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2026-40981",
+    "ghsa_id": "GHSA-2mh5-3cw6-hrrq",
+    "summary": "Spring Cloud Config has an Authorization Bypass Through User-Controlled Key ",
+    "severity": "high",
+    "packages": [
+      "org.springframework.cloud:spring-cloud-config >= 3.1.0, <= 3.1.13",
+      "org.springframework.cloud:spring-cloud-config >= 4.1.0, <= 4.1.9",
+      "org.springframework.cloud:spring-cloud-config >= 4.2.0, <= 4.2.6",
+      "org.springframework.cloud:spring-cloud-config >= 4.3.0, <= 4.3.2",
+      "org.springframework.cloud:spring-cloud-config >= 5.0.0, <= 5.0.2"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": "CVE-2026-44503",
+    "ghsa_id": "GHSA-7j59-v9qr-6fq9",
+    "summary": "Kiota abstractions RedirectHandler leaks Cookie/Proxy-Authorization headers on cross-host redirect",
+    "severity": "high",
+    "packages": [
+      "com.microsoft.kiota:microsoft-kiota-abstractions < 1.9.1",
+      "Microsoft.Kiota.Abstractions < 1.22.0",
+      "microsoft-kiota-http < 1.9.9",
+      "kiota-typescript < 1.0.0-preview.100",
+      "github.com/microsoft/kiota-http-go < 1.5.5"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": "CVE-2026-44241",
+    "ghsa_id": "GHSA-8hjv-92q9-g4xj",
+    "summary": "Micronaut has unbounded `formattersCache` in `TimeConverterRegistrar` that Allows Memory Exhaustion via `Accept-Language` Header",
+    "severity": "high",
+    "packages": [
+      "io.micronaut:micronaut-context >= 4.3.0, < 4.10.22"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": "CVE-2026-43646",
+    "ghsa_id": "GHSA-jvv4-8wxx-m5r6",
+    "summary": "Apache Wicket has an Exposure of Sensitive Information to an Unauthorized Actor vulnerability",
+    "severity": "high",
+    "packages": [
+      "org.apache.wicket:wicket-parent >= 8.0.0-M1, <= 8.17.0",
+      "org.apache.wicket:wicket-parent >= 9.0.0-M1, <= 9.22.0",
+      "org.apache.wicket:wicket-parent >= 10.0.0-M1, <= 10.8.0"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": "CVE-2026-42198",
+    "ghsa_id": "GHSA-98qh-xjc8-98pq",
+    "summary": "pgjdbc: Unbounded PBKDF2 iterations in SCRAM authentication allows CPU exhaustion DoS",
+    "severity": "high",
+    "packages": [
+      "org.postgresql:postgresql >= 42.2.0, < 42.7.11"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": "CVE-2026-39852",
+    "ghsa_id": "GHSA-rc95-pcm8-65v9",
+    "summary": "Quarkus has Authentication/Authorization bypasses",
+    "severity": "high",
+    "packages": [
+      "io.quarkus:quarkus-vertx-http < 3.20.6.1",
+      "io.quarkus:quarkus-vertx-http >= 3.21.0, < 3.27.3.1",
+      "io.quarkus:quarkus-vertx-http >= 3.30.0, < 3.33.1.1",
+      "io.quarkus:quarkus-vertx-http >= 3.34.0, < 3.35.1.1"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": null,
+    "ghsa_id": "GHSA-h8cj-hpmg-636v",
+    "summary": "appsmith has SQL Injection in FilterDataService via Unsafe DROP TABLE Execution",
+    "severity": "high",
+    "packages": [
+      "com.appsmith:interfaces <= 1.98"
+    ],
+    "fix_urls": [
+      "https://github.com/appsmithorg/appsmith/commit/c8023ba4b3b54204ff3309c9e5c33664ad15ba32"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2026-42524",
+    "ghsa_id": "GHSA-f8h4-46xv-h7jj",
+    "summary": "Jenkins HTML Publisher Plugin has a XSS vulnerability in the legacy wrapper file",
+    "severity": "high",
+    "packages": [
+      "org.jenkins-ci.plugins:htmlpublisher < 427.1"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": "CVE-2026-42520",
+    "ghsa_id": "GHSA-p2rf-wpxj-mx2g",
+    "summary": "Jenkins Credentials Binding Plugin has a path traversal vulnerability",
+    "severity": "high",
+    "packages": [
+      "org.jenkins-ci.plugins:credentials-binding < 720.v3f6decef43ea"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": "CVE-2026-40048",
+    "ghsa_id": "GHSA-v3vg-332r-mw99",
+    "summary": "Camel-PQC Vulnerable to Deserialization of Untrusted Data",
+    "severity": "high",
+    "packages": [
+      "org.apache.camel:camel-pqc < 4.18.2"
+    ],
+    "fix_urls": [
+      "https://github.com/apache/camel/pull/22034",
+      "https://github.com/apache/camel/pull/22495",
+      "https://github.com/apache/camel/commit/5bdd0f1d3289dfa78116deec6c81083708bf432d",
+      "https://github.com/apache/camel/commit/5f87a86f4e337efc59248d278c6a5650e73b3b7c"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2026-23902",
+    "ghsa_id": "GHSA-72mv-wwvm-vgp5",
+    "summary": "Apache DolphinScheduler has an Incorrect Authorization Vulnerability",
+    "severity": "high",
+    "packages": [
+      "org.apache.dolphinscheduler:dolphinscheduler < 3.4.1"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": "CVE-2026-39973",
+    "ghsa_id": "GHSA-m8mh-x359-vm8m",
+    "summary": "Apktool: Path Traversal to Arbitrary File Write",
+    "severity": "high",
+    "packages": [
+      "org.apktool:apktool-lib >= 3.0.0, < 3.0.2"
+    ],
+    "fix_urls": [
+      "https://github.com/iBotPeaches/Apktool/pull/4041",
+      "https://github.com/iBotPeaches/Apktool/commit/e10a0450c7afcd9462c0b76bcbff0e7428b92bdd#diff-cd531ebe1014bfd18185bf21585ca5cdb16fbcb07703ebc47949a1b4e4e36bc3"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2026-6857",
+    "ghsa_id": "GHSA-xfxp-ppx7-cqrp",
+    "summary": "camel-infinispan Vulnerable to Deserialization of Untrusted Data",
+    "severity": "high",
+    "packages": [
+      "org.apache.camel:camel-infinispan < 4.20.0"
+    ],
+    "fix_urls": [
+      "https://github.com/apache/camel/commit/ec297f89065b6cfc2682487a96411692d6c296e2"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2026-41166",
+    "ghsa_id": "GHSA-49vv-25qx-mg44",
+    "summary": "OpenRemote has Improper Access Control via updateUserRealmRoles function",
+    "severity": "high",
+    "packages": [
+      "io.openremote:openremote-manager < 1.22.1"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": "CVE-2026-22753",
+    "ghsa_id": "GHSA-4wrg-8wpc-h923",
+    "summary": "Spring Security Doesn't Correctly Include Servlet Path in Path Matching of HttpSecurity#securityMatchers",
+    "severity": "high",
+    "packages": [
+      "org.springframework.security:spring-security-config >= 7.0.0, <= 7.0.4"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": "CVE-2026-22754",
+    "ghsa_id": "GHSA-4vrc-j85c-598c",
+    "summary": "Spring Security Doesn't Correctly Include Servlet Path in Path Matching of XML Authorization Rules",
+    "severity": "high",
+    "packages": [
+      "org.springframework.security:spring-security-config >= 7.0.0, <= 7.0.4"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": "CVE-2026-2332",
+    "ghsa_id": "GHSA-355h-qmc2-wpwf",
+    "summary": "Jetty has HTTP Request Smuggling via Chunked Extension Quoted-String Parsing",
+    "severity": "high",
+    "packages": [
+      "org.eclipse.jetty:jetty-http >= 12.1.0, <= 12.1.6",
+      "org.eclipse.jetty:jetty-http >= 12.0.0, <= 12.0.32",
+      "org.eclipse.jetty:jetty-http >= 11.0.0, <= 11.0.27",
+      "org.eclipse.jetty:jetty-http >= 10.0.0, <= 10.0.27",
+      "org.eclipse.jetty:jetty-http >= 9.4.0, <= 9.4.59"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": "CVE-2026-5795",
+    "ghsa_id": "GHSA-r7p8-xq5m-436c",
+    "summary": "Eclipse Jetty: Early return from the JASPIAuthenticator code can potentially no clear ThreadLocal variables",
+    "severity": "high",
+    "packages": [
+      "org.eclipse.jetty.ee11:jetty-ee11-jaspi >= 12.1.0, <= 12.1.7",
+      "org.eclipse.jetty.ee10:jetty-ee10-jaspi >= 12.1.0, <= 12.1.7",
+      "org.eclipse.jetty.ee9:jetty-ee9-jaspi >= 12.1.0, <= 12.1.7",
+      "org.eclipse.jetty.ee8:jetty-ee8-jaspi >= 12.1.0, <= 12.1.7",
+      "org.eclipse.jetty.ee11:jetty-ee11-jaspi >= 12.0.0, <= 12.0.33",
+      "org.eclipse.jetty.ee10:jetty-ee10-jaspi >= 12.0.0, <= 12.0.33",
+      "org.eclipse.jetty.ee9:jetty-ee9-jaspi >= 12.0.0, <= 12.0.33",
+      "org.eclipse.jetty.ee8:jetty-ee8-jaspi >= 12.0.0, <= 12.0.33",
+      "org.eclipse.jetty:jetty-jaspi >= 11.0.0, <= 11.0.28",
+      "org.eclipse.jetty:jetty-jaspi >= 10.0.0, <= 10.0.28",
+      "org.eclipse.jetty:jetty-jaspi >= 9.4.0, <= 9.4.60"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": "CVE-2026-35582",
+    "ghsa_id": "GHSA-3p24-9x7v-7789",
+    "summary": "Emissary has an OS Command Injection via Unvalidated IN_FILE_ENDING / OUT_FILE_ENDING in Executrix",
+    "severity": "high",
+    "packages": [
+      "gov.nsa.emissary:emissary <= 8.42.0"
+    ],
+    "fix_urls": [
+      "https://github.com/NationalSecurityAgency/emissary/commit/1faf33f2494c0128f250d7d2e8f2da99bbd32ae8"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2025-62188",
+    "ghsa_id": "GHSA-3cjc-vhfm-ffp2",
+    "summary": "Apache DolphinScheduler vulnerable to sensitive information disclosure",
+    "severity": "high",
+    "packages": [
+      "org.apache.dolphinscheduler:dolphinscheduler >= 3.1.0, < 3.2.0"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": null,
+    "ghsa_id": "GHSA-gc59-r5jq-98qw",
+    "summary": "Duplicate Advisory: Eclipse Jetty: Early return from the JASPIAuthenticator code can potentially no clear ThreadLocal variables",
+    "severity": "high",
+    "packages": [
+      "org.eclipse.jetty.ee10:jetty-ee10 >= 12.1.0, < 12.1.7",
+      "org.eclipse.jetty.ee10:jetty-ee10 >= 12.0.0, < 12.0.33",
+      "org.eclipse.jetty.ee10:jetty-ee10 >= 11.0.0, < 11.0.28",
+      "org.eclipse.jetty.ee10:jetty-ee10 >= 10.0.0, < 10.0.28",
+      "org.eclipse.jetty.ee10:jetty-ee10 >= 9.4.0, < 9.4.60"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": "CVE-2026-27314",
+    "ghsa_id": "GHSA-qxpc-96fq-wwmg",
+    "summary": "Apache Cassandra is vulnerable to privilege escalation in an mTLS environment using MutualTlsAuthenticator",
+    "severity": "high",
+    "packages": [
+      "org.apache.cassandra:cassandra-all >= 5.0-alpha1, < 5.0.7"
+    ],
+    "fix_urls": [
+      "https://github.com/apache/cassandra/commit/b584a435970e5125e1def5148d943c39569dc7af"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2026-34359",
+    "ghsa_id": "GHSA-fgv2-4q4g-wc35",
+    "summary": "HAPI FHIR Core has Authentication Credential Leakage via Improper URL Prefix Matching on HTTP Redirect",
+    "severity": "high",
+    "packages": [
+      "ca.uhn.hapi.fhir:org.hl7.fhir.core < 6.9.4",
+      "ca.uhn.hapi.fhir:org.hl7.fhir.utilities < 6.9.4"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": "CVE-2026-34214",
+    "ghsa_id": "GHSA-x27p-5f68-m644",
+    "summary": "Trino: Iceberg REST catalog static and vended credentials are accessible via query JSON",
+    "severity": "high",
+    "packages": [
+      "io.trino:trino-iceberg >= 439, < 480"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": "CVE-2026-28368",
+    "ghsa_id": "GHSA-8v4x-mgvp-p658",
+    "summary": "Undertow is Vulnerable to HTTP Request/Response Smuggling",
+    "severity": "high",
+    "packages": [
+      "io.undertow:undertow-parent <= 2.3.23.Final"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": "CVE-2026-28367",
+    "ghsa_id": "GHSA-3gv6-g396-9v4r",
+    "summary": "Undertow is Vulnerable to HTTP Request/Response Smuggling",
+    "severity": "high",
+    "packages": [
+      "io.undertow:undertow-parent <= 2.3.23.Final"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": "CVE-2026-28369",
+    "ghsa_id": "GHSA-vqqj-9cmv-hx43",
+    "summary": "Undertow is Vulnerable to HTTP Request/Response Smuggling",
+    "severity": "high",
+    "packages": [
+      "io.undertow:undertow-parent <= 2.3.23.Final"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": "CVE-2026-33870",
+    "ghsa_id": "GHSA-pwqr-wmgm-9rr8",
+    "summary": "Netty: HTTP Request Smuggling via Chunked Extension Quoted-String Parsing",
+    "severity": "high",
+    "packages": [
+      "io.netty:netty-codec-http < 4.1.132.Final",
+      "io.netty:netty-codec-http >= 4.2.0.Alpha1, < 4.2.10.Final"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": "CVE-2026-22730",
+    "ghsa_id": "GHSA-c267-rfvc-mvpm",
+    "summary": "SQL Injection in Spring AI MariaDBFilterExpressionConverter",
+    "severity": "high",
+    "packages": [
+      "org.springframework.ai:spring-ai-mariadb-store >= 1.1.0-M1, < 1.1.3",
+      "org.springframework.ai:spring-ai-mariadb-store < 1.0.4"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": "CVE-2026-22729",
+    "ghsa_id": "GHSA-rp9g-qx29-88cp",
+    "summary": "JSONPath Injection in Spring AI Vector Stores FilterExpressionConverter",
+    "severity": "high",
+    "packages": [
+      "org.springframework.ai:spring-ai-vector-store >= 1.1.0-M1, < 1.1.3",
+      "org.springframework.ai:spring-ai-vector-store < 1.0.4"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": "CVE-2026-3047",
+    "ghsa_id": "GHSA-8cr3-vpxx-92cx",
+    "summary": "Keycloak SAML Broken has Authentication Bypass by Primary Weakness",
+    "severity": "high",
+    "packages": [
+      "org.keycloak:keycloak-broker-saml <= 1.8.1.Final"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": "CVE-2025-66024",
+    "ghsa_id": "GHSA-h2xq-h7f9-vh6c",
+    "summary": "XWiki Blog Application home page vulnerable to Stored XSS via Post Title",
+    "severity": "high",
+    "packages": [
+      "org.xwiki.contrib.blog:application-blog-ui < 9.15.7"
+    ],
+    "fix_urls": [
+      "https://github.com/xwiki-contrib/application-blog/commit/cca87f0a0edc2e7e049d46d51f4a4d8f78b714ba"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2026-25903",
+    "ghsa_id": "GHSA-c5w7-m8wf-xc77",
+    "summary": "Apache NiFi: Missing Authorization of Restricted Permissions for Component Updates",
+    "severity": "high",
+    "packages": [
+      "org.apache.nifi:nifi-web-api >= 1.1.0, < 2.8.0"
+    ],
+    "fix_urls": [
+      "https://github.com/apache/nifi/commit/119f8881fbc3cbd0d522b0c549b841da3de01f64"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2026-26010",
+    "ghsa_id": "GHSA-pqqf-7hxm-rj5r",
+    "summary": "Leaky JWTs in OpenMetadata exposing highly-privileged bot users",
+    "severity": "high",
+    "packages": [
+      "org.open-metadata:openmetadata-sdk < 1.11.8"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": "CVE-2024-4027",
+    "ghsa_id": "GHSA-33hj-rcmx-86mv",
+    "summary": "Undertow Servlets Vulnerable to Remote DoS via OutOfMemoryError when Passed Large Parameter Names",
+    "severity": "high",
+    "packages": [
+      "io.undertow:undertow-core < 2.2.39.Final",
+      "io.undertow:undertow-core = 2.4.0.Alpha1",
+      "io.undertow:undertow-core >= 2.3.0.Alpha1, < 2.3.21.Final"
+    ],
+    "fix_urls": [
+      "https://github.com/undertow-io/undertow/commit/6b7c18481ce65ae4012d92fe2b7f17a21ef4d70b",
+      "https://github.com/undertow-io/undertow/pull/1860",
+      "https://github.com/undertow-io/undertow/pull/1882",
+      "https://github.com/undertow-io/undertow/pull/1894",
+      "https://github.com/undertow-io/undertow/commit/8318dd36fdc2c9842baf10c5f1bfbb3bc23f75e7",
+      "https://github.com/undertow-io/undertow/commit/cb854c779b9e2368c3c274ebd7217c8e75d505be",
+      "https://github.com/undertow-io/undertow/commit/fb14baa51b611a4a9f755f1d8b07d6e12eac68e3"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2026-0603",
+    "ghsa_id": "GHSA-2p5w-cvg5-gc5c",
+    "summary": "Hibernate vulnerable to SQL Injection",
+    "severity": "high",
+    "packages": [
+      "org.hibernate:hibernate-core >= 5.2.8, <= 5.6.15"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": "CVE-2026-22022",
+    "ghsa_id": "GHSA-qr3p-2xj2-q7hq",
+    "summary": "Apache Solr: Unauthorized bypass of certain \"predefined permission\" rules in the RuleBasedAuthorizationPlugin",
+    "severity": "high",
+    "packages": [
+      "org.apache.solr:solr-core >= 5.3.0, < 9.10.1"
+    ],
+    "fix_urls": [
+      "https://github.com/apache/solr/commit/c135e6335c7158fa26e96b0dc386f825255b47c0"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2026-22444",
+    "ghsa_id": "GHSA-vc2w-4v3p-2mqw",
+    "summary": "Apache Solr: Insufficient file-access checking in standalone core-creation requests",
+    "severity": "high",
+    "packages": [
+      "org.apache.solr:solr-core >= 8.6.0, < 9.10.1"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": "CVE-2025-29847",
+    "ghsa_id": "GHSA-c399-q49h-qwc8",
+    "summary": "Apache Linkis: Arbitrary File Read via Double URL Encoding Bypass",
+    "severity": "high",
+    "packages": [
+      "org.apache.linkis:linkis >= 1.3.0, < 1.8.0"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": "CVE-2025-22223",
+    "ghsa_id": "GHSA-hh3m-g4qj-4835",
+    "summary": "Spring Security Vulnerable to Authorization Bypass via Security Annotations",
+    "severity": "medium",
+    "packages": [
+      "org.springframework.security:spring-security-core >= 6.4.0, < 6.4.4"
+    ],
+    "fix_urls": [
+      "https://github.com/spring-projects/spring-security/commit/dc2e1af2dab8ef81cd4edd25b56a2babeaab8cf9"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2024-38827",
+    "ghsa_id": "GHSA-q3v6-hm2v-pw99",
+    "summary": "Spring Framework has Authorization Bypass for Case Sensitive Comparisons",
+    "severity": "medium",
+    "packages": [
+      "org.springframework.security:spring-security-core < 5.7.14",
+      "org.springframework.security:spring-security-core >= 5.8.0, < 5.8.16",
+      "org.springframework.security:spring-security-core >= 6.0.0, < 6.0.14",
+      "org.springframework.security:spring-security-core >= 6.1.0, < 6.1.12",
+      "org.springframework.security:spring-security-core >= 6.2.0, < 6.2.8",
+      "org.springframework.security:spring-security-core >= 6.3.0, < 6.3.5"
+    ],
+    "fix_urls": [
+      "https://github.com/spring-projects/spring-framework/commit/11d4272ff48b4a4dabc4b28dfbff0364a4204bc9"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2024-38810",
+    "ghsa_id": "GHSA-hmqf-wpq9-jq83",
+    "summary": "Spring Security Missing Authorization vulnerability",
+    "severity": "medium",
+    "packages": [
+      "org.springframework.security:spring-security-core >= 6.3.0, < 6.3.2"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": "CVE-2012-5055",
+    "ghsa_id": "GHSA-3533-rvpc-6x56",
+    "summary": "Exposure of Sensitive Information to an Unauthorized Actor in Spring Security",
+    "severity": "medium",
+    "packages": [
+      "org.springframework.security:spring-security-core < 2.0.8",
+      "org.springframework.security:spring-security-core >= 3.0.0, < 3.0.8",
+      "org.springframework.security:spring-security-core >= 3.1.0, < 3.1.3"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": "CVE-2011-2731",
+    "ghsa_id": "GHSA-4644-hg35-55m9",
+    "summary": "Concurrent Execution using Shared Resource with Improper Synchronization in Spring Security",
+    "severity": "medium",
+    "packages": [
+      "org.springframework.security:spring-security-core < 2.0.7",
+      "org.springframework.security:spring-security-core >= 3.0.0, < 3.0.6"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": "CVE-2026-22747",
+    "ghsa_id": "GHSA-2jrg-rf5x-568g",
+    "summary": "Spring Security Vulnerable to Unauthorized User Impersonation when Using X.509 Client Certificates",
+    "severity": "medium",
+    "packages": [
+      "org.springframework.security:spring-security-web >= 7.0.0, <= 7.0.4"
+    ],
+    "fix_urls": [
+      "https://github.com/spring-projects/spring-security/commit/88118afb8f9357ae7cc215500a441e89fee701c3"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2024-22258",
+    "ghsa_id": "GHSA-x637-x8p3-5p22",
+    "summary": "Improper Authentication in Spring Authorization Server",
+    "severity": "medium",
+    "packages": [
+      "org.springframework.security:spring-security-oauth2-authorization-server < 1.1.6",
+      "org.springframework.security:spring-security-oauth2-authorization-server >= 1.2.0, < 1.2.3"
+    ],
+    "fix_urls": [
+      "https://github.com/spring-projects/spring-authorization-server/commit/a7035d22bd2de6c24e7125623d38fb83d8f659a9"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2023-6927",
+    "ghsa_id": "GHSA-9vm7-v8wj-3fqw",
+    "summary": "keycloak-core: open redirect via \"form_post.jwt\" JARM response mode",
+    "severity": "medium",
+    "packages": [
+      "org.keycloak:keycloak-core < 23.0.4"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": "CVE-2023-0091",
+    "ghsa_id": "GHSA-v436-q368-hvgg",
+    "summary": "Keycloak has lack of validation of access token on client registrations endpoint",
+    "severity": "medium",
+    "packages": [
+      "org.keycloak:keycloak-core <= 20.0.2"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": null,
+    "ghsa_id": "GHSA-755v-r4x4-qf7m",
+    "summary": "Stored Cross-Site Scripting (XSS) in Keycloak via groups dropdown",
+    "severity": "medium",
+    "packages": [
+      "org.keycloak:keycloak-core < 20.0.0"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": null,
+    "ghsa_id": "GHSA-w8v7-c7pm-7wfr",
+    "summary": "Duplicate Advisory: Keycloak vulnerable to Cross-Site Scripting (XSS)",
+    "severity": "medium",
+    "packages": [
+      "org.keycloak:keycloak-core <= 19.0.1"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": "CVE-2022-0225",
+    "ghsa_id": "GHSA-fqc7-5xxc-ph7r",
+    "summary": "Keycloak XSS via use of malicious payload as group name when creating new group from admin console",
+    "severity": "medium",
+    "packages": [
+      "org.keycloak:keycloak-core <= 16.1.0"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": "CVE-2022-1466",
+    "ghsa_id": "GHSA-f32v-vf79-p29q",
+    "summary": "Improper authorization in Keycloak",
+    "severity": "medium",
+    "packages": [
+      "org.keycloak:keycloak-core < 17.0.1"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": "CVE-2021-20262",
+    "ghsa_id": "GHSA-xf46-8vvp-4hxx",
+    "summary": "Keycloak Missing authentication for critical function",
+    "severity": "medium",
+    "packages": [
+      "org.keycloak:keycloak-core <= 12.0.4"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": "CVE-2019-14820",
+    "ghsa_id": "GHSA-xfqh-7356-vqjj",
+    "summary": "Exposure of Sensitive Information to an Unauthorized Actor in Keycloak",
+    "severity": "medium",
+    "packages": [
+      "org.keycloak:keycloak-core < 8.0.0"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": "CVE-2019-3868",
+    "ghsa_id": "GHSA-gc52-xj6p-9pxp",
+    "summary": "Exposure of Sensitive Information to an Unauthorized Actor in Keycloak",
+    "severity": "medium",
+    "packages": [
+      "org.keycloak:keycloak-core < 6.0.0"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": "CVE-2016-8629",
+    "ghsa_id": "GHSA-778x-2mqv-w6xw",
+    "summary": "Moderate severity vulnerability that affects org.keycloak:keycloak-core",
+    "severity": "medium",
+    "packages": [
+      "org.keycloak:keycloak-core < 2.4.0"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": "CVE-2026-7500",
+    "ghsa_id": "GHSA-hm32-hfmw-rhvg",
+    "summary": "Keycloak has a Forced Browsing issue",
+    "severity": "medium",
+    "packages": [
+      "org.keycloak:keycloak-services <= 26.6.1"
+    ],
+    "fix_urls": [
+      "https://github.com/keycloak/keycloak/pull/48715"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2026-37980",
+    "ghsa_id": "GHSA-m32f-8vh9-2hh3",
+    "summary": "Keycloak: Arbitrary code execution via Stored Cross-Site Scripting (XSS) in organization selection login page",
+    "severity": "medium",
+    "packages": [
+      "org.keycloak:keycloak-services <= 26.5.5"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": "CVE-2026-4325",
+    "ghsa_id": "GHSA-rx66-hj7g-28h7",
+    "summary": "Keycloak: Replay of action tokens via improper handling of single-use entries",
+    "severity": "medium",
+    "packages": [
+      "org.keycloak:keycloak-services < 26.5.7"
+    ],
+    "fix_urls": [
+      "https://github.com/keycloak/keycloak/commit/9046f201125a6fd6be9c116b99d348509d99d4a5"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2026-3190",
+    "ghsa_id": "GHSA-q35r-vvhv-vx5h",
+    "summary": "Keycloak: Missing Role Enforcement on UMA 2.0 Permission Ticket Endpoint Leads to Information Disclosure",
+    "severity": "medium",
+    "packages": [
+      "org.keycloak:keycloak-server-spi-private < 26.5.6",
+      "org.keycloak:keycloak-services < 26.5.6",
+      "org.keycloak:keycloak-model-jpa < 26.5.6"
+    ],
+    "fix_urls": [
+      "https://github.com/keycloak/keycloak/commit/f1baf25cbb1551202570f954102eb2d270ab0694"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2026-3121",
+    "ghsa_id": "GHSA-7xf9-4jfc-wgm4",
+    "summary": "Keycloak: manage-clients permission escalates to full realm admin access",
+    "severity": "medium",
+    "packages": [
+      "org.keycloak:keycloak-services < 26.5.6"
+    ],
+    "fix_urls": [
+      "https://github.com/keycloak/keycloak/commit/79ab3110a257fb8d6f1a664c916687128094ed01"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2026-4628",
+    "ghsa_id": "GHSA-4pgc-gfrr-wcmg",
+    "summary": "Keycloak has Improper Access Control that allows attackers with valid credentials to bypass the allowRemoteResourceManagement=false",
+    "severity": "medium",
+    "packages": [
+      "org.keycloak:keycloak-services <= 26.6.0"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": "CVE-2026-3429",
+    "ghsa_id": "GHSA-8g9r-9wjw-37j4",
+    "summary": "Keycloak: Improper Access Control Leading to MFA Deletion and Account Takeover in Keycloak Account REST API",
+    "severity": "medium",
+    "packages": [
+      "org.keycloak:keycloak-services <= 26.5.6"
+    ],
+    "fix_urls": [
+      "https://github.com/keycloak/keycloak/commit/68f5779230d08825e6a4b4e23471fade16434178"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2025-14778",
+    "ghsa_id": "GHSA-fm6w-rrp3-2x4w",
+    "summary": "Keycloak Affected by Broken Access Control Vulnerability in the UserManagedPermissionService",
+    "severity": "medium",
+    "packages": [
+      "org.keycloak:keycloak-services < 26.2.13",
+      "org.keycloak:keycloak-services >= 26.5.0, < 26.5.3",
+      "org.keycloak:keycloak-services >= 26.3.0, < 26.4.9"
+    ],
+    "fix_urls": [
+      "https://github.com/keycloak/keycloak/pull/46154"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2025-14559",
+    "ghsa_id": "GHSA-wv3h-x6c4-r867",
+    "summary": "Keycloak services allows the issuance of access and refresh tokens for disabled users",
+    "severity": "medium",
+    "packages": [
+      "org.keycloak:keycloak-services >= 26.5.0, < 26.5.2",
+      "org.keycloak:keycloak-services < 26.4.9"
+    ],
+    "fix_urls": [
+      "https://github.com/keycloak/keycloak/commit/d67349f3aa9fed5c61750619d0f9de6356aeaeff",
+      "https://github.com/keycloak/keycloak/commit/2d0aa31c4830ebaad094c3762e78b884c141e659"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2025-11429",
+    "ghsa_id": "GHSA-64w3-5q9m-68xf",
+    "summary": "Keycloak does not invalidate sessions when \"Remember Me\" is disabled",
+    "severity": "medium",
+    "packages": [
+      "org.keycloak:keycloak-services >= 26.3.0, < 26.4.1",
+      "org.keycloak:keycloak-services < 26.2.11"
+    ],
+    "fix_urls": [
+      "https://github.com/keycloak/keycloak/commit/a34094100716b7c69ae38eaed6678ab4344d0a1d",
+      "https://github.com/keycloak/keycloak/commit/bda0e2a67c8cf41d1b3d9010e6dfcddaf79bf59b",
+      "https://github.com/keycloak/keycloak/commit/a752492843e21c3ab06090616692e53001864158"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2025-7784",
+    "ghsa_id": "GHSA-27gp-8389-hm4w",
+    "summary": "Keycloak Privilege Escalation Vulnerability in Admin Console (FGAPv2 Enabled)",
+    "severity": "medium",
+    "packages": [
+      "org.keycloak:keycloak-services >= 26.2.0, < 26.2.6"
+    ],
+    "fix_urls": [
+      "https://github.com/keycloak/keycloak/pull/41168"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": null,
+    "ghsa_id": "GHSA-83j7-mhw9-388w",
+    "summary": "Duplicate Advisory: Keycloak Privilege Escalation Vulnerability in Admin Console (FGAPv2 Enabled)",
+    "severity": "medium",
+    "packages": [
+      "org.keycloak:keycloak-services <= 26.3.1"
+    ],
+    "fix_urls": [
+      "https://github.com/keycloak/keycloak/pull/41168"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2025-3910",
+    "ghsa_id": "GHSA-5jfq-x6xp-7rw2",
+    "summary": "Keycloak vulnerable to two factor authentication bypass",
+    "severity": "medium",
+    "packages": [
+      "org.keycloak:keycloak-services < 26.2.2"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": null,
+    "ghsa_id": "GHSA-fx44-2wx5-5fvp",
+    "summary": "Duplicate Advisory: Keycloak vulnerable to two factor authentication bypass",
+    "severity": "medium",
+    "packages": [
+      "org.keycloak:keycloak-services < 26.2.2"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": "CVE-2025-1391",
+    "ghsa_id": "GHSA-gvgg-2r3r-53x7",
+    "summary": "Improper Authorization in Keycloak Organization Mapper Allows Unauthorized Organization Claims ",
+    "severity": "medium",
+    "packages": [
+      "org.keycloak:keycloak-services >= 26.1.0, < 26.1.3",
+      "org.keycloak:keycloak-services < 26.0.10"
+    ],
+    "fix_urls": [
+      "https://github.com/keycloak/keycloak/commit/5aa2b4c75bb474303ab807017582bc01a9f7e378"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": null,
+    "ghsa_id": "GHSA-rq4w-cjrr-h8w8",
+    "summary": "Duplicate Advisory: Keycloak allows Incorrect Assignment of an Organization to a User",
+    "severity": "medium",
+    "packages": [
+      "org.keycloak:keycloak-services < 26.1.2"
+    ],
+    "fix_urls": [
+      "https://github.com/keycloak/keycloak/commit/5aa2b4c75bb474303ab807017582bc01a9f7e378"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2024-8883",
+    "ghsa_id": "GHSA-w8gr-xwp4-r9f7",
+    "summary": "Keycloak has Vulnerable Redirect URI Validation Results in Open Redirect",
+    "severity": "medium",
+    "packages": [
+      "org.keycloak:keycloak-services <= 22.0.12",
+      "org.keycloak:keycloak-services >= 23.0.0, <= 24.0.7",
+      "org.keycloak:keycloak-services >= 25.0.0, <= 25.0.5"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": "CVE-2023-6544",
+    "ghsa_id": "GHSA-46c8-635v-68r2",
+    "summary": "Keycloak Authorization Bypass vulnerability",
+    "severity": "medium",
+    "packages": [
+      "org.keycloak:keycloak-services < 22.0.10",
+      "org.keycloak:keycloak-services >= 23.0.0, < 24.0.3"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": "CVE-2018-10894",
+    "ghsa_id": "GHSA-xvv8-8wh9-9fh2",
+    "summary": "Keycloak Authentication Error",
+    "severity": "medium",
+    "packages": [
+      "org.keycloak:keycloak-saml-adapter-core < 4.4.0.Final",
+      "org.keycloak:keycloak-services < 4.4.0.Final"
+    ],
+    "fix_urls": [
+      "https://github.com/keycloak/keycloak/commit/812e76c39b1e693e8f11e5549cca2c90631f372e"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2021-3424",
+    "ghsa_id": "GHSA-pf38-cw3p-22q9",
+    "summary": "Keycloak is vulnerable to IDN homograph attack",
+    "severity": "medium",
+    "packages": [
+      "org.keycloak:keycloak-services < 18.0.0"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": "CVE-2026-27100",
+    "ghsa_id": "GHSA-wfhp-qgm8-5p5c",
+    "summary": "Jenkins has a build information disclosure vulnerability through Run Parameter ",
+    "severity": "medium",
+    "packages": [
+      "org.jenkins-ci.main:jenkins-core >= 2.542, < 2.551",
+      "org.jenkins-ci.main:jenkins-core < 2.541.2"
+    ],
+    "fix_urls": [
+      "https://github.com/jenkinsci/jenkins/commit/f92eadb5813f04ca27439455e2573c3171e93a45"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2025-67638",
+    "ghsa_id": "GHSA-hxjg-2jvf-h3rx",
+    "summary": "Jenkins's build authorization token is stored and displayed in plain text",
+    "severity": "medium",
+    "packages": [
+      "org.jenkins-ci.main:jenkins-core >= 2.529, < 2.541",
+      "org.jenkins-ci.main:jenkins-core < 2.528.3"
+    ],
+    "fix_urls": [
+      "https://github.com/jenkinsci/jenkins/commit/4710d65339251aaf1d1599f19545db99be24d981"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2025-67637",
+    "ghsa_id": "GHSA-fxj7-6v9w-xc76",
+    "summary": "Jenkins's build authorization token is stored and displayed in plain text",
+    "severity": "medium",
+    "packages": [
+      "org.jenkins-ci.main:jenkins-core >= 2.529, < 2.541",
+      "org.jenkins-ci.main:jenkins-core < 2.528.3"
+    ],
+    "fix_urls": [
+      "https://github.com/jenkinsci/jenkins/commit/4710d65339251aaf1d1599f19545db99be24d981"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2025-67636",
+    "ghsa_id": "GHSA-p3f5-98cv-562j",
+    "summary": "Jenkins is missing a permission check on password fields",
+    "severity": "medium",
+    "packages": [
+      "org.jenkins-ci.main:jenkins-core >= 2.529, < 2.541",
+      "org.jenkins-ci.main:jenkins-core < 2.528.3"
+    ],
+    "fix_urls": [
+      "https://github.com/jenkinsci/jenkins/commit/3ee7380c5e167fab865f58b52a81ef01c24b9eb2"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2025-59475",
+    "ghsa_id": "GHSA-223m-4rfp-646h",
+    "summary": "Jenkins is missing a permission check in the authenticated users' profile menu ",
+    "severity": "medium",
+    "packages": [
+      "org.jenkins-ci.main:jenkins-core < 2.516.3",
+      "org.jenkins-ci.main:jenkins-core >= 2.517, < 2.528"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": "CVE-2025-59474",
+    "ghsa_id": "GHSA-67v4-38h7-9jjp",
+    "summary": "Jenkins has a missing permission check, allowing users to obtain agent names",
+    "severity": "medium",
+    "packages": [
+      "org.jenkins-ci.main:jenkins-core < 2.516.3",
+      "org.jenkins-ci.main:jenkins-core >= 2.517, < 2.528"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": "CVE-2025-31721",
+    "ghsa_id": "GHSA-wr6w-jxg7-qpfh",
+    "summary": "Jenkins Missing Permission Check",
+    "severity": "medium",
+    "packages": [
+      "org.jenkins-ci.main:jenkins-core >= 2.500, < 2.504",
+      "org.jenkins-ci.main:jenkins-core < 2.492.3"
+    ],
+    "fix_urls": [
+      "https://github.com/jenkinsci/jenkins/commit/b3651b475302e8dba20fc63c1ff89d144ec652f0"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2025-31720",
+    "ghsa_id": "GHSA-565r-pf5q-45v6",
+    "summary": "Jenkins Missing Permission Check",
+    "severity": "medium",
+    "packages": [
+      "org.jenkins-ci.main:jenkins-core >= 2.500, < 2.504",
+      "org.jenkins-ci.main:jenkins-core < 2.492.3"
+    ],
+    "fix_urls": [
+      "https://github.com/jenkinsci/jenkins/commit/bf32018bf075c06e5df649583557c82d42d8bb5c"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2025-27623",
+    "ghsa_id": "GHSA-rfh6-9r2q-98vf",
+    "summary": "Jenkins reveals encrypted values of secrets stored in agent configuration to users with Agent/Extended Read permission",
+    "severity": "medium",
+    "packages": [
+      "org.jenkins-ci.main:jenkins-core < 2.492.2",
+      "org.jenkins-ci.main:jenkins-core >= 2.493, < 2.500"
+    ],
+    "fix_urls": [
+      "https://github.com/jenkinsci/jenkins/commit/923cdbc165e8b8523ae960dfee5f7354878532d5"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2025-27622",
+    "ghsa_id": "GHSA-p34j-r3ch-c985",
+    "summary": "Jenkins reveals encrypted values of secrets stored in agent configuration to users with Agent/Extended Read permission",
+    "severity": "medium",
+    "packages": [
+      "org.jenkins-ci.main:jenkins-core >= 2.493, < 2.500",
+      "org.jenkins-ci.main:jenkins-core < 2.492.2"
+    ],
+    "fix_urls": [
+      "https://github.com/jenkinsci/jenkins/commit/923cdbc165e8b8523ae960dfee5f7354878532d5"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2024-47804",
+    "ghsa_id": "GHSA-f9qj-77q2-h5c5",
+    "summary": "Jenkins item creation restriction bypass vulnerability",
+    "severity": "medium",
+    "packages": [
+      "org.jenkins-ci.main:jenkins-core < 2.462.3",
+      "org.jenkins-ci.main:jenkins-core >= 2.466, < 2.479"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": "CVE-2024-43045",
+    "ghsa_id": "GHSA-8pv9-qh96-9hc6",
+    "summary": "Jenkins does not perform a permission check in an HTTP endpoint",
+    "severity": "medium",
+    "packages": [
+      "org.jenkins-ci.main:jenkins-core < 2.452.4",
+      "org.jenkins-ci.main:jenkins-core >= 2.460, < 2.462.1",
+      "org.jenkins-ci.main:jenkins-core >= 2.470, < 2.471"
+    ],
+    "fix_urls": [
+      "https://github.com/jenkinsci/jenkins/commit/0c13259cebc6a780fee7825838f4dd98ece8e68a",
+      "https://github.com/jenkinsci/jenkins/commit/3752f406bfef764e4954238acf44343169ae5799",
+      "https://github.com/jenkinsci/jenkins/commit/efece77d759b38c95b39b191051a8203bbc2f428"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2023-43494",
+    "ghsa_id": "GHSA-279f-qwgh-h5mp",
+    "summary": "Jenkins does not exclude sensitive build variables from search",
+    "severity": "medium",
+    "packages": [
+      "org.jenkins-ci.main:jenkins-core >= 2.50, < 2.414.2",
+      "org.jenkins-ci.main:jenkins-core >= 2.415, < 2.424"
+    ],
+    "fix_urls": [
+      "https://github.com/jenkinsci/jenkins/commit/b8ac8cd4c51511b9f844846ba80a8aed054288c5"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2023-27902",
+    "ghsa_id": "GHSA-cj6r-8pxj-5jv6",
+    "summary": "Incorrect Permission Preservation in Jenkins Core",
+    "severity": "medium",
+    "packages": [
+      "org.jenkins-ci.main:jenkins-core < 2.375.4",
+      "org.jenkins-ci.main:jenkins-core >= 2.376, < 2.387.1",
+      "org.jenkins-ci.main:jenkins-core >= 2.388, < 2.394"
+    ],
+    "fix_urls": [
+      "https://github.com/jenkinsci/jenkins/commit/80452662b31ac6c9f4418cffae1af6af4daf479a"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2019-10406",
+    "ghsa_id": "GHSA-hw55-f8wc-82m6",
+    "summary": "Improper Neutralization of Input During Web Page Generation in Jenkins",
+    "severity": "medium",
+    "packages": [
+      "org.jenkins-ci.main:jenkins-core <= 2.176.3",
+      "org.jenkins-ci.main:jenkins-core >= 2.177, <= 2.196"
+    ],
+    "fix_urls": [
+      "https://github.com/jenkinsci/jenkins/commit/e2c596c049e5e09e7254ff000802709c2e01af2a"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2019-10401",
+    "ghsa_id": "GHSA-hg6g-jj7g-x6v2",
+    "summary": "Improper Neutralization of Input During Web Page Generation in Jenkins",
+    "severity": "medium",
+    "packages": [
+      "org.jenkins-ci.main:jenkins-core <= 2.176.3",
+      "org.jenkins-ci.main:jenkins-core >= 2.177, <= 2.196"
+    ],
+    "fix_urls": [
+      "https://github.com/jenkinsci/jenkins/commit/df600eb7a28dea189c41037398fd36fcea36302e"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2019-10405",
+    "ghsa_id": "GHSA-47wc-p5cp-w7pw",
+    "summary": "Exposure of Sensitive Information to an Unauthorized Actor in Jenkins",
+    "severity": "medium",
+    "packages": [
+      "org.jenkins-ci.main:jenkins-core <= 2.176.3",
+      "org.jenkins-ci.main:jenkins-core >= 2.177, <= 2.196"
+    ],
+    "fix_urls": [
+      "https://github.com/jenkinsci/jenkins/commit/560ee832b41814660c5632ea36ad1a1c977177bf"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2019-10402",
+    "ghsa_id": "GHSA-q6q9-83xw-mp6p",
+    "summary": "Improper Neutralization of Input During Web Page Generation in Jenkins",
+    "severity": "medium",
+    "packages": [
+      "org.jenkins-ci.main:jenkins-core <= 2.176.3",
+      "org.jenkins-ci.main:jenkins-core >= 2.177, <= 2.196"
+    ],
+    "fix_urls": [
+      "https://github.com/jenkinsci/jenkins/commit/00064be3661e687da7215523a3ed9a37a85f51a3"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2021-21682",
+    "ghsa_id": "GHSA-6q4g-84f3-mw74",
+    "summary": "Improper handling of equivalent directory names on Windows in Jenkins",
+    "severity": "medium",
+    "packages": [
+      "org.jenkins-ci.main:jenkins-core >= 2.304, <= 2.314",
+      "org.jenkins-ci.main:jenkins-core <= 2.303.1"
+    ],
+    "fix_urls": [
+      "https://github.com/jenkinsci/jenkins/commit/c2c2b59071265aea07f88d5e95297c0a433921c3"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2021-21683",
+    "ghsa_id": "GHSA-4pw5-r58h-fv24",
+    "summary": "Path traversal vulnerability on Windows in Jenkins",
+    "severity": "medium",
+    "packages": [
+      "org.jenkins-ci.main:jenkins-core <= 2.303.1",
+      "org.jenkins-ci.main:jenkins-core >= 2.304, <= 2.314"
+    ],
+    "fix_urls": [
+      "https://github.com/jenkinsci/jenkins/commit/3f679fc12d073676a4441d3fa8b5fff34c07662f"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2021-21670",
+    "ghsa_id": "GHSA-q4wp-8c99-69pw",
+    "summary": "Improper permission checks allow canceling queue items and aborting builds in Jenkins",
+    "severity": "medium",
+    "packages": [
+      "org.jenkins-ci.main:jenkins-core <= 2.289.1",
+      "org.jenkins-ci.main:jenkins-core >= 2.292, <= 2.299"
+    ],
+    "fix_urls": [
+      "https://github.com/jenkinsci/jenkins/commit/86b7d7e789586575522650c60d591605facb1d70"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2021-21639",
+    "ghsa_id": "GHSA-pvwx-3jx5-24r2",
+    "summary": "Lack of type validation in agent related REST API in Jenkins",
+    "severity": "medium",
+    "packages": [
+      "org.jenkins-ci.main:jenkins-core >= 2.278, <= 2.286",
+      "org.jenkins-ci.main:jenkins-core < 2.277.2"
+    ],
+    "fix_urls": [
+      "https://github.com/jenkinsci/jenkins/commit/84210baed0c866bdee3e59271f98a767a14a5509"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2021-21640",
+    "ghsa_id": "GHSA-w2hv-rcqr-2h7r",
+    "summary": "View name validation bypass in Jenkins",
+    "severity": "medium",
+    "packages": [
+      "org.jenkins-ci.main:jenkins-core >= 2.278, <= 2.286",
+      "org.jenkins-ci.main:jenkins-core < 2.277.2"
+    ],
+    "fix_urls": [
+      "https://github.com/jenkinsci/jenkins/commit/42e2c74049ddf5e0aca1fe6aadc7b24fdabb5494"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2021-21615",
+    "ghsa_id": "GHSA-qxp6-27gw-99cj",
+    "summary": "Time-of-check Time-of-use (TOCTOU) Race Condition in Jenkins",
+    "severity": "medium",
+    "packages": [
+      "org.jenkins-ci.main:jenkins-core <= 2.263.2",
+      "org.jenkins-ci.main:jenkins-core >= 2.264, <= 2.275"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": "CVE-2021-21606",
+    "ghsa_id": "GHSA-f585-9fw3-rj2m",
+    "summary": "Arbitrary file existence check in file fingerprints in Jenkins",
+    "severity": "medium",
+    "packages": [
+      "org.jenkins-ci.main:jenkins-core < 2.263.2",
+      "org.jenkins-ci.main:jenkins-core >= 2.264, <= 2.274"
+    ],
+    "fix_urls": [
+      "https://github.com/jenkinsci/jenkins/commit/f576b2eb4375f2bb076ce477cee27a946b65f22a"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2021-21602",
+    "ghsa_id": "GHSA-vpjm-58cw-r8q5",
+    "summary": "Arbitrary file read vulnerability in workspace browsers in Jenkins",
+    "severity": "medium",
+    "packages": [
+      "org.jenkins-ci.main:jenkins-core <= 2.263.1",
+      "org.jenkins-ci.main:jenkins-core >= 2.264, <= 2.274"
+    ],
+    "fix_urls": [
+      "https://github.com/jenkinsci/jenkins/commit/71d2ecf1a4e5303e80815eaa3935c4f2fa3d9104"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2021-21609",
+    "ghsa_id": "GHSA-4625-q52w-39cx",
+    "summary": "Missing permission check for paths with specific prefix in Jenkins",
+    "severity": "medium",
+    "packages": [
+      "org.jenkins-ci.main:jenkins-core <= 2.263.1",
+      "org.jenkins-ci.main:jenkins-core >= 2.264, <= 2.274"
+    ],
+    "fix_urls": [
+      "https://github.com/jenkinsci/jenkins/commit/fe9091fc74d55a56fd36544f3038d47c8cb331a4"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2020-2231",
+    "ghsa_id": "GHSA-jpvq-v729-7j2h",
+    "summary": "Improper Neutralization of Input During Web Page Generation in Jenkins",
+    "severity": "medium",
+    "packages": [
+      "org.jenkins-ci.main:jenkins-core <= 2.235.3",
+      "org.jenkins-ci.main:jenkins-core >= 2.237, <= 2.251"
+    ],
+    "fix_urls": [
+      "https://github.com/jenkinsci/jenkins/commit/29c9a8fdeafe26fded955cfba188f50fd4f1786a"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2020-2162",
+    "ghsa_id": "GHSA-crg2-6xv3-qg5f",
+    "summary": "Improper Neutralization of Input During Web Page Generation in Jenkins",
+    "severity": "medium",
+    "packages": [
+      "org.jenkins-ci.main:jenkins-core <= 2.204.5",
+      "org.jenkins-ci.main:jenkins-core >= 2.204.6, <= 2.227"
+    ],
+    "fix_urls": [
+      "https://github.com/jenkinsci/jenkins/commit/c2d22b241eba718c62996e2ceeb5f2e0e9787f81"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2020-2104",
+    "ghsa_id": "GHSA-r78q-qgx6-64pp",
+    "summary": "Memory usage graphs accessible to anyone with Overall/Read",
+    "severity": "medium",
+    "packages": [
+      "org.jenkins-ci.main:jenkins-core <= 2.204.1",
+      "org.jenkins-ci.main:jenkins-core >= 2.205, <= 2.218"
+    ],
+    "fix_urls": [
+      "https://github.com/jenkinsci/jenkins/commit/7d44836fad0f49341ae2a61de06dbb556014a2df"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2024-4028",
+    "ghsa_id": "GHSA-q4xq-445g-g6ch",
+    "summary": "Keycloak allows cross-site scripting (XSS)",
+    "severity": "low",
+    "packages": [
+      "org.keycloak:keycloak-core <= 26.1.2"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": null,
+    "ghsa_id": "GHSA-gmrm-8fx4-66x7",
+    "summary": "Duplicate Advisory: Keycloak: Leak of configured LDAP bind credentials",
+    "severity": "low",
+    "packages": [
+      "org.keycloak:keycloak-core <= 24.0.5"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": "CVE-2026-37977",
+    "ghsa_id": "GHSA-5v8v-xvjv-57x7",
+    "summary": "Keycloak vulnerable to information disclosure via CORS header injection due to unvalidated JWT azp claim",
+    "severity": "low",
+    "packages": [
+      "org.keycloak:keycloak-services <= 26.5.7"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": "CVE-2026-3911",
+    "ghsa_id": "GHSA-xh32-c9wx-phrp",
+    "summary": "Keycloak: Information disclosure of disabled user attributes via administrative endpoint",
+    "severity": "low",
+    "packages": [
+      "org.keycloak:keycloak-services <= 26.5.5"
+    ],
+    "fix_urls": [
+      "https://github.com/keycloak/keycloak/pull/46923",
+      "https://github.com/keycloak/keycloak/commit/215bc1e27230f2a66670ed70262248b5f5254eb9"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2025-12150",
+    "ghsa_id": "GHSA-7g5x-9c4v-4w5r",
+    "summary": "Keycloak REST Services has a WebAuthn Attestation Statement Verification Bypass",
+    "severity": "low",
+    "packages": [
+      "org.keycloak:keycloak-services < 26.4.4"
+    ],
+    "fix_urls": [
+      "https://github.com/keycloak/keycloak/commit/4136a677e7e24f6685ed25567e191e1003200339"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2025-13881",
+    "ghsa_id": "GHSA-g78x-7vwx-9f58",
+    "summary": "Keycloak Admin API allows an administrator with limited privileges to retrieve sensitive custom attributes",
+    "severity": "low",
+    "packages": [
+      "org.keycloak:keycloak-services >= 26.5.0, < 26.5.2",
+      "org.keycloak:keycloak-services < 26.4.9"
+    ],
+    "fix_urls": [
+      "https://github.com/keycloak/keycloak/pull/45427",
+      "https://github.com/keycloak/keycloak/commit/c5c83d6604d4c73139f38fce3ed7b7c4c38c09f2",
+      "https://github.com/keycloak/keycloak/commit/1d7ab8d5fb1403902f5152820a8fc734d38b08d2"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2025-14083",
+    "ghsa_id": "GHSA-594w-2fwp-jwrc",
+    "summary": "Keycloak Admin REST API exposes backend schema and rules",
+    "severity": "low",
+    "packages": [
+      "org.keycloak:keycloak-services <= 26.2.5"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": "CVE-2025-14082",
+    "ghsa_id": "GHSA-6q37-7866-h27j",
+    "summary": "Keycloak Admin REST (Representational State Transfer) API does not properly enforce permissions",
+    "severity": "low",
+    "packages": [
+      "org.keycloak:keycloak-services < 26.5.0"
+    ],
+    "fix_urls": [
+      "https://github.com/keycloak/keycloak/commit/89a8cddfd669178565ae50989c49216a945d1371"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2023-0657",
+    "ghsa_id": "GHSA-7fpj-9hr8-28vh",
+    "summary": "Keycloak vulnerable to impersonation via logout token exchange",
+    "severity": "low",
+    "packages": [
+      "org.keycloak:keycloak-services < 22.0.10",
+      "org.keycloak:keycloak-services >= 23.0.0, < 24.0.3"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": null,
+    "ghsa_id": "GHSA-mwm4-5qwr-g9pf",
+    "summary": "Keycloak is vulnerable to IDN homograph attack",
+    "severity": "low",
+    "packages": [
+      "org.keycloak:keycloak-services < 18.0.0"
+    ],
+    "fix_urls": [
+      "https://github.com/keycloak/keycloak/commit/ac79fd0c23c6947a04073afc61e30d341498438e"
+    ],
+    "has_fix": true
+  },
+  {
+    "cve_id": "CVE-2023-43497",
+    "ghsa_id": "GHSA-qv64-w99c-qcr9",
+    "summary": "Jenkins temporary uploaded file created with insecure permissions",
+    "severity": "low",
+    "packages": [
+      "org.jenkins-ci.main:jenkins-core >= 2.50, < 2.414.2",
+      "org.jenkins-ci.main:jenkins-core >= 2.415, < 2.424"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": "CVE-2023-43498",
+    "ghsa_id": "GHSA-hq87-h4jg-vxfw",
+    "summary": "Jenkins temporary uploaded file created with insecure permissions",
+    "severity": "low",
+    "packages": [
+      "org.jenkins-ci.main:jenkins-core >= 2.50, < 2.414.2",
+      "org.jenkins-ci.main:jenkins-core >= 2.415, < 2.424"
+    ],
+    "fix_urls": [],
+    "has_fix": false
+  },
+  {
+    "cve_id": "CVE-2023-27903",
+    "ghsa_id": "GHSA-584m-7r4m-8j6v",
+    "summary": "Incorrect Authorization in Jenkins Core",
+    "severity": "low",
+    "packages": [
+      "org.jenkins-ci.main:jenkins-core < 2.375.4",
+      "org.jenkins-ci.main:jenkins-core >= 2.376, < 2.387.1",
+      "org.jenkins-ci.main:jenkins-core >= 2.388, < 2.394"
+    ],
+    "fix_urls": [
+      "https://github.com/jenkinsci/jenkins/commit/554587b06db553ce35fa362d7a0b0aef33a57afb"
+    ],
+    "has_fix": true
+  }
+]

@@ -1,22 +1,23 @@
-"""Phase 5 W24-W25: Spring Boot extractor demo.
+"""Phase 5 W24-W25: Spring Boot / JAX-RS extractor.
 
-A pragmatic, regex-based extractor for Spring MVC / Spring Boot projects.
-Goal is *demonstration*: show that the same PFG schema generalizes to a
-second framework, not full coverage.
+A pragmatic, regex-based extractor for Spring MVC, Spring Boot, and JAX-RS
+(Keycloak, Quarkus, Dropwizard, Jersey) projects. Shows that the same PFG
+schema generalizes across Java web frameworks.
 
 What is recognized
 ------------------
-* **Endpoints**: ``@RequestMapping``, ``@GetMapping``, ``@PostMapping``,
-  ``@PutMapping``, ``@PatchMapping``, ``@DeleteMapping`` on methods of
-  ``@RestController`` / ``@Controller`` classes. Class-level
-  ``@RequestMapping`` is concatenated as a base path.
+* **Endpoints** (Spring MVC): ``@RequestMapping``, ``@GetMapping``,
+  ``@PostMapping``, ``@PutMapping``, ``@PatchMapping``, ``@DeleteMapping``
+  on methods of ``@RestController`` / ``@Controller`` classes.
+* **Endpoints** (JAX-RS): ``@GET``, ``@POST``, ``@PUT``, ``@PATCH``,
+  ``@DELETE`` on methods of ``@Path``-annotated classes.
 * **Auth**: method- or class-level ``@PreAuthorize("...")`` /
-  ``@Secured(...)`` / ``@RolesAllowed(...)``. Absence of any of these
-  *and* no ``@PermitAll`` /  no Spring-Security ``http.requestMatchers``
-  override means ``requires_auth=False``.
-* **Path variables**: ``@PathVariable`` parameter names. A flow edge is
-  added from the endpoint to a data-access node iff the path variable is
-  passed (by name) to a JPA-repository call site.
+  ``@Secured(...)`` / ``@RolesAllowed(...)`` / ``@DenyAll``.
+  Absence of any auth annotation *and* no ``@PermitAll`` means
+  ``requires_auth=False``.
+* **Path variables**: ``@PathVariable`` (Spring) / ``@PathParam`` (JAX-RS).
+  A flow edge is added from the endpoint to a data-access node iff the
+  path variable is passed (by name) to a repository call site.
 * **Data access**: invocations on fields/locals whose declared type ends
   in ``Repository`` (or ``JpaRepository``). Operation kind is inferred
   from the method name (``find*/get*`` -> READ, ``save*`` -> UPDATE,
@@ -63,20 +64,34 @@ _REPO_LOCAL_RE = re.compile(
     r"(?m)^\s*(?:final\s+)?(\w+Repository)(?:<[^>]+>)?\s+(\w+)\s*="
 )
 _AUTOWIRED_FIELD_RE = re.compile(
-    r"(?ms)@Autowired[^\n]*\n\s*(?:private|protected|public)?\s*(?:final\s+)?"
+    r"(?ms)@(?:Autowired|Inject)[^\n]*\n\s*(?:private|protected|public)?\s*(?:final\s+)?"
     r"(\w+Repository)(?:<[^>]+>)?\s+(\w+)"
 )
 
 _HTTP_ANN_TO_METHODS: dict[str, tuple[str, ...]] = {
+    # Spring MVC
     "GetMapping": ("GET",),
     "PostMapping": ("POST",),
     "PutMapping": ("PUT",),
     "PatchMapping": ("PATCH",),
     "DeleteMapping": ("DELETE",),
+    # JAX-RS
+    "GET": ("GET",),
+    "POST": ("POST",),
+    "PUT": ("PUT",),
+    "PATCH": ("PATCH",),
+    "DELETE": ("DELETE",),
+    "HEAD": ("HEAD",),
+    "OPTIONS": ("OPTIONS",),
 }
 
-_AUTH_ANN = ("PreAuthorize", "Secured", "RolesAllowed")
+_AUTH_ANN = ("PreAuthorize", "Secured", "RolesAllowed", "DenyAll")
 _PUBLIC_ANN = ("PermitAll",)
+
+# JAX-RS class markers (equivalent to @RestController/@Controller)
+_JAXRS_CLASS_ANN = ("Path",)
+# JAX-RS parameter annotations
+_JAXRS_PARAM_ANN = ("PathParam", "QueryParam", "FormParam", "BeanParam")
 
 
 # --- data classes ---------------------------------------------------------
@@ -218,12 +233,14 @@ def _parse_file(path: Path) -> list[_ParsedClass]:
         ann_blob, name = cm.group(1) or "", cm.group(2)
         anns = _split_annotations(ann_blob)
         ann_names = [_ann_name(a) for a in anns]
-        if not any(n in {"RestController", "Controller"} for n in ann_names):
+        is_spring_ctrl = any(n in {"RestController", "Controller"} for n in ann_names)
+        is_jaxrs_resource = any(n in _JAXRS_CLASS_ANN for n in ann_names)
+        if not (is_spring_ctrl or is_jaxrs_resource):
             continue
-        # class-level @RequestMapping for base path
+        # class-level @RequestMapping or @Path for base path
         class_route = ""
         for a in anns:
-            if _ann_name(a) == "RequestMapping":
+            if _ann_name(a) in ("RequestMapping", "Path"):
                 class_route = _extract_route_from_ann(a)
                 break
 
@@ -445,12 +462,12 @@ def _path_variables(args_blob: str) -> tuple[list[str], list[tuple[str, str]]]:
         pname = ann_match.group(2)
         anns = _split_annotations(ann_text)
         kinds = [_ann_name(a) for a in anns]
-        if "PathVariable" in kinds:
+        if "PathVariable" in kinds or "PathParam" in kinds:
             pvs.append(pname)
             params.append((pname, "path"))
-        elif "RequestParam" in kinds:
+        elif "RequestParam" in kinds or "QueryParam" in kinds:
             params.append((pname, "query"))
-        elif "RequestBody" in kinds:
+        elif "RequestBody" in kinds or "FormParam" in kinds:
             params.append((pname, "body"))
     return pvs, params
 
@@ -524,9 +541,13 @@ def discover_endpoints(project_root: Path) -> list[tuple[SpringEndpoint, _Parsed
                 ann_names = [_ann_name(a) for a in mdef["annotations"]]
                 http_methods: tuple[str, ...] = ()
                 sub_route = ""
+                jaxrs_path = ""
                 for ann in mdef["annotations"]:
                     aname = _ann_name(ann)
-                    if aname in _HTTP_ANN_TO_METHODS:
+                    # Spring MVC composite annotations
+                    if aname in _HTTP_ANN_TO_METHODS and aname not in (
+                        "GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"
+                    ):
                         http_methods = _HTTP_ANN_TO_METHODS[aname]
                         sub_route = _extract_route_from_ann(ann)
                         break
@@ -534,6 +555,18 @@ def discover_endpoints(project_root: Path) -> list[tuple[SpringEndpoint, _Parsed
                         http_methods = _http_methods_from_request_mapping(ann)
                         sub_route = _extract_route_from_ann(ann)
                         break
+                # JAX-RS style: @GET/@POST + separate @Path
+                if not http_methods:
+                    for ann in mdef["annotations"]:
+                        aname = _ann_name(ann)
+                        if aname in ("GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"):
+                            http_methods = _HTTP_ANN_TO_METHODS[aname]
+                            break
+                    # JAX-RS @Path on method for sub-route
+                    for ann in mdef["annotations"]:
+                        if _ann_name(ann) == "Path":
+                            sub_route = _extract_route_from_ann(ann)
+                            break
                 if not http_methods:
                     continue
 
@@ -573,9 +606,9 @@ def _required_role(annotations: list[str]) -> str:
             if mr:
                 return mr.group(1).upper()
         elif _ann_name(a) == "Secured" or _ann_name(a) == "RolesAllowed":
-            m = re.search(r"['\"]([A-Z_]+)['\"]", a)
+            m = re.search(r"['\"]([A-Za-z_][\w-]*)['\"]", a)
             if m:
-                return m.group(1)
+                return m.group(1).upper()
     return "NONE"
 
 

@@ -1,0 +1,3766 @@
+[
+  {
+    "ghsa_id": "GHSA-27gp-8389-hm4w",
+    "cve_id": "CVE-2025-7784",
+    "url": "https://api.github.com/repos/keycloak/keycloak/security-advisories/GHSA-27gp-8389-hm4w",
+    "html_url": "https://github.com/keycloak/keycloak/security/advisories/GHSA-27gp-8389-hm4w",
+    "summary": "Privilege Escalation in Keycloak Admin Console (FGAPv2 Enabled)",
+    "description": "A Privilege Escalation vulnerability was identified in the Keycloak identity and access management solution, specifically when FGAPv2 is enabled in version 26.2.x. The flaw lies in the admin permission enforcement logic, where a user with manage-users privileges can self-assign realm-admin rights. The escalation occurs due to missing privilege boundary checks in role mapping operations via the admin REST interface. A malicious administrator with limited permissions can exploit this by editing their own user roles, gaining unauthorized full access to realm configuration and user data.\r\n",
+    "severity": "medium",
+    "author": null,
+    "publisher": {
+      "login": "rmartinc",
+      "id": 26901232,
+      "node_id": "MDQ6VXNlcjI2OTAxMjMy",
+      "avatar_url": "https://avatars.githubusercontent.com/u/26901232?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/rmartinc",
+      "html_url": "https://github.com/rmartinc",
+      "followers_url": "https://api.github.com/users/rmartinc/followers",
+      "following_url": "https://api.github.com/users/rmartinc/following{/other_user}",
+      "gists_url": "https://api.github.com/users/rmartinc/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/rmartinc/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/rmartinc/subscriptions",
+      "organizations_url": "https://api.github.com/users/rmartinc/orgs",
+      "repos_url": "https://api.github.com/users/rmartinc/repos",
+      "events_url": "https://api.github.com/users/rmartinc/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/rmartinc/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "identifiers": [
+      {
+        "value": "GHSA-27gp-8389-hm4w",
+        "type": "GHSA"
+      },
+      {
+        "value": "CVE-2025-7784",
+        "type": "CVE"
+      }
+    ],
+    "state": "published",
+    "created_at": null,
+    "updated_at": "2025-07-29T13:49:50Z",
+    "published_at": "2025-07-29T13:49:50Z",
+    "closed_at": null,
+    "withdrawn_at": null,
+    "submission": null,
+    "vulnerabilities": [
+      {
+        "package": {
+          "ecosystem": "maven",
+          "name": "org.keycloak:keycloak-services"
+        },
+        "vulnerable_version_range": ">26.2.0, <26.2.6",
+        "patched_versions": "26.2.6, 26.3.0",
+        "vulnerable_functions": []
+      }
+    ],
+    "cvss_severities": {
+      "cvss_v3": {
+        "vector_string": null,
+        "score": null
+      },
+      "cvss_v4": {
+        "vector_string": null,
+        "score": null
+      }
+    },
+    "cwes": [
+      {
+        "cwe_id": "CWE-269",
+        "name": "Improper Privilege Management"
+      }
+    ],
+    "cwe_ids": [
+      "CWE-269"
+    ],
+    "credits": [],
+    "credits_detailed": [],
+    "collaborating_users": null,
+    "collaborating_teams": null,
+    "private_fork": null,
+    "cvss": {
+      "vector_string": null,
+      "score": null
+    },
+    "_source_repo": "keycloak/keycloak",
+    "_framework": "jaxrs",
+    "_fix_commits": [],
+    "_fix_prs": []
+  },
+  {
+    "ghsa_id": "GHSA-gvgg-2r3r-53x7",
+    "cve_id": "CVE-2025-1391",
+    "url": "https://api.github.com/repos/keycloak/keycloak/security-advisories/GHSA-gvgg-2r3r-53x7",
+    "html_url": "https://github.com/keycloak/keycloak/security/advisories/GHSA-gvgg-2r3r-53x7",
+    "summary": "Improper Authorization in Keycloak Organization Mapper Allows Unauthorized Organization Claims ",
+    "description": "This vulnerability is caused by the improper mapping of users to organizations based solely on email/username patterns. The issue is limited to the token claim level, meaning the user is not truly added to the organization but may appear as such in applications relying on these claims. The risk increases in scenarios where self-registration is enabled and unrestricted, allowing an attacker to exploit the naming pattern. The issue is mitigated if admins restrict registration or use strict validation mechanisms.",
+    "severity": "medium",
+    "author": null,
+    "publisher": {
+      "login": "rmartinc",
+      "id": 26901232,
+      "node_id": "MDQ6VXNlcjI2OTAxMjMy",
+      "avatar_url": "https://avatars.githubusercontent.com/u/26901232?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/rmartinc",
+      "html_url": "https://github.com/rmartinc",
+      "followers_url": "https://api.github.com/users/rmartinc/followers",
+      "following_url": "https://api.github.com/users/rmartinc/following{/other_user}",
+      "gists_url": "https://api.github.com/users/rmartinc/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/rmartinc/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/rmartinc/subscriptions",
+      "organizations_url": "https://api.github.com/users/rmartinc/orgs",
+      "repos_url": "https://api.github.com/users/rmartinc/repos",
+      "events_url": "https://api.github.com/users/rmartinc/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/rmartinc/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "identifiers": [
+      {
+        "value": "GHSA-gvgg-2r3r-53x7",
+        "type": "GHSA"
+      },
+      {
+        "value": "CVE-2025-1391",
+        "type": "CVE"
+      }
+    ],
+    "state": "published",
+    "created_at": null,
+    "updated_at": "2025-03-10T15:10:25Z",
+    "published_at": "2025-03-10T15:10:25Z",
+    "closed_at": null,
+    "withdrawn_at": null,
+    "submission": null,
+    "vulnerabilities": [
+      {
+        "package": {
+          "ecosystem": "maven",
+          "name": "org.keycloak:keycloak-services"
+        },
+        "vulnerable_version_range": "< 26.1.3, < 26.0.10",
+        "patched_versions": "26.1.3, 26.0.10",
+        "vulnerable_functions": []
+      }
+    ],
+    "cvss_severities": {
+      "cvss_v3": {
+        "vector_string": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:L/A:N",
+        "score": 5.4
+      },
+      "cvss_v4": {
+        "vector_string": null,
+        "score": null
+      }
+    },
+    "cwes": [
+      {
+        "cwe_id": "CWE-284",
+        "name": "Improper Access Control"
+      }
+    ],
+    "cwe_ids": [
+      "CWE-284"
+    ],
+    "credits": [],
+    "credits_detailed": [],
+    "collaborating_users": null,
+    "collaborating_teams": null,
+    "private_fork": null,
+    "cvss": {
+      "vector_string": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:L/A:N",
+      "score": 5.4
+    },
+    "_source_repo": "keycloak/keycloak",
+    "_framework": "jaxrs",
+    "_fix_commits": [
+      {
+        "repo": "keycloak/keycloak",
+        "sha": "5aa2b4c75bb474303ab807017582bc01a9f7e378"
+      }
+    ],
+    "_fix_prs": []
+  },
+  {
+    "ghsa_id": "GHSA-2cww-fgmg-4jqc",
+    "cve_id": "CVE-2024-3656",
+    "url": "https://api.github.com/repos/keycloak/keycloak/security-advisories/GHSA-2cww-fgmg-4jqc",
+    "html_url": "https://github.com/keycloak/keycloak/security/advisories/GHSA-2cww-fgmg-4jqc",
+    "summary": "Unguarded admin REST API endpoints allows low privilege users to use administrative functionalities",
+    "description": "Users with low privileges (just plain users in the realm) are able to utilize administrative functionalities within Keycloak admin interface. This issue presents a significant security risk as it allows unauthorized users to perform actions reserved for administrators, potentially leading to data breaches or system compromise.\r\n\r\n**Acknowledgements:**\r\nSpecial thanks to Maurizio Agazzini for reporting this issue and helping us improve our project.",
+    "severity": "medium",
+    "author": null,
+    "publisher": {
+      "login": "rmartinc",
+      "id": 26901232,
+      "node_id": "MDQ6VXNlcjI2OTAxMjMy",
+      "avatar_url": "https://avatars.githubusercontent.com/u/26901232?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/rmartinc",
+      "html_url": "https://github.com/rmartinc",
+      "followers_url": "https://api.github.com/users/rmartinc/followers",
+      "following_url": "https://api.github.com/users/rmartinc/following{/other_user}",
+      "gists_url": "https://api.github.com/users/rmartinc/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/rmartinc/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/rmartinc/subscriptions",
+      "organizations_url": "https://api.github.com/users/rmartinc/orgs",
+      "repos_url": "https://api.github.com/users/rmartinc/repos",
+      "events_url": "https://api.github.com/users/rmartinc/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/rmartinc/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "identifiers": [
+      {
+        "value": "GHSA-2cww-fgmg-4jqc",
+        "type": "GHSA"
+      },
+      {
+        "value": "CVE-2024-3656",
+        "type": "CVE"
+      }
+    ],
+    "state": "published",
+    "created_at": null,
+    "updated_at": "2024-06-11T15:32:37Z",
+    "published_at": "2024-06-11T15:32:37Z",
+    "closed_at": null,
+    "withdrawn_at": null,
+    "submission": null,
+    "vulnerabilities": [
+      {
+        "package": {
+          "ecosystem": "maven",
+          "name": "org.keycloak.services"
+        },
+        "vulnerable_version_range": "< 24.0.5",
+        "patched_versions": "24.0.5",
+        "vulnerable_functions": []
+      }
+    ],
+    "cvss_severities": {
+      "cvss_v3": {
+        "vector_string": null,
+        "score": null
+      },
+      "cvss_v4": {
+        "vector_string": null,
+        "score": null
+      }
+    },
+    "cwes": [
+      {
+        "cwe_id": "CWE-269",
+        "name": "Improper Privilege Management"
+      },
+      {
+        "cwe_id": "CWE-284",
+        "name": "Improper Access Control"
+      }
+    ],
+    "cwe_ids": [
+      "CWE-269",
+      "CWE-284"
+    ],
+    "credits": [],
+    "credits_detailed": [],
+    "collaborating_users": null,
+    "collaborating_teams": null,
+    "private_fork": null,
+    "cvss": {
+      "vector_string": null,
+      "score": null
+    },
+    "_source_repo": "keycloak/keycloak",
+    "_framework": "jaxrs",
+    "_fix_commits": [
+      {
+        "repo": "keycloak/keycloak",
+        "sha": "d9f0c84b797525eac55914db5f81a8133ef5f9b1"
+      }
+    ],
+    "_fix_prs": []
+  },
+  {
+    "ghsa_id": "GHSA-46c8-635v-68r2",
+    "cve_id": "CVE-2023-6544",
+    "url": "https://api.github.com/repos/keycloak/keycloak/security-advisories/GHSA-46c8-635v-68r2",
+    "html_url": "https://github.com/keycloak/keycloak/security/advisories/GHSA-46c8-635v-68r2",
+    "summary": "Authorization Bypass",
+    "description": "Due to a permissive regular expression hardcoded for filtering allowed hosts to register a dynamic client, a malicious user with enough information about the environment could benefit and jeopardize an environment with this specific Dynamic Client Registration with TrustedDomain configuration previously unauthorized.\r\n\r\n#### Acknowledgements:\r\nSpecial thanks to Bastian Kanbach for reporting this issue and helping us improve our security.",
+    "severity": "medium",
+    "author": null,
+    "publisher": {
+      "login": "abstractj",
+      "id": 21758,
+      "node_id": "MDQ6VXNlcjIxNzU4",
+      "avatar_url": "https://avatars.githubusercontent.com/u/21758?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/abstractj",
+      "html_url": "https://github.com/abstractj",
+      "followers_url": "https://api.github.com/users/abstractj/followers",
+      "following_url": "https://api.github.com/users/abstractj/following{/other_user}",
+      "gists_url": "https://api.github.com/users/abstractj/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/abstractj/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/abstractj/subscriptions",
+      "organizations_url": "https://api.github.com/users/abstractj/orgs",
+      "repos_url": "https://api.github.com/users/abstractj/repos",
+      "events_url": "https://api.github.com/users/abstractj/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/abstractj/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "identifiers": [
+      {
+        "value": "GHSA-46c8-635v-68r2",
+        "type": "GHSA"
+      },
+      {
+        "value": "CVE-2023-6544",
+        "type": "CVE"
+      }
+    ],
+    "state": "published",
+    "created_at": null,
+    "updated_at": "2024-04-17T13:17:36Z",
+    "published_at": "2024-04-17T13:17:36Z",
+    "closed_at": null,
+    "withdrawn_at": null,
+    "submission": null,
+    "vulnerabilities": [
+      {
+        "package": {
+          "ecosystem": "maven",
+          "name": "org.keycloak.services.clientregistration"
+        },
+        "vulnerable_version_range": "< 22.0.10, < 24.0.3",
+        "patched_versions": "22.0.10, 24.0.3",
+        "vulnerable_functions": []
+      }
+    ],
+    "cvss_severities": {
+      "cvss_v3": {
+        "vector_string": null,
+        "score": null
+      },
+      "cvss_v4": {
+        "vector_string": null,
+        "score": null
+      }
+    },
+    "cwes": [
+      {
+        "cwe_id": "CWE-20",
+        "name": "Improper Input Validation"
+      },
+      {
+        "cwe_id": "CWE-287",
+        "name": "Improper Authentication"
+      },
+      {
+        "cwe_id": "CWE-290",
+        "name": "Authentication Bypass by Spoofing"
+      }
+    ],
+    "cwe_ids": [
+      "CWE-20",
+      "CWE-287",
+      "CWE-290"
+    ],
+    "credits": [],
+    "credits_detailed": [],
+    "collaborating_users": null,
+    "collaborating_teams": null,
+    "private_fork": null,
+    "cvss": {
+      "vector_string": null,
+      "score": null
+    },
+    "_source_repo": "keycloak/keycloak",
+    "_framework": "jaxrs",
+    "_fix_commits": [],
+    "_fix_prs": []
+  },
+  {
+    "ghsa_id": "GHSA-c7xw-p58w-h6fj",
+    "cve_id": "CVE-2023-0105",
+    "url": "https://api.github.com/repos/keycloak/keycloak/security-advisories/GHSA-c7xw-p58w-h6fj",
+    "html_url": "https://github.com/keycloak/keycloak/security/advisories/GHSA-c7xw-p58w-h6fj",
+    "summary": "Impersonation and lockout possible through incorrect handling of email trust",
+    "description": "Impersonation and lockout are possible due to email trust not being handled correctly in Keycloak. Since the verified state is not reset when the email changes, it is possible for users to shadow others with the same email and lock out or impersonate them.\r\n\r\n## Acknowledgements\r\n\r\nWillem Noort (Inverid) as the original reporter.",
+    "severity": "medium",
+    "author": null,
+    "publisher": {
+      "login": "stianst",
+      "id": 2271511,
+      "node_id": "MDQ6VXNlcjIyNzE1MTE=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2271511?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/stianst",
+      "html_url": "https://github.com/stianst",
+      "followers_url": "https://api.github.com/users/stianst/followers",
+      "following_url": "https://api.github.com/users/stianst/following{/other_user}",
+      "gists_url": "https://api.github.com/users/stianst/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/stianst/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/stianst/subscriptions",
+      "organizations_url": "https://api.github.com/users/stianst/orgs",
+      "repos_url": "https://api.github.com/users/stianst/repos",
+      "events_url": "https://api.github.com/users/stianst/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/stianst/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "identifiers": [
+      {
+        "value": "GHSA-c7xw-p58w-h6fj",
+        "type": "GHSA"
+      },
+      {
+        "value": "CVE-2023-0105",
+        "type": "CVE"
+      }
+    ],
+    "state": "published",
+    "created_at": null,
+    "updated_at": "2023-07-18T11:01:52Z",
+    "published_at": "2023-07-18T11:01:52Z",
+    "closed_at": null,
+    "withdrawn_at": null,
+    "submission": null,
+    "vulnerabilities": [
+      {
+        "package": {
+          "ecosystem": "maven",
+          "name": "org.keycloak.authentication"
+        },
+        "vulnerable_version_range": "< 22.0.1",
+        "patched_versions": "22.0.1",
+        "vulnerable_functions": []
+      }
+    ],
+    "cvss_severities": {
+      "cvss_v3": {
+        "vector_string": null,
+        "score": null
+      },
+      "cvss_v4": {
+        "vector_string": null,
+        "score": null
+      }
+    },
+    "cwes": [
+      {
+        "cwe_id": "CWE-287",
+        "name": "Improper Authentication"
+      },
+      {
+        "cwe_id": "CWE-841",
+        "name": "Improper Enforcement of Behavioral Workflow"
+      }
+    ],
+    "cwe_ids": [
+      "CWE-287",
+      "CWE-841"
+    ],
+    "credits": [],
+    "credits_detailed": [],
+    "collaborating_users": null,
+    "collaborating_teams": null,
+    "private_fork": null,
+    "cvss": {
+      "vector_string": null,
+      "score": null
+    },
+    "_source_repo": "keycloak/keycloak",
+    "_framework": "jaxrs",
+    "_fix_commits": [
+      {
+        "repo": "keycloak/keycloak",
+        "sha": "87a50d3ba790b049e436c9925874f9b418af7988"
+      }
+    ],
+    "_fix_prs": []
+  },
+  {
+    "ghsa_id": "GHSA-v436-q368-hvgg",
+    "cve_id": "CVE-2023-0091",
+    "url": "https://api.github.com/repos/keycloak/keycloak/security-advisories/GHSA-v436-q368-hvgg",
+    "html_url": "https://github.com/keycloak/keycloak/security/advisories/GHSA-v436-q368-hvgg",
+    "summary": "Lack of validation of access token on client registrations endpoint",
+    "description": "When a service account with the create-client or manage-clients role can use the client-registration endpoints to create/manage clients with an access token.\r\n\r\nIf the access token is leaked, there is an option to revoke the specific token. However, the check is not performed in client-registration endpoints.",
+    "severity": "low",
+    "author": null,
+    "publisher": {
+      "login": "abstractj",
+      "id": 21758,
+      "node_id": "MDQ6VXNlcjIxNzU4",
+      "avatar_url": "https://avatars.githubusercontent.com/u/21758?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/abstractj",
+      "html_url": "https://github.com/abstractj",
+      "followers_url": "https://api.github.com/users/abstractj/followers",
+      "following_url": "https://api.github.com/users/abstractj/following{/other_user}",
+      "gists_url": "https://api.github.com/users/abstractj/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/abstractj/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/abstractj/subscriptions",
+      "organizations_url": "https://api.github.com/users/abstractj/orgs",
+      "repos_url": "https://api.github.com/users/abstractj/repos",
+      "events_url": "https://api.github.com/users/abstractj/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/abstractj/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "identifiers": [
+      {
+        "value": "GHSA-v436-q368-hvgg",
+        "type": "GHSA"
+      },
+      {
+        "value": "CVE-2023-0091",
+        "type": "CVE"
+      }
+    ],
+    "state": "published",
+    "created_at": null,
+    "updated_at": "2023-01-12T18:26:23Z",
+    "published_at": "2023-01-12T18:26:23Z",
+    "closed_at": null,
+    "withdrawn_at": null,
+    "submission": null,
+    "vulnerabilities": [
+      {
+        "package": {
+          "ecosystem": "maven",
+          "name": "org.keycloak"
+        },
+        "vulnerable_version_range": "< 20.0.3",
+        "patched_versions": "20.0.3",
+        "vulnerable_functions": []
+      }
+    ],
+    "cvss_severities": {
+      "cvss_v3": {
+        "vector_string": null,
+        "score": null
+      },
+      "cvss_v4": {
+        "vector_string": null,
+        "score": null
+      }
+    },
+    "cwes": [
+      {
+        "cwe_id": "CWE-284",
+        "name": "Improper Access Control"
+      }
+    ],
+    "cwe_ids": [
+      "CWE-284"
+    ],
+    "credits": [],
+    "credits_detailed": [],
+    "collaborating_users": null,
+    "collaborating_teams": null,
+    "private_fork": null,
+    "cvss": {
+      "vector_string": null,
+      "score": null
+    },
+    "_source_repo": "keycloak/keycloak",
+    "_framework": "jaxrs",
+    "_fix_commits": [],
+    "_fix_prs": []
+  },
+  {
+    "ghsa_id": "GHSA-75p6-52g3-rqc8",
+    "cve_id": "CVE-2022-1245",
+    "url": "https://api.github.com/repos/keycloak/keycloak/security-advisories/GHSA-75p6-52g3-rqc8",
+    "html_url": "https://github.com/keycloak/keycloak/security/advisories/GHSA-75p6-52g3-rqc8",
+    "summary": "Privilege escalation vulnerability on Token Exchange feature",
+    "description": "A privilege escalation flaw was found in the token exchange feature of keycloak. Missing authorization allows a client application holding a valid access token to exchange tokens for any target client by passing the client_id of the target. This could allow a client to gain unauthorized access to additional services.",
+    "severity": "medium",
+    "author": null,
+    "publisher": {
+      "login": "abstractj",
+      "id": 21758,
+      "node_id": "MDQ6VXNlcjIxNzU4",
+      "avatar_url": "https://avatars.githubusercontent.com/u/21758?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/abstractj",
+      "html_url": "https://github.com/abstractj",
+      "followers_url": "https://api.github.com/users/abstractj/followers",
+      "following_url": "https://api.github.com/users/abstractj/following{/other_user}",
+      "gists_url": "https://api.github.com/users/abstractj/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/abstractj/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/abstractj/subscriptions",
+      "organizations_url": "https://api.github.com/users/abstractj/orgs",
+      "repos_url": "https://api.github.com/users/abstractj/repos",
+      "events_url": "https://api.github.com/users/abstractj/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/abstractj/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "identifiers": [
+      {
+        "value": "GHSA-75p6-52g3-rqc8",
+        "type": "GHSA"
+      },
+      {
+        "value": "CVE-2022-1245",
+        "type": "CVE"
+      }
+    ],
+    "state": "published",
+    "created_at": null,
+    "updated_at": "2022-04-25T14:27:45Z",
+    "published_at": "2022-04-25T14:27:45Z",
+    "closed_at": null,
+    "withdrawn_at": null,
+    "submission": null,
+    "vulnerabilities": [
+      {
+        "package": {
+          "ecosystem": "maven",
+          "name": "org.keycloak.services"
+        },
+        "vulnerable_version_range": "< 18.0.0",
+        "patched_versions": "18.0.0",
+        "vulnerable_functions": []
+      }
+    ],
+    "cvss_severities": {
+      "cvss_v3": {
+        "vector_string": null,
+        "score": null
+      },
+      "cvss_v4": {
+        "vector_string": null,
+        "score": null
+      }
+    },
+    "cwes": [
+      {
+        "cwe_id": "CWE-284",
+        "name": "Improper Access Control"
+      }
+    ],
+    "cwe_ids": [
+      "CWE-284"
+    ],
+    "credits": [
+      {
+        "login": "knutz3n",
+        "type": "analyst"
+      }
+    ],
+    "credits_detailed": [
+      {
+        "user": {
+          "login": "knutz3n",
+          "id": 159774,
+          "node_id": "MDQ6VXNlcjE1OTc3NA==",
+          "avatar_url": "https://avatars.githubusercontent.com/u/159774?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/knutz3n",
+          "html_url": "https://github.com/knutz3n",
+          "followers_url": "https://api.github.com/users/knutz3n/followers",
+          "following_url": "https://api.github.com/users/knutz3n/following{/other_user}",
+          "gists_url": "https://api.github.com/users/knutz3n/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/knutz3n/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/knutz3n/subscriptions",
+          "organizations_url": "https://api.github.com/users/knutz3n/orgs",
+          "repos_url": "https://api.github.com/users/knutz3n/repos",
+          "events_url": "https://api.github.com/users/knutz3n/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/knutz3n/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "type": "analyst",
+        "state": "accepted"
+      }
+    ],
+    "collaborating_users": null,
+    "collaborating_teams": null,
+    "private_fork": null,
+    "cvss": {
+      "vector_string": null,
+      "score": null
+    },
+    "_source_repo": "keycloak/keycloak",
+    "_framework": "jaxrs",
+    "_fix_commits": [
+      {
+        "repo": "keycloak/keycloak",
+        "sha": "76d83f46fad94ebcbedaa49e6daad458e2894e52"
+      }
+    ],
+    "_fix_prs": []
+  },
+  {
+    "ghsa_id": "GHSA-83x4-9cwr-5487",
+    "cve_id": "CVE-2021-4133",
+    "url": "https://api.github.com/repos/keycloak/keycloak/security-advisories/GHSA-83x4-9cwr-5487",
+    "html_url": "https://github.com/keycloak/keycloak/security/advisories/GHSA-83x4-9cwr-5487",
+    "summary": "Incorrect authorization allows unpriviledged users to create other users",
+    "description": "A incorrect authorization flaw was found in Keycloak 12.0.0, the flaw allows an attacker with any existing user account to create new default user accounts via the administrative REST API even where new user registration is disabled.",
+    "severity": "high",
+    "author": null,
+    "publisher": {
+      "login": "stianst",
+      "id": 2271511,
+      "node_id": "MDQ6VXNlcjIyNzE1MTE=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2271511?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/stianst",
+      "html_url": "https://github.com/stianst",
+      "followers_url": "https://api.github.com/users/stianst/followers",
+      "following_url": "https://api.github.com/users/stianst/following{/other_user}",
+      "gists_url": "https://api.github.com/users/stianst/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/stianst/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/stianst/subscriptions",
+      "organizations_url": "https://api.github.com/users/stianst/orgs",
+      "repos_url": "https://api.github.com/users/stianst/repos",
+      "events_url": "https://api.github.com/users/stianst/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/stianst/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "identifiers": [
+      {
+        "value": "GHSA-83x4-9cwr-5487",
+        "type": "GHSA"
+      },
+      {
+        "value": "CVE-2021-4133",
+        "type": "CVE"
+      }
+    ],
+    "state": "published",
+    "created_at": null,
+    "updated_at": "2021-12-20T12:34:04Z",
+    "published_at": "2021-12-20T12:34:04Z",
+    "closed_at": null,
+    "withdrawn_at": null,
+    "submission": null,
+    "vulnerabilities": [
+      {
+        "package": {
+          "ecosystem": "java",
+          "name": "keycloak-services"
+        },
+        "vulnerable_version_range": "< 16.0.0",
+        "patched_versions": "16.0.0",
+        "vulnerable_functions": []
+      }
+    ],
+    "cvss_severities": {
+      "cvss_v3": {
+        "vector_string": null,
+        "score": null
+      },
+      "cvss_v4": {
+        "vector_string": null,
+        "score": null
+      }
+    },
+    "cwes": [
+      {
+        "cwe_id": "CWE-285",
+        "name": "Improper Authorization"
+      }
+    ],
+    "cwe_ids": [
+      "CWE-285"
+    ],
+    "credits": [],
+    "credits_detailed": [],
+    "collaborating_users": null,
+    "collaborating_teams": null,
+    "private_fork": null,
+    "cvss": {
+      "vector_string": null,
+      "score": null
+    },
+    "_source_repo": "keycloak/keycloak",
+    "_framework": "jaxrs",
+    "_fix_commits": [],
+    "_fix_prs": []
+  },
+  {
+    "ghsa_id": "GHSA-vpc2-3wcv-qj4w",
+    "cve_id": "CVE-2021-21318",
+    "url": "https://api.github.com/repos/opencast/opencast/security-advisories/GHSA-vpc2-3wcv-qj4w",
+    "html_url": "https://github.com/opencast/opencast/security/advisories/GHSA-vpc2-3wcv-qj4w",
+    "summary": "Removing access may not effect published series",
+    "description": "Access to series and series metadata on the search service (shown in media module and player) depends on the events published which are part of the series. Publishing an event will automatically publish a series and update access to it. Removing an event or republishing the event should do the same.\r\n\r\nOpencast before version 9.2 may not update the series access or remove a published series if an event is being removed. On removal of an episode, this may lead to:\r\n\r\n- An access control list for series metadata with broader access  rules than the merged access rules of all remaining events.\r\n- The series metadata still being available although all episodes of that series have been removed.\r\n\r\n### Patches\r\n\r\nThis problem is fixed in Opencast 9.2.\r\n\r\n### Workarounds\r\n\r\nWithout the patch, publishing an episode with strict access rules will overwrite the currently set series access. This allows for an easy denial of access for all users without superuser privileges, effectively hiding the series.\r\n\r\n### References\r\n\r\nFor technical details, take a look at the patch fixing the issue: https://github.com/opencast/opencast/commit/b18c6a7f81f08ed14884592a6c14c9ab611ad450\r\n\r\n### For more information\r\n\r\nIf you have any questions or comments about this advisory:\r\n* Open an issue in [our issue tracker](https://github.com/opencast/opencast/issues)\r\n* Email us at [security@opencast.org](mailto:security@opencast.org)\r\n",
+    "severity": "low",
+    "author": null,
+    "publisher": {
+      "login": "lkiesow",
+      "id": 1008395,
+      "node_id": "MDQ6VXNlcjEwMDgzOTU=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1008395?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/lkiesow",
+      "html_url": "https://github.com/lkiesow",
+      "followers_url": "https://api.github.com/users/lkiesow/followers",
+      "following_url": "https://api.github.com/users/lkiesow/following{/other_user}",
+      "gists_url": "https://api.github.com/users/lkiesow/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/lkiesow/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/lkiesow/subscriptions",
+      "organizations_url": "https://api.github.com/users/lkiesow/orgs",
+      "repos_url": "https://api.github.com/users/lkiesow/repos",
+      "events_url": "https://api.github.com/users/lkiesow/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/lkiesow/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "identifiers": [
+      {
+        "value": "GHSA-vpc2-3wcv-qj4w",
+        "type": "GHSA"
+      },
+      {
+        "value": "CVE-2021-21318",
+        "type": "CVE"
+      }
+    ],
+    "state": "published",
+    "created_at": null,
+    "updated_at": "2021-02-17T23:15:26Z",
+    "published_at": "2021-02-17T23:15:26Z",
+    "closed_at": null,
+    "withdrawn_at": null,
+    "submission": null,
+    "vulnerabilities": [
+      {
+        "package": {
+          "ecosystem": "maven",
+          "name": "search-service-impl"
+        },
+        "vulnerable_version_range": "< 9.2",
+        "patched_versions": "9.2",
+        "vulnerable_functions": []
+      }
+    ],
+    "cvss_severities": {
+      "cvss_v3": {
+        "vector_string": null,
+        "score": null
+      },
+      "cvss_v4": {
+        "vector_string": null,
+        "score": null
+      }
+    },
+    "cwes": [],
+    "cwe_ids": [],
+    "credits": [
+      {
+        "login": "lkiesow",
+        "type": "analyst"
+      }
+    ],
+    "credits_detailed": [
+      {
+        "user": {
+          "login": "lkiesow",
+          "id": 1008395,
+          "node_id": "MDQ6VXNlcjEwMDgzOTU=",
+          "avatar_url": "https://avatars.githubusercontent.com/u/1008395?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/lkiesow",
+          "html_url": "https://github.com/lkiesow",
+          "followers_url": "https://api.github.com/users/lkiesow/followers",
+          "following_url": "https://api.github.com/users/lkiesow/following{/other_user}",
+          "gists_url": "https://api.github.com/users/lkiesow/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/lkiesow/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/lkiesow/subscriptions",
+          "organizations_url": "https://api.github.com/users/lkiesow/orgs",
+          "repos_url": "https://api.github.com/users/lkiesow/repos",
+          "events_url": "https://api.github.com/users/lkiesow/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/lkiesow/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "type": "analyst",
+        "state": "accepted"
+      }
+    ],
+    "collaborating_users": null,
+    "collaborating_teams": null,
+    "private_fork": null,
+    "cvss": {
+      "vector_string": null,
+      "score": null
+    },
+    "_source_repo": "opencast/opencast",
+    "_framework": "spring",
+    "_fix_commits": [
+      {
+        "repo": "opencast/opencast",
+        "sha": "f1c2c056d3ccd622f9586f564856cf62ca4ed0ac"
+      }
+    ],
+    "_fix_prs": []
+  },
+  {
+    "ghsa_id": "GHSA-94qw-r73x-j7hg",
+    "cve_id": "CVE-2020-5231",
+    "url": "https://api.github.com/repos/opencast/opencast/security-advisories/GHSA-94qw-r73x-j7hg",
+    "html_url": "https://github.com/opencast/opencast/security/advisories/GHSA-94qw-r73x-j7hg",
+    "summary": "Users with ROLE_COURSE_ADMIN can create new users",
+    "description": "### Impact\r\n\r\nUsers with the role `ROLE_COURSE_ADMIN` can use the user-utils endpoint to create new users not including the role `ROLE_ADMIN`. For example:\r\n\r\n```bash\r\n# Use the admin to create a new user with ROLE_COURSE_ADMIN using the admin user.\r\n# We expect this to work.\r\n% curl -i -u admin:opencast 'https://example.opencast.org/user-utils/xy.json' -X PUT \\\r\n  --data 'password=f&roles=%5B%22ROLE_COURSE_ADMIN%22%5D'\r\nHTTP/2 201\r\n\r\n# Use the new user to create more new users.\r\n# We don't exp\u00fcect a user with just role ROLE_COURSE_ADMIN to succeed.\r\n# But it does work\r\n% curl -i -u xy:f 'https://example.opencast.org/user-utils/ab.json' -X PUT \\\r\n  --data 'password=f&roles=%5B%22ROLE_COURSE_ADMIN%22%5D'\r\nHTTP/2 201\r\n```\r\n`ROLE_COURSE_ADMIN` is a non-standard role in Opencast which is referenced neither in the documentation nor in any code (except for tests) but only in the security configuration. From the name \u2013 implying an admin for a specific course \u2013 users would never expect that this role allows user creation.\r\n\r\n### Patches\r\n\r\nThis issue is fixed in 7.6 and 8.1 which both ship a new default security configuration.\r\n\r\n### Workarounds\r\n\r\nYou can fix this issue by removing all instances of `ROLE_COURSE_ADMIN` in your organization's security configuration (`etc/security/mh_default_org.xml` by default).\r\n\r\n### For more information\r\n\r\nIf you have any questions or comments about this advisory:\r\n\r\n- Open an issue in [opencast/opencast](https://github.com/opencast/opencast/issues)\r\n- For security-relevant information, email us at security@opencast.org",
+    "severity": "medium",
+    "author": null,
+    "publisher": {
+      "login": "lkiesow",
+      "id": 1008395,
+      "node_id": "MDQ6VXNlcjEwMDgzOTU=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1008395?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/lkiesow",
+      "html_url": "https://github.com/lkiesow",
+      "followers_url": "https://api.github.com/users/lkiesow/followers",
+      "following_url": "https://api.github.com/users/lkiesow/following{/other_user}",
+      "gists_url": "https://api.github.com/users/lkiesow/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/lkiesow/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/lkiesow/subscriptions",
+      "organizations_url": "https://api.github.com/users/lkiesow/orgs",
+      "repos_url": "https://api.github.com/users/lkiesow/repos",
+      "events_url": "https://api.github.com/users/lkiesow/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/lkiesow/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "identifiers": [
+      {
+        "value": "GHSA-94qw-r73x-j7hg",
+        "type": "GHSA"
+      },
+      {
+        "value": "CVE-2020-5231",
+        "type": "CVE"
+      }
+    ],
+    "state": "published",
+    "created_at": null,
+    "updated_at": "2020-01-29T20:13:28Z",
+    "published_at": "2020-01-29T20:13:28Z",
+    "closed_at": null,
+    "withdrawn_at": null,
+    "submission": null,
+    "vulnerabilities": [
+      {
+        "package": {
+          "ecosystem": "",
+          "name": ""
+        },
+        "vulnerable_version_range": "< 7.6, 8.0",
+        "patched_versions": "7.6, 8.1",
+        "vulnerable_functions": []
+      }
+    ],
+    "cvss_severities": {
+      "cvss_v3": {
+        "vector_string": null,
+        "score": null
+      },
+      "cvss_v4": {
+        "vector_string": null,
+        "score": null
+      }
+    },
+    "cwes": [],
+    "cwe_ids": [],
+    "credits": [],
+    "credits_detailed": [],
+    "collaborating_users": null,
+    "collaborating_teams": null,
+    "private_fork": null,
+    "cvss": {
+      "vector_string": null,
+      "score": null
+    },
+    "_source_repo": "opencast/opencast",
+    "_framework": "spring",
+    "_fix_commits": [
+      {
+        "repo": "opencast/opencast",
+        "sha": "72fad0031d8a82c860e2bde0b27570c5042320ee"
+      }
+    ],
+    "_fix_prs": []
+  },
+  {
+    "ghsa_id": "GHSA-6f54-3qr9-pjgj",
+    "cve_id": "CVE-2020-5228",
+    "url": "https://api.github.com/repos/opencast/opencast/security-advisories/GHSA-6f54-3qr9-pjgj",
+    "html_url": "https://github.com/opencast/opencast/security/advisories/GHSA-6f54-3qr9-pjgj",
+    "summary": "Unauthenticated Access Via OAI-PMH",
+    "description": "### Impact\r\n\r\nMedia publication via OAI-PMH allows unauthenticated public access to all media and metadata by default. OAI-PMH is part of the default workflow and is activated by default, requiring active user intervention of users to protect media. This leads to users unknowingly handing out public access to events without their knowledge.\r\n\r\n\r\n### Patches\r\n\r\nThe problem has been addressed in Opencast 7.6 and 8.1 where the OAI-PMH endpoint is configured to require users with `ROLE_ADMIN` by default. In addition to this, Opencast 9 removes the OAI-PMH publication from the default workflow, making the publication a conscious decision users have to make by updating their workflows.\r\n\r\n### Workarounds\r\n\r\nIn the organization security configuration (`etc/security/mh_default_org.xml`), change the roles required for accessing `/oaipmh` from `ROLE_ANONYMOUS` to `ROLE_ADMIN`.\r\n\r\n### References\r\n\r\n- [Public access configuration in the organization's security configuration](https://github.com/opencast/opencast/blob/1fb812c7810c78f09f29a7f455ff920417924307/etc/security/mh_default_org.xml#L271-L276)\r\n\r\n### For more information\r\n\r\nIf you have any questions or comments about this advisory:\r\n\r\n- Open an issue in [opencast/opencast](https://github.com/opencast/opencast/issues)\r\n- For security-relevant information, email us at security@opencast.org\r\n",
+    "severity": "high",
+    "author": null,
+    "publisher": {
+      "login": "lkiesow",
+      "id": 1008395,
+      "node_id": "MDQ6VXNlcjEwMDgzOTU=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1008395?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/lkiesow",
+      "html_url": "https://github.com/lkiesow",
+      "followers_url": "https://api.github.com/users/lkiesow/followers",
+      "following_url": "https://api.github.com/users/lkiesow/following{/other_user}",
+      "gists_url": "https://api.github.com/users/lkiesow/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/lkiesow/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/lkiesow/subscriptions",
+      "organizations_url": "https://api.github.com/users/lkiesow/orgs",
+      "repos_url": "https://api.github.com/users/lkiesow/repos",
+      "events_url": "https://api.github.com/users/lkiesow/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/lkiesow/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "identifiers": [
+      {
+        "value": "GHSA-6f54-3qr9-pjgj",
+        "type": "GHSA"
+      },
+      {
+        "value": "CVE-2020-5228",
+        "type": "CVE"
+      }
+    ],
+    "state": "published",
+    "created_at": null,
+    "updated_at": "2020-01-29T20:11:38Z",
+    "published_at": "2020-01-29T20:11:38Z",
+    "closed_at": null,
+    "withdrawn_at": null,
+    "submission": null,
+    "vulnerabilities": [
+      {
+        "package": {
+          "ecosystem": "",
+          "name": ""
+        },
+        "vulnerable_version_range": "< 7.6, 8.0",
+        "patched_versions": "7.6, 8.1",
+        "vulnerable_functions": []
+      }
+    ],
+    "cvss_severities": {
+      "cvss_v3": {
+        "vector_string": null,
+        "score": null
+      },
+      "cvss_v4": {
+        "vector_string": null,
+        "score": null
+      }
+    },
+    "cwes": [],
+    "cwe_ids": [],
+    "credits": [],
+    "credits_detailed": [],
+    "collaborating_users": null,
+    "collaborating_teams": null,
+    "private_fork": null,
+    "cvss": {
+      "vector_string": null,
+      "score": null
+    },
+    "_source_repo": "opencast/opencast",
+    "_framework": "spring",
+    "_fix_commits": [],
+    "_fix_prs": []
+  },
+  {
+    "ghsa_id": "GHSA-f68p-c9wh-j2q8",
+    "cve_id": "CVE-2021-41112",
+    "url": "https://api.github.com/repos/rundeck/rundeck/security-advisories/GHSA-f68p-c9wh-j2q8",
+    "html_url": "https://github.com/rundeck/rundeck/security/advisories/GHSA-f68p-c9wh-j2q8",
+    "summary": "Authenticated users can modify Calendars without appropriate authorization",
+    "description": "### Impact\r\nAuthenticated users could craft a request to modify or delete System or Project level Calendars, without appropriate authorization.  Modifying or removing calendars could cause Scheduled Jobs to execute, or not execute on desired calendar days.\r\n\r\nSeverity depends on trust level of authenticated users and impact of running or not running scheduled jobs on days governed by calendar definitions.\r\n\r\n### Patches\r\nUpdate to 3.4.5\r\n\r\n### Workarounds\r\nNone\r\n\r\n### References\r\n_Are there any links users can visit to find out more?_\r\n\r\n### For more information\r\nIf you have any questions or comments about this advisory:\r\n\r\n* Email us at security@rundeck.com\r\n\r\nTo report security issues to Rundeck please use the form at <http://rundeck.com/security>",
+    "severity": "low",
+    "author": null,
+    "publisher": {
+      "login": "fdevans",
+      "id": 9272445,
+      "node_id": "MDQ6VXNlcjkyNzI0NDU=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/9272445?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/fdevans",
+      "html_url": "https://github.com/fdevans",
+      "followers_url": "https://api.github.com/users/fdevans/followers",
+      "following_url": "https://api.github.com/users/fdevans/following{/other_user}",
+      "gists_url": "https://api.github.com/users/fdevans/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/fdevans/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/fdevans/subscriptions",
+      "organizations_url": "https://api.github.com/users/fdevans/orgs",
+      "repos_url": "https://api.github.com/users/fdevans/repos",
+      "events_url": "https://api.github.com/users/fdevans/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/fdevans/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "identifiers": [
+      {
+        "value": "GHSA-f68p-c9wh-j2q8",
+        "type": "GHSA"
+      },
+      {
+        "value": "CVE-2021-41112",
+        "type": "CVE"
+      }
+    ],
+    "state": "published",
+    "created_at": null,
+    "updated_at": "2022-02-28T17:14:27Z",
+    "published_at": "2022-02-28T17:14:27Z",
+    "closed_at": null,
+    "withdrawn_at": null,
+    "submission": null,
+    "vulnerabilities": [
+      {
+        "package": {
+          "ecosystem": "maven",
+          "name": "rundeckpro-enterprise.war"
+        },
+        "vulnerable_version_range": "<3.4.5, 3.3.*",
+        "patched_versions": "3.4.5",
+        "vulnerable_functions": []
+      }
+    ],
+    "cvss_severities": {
+      "cvss_v3": {
+        "vector_string": null,
+        "score": null
+      },
+      "cvss_v4": {
+        "vector_string": null,
+        "score": null
+      }
+    },
+    "cwes": [
+      {
+        "cwe_id": "CWE-862",
+        "name": "Missing Authorization"
+      }
+    ],
+    "cwe_ids": [
+      "CWE-862"
+    ],
+    "credits": [],
+    "credits_detailed": [],
+    "collaborating_users": null,
+    "collaborating_teams": null,
+    "private_fork": null,
+    "cvss": {
+      "vector_string": null,
+      "score": null
+    },
+    "_source_repo": "rundeck/rundeck",
+    "_framework": "grails",
+    "_fix_commits": [],
+    "_fix_prs": []
+  },
+  {
+    "ghsa_id": "GHSA-mfqj-f22m-gv8j",
+    "cve_id": "CVE-2021-41111",
+    "url": "https://api.github.com/repos/rundeck/rundeck/security-advisories/GHSA-mfqj-f22m-gv8j",
+    "html_url": "https://github.com/rundeck/rundeck/security/advisories/GHSA-mfqj-f22m-gv8j",
+    "summary": "Webhook data and tokens can be revealed to an unauthorized user",
+    "description": "### Impact\r\n\r\nAn authenticated user with authorization to read webhooks in one project, can craft a request to reveal Webhook definitions and tokens in another project. The user could use the revealed webhook tokens to trigger webhooks.  \r\n\r\nSeverity depends on trust level of authenticated users, and whether any webhooks exist that trigger sensitive actions.\r\n\r\n### Patches\r\nPatched in release 3.4.5, 3.3.15\r\n\r\n### Workarounds\r\nNone\r\n\r\n### References\r\n\r\nRelease Notes: 3.4.5\r\n\r\n### For more information\r\nIf you have any questions or comments about this advisory:\r\n\r\n* Email us at security@rundeck.com\r\n\r\nTo report security issues to Rundeck please use the form at <http://rundeck.com/security>\r\n",
+    "severity": "medium",
+    "author": null,
+    "publisher": {
+      "login": "fdevans",
+      "id": 9272445,
+      "node_id": "MDQ6VXNlcjkyNzI0NDU=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/9272445?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/fdevans",
+      "html_url": "https://github.com/fdevans",
+      "followers_url": "https://api.github.com/users/fdevans/followers",
+      "following_url": "https://api.github.com/users/fdevans/following{/other_user}",
+      "gists_url": "https://api.github.com/users/fdevans/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/fdevans/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/fdevans/subscriptions",
+      "organizations_url": "https://api.github.com/users/fdevans/orgs",
+      "repos_url": "https://api.github.com/users/fdevans/repos",
+      "events_url": "https://api.github.com/users/fdevans/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/fdevans/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "identifiers": [
+      {
+        "value": "GHSA-mfqj-f22m-gv8j",
+        "type": "GHSA"
+      },
+      {
+        "value": "CVE-2021-41111",
+        "type": "CVE"
+      }
+    ],
+    "state": "published",
+    "created_at": null,
+    "updated_at": "2022-02-28T17:14:41Z",
+    "published_at": "2022-02-28T17:14:41Z",
+    "closed_at": null,
+    "withdrawn_at": null,
+    "submission": null,
+    "vulnerabilities": [
+      {
+        "package": {
+          "ecosystem": "maven",
+          "name": "rundeck.war, rundeckpro-enterprise.war"
+        },
+        "vulnerable_version_range": "< 3.4.5, < 3.3.15",
+        "patched_versions": "3.4.5, 3.3.15",
+        "vulnerable_functions": []
+      }
+    ],
+    "cvss_severities": {
+      "cvss_v3": {
+        "vector_string": null,
+        "score": null
+      },
+      "cvss_v4": {
+        "vector_string": null,
+        "score": null
+      }
+    },
+    "cwes": [
+      {
+        "cwe_id": "CWE-639",
+        "name": "Authorization Bypass Through User-Controlled Key"
+      }
+    ],
+    "cwe_ids": [
+      "CWE-639"
+    ],
+    "credits": [],
+    "credits_detailed": [],
+    "collaborating_users": null,
+    "collaborating_teams": null,
+    "private_fork": null,
+    "cvss": {
+      "vector_string": null,
+      "score": null
+    },
+    "_source_repo": "rundeck/rundeck",
+    "_framework": "grails",
+    "_fix_commits": [
+      {
+        "repo": "rundeck/rundeck",
+        "sha": "a3bdc06a0731da902593732022a5b9d2b4facec5"
+      }
+    ],
+    "_fix_prs": []
+  },
+  {
+    "ghsa_id": "GHSA-5679-7qrc-5m7j",
+    "cve_id": "CVE-2020-11009",
+    "url": "https://api.github.com/repos/rundeck/rundeck/security-advisories/GHSA-5679-7qrc-5m7j",
+    "html_url": "https://github.com/rundeck/rundeck/security/advisories/GHSA-5679-7qrc-5m7j",
+    "summary": "IDOR can reveal execution data and logs to unauthorized user",
+    "description": "### Impact\r\n\r\nAuthenticated users can craft a request that reveals Execution data and logs  and Job details that they are not authorized to see.\r\n\r\n> Depending on the configuration and the way that Rundeck is used, this could result in anything between a high severity risk, or a very low risk. If access is tightly restricted and all users on the system have access to all projects, this is not really much of an issue. If access is wider and allows login for users that do not have access to any projects, or project access is restricted, there is a larger issue. If access is meant to be restricted and secrets, sensitive data, or intellectual property are exposed in Rundeck execution output and job data, the risk becomes much higher.\r\n\r\n### Details\r\n\r\nAn authenticated user could craft a request to:\r\n\r\n* View Executions and download execution logs without access to `read` or `view` the associated Job, or ad-hoc resource.\r\n* Get the list of running executions in a project, without Event `read` access, if they have `read` access to view the project.\r\n* View the Options definitions of a Job without access to view the Job.\r\n* View the definition of a workflow step of a Job without access to view the Job.\r\n* View the SCM diff of a modified Job definition if SCM is enabled, without Project `export` access level.\r\n* View the New User Profile Form for a different username, without User `admin` access. Note: they would not be allowed to create or modify a profile for a different user, or reveal any user profile information for a different user.\r\n\r\nSome authenticated API requests were not correctly checking appropriate authorization levels:\r\n\r\n* The list of running Executions would be sent without `read` access to Events.\r\n* The Plugin Input Parameters for a SCM plugin would be sent without authorization for project `import`,`scm_import`,`export`, or `scm_export` actions.\r\n* Job Retry action could retry an execution without `read` or `view` access to the Execution, which would reveal the Execution's option values. (`run` access to the Job was still required).\r\n\r\n### Patches\r\nUpgrade to Rundeck version 3.2.6\r\n\r\n### Workarounds\r\nNone\r\n\r\n### References\r\n[3.2.6 Release Notes](https://docs.rundeck.com/docs/history/3_2_x/version-3.2.6.html)\r\n\r\n### Report\r\nIf you have any questions or comments about this advisory:\r\n* Email us at [security@rundeck.com](mailto:security@rundeck.com)\r\n\r\nTo report security issues to Rundeck please use the form at [http://rundeck.com/security](http://rundeck.com/security)\r\n\r\nReporter: Justine Osborne of Apple Information Security\r\n",
+    "severity": "medium",
+    "author": null,
+    "publisher": {
+      "login": "gschueler",
+      "id": 55603,
+      "node_id": "MDQ6VXNlcjU1NjAz",
+      "avatar_url": "https://avatars.githubusercontent.com/u/55603?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/gschueler",
+      "html_url": "https://github.com/gschueler",
+      "followers_url": "https://api.github.com/users/gschueler/followers",
+      "following_url": "https://api.github.com/users/gschueler/following{/other_user}",
+      "gists_url": "https://api.github.com/users/gschueler/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/gschueler/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/gschueler/subscriptions",
+      "organizations_url": "https://api.github.com/users/gschueler/orgs",
+      "repos_url": "https://api.github.com/users/gschueler/repos",
+      "events_url": "https://api.github.com/users/gschueler/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/gschueler/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "identifiers": [
+      {
+        "value": "GHSA-5679-7qrc-5m7j",
+        "type": "GHSA"
+      },
+      {
+        "value": "CVE-2020-11009",
+        "type": "CVE"
+      }
+    ],
+    "state": "published",
+    "created_at": null,
+    "updated_at": "2020-04-27T16:22:37Z",
+    "published_at": "2020-04-27T16:22:37Z",
+    "closed_at": null,
+    "withdrawn_at": null,
+    "submission": null,
+    "vulnerabilities": [
+      {
+        "package": {
+          "ecosystem": "maven",
+          "name": "rundeck.war"
+        },
+        "vulnerable_version_range": "< 3.2.6",
+        "patched_versions": "3.2.6",
+        "vulnerable_functions": []
+      }
+    ],
+    "cvss_severities": {
+      "cvss_v3": {
+        "vector_string": null,
+        "score": null
+      },
+      "cvss_v4": {
+        "vector_string": null,
+        "score": null
+      }
+    },
+    "cwes": [],
+    "cwe_ids": [],
+    "credits": [],
+    "credits_detailed": [],
+    "collaborating_users": null,
+    "collaborating_teams": null,
+    "private_fork": null,
+    "cvss": {
+      "vector_string": null,
+      "score": null
+    },
+    "_source_repo": "rundeck/rundeck",
+    "_framework": "grails",
+    "_fix_commits": [
+      {
+        "repo": "rundeck/rundeck",
+        "sha": "1d5ba57f81697c382642a7d1b6110aacc2498931"
+      }
+    ],
+    "_fix_prs": []
+  },
+  {
+    "ghsa_id": "GHSA-3m86-c9x3-vwm9",
+    "cve_id": "CVE-2025-53106",
+    "url": "https://api.github.com/repos/Graylog2/graylog2-server/security-advisories/GHSA-3m86-c9x3-vwm9",
+    "html_url": "https://github.com/Graylog2/graylog2-server/security/advisories/GHSA-3m86-c9x3-vwm9",
+    "summary": "Privilege escalation through API tokens",
+    "description": "### Impact\r\n\r\nGraylog users can gain elevated privileges by creating and using API tokens for the local Administrator or any other user for whom the malicious user knows the ID.\r\n\r\nFor the attack to succeed, the attacker needs a user account in Graylog. They can then proceed to issue hand-crafted requests to the Graylog REST API and exploit a weak permission check for token creation.\r\n\r\n### Workarounds\r\n\r\nIn Graylog version `6.2.0` and above, regular users can be restricted from creating API tokens. The respective configuration can be found in `System > Configuration > Users > \"Allow users to create personal access tokens\"`. This option should be *Disabled*, so that only administrators are allowed to create tokens.\r\n\r\n### Recommended Actions\r\n\r\nAfter upgrading Graylog from a vulnerable version to a patched version, administrators are advised to perform the following steps to ensure the integrity of their system:\r\n\r\n#### Review API tokens \r\nAn overview of all existing API tokens is available at `System > Users and Teams > Token Management`. Please review this list carefully and ensure each token is there for a reason.  \r\n\r\n#### Check Audit Log (Graylog Enterprise only)\r\nGraylog Enterprise provides an audit log that can be used to review which API tokens were created when the system was vulnerable. Please search the Audit Log for `action:create token` and match the *Actor* with the user for whom the token was created. In most cases this should be the same user, but there might be legitimate reasons for users to be allowed to create tokens for other users. If in doubt, please review the user's actual permissions.\r\n\r\n#### Review API token creation requests\r\nGraylog Open does not provide audit logging, but many setups contain infrastructure components, like reverse proxies, in front of the Graylog REST API. These components often provide HTTP access logs. Please check the access logs to detect malicious token creations by reviewing all API token requests to the `/api/users/{user_id}/tokens/{token_name}` endpoint (`{user_id}` and `{token_name}` may be arbitrary strings).",
+    "severity": "high",
+    "author": null,
+    "publisher": {
+      "login": "boosty",
+      "id": 4270,
+      "node_id": "MDQ6VXNlcjQyNzA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4270?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/boosty",
+      "html_url": "https://github.com/boosty",
+      "followers_url": "https://api.github.com/users/boosty/followers",
+      "following_url": "https://api.github.com/users/boosty/following{/other_user}",
+      "gists_url": "https://api.github.com/users/boosty/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/boosty/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/boosty/subscriptions",
+      "organizations_url": "https://api.github.com/users/boosty/orgs",
+      "repos_url": "https://api.github.com/users/boosty/repos",
+      "events_url": "https://api.github.com/users/boosty/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/boosty/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "identifiers": [
+      {
+        "value": "GHSA-3m86-c9x3-vwm9",
+        "type": "GHSA"
+      },
+      {
+        "value": "CVE-2025-53106",
+        "type": "CVE"
+      }
+    ],
+    "state": "published",
+    "created_at": null,
+    "updated_at": "2025-06-30T16:02:17Z",
+    "published_at": "2025-06-30T16:02:16Z",
+    "closed_at": null,
+    "withdrawn_at": null,
+    "submission": null,
+    "vulnerabilities": [
+      {
+        "package": {
+          "ecosystem": "",
+          "name": ""
+        },
+        "vulnerable_version_range": ">=6.2.0",
+        "patched_versions": "6.2.4, 6.3.0-rc.2",
+        "vulnerable_functions": []
+      }
+    ],
+    "cvss_severities": {
+      "cvss_v3": {
+        "vector_string": null,
+        "score": null
+      },
+      "cvss_v4": {
+        "vector_string": "CVSS:4.0/AV:N/AC:L/AT:P/PR:L/UI:A/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H",
+        "score": 8.8
+      }
+    },
+    "cwes": [],
+    "cwe_ids": [],
+    "credits": [
+      {
+        "login": "thll",
+        "type": "finder"
+      }
+    ],
+    "credits_detailed": [
+      {
+        "user": {
+          "login": "thll",
+          "id": 886541,
+          "node_id": "MDQ6VXNlcjg4NjU0MQ==",
+          "avatar_url": "https://avatars.githubusercontent.com/u/886541?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/thll",
+          "html_url": "https://github.com/thll",
+          "followers_url": "https://api.github.com/users/thll/followers",
+          "following_url": "https://api.github.com/users/thll/following{/other_user}",
+          "gists_url": "https://api.github.com/users/thll/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/thll/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/thll/subscriptions",
+          "organizations_url": "https://api.github.com/users/thll/orgs",
+          "repos_url": "https://api.github.com/users/thll/repos",
+          "events_url": "https://api.github.com/users/thll/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/thll/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "type": "finder",
+        "state": "accepted"
+      }
+    ],
+    "collaborating_users": null,
+    "collaborating_teams": null,
+    "private_fork": null,
+    "cvss": {
+      "vector_string": null,
+      "score": null
+    },
+    "_source_repo": "Graylog2/graylog2-server",
+    "_framework": "jaxrs",
+    "_fix_commits": [
+      {
+        "repo": "Graylog2/graylog2-server",
+        "sha": "6936bd16a783c2944a3d2f1e83902062520f90e3"
+      }
+    ],
+    "_fix_prs": []
+  },
+  {
+    "ghsa_id": "GHSA-q7g5-jq6p-6wvx",
+    "cve_id": "CVE-2025-30373",
+    "url": "https://api.github.com/repos/Graylog2/graylog2-server/security-advisories/GHSA-q7g5-jq6p-6wvx",
+    "html_url": "https://github.com/Graylog2/graylog2-server/security/advisories/GHSA-q7g5-jq6p-6wvx",
+    "summary": "Authenticated HTTP inputs do ingest message even if Authorization header is missing or has wrong value",
+    "description": "### Impact\r\nStarting with 6.1, HTTP Inputs can be configured to check if a specified header is present and has a specified value to authenticate HTTP-based ingestion. Unfortunately, even though in cases of a missing header or a wrong value the correct HTTP response (401) is returned, the message will be ingested nonetheless.\r\n\r\n### Patches\r\n\r\n### Workarounds\r\nDisabling http-based inputs and allow only authenticated pull-based inputs.\r\n\r\nAnalysis provided by Fabian Yamaguchi - Whirly Labs (Pty) Ltd\r\n\r\n",
+    "severity": "medium",
+    "author": null,
+    "publisher": {
+      "login": "dennisoelkers",
+      "id": 41929,
+      "node_id": "MDQ6VXNlcjQxOTI5",
+      "avatar_url": "https://avatars.githubusercontent.com/u/41929?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/dennisoelkers",
+      "html_url": "https://github.com/dennisoelkers",
+      "followers_url": "https://api.github.com/users/dennisoelkers/followers",
+      "following_url": "https://api.github.com/users/dennisoelkers/following{/other_user}",
+      "gists_url": "https://api.github.com/users/dennisoelkers/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/dennisoelkers/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/dennisoelkers/subscriptions",
+      "organizations_url": "https://api.github.com/users/dennisoelkers/orgs",
+      "repos_url": "https://api.github.com/users/dennisoelkers/repos",
+      "events_url": "https://api.github.com/users/dennisoelkers/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/dennisoelkers/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "identifiers": [
+      {
+        "value": "GHSA-q7g5-jq6p-6wvx",
+        "type": "GHSA"
+      },
+      {
+        "value": "CVE-2025-30373",
+        "type": "CVE"
+      }
+    ],
+    "state": "published",
+    "created_at": null,
+    "updated_at": "2025-05-07T13:40:42Z",
+    "published_at": "2025-04-07T13:32:49Z",
+    "closed_at": null,
+    "withdrawn_at": null,
+    "submission": null,
+    "vulnerabilities": [
+      {
+        "package": {
+          "ecosystem": "",
+          "name": "Graylog"
+        },
+        "vulnerable_version_range": ">= 6.1.0",
+        "patched_versions": ">= 6.1.9",
+        "vulnerable_functions": []
+      }
+    ],
+    "cvss_severities": {
+      "cvss_v3": {
+        "vector_string": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:L",
+        "score": 6.5
+      },
+      "cvss_v4": {
+        "vector_string": null,
+        "score": null
+      }
+    },
+    "cwes": [],
+    "cwe_ids": [],
+    "credits": [
+      {
+        "login": "fabsx00",
+        "type": "analyst"
+      }
+    ],
+    "credits_detailed": [
+      {
+        "user": {
+          "login": "fabsx00",
+          "id": 1379115,
+          "node_id": "MDQ6VXNlcjEzNzkxMTU=",
+          "avatar_url": "https://avatars.githubusercontent.com/u/1379115?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/fabsx00",
+          "html_url": "https://github.com/fabsx00",
+          "followers_url": "https://api.github.com/users/fabsx00/followers",
+          "following_url": "https://api.github.com/users/fabsx00/following{/other_user}",
+          "gists_url": "https://api.github.com/users/fabsx00/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/fabsx00/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/fabsx00/subscriptions",
+          "organizations_url": "https://api.github.com/users/fabsx00/orgs",
+          "repos_url": "https://api.github.com/users/fabsx00/repos",
+          "events_url": "https://api.github.com/users/fabsx00/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/fabsx00/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "type": "analyst",
+        "state": "accepted"
+      }
+    ],
+    "collaborating_users": null,
+    "collaborating_teams": null,
+    "private_fork": null,
+    "cvss": {
+      "vector_string": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:L",
+      "score": 6.5
+    },
+    "_source_repo": "Graylog2/graylog2-server",
+    "_framework": "jaxrs",
+    "_fix_commits": [
+      {
+        "repo": "Graylog2/graylog2-server",
+        "sha": "31bc13d3cd6f550ec83473d0f8666cd3ebf50f10"
+      }
+    ],
+    "_fix_prs": []
+  },
+  {
+    "ghsa_id": "GHSA-rrc5-qpxr-5jm2",
+    "cve_id": "CVE-2023-51650",
+    "url": "https://api.github.com/repos/apache/hertzbeat/security-advisories/GHSA-rrc5-qpxr-5jm2",
+    "html_url": "https://github.com/apache/hertzbeat/security/advisories/GHSA-rrc5-qpxr-5jm2",
+    "summary": "Unauthorized access vulnerability on three interfaces",
+    "description": "### Summary\r\nSpring Boot permission configuration issues caused unauthorized access vulnerabilities to three interfaces\r\n\r\n### Details\r\nThe following three interfaces can be accessed without authorization and leak sensitive server information.\r\nhttp://localhost:1157/actuator/metrics/\r\nhttp://localhost:1157/actuator/health\r\nhttp://localhost:1157/actuator/env\r\n\r\n### PoC\r\nhttp://localhost:1157/actuator/metrics/\r\nhttp://localhost:1157/actuator/health\r\nhttp://localhost:1157/actuator/env\r\n\r\n### Impact\r\nDisclosure of sensitive server information.\r\n",
+    "severity": "medium",
+    "author": null,
+    "publisher": {
+      "login": "tomsun28",
+      "id": 24788200,
+      "node_id": "MDQ6VXNlcjI0Nzg4MjAw",
+      "avatar_url": "https://avatars.githubusercontent.com/u/24788200?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/tomsun28",
+      "html_url": "https://github.com/tomsun28",
+      "followers_url": "https://api.github.com/users/tomsun28/followers",
+      "following_url": "https://api.github.com/users/tomsun28/following{/other_user}",
+      "gists_url": "https://api.github.com/users/tomsun28/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/tomsun28/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/tomsun28/subscriptions",
+      "organizations_url": "https://api.github.com/users/tomsun28/orgs",
+      "repos_url": "https://api.github.com/users/tomsun28/repos",
+      "events_url": "https://api.github.com/users/tomsun28/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/tomsun28/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "identifiers": [
+      {
+        "value": "GHSA-rrc5-qpxr-5jm2",
+        "type": "GHSA"
+      },
+      {
+        "value": "CVE-2023-51650",
+        "type": "CVE"
+      }
+    ],
+    "state": "published",
+    "created_at": null,
+    "updated_at": "2023-12-21T14:29:08Z",
+    "published_at": "2023-12-20T07:29:42Z",
+    "closed_at": null,
+    "withdrawn_at": null,
+    "submission": null,
+    "vulnerabilities": [
+      {
+        "package": {
+          "ecosystem": "spring boot ",
+          "name": ""
+        },
+        "vulnerable_version_range": "1.4.1",
+        "patched_versions": "1.4.1",
+        "vulnerable_functions": []
+      }
+    ],
+    "cvss_severities": {
+      "cvss_v3": {
+        "vector_string": null,
+        "score": null
+      },
+      "cvss_v4": {
+        "vector_string": null,
+        "score": null
+      }
+    },
+    "cwes": [],
+    "cwe_ids": [],
+    "credits": [
+      {
+        "login": "pbuff07",
+        "type": "reporter"
+      }
+    ],
+    "credits_detailed": [
+      {
+        "user": {
+          "login": "pbuff07",
+          "id": 118048548,
+          "node_id": "U_kgDOBwlHJA",
+          "avatar_url": "https://avatars.githubusercontent.com/u/118048548?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/pbuff07",
+          "html_url": "https://github.com/pbuff07",
+          "followers_url": "https://api.github.com/users/pbuff07/followers",
+          "following_url": "https://api.github.com/users/pbuff07/following{/other_user}",
+          "gists_url": "https://api.github.com/users/pbuff07/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/pbuff07/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/pbuff07/subscriptions",
+          "organizations_url": "https://api.github.com/users/pbuff07/orgs",
+          "repos_url": "https://api.github.com/users/pbuff07/repos",
+          "events_url": "https://api.github.com/users/pbuff07/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/pbuff07/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "type": "reporter",
+        "state": "accepted"
+      }
+    ],
+    "collaborating_users": null,
+    "collaborating_teams": null,
+    "private_fork": null,
+    "cvss": {
+      "vector_string": null,
+      "score": null
+    },
+    "_source_repo": "dromara/hertzbeat",
+    "_framework": "spring",
+    "_fix_commits": [],
+    "_fix_prs": []
+  },
+  {
+    "ghsa_id": "GHSA-9pp5-9c7g-4r83",
+    "cve_id": "CVE-2025-41232",
+    "url": "https://api.github.com/advisories/GHSA-9pp5-9c7g-4r83",
+    "html_url": "https://github.com/advisories/GHSA-9pp5-9c7g-4r83",
+    "summary": "Spring Security authorization bypass for method security annotations on private methods",
+    "description": "Spring Security Aspects may not correctly locate method security annotations on private methods. This can cause an authorization bypass.\n\nYour application may be affected by this if the following are true:\n\n  *  You are using @EnableMethodSecurity(mode=ASPECTJ)\u00a0and spring-security-aspects, and\n  *  You have Spring Security method annotations on a private method\nIn that case, the target method may be able to be invoked without proper authorization.\n\nYou are not affected if:\n\n  *  You are not using @EnableMethodSecurity(mode=ASPECTJ)\u00a0or spring-security-aspects, or\n  *  You have no Spring Security-annotated private methods",
+    "type": "reviewed",
+    "severity": "critical",
+    "repository_advisory_url": null,
+    "source_code_location": "https://github.com/spring-projects/spring-security",
+    "identifiers": [
+      {
+        "value": "GHSA-9pp5-9c7g-4r83",
+        "type": "GHSA"
+      },
+      {
+        "value": "CVE-2025-41232",
+        "type": "CVE"
+      }
+    ],
+    "references": [
+      "https://nvd.nist.gov/vuln/detail/CVE-2025-41232",
+      "http://spring.io/security/cve-2025-41232",
+      "https://github.com/spring-projects/spring-security/commit/bf2aaa1b1830e534ba651d422545ac08a115151b",
+      "https://github.com/spring-projects/spring-security/commit/c972de5369a1261ab674a3f5e3a80e8ce3e8cdfb",
+      "https://github.com/spring-projects/spring-security/releases/tag/6.4.6",
+      "https://github.com/advisories/GHSA-9pp5-9c7g-4r83"
+    ],
+    "published_at": "2025-05-21T15:30:33Z",
+    "updated_at": "2025-10-15T20:13:16Z",
+    "github_reviewed_at": "2025-05-21T18:31:29Z",
+    "nvd_published_at": "2025-05-21T12:16:21Z",
+    "withdrawn_at": null,
+    "vulnerabilities": [
+      {
+        "package": {
+          "ecosystem": "maven",
+          "name": "org.springframework.security:spring-security-aspects"
+        },
+        "vulnerable_version_range": ">= 6.4.0, < 6.4.6",
+        "first_patched_version": "6.4.6",
+        "vulnerable_functions": []
+      },
+      {
+        "package": {
+          "ecosystem": "maven",
+          "name": "org.springframework.security:spring-security-core"
+        },
+        "vulnerable_version_range": ">= 6.4.0, < 6.4.6",
+        "first_patched_version": "6.4.6",
+        "vulnerable_functions": []
+      }
+    ],
+    "cvss_severities": {
+      "cvss_v3": {
+        "vector_string": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+        "score": 9.1
+      },
+      "cvss_v4": {
+        "vector_string": null,
+        "score": 0.0
+      }
+    },
+    "cwes": [
+      {
+        "cwe_id": "CWE-693",
+        "name": "Protection Mechanism Failure"
+      }
+    ],
+    "credits": [
+      {
+        "user": {
+          "login": "tomabai",
+          "id": 47742369,
+          "node_id": "MDQ6VXNlcjQ3NzQyMzY5",
+          "avatar_url": "https://avatars.githubusercontent.com/u/47742369?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/tomabai",
+          "html_url": "https://github.com/tomabai",
+          "followers_url": "https://api.github.com/users/tomabai/followers",
+          "following_url": "https://api.github.com/users/tomabai/following{/other_user}",
+          "gists_url": "https://api.github.com/users/tomabai/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/tomabai/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/tomabai/subscriptions",
+          "organizations_url": "https://api.github.com/users/tomabai/orgs",
+          "repos_url": "https://api.github.com/users/tomabai/repos",
+          "events_url": "https://api.github.com/users/tomabai/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/tomabai/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "type": "analyst"
+      }
+    ],
+    "cvss": {
+      "vector_string": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+      "score": 9.1
+    },
+    "epss": {
+      "percentage": 0.00351,
+      "percentile": 0.57516
+    },
+    "_source_repo": "spring-projects/spring-security",
+    "_framework": "spring-framework",
+    "_fix_commits": [
+      {
+        "repo": "spring-projects/spring-security",
+        "sha": "bf2aaa1b1830e534ba651d422545ac08a115151b"
+      },
+      {
+        "repo": "spring-projects/spring-security",
+        "sha": "c972de5369a1261ab674a3f5e3a80e8ce3e8cdfb"
+      }
+    ],
+    "_fix_prs": []
+  },
+  {
+    "ghsa_id": "GHSA-72mv-wwvm-vgp5",
+    "cve_id": "CVE-2026-23902",
+    "url": "https://api.github.com/advisories/GHSA-72mv-wwvm-vgp5",
+    "html_url": "https://github.com/advisories/GHSA-72mv-wwvm-vgp5",
+    "summary": "Apache DolphinScheduler has an Incorrect Authorization Vulnerability",
+    "description": "Incorrect Authorization vulnerability in Apache DolphinScheduler allows authenticated users with system login permissions to use tenants that are not defined on the platform during workflow execution.\n\nThis issue affects Apache DolphinScheduler versions prior to 3.4.1.\u00a0\n\nUsers are recommended to upgrade to version 3.4.1, which fixes this issue.",
+    "type": "reviewed",
+    "severity": "high",
+    "repository_advisory_url": null,
+    "source_code_location": "https://github.com/apache/dolphinscheduler",
+    "identifiers": [
+      {
+        "value": "GHSA-72mv-wwvm-vgp5",
+        "type": "GHSA"
+      },
+      {
+        "value": "CVE-2026-23902",
+        "type": "CVE"
+      }
+    ],
+    "references": [
+      "https://nvd.nist.gov/vuln/detail/CVE-2026-23902",
+      "https://lists.apache.org/thread/hy4ntb2gys8150zfmnxhsd5ph0hoh7s9",
+      "http://www.openwall.com/lists/oss-security/2026/04/24/1",
+      "https://github.com/advisories/GHSA-72mv-wwvm-vgp5"
+    ],
+    "published_at": "2026-04-24T12:30:27Z",
+    "updated_at": "2026-05-05T00:16:33Z",
+    "github_reviewed_at": "2026-05-05T00:16:32Z",
+    "nvd_published_at": "2026-04-24T12:17:06Z",
+    "withdrawn_at": null,
+    "vulnerabilities": [
+      {
+        "package": {
+          "ecosystem": "maven",
+          "name": "org.apache.dolphinscheduler:dolphinscheduler"
+        },
+        "vulnerable_version_range": "< 3.4.1",
+        "first_patched_version": "3.4.1",
+        "vulnerable_functions": []
+      }
+    ],
+    "cvss_severities": {
+      "cvss_v3": {
+        "vector_string": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:N",
+        "score": 8.1
+      },
+      "cvss_v4": {
+        "vector_string": null,
+        "score": 0.0
+      }
+    },
+    "cwes": [
+      {
+        "cwe_id": "CWE-863",
+        "name": "Incorrect Authorization"
+      }
+    ],
+    "credits": [],
+    "cvss": {
+      "vector_string": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:N",
+      "score": 8.1
+    },
+    "epss": {
+      "percentage": 0.00019,
+      "percentile": 0.05569
+    },
+    "_source_repo": "apache/dolphinscheduler",
+    "_framework": "spring",
+    "_fix_commits": [],
+    "_fix_prs": [],
+    "_patched_version": "3.4.1",
+    "_last_vuln_before": "3.4.1",
+    "_patched_tag_sha": "147eb7ad00264acc84f268dbffa3ae1d1e06ea45"
+  },
+  {
+    "ghsa_id": "GHSA-3cjc-vhfm-ffp2",
+    "cve_id": "CVE-2025-62188",
+    "url": "https://api.github.com/advisories/GHSA-3cjc-vhfm-ffp2",
+    "html_url": "https://github.com/advisories/GHSA-3cjc-vhfm-ffp2",
+    "summary": "Apache DolphinScheduler vulnerable to sensitive information disclosure",
+    "description": "An Exposure of Sensitive Information to an Unauthorized Actor vulnerability exists in Apache DolphinScheduler.\n\nThis vulnerability may allow unauthorized actors to access sensitive information, including database credentials.\n\n\nThis issue affects Apache DolphinScheduler versions 3.1.*.\n\n\nUsers are recommended to upgrade to:\n\n  *  version \u2265 3.2.0 if using 3.1.x\n\nAs a temporary workaround, users who cannot upgrade immediately may restrict the exposed management endpoints by setting the following environment variable:\n\n\n```\nMANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=health,metrics,prometheus\n```\n\nAlternatively, add the following configuration to the application.yaml file:\n\n\n```\nmanagement:\n\u00a0 \u00a0endpoints:\n\u00a0 \u00a0 \u00a0web:\n\u00a0 \u00a0 \u00a0 \u00a0 exposure:\n\u00a0 \u00a0 \u00a0 \u00a0 \u00a0 include: health,metrics,prometheus\n```\n\nThis issue has been reported as CVE-2023-48796:\n\n https://cveprocess.apache.org/cve5/CVE-2023-48796",
+    "type": "reviewed",
+    "severity": "high",
+    "repository_advisory_url": null,
+    "source_code_location": "https://github.com/apache/dolphinscheduler",
+    "identifiers": [
+      {
+        "value": "GHSA-3cjc-vhfm-ffp2",
+        "type": "GHSA"
+      },
+      {
+        "value": "CVE-2025-62188",
+        "type": "CVE"
+      }
+    ],
+    "references": [
+      "https://nvd.nist.gov/vuln/detail/CVE-2025-62188",
+      "https://lists.apache.org/thread/ffrmkcwgr2lcz0f5nnnyswhpn3fytsvo",
+      "https://www.cve.org/CVERecord?id=CVE-2023-48796",
+      "https://github.com/apache/dolphinscheduler/releases/tag/3.0.2",
+      "https://github.com/advisories/GHSA-3cjc-vhfm-ffp2"
+    ],
+    "published_at": "2026-04-09T12:31:10Z",
+    "updated_at": "2026-04-10T19:31:32Z",
+    "github_reviewed_at": "2026-04-10T19:31:30Z",
+    "nvd_published_at": "2026-04-09T10:16:20Z",
+    "withdrawn_at": null,
+    "vulnerabilities": [
+      {
+        "package": {
+          "ecosystem": "maven",
+          "name": "org.apache.dolphinscheduler:dolphinscheduler"
+        },
+        "vulnerable_version_range": ">= 3.1.0, < 3.2.0",
+        "first_patched_version": "3.2.0",
+        "vulnerable_functions": []
+      }
+    ],
+    "cvss_severities": {
+      "cvss_v3": {
+        "vector_string": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N",
+        "score": 7.5
+      },
+      "cvss_v4": {
+        "vector_string": null,
+        "score": 0.0
+      }
+    },
+    "cwes": [
+      {
+        "cwe_id": "CWE-200",
+        "name": "Exposure of Sensitive Information to an Unauthorized Actor"
+      }
+    ],
+    "credits": [],
+    "cvss": {
+      "vector_string": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N",
+      "score": 7.5
+    },
+    "epss": {
+      "percentage": 0.00027,
+      "percentile": 0.07753
+    },
+    "_source_repo": "apache/dolphinscheduler",
+    "_framework": "spring",
+    "_fix_commits": [],
+    "_fix_prs": [],
+    "_patched_version": "3.2.0",
+    "_last_vuln_before": "3.2.0",
+    "_patched_tag_sha": "262a57a4d9c45189f5aaa29d51cda23531233882"
+  },
+  {
+    "ghsa_id": "GHSA-8v5q-rhf3-jphm",
+    "cve_id": "CVE-2025-41248",
+    "url": "https://api.github.com/advisories/GHSA-8v5q-rhf3-jphm",
+    "html_url": "https://github.com/advisories/GHSA-8v5q-rhf3-jphm",
+    "summary": "Spring Security annotation detection mechanism has authorization bypass",
+    "description": "The Spring Security annotation detection mechanism may not correctly resolve annotations on methods within type hierarchies with a parameterized super type with unbounded generics. This can be an issue when using @PreAuthorize\u00a0and other method security annotations, resulting in an authorization bypass.\n\nYour application may be affected by this if you are using Spring Security's @EnableMethodSecurity\u00a0feature.\n\nYou are not affected by this if you are not using @EnableMethodSecurity\u00a0or if you do not use security annotations on methods in generic superclasses or generic interfaces.\n\nThis CVE is published in conjunction with  CVE-2025-41249 https://spring.io/security/cve-2025-41249 .",
+    "type": "reviewed",
+    "severity": "high",
+    "repository_advisory_url": null,
+    "source_code_location": "https://github.com/spring-projects/spring-security",
+    "identifiers": [
+      {
+        "value": "GHSA-8v5q-rhf3-jphm",
+        "type": "GHSA"
+      },
+      {
+        "value": "CVE-2025-41248",
+        "type": "CVE"
+      }
+    ],
+    "references": [
+      "https://nvd.nist.gov/vuln/detail/CVE-2025-41248",
+      "https://spring.io/security/cve-2025-41248",
+      "https://github.com/spring-projects/spring-security/issues/17898",
+      "https://github.com/spring-projects/spring-security/issues/17899",
+      "https://github.com/spring-projects/spring-security/commit/d0f93fa6d8338149943ae640c53db07de827867f",
+      "https://github.com/spring-projects/spring-security/commit/e5694ac7b5e4394b920c6cab48b7bfbd871f84bd",
+      "https://github.com/spring-projects/spring-security/releases/tag/6.4.10",
+      "https://github.com/spring-projects/spring-security/releases/tag/6.5.4",
+      "https://github.com/advisories/GHSA-8v5q-rhf3-jphm"
+    ],
+    "published_at": "2025-09-16T15:32:34Z",
+    "updated_at": "2025-09-16T21:34:19Z",
+    "github_reviewed_at": "2025-09-16T19:34:33Z",
+    "nvd_published_at": "2025-09-16T11:15:30Z",
+    "withdrawn_at": null,
+    "vulnerabilities": [
+      {
+        "package": {
+          "ecosystem": "maven",
+          "name": "org.springframework.security:spring-security-core"
+        },
+        "vulnerable_version_range": ">= 6.4.0, < 6.4.10",
+        "first_patched_version": "6.4.10",
+        "vulnerable_functions": []
+      },
+      {
+        "package": {
+          "ecosystem": "maven",
+          "name": "org.springframework.security:spring-security-core"
+        },
+        "vulnerable_version_range": ">= 6.5.0, < 6.5.4",
+        "first_patched_version": "6.5.4",
+        "vulnerable_functions": []
+      }
+    ],
+    "cvss_severities": {
+      "cvss_v3": {
+        "vector_string": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N",
+        "score": 7.5
+      },
+      "cvss_v4": {
+        "vector_string": null,
+        "score": 0.0
+      }
+    },
+    "cwes": [
+      {
+        "cwe_id": "CWE-289",
+        "name": "Authentication Bypass by Alternate Name"
+      },
+      {
+        "cwe_id": "CWE-863",
+        "name": "Incorrect Authorization"
+      }
+    ],
+    "credits": [],
+    "cvss": {
+      "vector_string": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N",
+      "score": 7.5
+    },
+    "epss": {
+      "percentage": 0.00067,
+      "percentile": 0.20708
+    },
+    "_source_repo": "spring-projects/spring-security",
+    "_framework": "spring-framework",
+    "_fix_commits": [
+      {
+        "repo": "spring-projects/spring-security",
+        "sha": "d0f93fa6d8338149943ae640c53db07de827867f"
+      },
+      {
+        "repo": "spring-projects/spring-security",
+        "sha": "e5694ac7b5e4394b920c6cab48b7bfbd871f84bd"
+      }
+    ],
+    "_fix_prs": []
+  },
+  {
+    "ghsa_id": "GHSA-4vvc-r4p4-qgrr",
+    "cve_id": "CVE-2023-48796",
+    "url": "https://api.github.com/advisories/GHSA-4vvc-r4p4-qgrr",
+    "html_url": "https://github.com/advisories/GHSA-4vvc-r4p4-qgrr",
+    "summary": "Apache DolphinScheduler sensitive information disclosure",
+    "description": "Exposure of Sensitive Information to an Unauthorized Actor vulnerability in Apache DolphinScheduler.\n\nThe information exposed to unauthorized actors may include sensitive data such as database credentials.\n\nUsers who can't upgrade to the fixed version can also set environment variable `MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=health,metrics,prometheus` to workaround this, or add the following section in the `application.yaml` file\n\n```\nmanagement:\n\u00a0 endpoints:\n\u00a0 \u00a0 web:\n\u00a0 \u00a0 \u00a0 exposure:\n\u00a0 \u00a0 \u00a0 \u00a0 include: health,metrics,prometheus\n```\n\nThis issue affects Apache DolphinScheduler: from 3.0.0 before 3.0.2.\n\nUsers are recommended to upgrade to version 3.0.2, which fixes the issue.",
+    "type": "reviewed",
+    "severity": "high",
+    "repository_advisory_url": null,
+    "source_code_location": "https://github.com/apache/dolphinscheduler",
+    "identifiers": [
+      {
+        "value": "GHSA-4vvc-r4p4-qgrr",
+        "type": "GHSA"
+      },
+      {
+        "value": "CVE-2023-48796",
+        "type": "CVE"
+      }
+    ],
+    "references": [
+      "https://nvd.nist.gov/vuln/detail/CVE-2023-48796",
+      "https://lists.apache.org/thread/ffrmkcwgr2lcz0f5nnnyswhpn3fytsvo",
+      "http://www.openwall.com/lists/oss-security/2023/11/24/1",
+      "https://github.com/pypa/advisory-database/tree/main/vulns/apache-dolphinscheduler/PYSEC-2023-268.yaml",
+      "http://www.openwall.com/lists/oss-security/2025/11/28/1",
+      "https://github.com/advisories/GHSA-4vvc-r4p4-qgrr"
+    ],
+    "published_at": "2023-11-24T09:30:28Z",
+    "updated_at": "2025-12-01T16:05:33Z",
+    "github_reviewed_at": "2023-11-27T23:27:35Z",
+    "nvd_published_at": "2023-11-24T08:15:20Z",
+    "withdrawn_at": null,
+    "vulnerabilities": [
+      {
+        "package": {
+          "ecosystem": "maven",
+          "name": "org.apache.dolphinscheduler:dolphinscheduler"
+        },
+        "vulnerable_version_range": ">= 3.0.0, < 3.0.2",
+        "first_patched_version": "3.0.2",
+        "vulnerable_functions": []
+      },
+      {
+        "package": {
+          "ecosystem": "pip",
+          "name": "apache-dolphinscheduler"
+        },
+        "vulnerable_version_range": ">= 3.0.0, < 3.0.2",
+        "first_patched_version": "3.0.2",
+        "vulnerable_functions": []
+      }
+    ],
+    "cvss_severities": {
+      "cvss_v3": {
+        "vector_string": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N",
+        "score": 7.5
+      },
+      "cvss_v4": {
+        "vector_string": null,
+        "score": 0.0
+      }
+    },
+    "cwes": [
+      {
+        "cwe_id": "CWE-200",
+        "name": "Exposure of Sensitive Information to an Unauthorized Actor"
+      }
+    ],
+    "credits": [],
+    "cvss": {
+      "vector_string": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N",
+      "score": 7.5
+    },
+    "epss": {
+      "percentage": 0.00353,
+      "percentile": 0.57647
+    },
+    "_source_repo": "apache/dolphinscheduler",
+    "_framework": "spring",
+    "_fix_commits": [],
+    "_fix_prs": [],
+    "_patched_version": "3.0.2",
+    "_last_vuln_before": "3.0.2",
+    "_patched_tag_sha": "47ad0a872680c5c0dc45d6a105bb99bd8a8c994f"
+  },
+  {
+    "ghsa_id": "GHSA-hm32-hfmw-rhvg",
+    "cve_id": "CVE-2026-7500",
+    "url": "https://api.github.com/advisories/GHSA-hm32-hfmw-rhvg",
+    "html_url": "https://github.com/advisories/GHSA-hm32-hfmw-rhvg",
+    "summary": "Keycloak has a Forced Browsing issue",
+    "description": "When Keycloak is started with `--features-disabled=account,account-api`, the Account REST API is only partially disabled. Five endpoints under the versioned path `/account/v1alpha1` remain fully functional \u2014 including both read and write operations \u2014 because they lack the `checkAccountApiEnabled()` gate that correctly blocks four other endpoints in the same REST service class. The user needs to have permissions to use the API.",
+    "type": "reviewed",
+    "severity": "medium",
+    "repository_advisory_url": null,
+    "source_code_location": "https://github.com/keycloak/keycloak",
+    "identifiers": [
+      {
+        "value": "GHSA-hm32-hfmw-rhvg",
+        "type": "GHSA"
+      },
+      {
+        "value": "CVE-2026-7500",
+        "type": "CVE"
+      }
+    ],
+    "references": [
+      "https://nvd.nist.gov/vuln/detail/CVE-2026-7500",
+      "https://access.redhat.com/security/cve/CVE-2026-7500",
+      "https://bugzilla.redhat.com/show_bug.cgi?id=2464126",
+      "https://github.com/keycloak/keycloak/issues/48709",
+      "https://github.com/keycloak/keycloak/pull/48715",
+      "https://github.com/advisories/GHSA-hm32-hfmw-rhvg"
+    ],
+    "published_at": "2026-04-30T15:30:39Z",
+    "updated_at": "2026-05-07T00:07:17Z",
+    "github_reviewed_at": "2026-05-07T00:07:16Z",
+    "nvd_published_at": "2026-04-30T15:16:23Z",
+    "withdrawn_at": null,
+    "vulnerabilities": [
+      {
+        "package": {
+          "ecosystem": "maven",
+          "name": "org.keycloak:keycloak-services"
+        },
+        "vulnerable_version_range": "<= 26.6.1",
+        "first_patched_version": null,
+        "vulnerable_functions": []
+      }
+    ],
+    "cvss_severities": {
+      "cvss_v3": {
+        "vector_string": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:L/A:N",
+        "score": 5.4
+      },
+      "cvss_v4": {
+        "vector_string": null,
+        "score": 0.0
+      }
+    },
+    "cwes": [
+      {
+        "cwe_id": "CWE-425",
+        "name": "Direct Request ('Forced Browsing')"
+      }
+    ],
+    "credits": [],
+    "cvss": {
+      "vector_string": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:L/A:N",
+      "score": 5.4
+    },
+    "epss": {
+      "percentage": 0.00026,
+      "percentile": 0.07594
+    },
+    "_source_repo": "keycloak/keycloak",
+    "_framework": "jaxrs",
+    "_fix_commits": [
+      {
+        "repo": "keycloak/keycloak",
+        "sha": "8e808ca15fae0a814516a9fa39361c5f0aab6a5c"
+      }
+    ],
+    "_fix_prs": [
+      {
+        "repo": "keycloak/keycloak",
+        "pr": "48715"
+      }
+    ]
+  },
+  {
+    "ghsa_id": "GHSA-f2hx-5fx3-hmcv",
+    "cve_id": "CVE-2026-4636",
+    "url": "https://api.github.com/advisories/GHSA-f2hx-5fx3-hmcv",
+    "html_url": "https://github.com/advisories/GHSA-f2hx-5fx3-hmcv",
+    "summary": "Keycloak: UMA Policy Resource Injection Allows Unauthorized Cross-User Permission Grants",
+    "description": "A flaw was found in Keycloak. An authenticated user with the uma_protection role can bypass User-Managed Access (UMA) policy validation. This allows the attacker to include resource identifiers owned by other users in a policy creation request, even if the URL path specifies an attacker-owned resource. Consequently, the attacker gains unauthorized permissions to victim-owned resources, enabling them to obtain a Requesting Party Token (RPT) and access sensitive information or perform unauthorized actions.",
+    "type": "reviewed",
+    "severity": "high",
+    "repository_advisory_url": null,
+    "source_code_location": "https://github.com/keycloak/keycloak",
+    "identifiers": [
+      {
+        "value": "GHSA-f2hx-5fx3-hmcv",
+        "type": "GHSA"
+      },
+      {
+        "value": "CVE-2026-4636",
+        "type": "CVE"
+      }
+    ],
+    "references": [
+      "https://nvd.nist.gov/vuln/detail/CVE-2026-4636",
+      "https://access.redhat.com/errata/RHSA-2026:6477",
+      "https://access.redhat.com/errata/RHSA-2026:6478",
+      "https://access.redhat.com/security/cve/CVE-2026-4636",
+      "https://bugzilla.redhat.com/show_bug.cgi?id=2450251",
+      "https://access.redhat.com/errata/RHSA-2026:6475",
+      "https://access.redhat.com/errata/RHSA-2026:6476",
+      "https://github.com/keycloak/keycloak/issues/47717",
+      "https://github.com/keycloak/keycloak/commit/995832f8b74b02833d106c8788bb7a78634aa725",
+      "https://github.com/advisories/GHSA-f2hx-5fx3-hmcv"
+    ],
+    "published_at": "2026-04-02T15:31:39Z",
+    "updated_at": "2026-04-04T06:00:16Z",
+    "github_reviewed_at": "2026-04-04T06:00:14Z",
+    "nvd_published_at": "2026-04-02T13:16:27Z",
+    "withdrawn_at": null,
+    "vulnerabilities": [
+      {
+        "package": {
+          "ecosystem": "maven",
+          "name": "org.keycloak:keycloak-services"
+        },
+        "vulnerable_version_range": "< 26.5.7",
+        "first_patched_version": "26.5.7",
+        "vulnerable_functions": []
+      }
+    ],
+    "cvss_severities": {
+      "cvss_v3": {
+        "vector_string": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:N",
+        "score": 8.1
+      },
+      "cvss_v4": {
+        "vector_string": null,
+        "score": 0.0
+      }
+    },
+    "cwes": [
+      {
+        "cwe_id": "CWE-551",
+        "name": "Incorrect Behavior Order: Authorization Before Parsing and Canonicalization"
+      }
+    ],
+    "credits": [],
+    "cvss": {
+      "vector_string": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:N",
+      "score": 8.1
+    },
+    "epss": {
+      "percentage": 0.00013,
+      "percentile": 0.02192
+    },
+    "_source_repo": "keycloak/keycloak",
+    "_framework": "jaxrs",
+    "_fix_commits": [
+      {
+        "repo": "keycloak/keycloak",
+        "sha": "995832f8b74b02833d106c8788bb7a78634aa725"
+      }
+    ],
+    "_fix_prs": []
+  },
+  {
+    "ghsa_id": "GHSA-q35r-vvhv-vx5h",
+    "cve_id": "CVE-2026-3190",
+    "url": "https://api.github.com/advisories/GHSA-q35r-vvhv-vx5h",
+    "html_url": "https://github.com/advisories/GHSA-q35r-vvhv-vx5h",
+    "summary": "Keycloak: Missing Role Enforcement on UMA 2.0 Permission Ticket Endpoint Leads to Information Disclosure",
+    "description": "A flaw was found in Keycloak. The User-Managed Access (UMA) 2.0 Protection API endpoint for permission tickets fails to enforce the `uma_protection` role check. This allows any authenticated user with a token issued for a resource server client, even without the `uma_protection` role, to enumerate all permission tickets in the system. This vulnerability partial leads to information disclosure.",
+    "type": "reviewed",
+    "severity": "medium",
+    "repository_advisory_url": null,
+    "source_code_location": "https://github.com/keycloak/keycloak",
+    "identifiers": [
+      {
+        "value": "GHSA-q35r-vvhv-vx5h",
+        "type": "GHSA"
+      },
+      {
+        "value": "CVE-2026-3190",
+        "type": "CVE"
+      }
+    ],
+    "references": [
+      "https://nvd.nist.gov/vuln/detail/CVE-2026-3190",
+      "https://access.redhat.com/security/cve/CVE-2026-3190",
+      "https://bugzilla.redhat.com/show_bug.cgi?id=2442572",
+      "https://github.com/keycloak/keycloak/issues/46723",
+      "https://github.com/keycloak/keycloak/commit/f1baf25cbb1551202570f954102eb2d270ab0694",
+      "https://access.redhat.com/errata/RHSA-2026:6477",
+      "https://access.redhat.com/errata/RHSA-2026:6478",
+      "https://github.com/advisories/GHSA-q35r-vvhv-vx5h"
+    ],
+    "published_at": "2026-03-26T21:31:26Z",
+    "updated_at": "2026-04-02T15:32:42Z",
+    "github_reviewed_at": "2026-03-29T15:46:10Z",
+    "nvd_published_at": "2026-03-26T19:17:06Z",
+    "withdrawn_at": null,
+    "vulnerabilities": [
+      {
+        "package": {
+          "ecosystem": "maven",
+          "name": "org.keycloak:keycloak-server-spi-private"
+        },
+        "vulnerable_version_range": "< 26.5.6",
+        "first_patched_version": "26.5.6",
+        "vulnerable_functions": []
+      },
+      {
+        "package": {
+          "ecosystem": "maven",
+          "name": "org.keycloak:keycloak-services"
+        },
+        "vulnerable_version_range": "< 26.5.6",
+        "first_patched_version": "26.5.6",
+        "vulnerable_functions": []
+      },
+      {
+        "package": {
+          "ecosystem": "maven",
+          "name": "org.keycloak:keycloak-model-jpa"
+        },
+        "vulnerable_version_range": "< 26.5.6",
+        "first_patched_version": "26.5.6",
+        "vulnerable_functions": []
+      }
+    ],
+    "cvss_severities": {
+      "cvss_v3": {
+        "vector_string": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:N/A:N",
+        "score": 4.3
+      },
+      "cvss_v4": {
+        "vector_string": null,
+        "score": 0.0
+      }
+    },
+    "cwes": [
+      {
+        "cwe_id": "CWE-280",
+        "name": "Improper Handling of Insufficient Permissions or Privileges "
+      }
+    ],
+    "credits": [],
+    "cvss": {
+      "vector_string": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:N/A:N",
+      "score": 4.3
+    },
+    "epss": {
+      "percentage": 0.00011,
+      "percentile": 0.01491
+    },
+    "_source_repo": "keycloak/keycloak",
+    "_framework": "jaxrs",
+    "_fix_commits": [
+      {
+        "repo": "keycloak/keycloak",
+        "sha": "f1baf25cbb1551202570f954102eb2d270ab0694"
+      }
+    ],
+    "_fix_prs": []
+  },
+  {
+    "ghsa_id": "GHSA-7xf9-4jfc-wgm4",
+    "cve_id": "CVE-2026-3121",
+    "url": "https://api.github.com/advisories/GHSA-7xf9-4jfc-wgm4",
+    "html_url": "https://github.com/advisories/GHSA-7xf9-4jfc-wgm4",
+    "summary": "Keycloak: manage-clients permission escalates to full realm admin access",
+    "description": "A flaw was found in Keycloak. An administrator with `manage-clients` permission can exploit a misconfiguration where this permission is equivalent to `manage-permissions`. This allows the administrator to escalate privileges and gain control over roles, users, or other administrative functions within the realm. This privilege escalation can occur when admin permissions are enabled at the realm level.",
+    "type": "reviewed",
+    "severity": "medium",
+    "repository_advisory_url": null,
+    "source_code_location": "https://github.com/keycloak/keycloak",
+    "identifiers": [
+      {
+        "value": "GHSA-7xf9-4jfc-wgm4",
+        "type": "GHSA"
+      },
+      {
+        "value": "CVE-2026-3121",
+        "type": "CVE"
+      }
+    ],
+    "references": [
+      "https://nvd.nist.gov/vuln/detail/CVE-2026-3121",
+      "https://access.redhat.com/security/cve/CVE-2026-3121",
+      "https://bugzilla.redhat.com/show_bug.cgi?id=2442277",
+      "https://github.com/keycloak/keycloak/issues/46719",
+      "https://github.com/keycloak/keycloak/commit/79ab3110a257fb8d6f1a664c916687128094ed01",
+      "https://access.redhat.com/errata/RHSA-2026:6477",
+      "https://access.redhat.com/errata/RHSA-2026:6478",
+      "https://github.com/advisories/GHSA-7xf9-4jfc-wgm4"
+    ],
+    "published_at": "2026-03-26T21:31:26Z",
+    "updated_at": "2026-04-06T16:41:15Z",
+    "github_reviewed_at": "2026-03-29T15:45:17Z",
+    "nvd_published_at": "2026-03-26T19:17:06Z",
+    "withdrawn_at": null,
+    "vulnerabilities": [
+      {
+        "package": {
+          "ecosystem": "maven",
+          "name": "org.keycloak:keycloak-services"
+        },
+        "vulnerable_version_range": "< 26.5.6",
+        "first_patched_version": "26.5.6",
+        "vulnerable_functions": []
+      }
+    ],
+    "cvss_severities": {
+      "cvss_v3": {
+        "vector_string": "CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:U/C:H/I:H/A:N",
+        "score": 6.5
+      },
+      "cvss_v4": {
+        "vector_string": null,
+        "score": 0.0
+      }
+    },
+    "cwes": [
+      {
+        "cwe_id": "CWE-266",
+        "name": "Incorrect Privilege Assignment"
+      }
+    ],
+    "credits": [],
+    "cvss": {
+      "vector_string": "CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:U/C:H/I:H/A:N",
+      "score": 6.5
+    },
+    "epss": {
+      "percentage": 0.00012,
+      "percentile": 0.01708
+    },
+    "_source_repo": "keycloak/keycloak",
+    "_framework": "jaxrs",
+    "_fix_commits": [
+      {
+        "repo": "keycloak/keycloak",
+        "sha": "79ab3110a257fb8d6f1a664c916687128094ed01"
+      }
+    ],
+    "_fix_prs": []
+  },
+  {
+    "ghsa_id": "GHSA-4pgc-gfrr-wcmg",
+    "cve_id": "CVE-2026-4628",
+    "url": "https://api.github.com/advisories/GHSA-4pgc-gfrr-wcmg",
+    "html_url": "https://github.com/advisories/GHSA-4pgc-gfrr-wcmg",
+    "summary": "Keycloak has Improper Access Control that allows attackers with valid credentials to bypass the allowRemoteResourceManagement=false",
+    "description": "A flaw was found in Keycloak. An improper Access Control vulnerability in Keycloak\u2019s User-Managed Access (UMA) resource_set endpoint allows attackers with valid credentials to bypass the allowRemoteResourceManagement=false restriction. This occurs due to incomplete enforcement of access control checks on PUT operations to the resource_set endpoint. This issue enables unauthorized modification of protected resources, impacting data integrity.",
+    "type": "reviewed",
+    "severity": "medium",
+    "repository_advisory_url": null,
+    "source_code_location": "https://github.com/keycloak/keycloak/",
+    "identifiers": [
+      {
+        "value": "GHSA-4pgc-gfrr-wcmg",
+        "type": "GHSA"
+      },
+      {
+        "value": "CVE-2026-4628",
+        "type": "CVE"
+      }
+    ],
+    "references": [
+      "https://nvd.nist.gov/vuln/detail/CVE-2026-4628",
+      "https://access.redhat.com/security/cve/CVE-2026-4628",
+      "https://bugzilla.redhat.com/show_bug.cgi?id=2450240",
+      "https://github.com/advisories/GHSA-4pgc-gfrr-wcmg"
+    ],
+    "published_at": "2026-03-23T09:30:30Z",
+    "updated_at": "2026-04-13T18:36:30Z",
+    "github_reviewed_at": "2026-03-26T19:25:57Z",
+    "nvd_published_at": "2026-03-23T09:16:26Z",
+    "withdrawn_at": null,
+    "vulnerabilities": [
+      {
+        "package": {
+          "ecosystem": "maven",
+          "name": "org.keycloak:keycloak-services"
+        },
+        "vulnerable_version_range": "<= 26.6.0",
+        "first_patched_version": null,
+        "vulnerable_functions": []
+      }
+    ],
+    "cvss_severities": {
+      "cvss_v3": {
+        "vector_string": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:N/I:L/A:N",
+        "score": 4.3
+      },
+      "cvss_v4": {
+        "vector_string": null,
+        "score": 0.0
+      }
+    },
+    "cwes": [
+      {
+        "cwe_id": "CWE-284",
+        "name": "Improper Access Control"
+      }
+    ],
+    "credits": [
+      {
+        "user": {
+          "login": "dnegreira",
+          "id": 5215383,
+          "node_id": "MDQ6VXNlcjUyMTUzODM=",
+          "avatar_url": "https://avatars.githubusercontent.com/u/5215383?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/dnegreira",
+          "html_url": "https://github.com/dnegreira",
+          "followers_url": "https://api.github.com/users/dnegreira/followers",
+          "following_url": "https://api.github.com/users/dnegreira/following{/other_user}",
+          "gists_url": "https://api.github.com/users/dnegreira/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/dnegreira/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/dnegreira/subscriptions",
+          "organizations_url": "https://api.github.com/users/dnegreira/orgs",
+          "repos_url": "https://api.github.com/users/dnegreira/repos",
+          "events_url": "https://api.github.com/users/dnegreira/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/dnegreira/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "type": "analyst"
+      }
+    ],
+    "cvss": {
+      "vector_string": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:N/I:L/A:N",
+      "score": 4.3
+    },
+    "epss": {
+      "percentage": 0.0001,
+      "percentile": 0.01125
+    },
+    "_source_repo": "keycloak/keycloak",
+    "_framework": "jaxrs",
+    "_fix_commits": [],
+    "_fix_prs": []
+  },
+  {
+    "ghsa_id": "GHSA-8g9r-9wjw-37j4",
+    "cve_id": "CVE-2026-3429",
+    "url": "https://api.github.com/advisories/GHSA-8g9r-9wjw-37j4",
+    "html_url": "https://github.com/advisories/GHSA-8g9r-9wjw-37j4",
+    "summary": "Keycloak: Improper Access Control Leading to MFA Deletion and Account Takeover in Keycloak Account REST API",
+    "description": "A flaw was identified in the Account REST API of Keycloak that allows a user authenticated at a lower security level to perform sensitive actions intended only for higher-assurance sessions. Specifically, an attacker who has already obtained a victim\u2019s password can delete the victim\u2019s registered MFA/OTP credential without first proving possession of that factor. The attacker can then register their own MFA device, effectively taking full control of the account. This weakness undermines the intended protection provided by multi-factor authentication.",
+    "type": "reviewed",
+    "severity": "medium",
+    "repository_advisory_url": null,
+    "source_code_location": "https://github.com/keycloak/keycloak",
+    "identifiers": [
+      {
+        "value": "GHSA-8g9r-9wjw-37j4",
+        "type": "GHSA"
+      },
+      {
+        "value": "CVE-2026-3429",
+        "type": "CVE"
+      }
+    ],
+    "references": [
+      "https://nvd.nist.gov/vuln/detail/CVE-2026-3429",
+      "https://access.redhat.com/security/cve/CVE-2026-3429",
+      "https://bugzilla.redhat.com/show_bug.cgi?id=2443771",
+      "https://github.com/keycloak/keycloak/issues/47069",
+      "https://github.com/keycloak/keycloak/commit/68f5779230d08825e6a4b4e23471fade16434178",
+      "https://access.redhat.com/errata/RHSA-2026:6477",
+      "https://access.redhat.com/errata/RHSA-2026:6478",
+      "https://github.com/advisories/GHSA-8g9r-9wjw-37j4"
+    ],
+    "published_at": "2026-03-11T18:30:33Z",
+    "updated_at": "2026-04-02T15:32:40Z",
+    "github_reviewed_at": "2026-03-12T17:26:37Z",
+    "nvd_published_at": "2026-03-11T17:16:59Z",
+    "withdrawn_at": null,
+    "vulnerabilities": [
+      {
+        "package": {
+          "ecosystem": "maven",
+          "name": "org.keycloak:keycloak-services"
+        },
+        "vulnerable_version_range": "<= 26.5.6",
+        "first_patched_version": null,
+        "vulnerable_functions": []
+      }
+    ],
+    "cvss_severities": {
+      "cvss_v3": {
+        "vector_string": "CVSS:3.1/AV:N/AC:H/PR:L/UI:N/S:U/C:L/I:L/A:N",
+        "score": 4.2
+      },
+      "cvss_v4": {
+        "vector_string": null,
+        "score": 0.0
+      }
+    },
+    "cwes": [
+      {
+        "cwe_id": "CWE-284",
+        "name": "Improper Access Control"
+      }
+    ],
+    "credits": [
+      {
+        "user": {
+          "login": "Ankush-Pathak",
+          "id": 17806816,
+          "node_id": "MDQ6VXNlcjE3ODA2ODE2",
+          "avatar_url": "https://avatars.githubusercontent.com/u/17806816?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/Ankush-Pathak",
+          "html_url": "https://github.com/Ankush-Pathak",
+          "followers_url": "https://api.github.com/users/Ankush-Pathak/followers",
+          "following_url": "https://api.github.com/users/Ankush-Pathak/following{/other_user}",
+          "gists_url": "https://api.github.com/users/Ankush-Pathak/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/Ankush-Pathak/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/Ankush-Pathak/subscriptions",
+          "organizations_url": "https://api.github.com/users/Ankush-Pathak/orgs",
+          "repos_url": "https://api.github.com/users/Ankush-Pathak/repos",
+          "events_url": "https://api.github.com/users/Ankush-Pathak/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/Ankush-Pathak/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "type": "analyst"
+      }
+    ],
+    "cvss": {
+      "vector_string": "CVSS:3.1/AV:N/AC:H/PR:L/UI:N/S:U/C:L/I:L/A:N",
+      "score": 4.2
+    },
+    "epss": {
+      "percentage": 0.00017,
+      "percentile": 0.0432
+    },
+    "_source_repo": "keycloak/keycloak",
+    "_framework": "jaxrs",
+    "_fix_commits": [
+      {
+        "repo": "keycloak/keycloak",
+        "sha": "68f5779230d08825e6a4b4e23471fade16434178"
+      }
+    ],
+    "_fix_prs": []
+  },
+  {
+    "ghsa_id": "GHSA-fm6w-rrp3-2x4w",
+    "cve_id": "CVE-2025-14778",
+    "url": "https://api.github.com/advisories/GHSA-fm6w-rrp3-2x4w",
+    "html_url": "https://github.com/advisories/GHSA-fm6w-rrp3-2x4w",
+    "summary": "Keycloak Affected by Broken Access Control Vulnerability in the UserManagedPermissionService",
+    "description": "A flaw was found in Keycloak. A significant Broken Access Control vulnerability exists in the UserManagedPermissionService (UMA Protection API). When updating or deleting a UMA policy associated with multiple resources, the authorization check only verifies the caller's ownership against the first resource in the policy's list. This allows a user (Owner A) who owns one resource (RA) to update a shared policy and modify authorization rules for other resources (e.g., RB) in that same policy, even if those other resources are owned by a different user (Owner B). This constitutes a horizontal privilege escalation.",
+    "type": "reviewed",
+    "severity": "medium",
+    "repository_advisory_url": null,
+    "source_code_location": "https://github.com/keycloak/keycloak",
+    "identifiers": [
+      {
+        "value": "GHSA-fm6w-rrp3-2x4w",
+        "type": "GHSA"
+      },
+      {
+        "value": "CVE-2025-14778",
+        "type": "CVE"
+      }
+    ],
+    "references": [
+      "https://nvd.nist.gov/vuln/detail/CVE-2025-14778",
+      "https://access.redhat.com/errata/RHSA-2026:2364",
+      "https://access.redhat.com/security/cve/CVE-2025-14778",
+      "https://bugzilla.redhat.com/show_bug.cgi?id=2422600",
+      "https://access.redhat.com/errata/RHSA-2026:2363",
+      "https://access.redhat.com/errata/RHSA-2026:2365",
+      "https://access.redhat.com/errata/RHSA-2026:2366",
+      "https://github.com/keycloak/keycloak/issues/46147",
+      "https://github.com/keycloak/keycloak/pull/46154",
+      "https://github.com/advisories/GHSA-fm6w-rrp3-2x4w"
+    ],
+    "published_at": "2026-02-09T21:31:03Z",
+    "updated_at": "2026-02-13T22:41:36Z",
+    "github_reviewed_at": "2026-02-10T16:53:14Z",
+    "nvd_published_at": "2026-02-09T20:15:54Z",
+    "withdrawn_at": null,
+    "vulnerabilities": [
+      {
+        "package": {
+          "ecosystem": "maven",
+          "name": "org.keycloak:keycloak-services"
+        },
+        "vulnerable_version_range": "< 26.2.13",
+        "first_patched_version": "26.2.13",
+        "vulnerable_functions": []
+      },
+      {
+        "package": {
+          "ecosystem": "maven",
+          "name": "org.keycloak:keycloak-services"
+        },
+        "vulnerable_version_range": ">= 26.5.0, < 26.5.3",
+        "first_patched_version": "26.5.3",
+        "vulnerable_functions": []
+      },
+      {
+        "package": {
+          "ecosystem": "maven",
+          "name": "org.keycloak:keycloak-services"
+        },
+        "vulnerable_version_range": ">= 26.3.0, < 26.4.9",
+        "first_patched_version": "26.4.9",
+        "vulnerable_functions": []
+      }
+    ],
+    "cvss_severities": {
+      "cvss_v3": {
+        "vector_string": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:L/A:N",
+        "score": 5.4
+      },
+      "cvss_v4": {
+        "vector_string": null,
+        "score": 0.0
+      }
+    },
+    "cwes": [
+      {
+        "cwe_id": "CWE-266",
+        "name": "Incorrect Privilege Assignment"
+      }
+    ],
+    "credits": [
+      {
+        "user": {
+          "login": "eminaktas",
+          "id": 54074230,
+          "node_id": "MDQ6VXNlcjU0MDc0MjMw",
+          "avatar_url": "https://avatars.githubusercontent.com/u/54074230?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/eminaktas",
+          "html_url": "https://github.com/eminaktas",
+          "followers_url": "https://api.github.com/users/eminaktas/followers",
+          "following_url": "https://api.github.com/users/eminaktas/following{/other_user}",
+          "gists_url": "https://api.github.com/users/eminaktas/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/eminaktas/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/eminaktas/subscriptions",
+          "organizations_url": "https://api.github.com/users/eminaktas/orgs",
+          "repos_url": "https://api.github.com/users/eminaktas/repos",
+          "events_url": "https://api.github.com/users/eminaktas/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/eminaktas/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "type": "analyst"
+      }
+    ],
+    "cvss": {
+      "vector_string": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:L/A:N",
+      "score": 5.4
+    },
+    "epss": {
+      "percentage": 0.00012,
+      "percentile": 0.01598
+    },
+    "_source_repo": "keycloak/keycloak",
+    "_framework": "jaxrs",
+    "_fix_commits": [
+      {
+        "repo": "keycloak/keycloak",
+        "sha": "295945773e7afa7fda299245c91638a5686da152"
+      }
+    ],
+    "_fix_prs": [
+      {
+        "repo": "keycloak/keycloak",
+        "pr": "46154"
+      }
+    ],
+    "_patched_version": "26.2.13",
+    "_last_vuln_before": "26.2.13"
+  },
+  {
+    "ghsa_id": "GHSA-g78x-7vwx-9f58",
+    "cve_id": "CVE-2025-13881",
+    "url": "https://api.github.com/advisories/GHSA-g78x-7vwx-9f58",
+    "html_url": "https://github.com/advisories/GHSA-g78x-7vwx-9f58",
+    "summary": "Keycloak Admin API allows an administrator with limited privileges to retrieve sensitive custom attributes",
+    "description": "A flaw was found in Keycloak Admin API. This vulnerability allows an administrator with limited privileges to retrieve sensitive custom attributes via the /unmanagedAttributes endpoint, bypassing User Profile visibility settings.",
+    "type": "reviewed",
+    "severity": "low",
+    "repository_advisory_url": null,
+    "source_code_location": "https://github.com/keycloak/keycloak",
+    "identifiers": [
+      {
+        "value": "GHSA-g78x-7vwx-9f58",
+        "type": "GHSA"
+      },
+      {
+        "value": "CVE-2025-13881",
+        "type": "CVE"
+      }
+    ],
+    "references": [
+      "https://nvd.nist.gov/vuln/detail/CVE-2025-13881",
+      "https://access.redhat.com/security/cve/CVE-2025-13881",
+      "https://bugzilla.redhat.com/show_bug.cgi?id=2418330",
+      "https://github.com/keycloak/keycloak/issues/45873",
+      "https://github.com/keycloak/keycloak/pull/45427",
+      "https://github.com/keycloak/keycloak/commit/c5c83d6604d4c73139f38fce3ed7b7c4c38c09f2",
+      "https://access.redhat.com/errata/RHSA-2026:2365",
+      "https://access.redhat.com/errata/RHSA-2026:2366",
+      "https://github.com/keycloak/keycloak/commit/1d7ab8d5fb1403902f5152820a8fc734d38b08d2",
+      "https://github.com/advisories/GHSA-g78x-7vwx-9f58"
+    ],
+    "published_at": "2026-02-02T06:30:53Z",
+    "updated_at": "2026-02-13T21:51:18Z",
+    "github_reviewed_at": "2026-02-02T20:59:06Z",
+    "nvd_published_at": "2026-02-02T06:16:19Z",
+    "withdrawn_at": null,
+    "vulnerabilities": [
+      {
+        "package": {
+          "ecosystem": "maven",
+          "name": "org.keycloak:keycloak-services"
+        },
+        "vulnerable_version_range": ">= 26.5.0, < 26.5.2",
+        "first_patched_version": "26.5.2",
+        "vulnerable_functions": []
+      },
+      {
+        "package": {
+          "ecosystem": "maven",
+          "name": "org.keycloak:keycloak-services"
+        },
+        "vulnerable_version_range": "< 26.4.9",
+        "first_patched_version": "26.4.9",
+        "vulnerable_functions": []
+      }
+    ],
+    "cvss_severities": {
+      "cvss_v3": {
+        "vector_string": "CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:U/C:L/I:N/A:N",
+        "score": 2.7
+      },
+      "cvss_v4": {
+        "vector_string": null,
+        "score": 0.0
+      }
+    },
+    "cwes": [
+      {
+        "cwe_id": "CWE-266",
+        "name": "Incorrect Privilege Assignment"
+      }
+    ],
+    "credits": [
+      {
+        "user": {
+          "login": "eminaktas",
+          "id": 54074230,
+          "node_id": "MDQ6VXNlcjU0MDc0MjMw",
+          "avatar_url": "https://avatars.githubusercontent.com/u/54074230?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/eminaktas",
+          "html_url": "https://github.com/eminaktas",
+          "followers_url": "https://api.github.com/users/eminaktas/followers",
+          "following_url": "https://api.github.com/users/eminaktas/following{/other_user}",
+          "gists_url": "https://api.github.com/users/eminaktas/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/eminaktas/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/eminaktas/subscriptions",
+          "organizations_url": "https://api.github.com/users/eminaktas/orgs",
+          "repos_url": "https://api.github.com/users/eminaktas/repos",
+          "events_url": "https://api.github.com/users/eminaktas/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/eminaktas/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "type": "analyst"
+      }
+    ],
+    "cvss": {
+      "vector_string": "CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:U/C:L/I:N/A:N",
+      "score": 2.7
+    },
+    "epss": {
+      "percentage": 0.00012,
+      "percentile": 0.01599
+    },
+    "_source_repo": "keycloak/keycloak",
+    "_framework": "jaxrs",
+    "_fix_commits": [
+      {
+        "repo": "keycloak/keycloak",
+        "sha": "c5c83d6604d4c73139f38fce3ed7b7c4c38c09f2"
+      },
+      {
+        "repo": "keycloak/keycloak",
+        "sha": "1d7ab8d5fb1403902f5152820a8fc734d38b08d2"
+      }
+    ],
+    "_fix_prs": [
+      {
+        "repo": "keycloak/keycloak",
+        "pr": "45427"
+      }
+    ]
+  },
+  {
+    "ghsa_id": "GHSA-6q37-7866-h27j",
+    "cve_id": "CVE-2025-14082",
+    "url": "https://api.github.com/advisories/GHSA-6q37-7866-h27j",
+    "html_url": "https://github.com/advisories/GHSA-6q37-7866-h27j",
+    "summary": "Keycloak Admin REST (Representational State Transfer) API does not properly enforce permissions",
+    "description": "A flaw was found in Keycloak Admin REST (Representational State Transfer) API. This vulnerability allows information disclosure of sensitive role metadata via insufficient authorization checks on the /admin/realms/{realm}/roles endpoint.",
+    "type": "reviewed",
+    "severity": "low",
+    "repository_advisory_url": null,
+    "source_code_location": "https://github.com/keycloak/keycloak",
+    "identifiers": [
+      {
+        "value": "GHSA-6q37-7866-h27j",
+        "type": "GHSA"
+      },
+      {
+        "value": "CVE-2025-14082",
+        "type": "CVE"
+      }
+    ],
+    "references": [
+      "https://nvd.nist.gov/vuln/detail/CVE-2025-14082",
+      "https://access.redhat.com/security/cve/CVE-2025-14082",
+      "https://bugzilla.redhat.com/show_bug.cgi?id=2419078",
+      "https://github.com/keycloak/keycloak/commit/89a8cddfd669178565ae50989c49216a945d1371",
+      "https://access.redhat.com/errata/RHSA-2026:6477",
+      "https://access.redhat.com/errata/RHSA-2026:6478",
+      "https://github.com/advisories/GHSA-6q37-7866-h27j"
+    ],
+    "published_at": "2025-12-10T09:30:24Z",
+    "updated_at": "2026-04-02T15:31:34Z",
+    "github_reviewed_at": "2025-12-10T17:21:00Z",
+    "nvd_published_at": "2025-12-10T09:15:46Z",
+    "withdrawn_at": null,
+    "vulnerabilities": [
+      {
+        "package": {
+          "ecosystem": "maven",
+          "name": "org.keycloak:keycloak-services"
+        },
+        "vulnerable_version_range": "< 26.5.0",
+        "first_patched_version": "26.5.0",
+        "vulnerable_functions": []
+      }
+    ],
+    "cvss_severities": {
+      "cvss_v3": {
+        "vector_string": "CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:U/C:L/I:N/A:N",
+        "score": 2.7
+      },
+      "cvss_v4": {
+        "vector_string": null,
+        "score": 0.0
+      }
+    },
+    "cwes": [
+      {
+        "cwe_id": "CWE-284",
+        "name": "Improper Access Control"
+      }
+    ],
+    "credits": [
+      {
+        "user": {
+          "login": "julianladisch",
+          "id": 533612,
+          "node_id": "MDQ6VXNlcjUzMzYxMg==",
+          "avatar_url": "https://avatars.githubusercontent.com/u/533612?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/julianladisch",
+          "html_url": "https://github.com/julianladisch",
+          "followers_url": "https://api.github.com/users/julianladisch/followers",
+          "following_url": "https://api.github.com/users/julianladisch/following{/other_user}",
+          "gists_url": "https://api.github.com/users/julianladisch/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/julianladisch/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/julianladisch/subscriptions",
+          "organizations_url": "https://api.github.com/users/julianladisch/orgs",
+          "repos_url": "https://api.github.com/users/julianladisch/repos",
+          "events_url": "https://api.github.com/users/julianladisch/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/julianladisch/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "type": "analyst"
+      }
+    ],
+    "cvss": {
+      "vector_string": "CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:U/C:L/I:N/A:N",
+      "score": 2.7
+    },
+    "epss": {
+      "percentage": 0.00012,
+      "percentile": 0.01536
+    },
+    "_source_repo": "keycloak/keycloak",
+    "_framework": "jaxrs",
+    "_fix_commits": [
+      {
+        "repo": "keycloak/keycloak",
+        "sha": "89a8cddfd669178565ae50989c49216a945d1371"
+      }
+    ],
+    "_fix_prs": []
+  },
+  {
+    "ghsa_id": "GHSA-xvmv-4rx6-x6jx",
+    "cve_id": "CVE-2023-47112",
+    "summary": "Authenticated users can view job names and groups they do not have authorization to view",
+    "severity": "medium",
+    "published_at": "2023-11-16T20:13:06Z",
+    "references": [
+      "https://github.com/rundeck/rundeck/security/advisories/GHSA-xvmv-4rx6-x6jx",
+      "https://github.com/rundeck/rundeck/commit/8992879036a1ddacfca78559d823be0424796e7e",
+      "https://nvd.nist.gov/vuln/detail/CVE-2023-47112",
+      "https://github.com/advisories/GHSA-xvmv-4rx6-x6jx"
+    ],
+    "vulnerabilities": [
+      {
+        "package": {
+          "ecosystem": "maven",
+          "name": "org.rundeck:rundeckapp"
+        },
+        "vulnerable_version_range": ">= 4.17.0, < 4.17.3",
+        "first_patched_version": "4.17.3",
+        "vulnerable_functions": []
+      }
+    ],
+    "_source_repo": "rundeck/rundeck",
+    "_framework": "grails",
+    "_fix_commits": [
+      {
+        "repo": "rundeck/rundeck",
+        "sha": "8992879036a1ddacfca78559d823be0424796e7e"
+      }
+    ],
+    "_fix_prs": []
+  },
+  {
+    "ghsa_id": "GHSA-xv5h-v7jh-p2qh",
+    "cve_id": "CVE-2021-29442",
+    "summary": "Authentication bypass for specific endpoint",
+    "severity": "high",
+    "published_at": "2021-04-27T20:09:25Z",
+    "references": [
+      "https://nvd.nist.gov/vuln/detail/CVE-2021-29442",
+      "https://github.com/alibaba/nacos/issues/4463",
+      "https://github.com/alibaba/nacos/pull/4517",
+      "https://github.com/advisories/GHSA-36hp-jr8h-556f",
+      "https://github.com/advisories/GHSA-xv5h-v7jh-p2qh"
+    ],
+    "vulnerabilities": [
+      {
+        "package": {
+          "ecosystem": "maven",
+          "name": "com.alibaba.nacos:nacos-common"
+        },
+        "vulnerable_version_range": "< 1.4.1",
+        "first_patched_version": "1.4.1",
+        "vulnerable_functions": []
+      }
+    ],
+    "_source_repo": "alibaba/nacos",
+    "_framework": "spring",
+    "_fix_commits": [
+      {
+        "repo": "alibaba/nacos",
+        "sha": "1bc350b99a7d61c394f73fbf8844bda8fc49e0a7"
+      }
+    ],
+    "_fix_prs": [
+      {
+        "repo": "alibaba/nacos",
+        "pr": "4517"
+      }
+    ],
+    "_patched_version": "1.4.1",
+    "_last_vuln_before": "1.4.1"
+  },
+  {
+    "ghsa_id": "GHSA-59g4-hpg3-3gcp",
+    "cve_id": "CVE-2021-43821",
+    "summary": "Files Accessible to External Parties in Opencast",
+    "severity": "critical",
+    "published_at": "2021-12-14T21:44:03Z",
+    "references": [
+      "https://github.com/opencast/opencast/security/advisories/GHSA-59g4-hpg3-3gcp",
+      "https://github.com/opencast/opencast/commit/65c46b9d3e8f045c544881059923134571897764",
+      "https://github.com/opencast/opencast/blob/69952463971cf578363e3b97d8edaf334ff51253/modules/ingest-service-impl/src/main/java/org/opencastproject/ingest/impl/IngestServiceImpl.java#L1587",
+      "https://mvnrepository.com/artifact/org.opencastproject/opencast-ingest-service-impl",
+      "https://nvd.nist.gov/vuln/detail/CVE-2021-43821",
+      "https://github.com/advisories/GHSA-59g4-hpg3-3gcp"
+    ],
+    "vulnerabilities": [
+      {
+        "package": {
+          "ecosystem": "maven",
+          "name": "org.opencastproject:opencast-ingest-service-impl"
+        },
+        "vulnerable_version_range": "< 10.6",
+        "first_patched_version": "10.6",
+        "vulnerable_functions": []
+      }
+    ],
+    "_source_repo": "opencast/opencast",
+    "_framework": "spring",
+    "_fix_commits": [
+      {
+        "repo": "opencast/opencast",
+        "sha": "65c46b9d3e8f045c544881059923134571897764"
+      }
+    ],
+    "_fix_prs": []
+  },
+  {
+    "ghsa_id": "GHSA-qm6v-cg9v-53j3",
+    "cve_id": "CVE-2022-29237",
+    "summary": "Limited Authentication Bypass for Media Files",
+    "severity": "medium",
+    "published_at": "2022-05-25T20:16:36Z",
+    "references": [
+      "https://github.com/opencast/opencast/security/advisories/GHSA-qm6v-cg9v-53j3",
+      "https://nvd.nist.gov/vuln/detail/CVE-2022-29237",
+      "https://github.com/opencast/opencast/commit/8d5ec1614eed109b812bc27b0c6d3214e456d4e7",
+      "https://github.com/advisories/GHSA-qm6v-cg9v-53j3"
+    ],
+    "vulnerabilities": [
+      {
+        "package": {
+          "ecosystem": "maven",
+          "name": "org.opencastproject:opencast-ingest-service-impl"
+        },
+        "vulnerable_version_range": "< 10.14",
+        "first_patched_version": "10.14",
+        "vulnerable_functions": []
+      },
+      {
+        "package": {
+          "ecosystem": "maven",
+          "name": "org.opencastproject:opencast-ingest-service-impl"
+        },
+        "vulnerable_version_range": ">= 11.0, < 11.7",
+        "first_patched_version": "11.7",
+        "vulnerable_functions": []
+      }
+    ],
+    "_source_repo": "opencast/opencast",
+    "_framework": "spring",
+    "_fix_commits": [
+      {
+        "repo": "opencast/opencast",
+        "sha": "8d5ec1614eed109b812bc27b0c6d3214e456d4e7"
+      }
+    ],
+    "_fix_prs": []
+  },
+  {
+    "ghsa_id": "GHSA-36hp-jr8h-556f",
+    "cve_id": "CVE-2021-29441",
+    "summary": "Authentication Bypass",
+    "severity": "high",
+    "published_at": "2021-04-27T20:09:17Z",
+    "references": [
+      "https://nvd.nist.gov/vuln/detail/CVE-2021-29441",
+      "https://github.com/alibaba/nacos/issues/4701",
+      "https://github.com/alibaba/nacos/pull/4703",
+      "https://github.com/advisories/GHSA-36hp-jr8h-556f"
+    ],
+    "vulnerabilities": [
+      {
+        "package": {
+          "ecosystem": "maven",
+          "name": "com.alibaba.nacos:nacos-common"
+        },
+        "vulnerable_version_range": "< 1.4.1",
+        "first_patched_version": "1.4.1",
+        "vulnerable_functions": []
+      }
+    ],
+    "_source_repo": "alibaba/nacos",
+    "_framework": "spring",
+    "_fix_commits": [
+      {
+        "repo": "alibaba/nacos",
+        "sha": "2cc0be6ae1cee1f2bcd2b19886380a15004eae47"
+      }
+    ],
+    "_fix_prs": [
+      {
+        "repo": "alibaba/nacos",
+        "pr": "4703"
+      }
+    ],
+    "_patched_version": "1.4.1",
+    "_last_vuln_before": "1.4.1"
+  },
+  {
+    "ghsa_id": "GHSA-phmw-jx86-x666",
+    "cve_id": "CVE-2023-48222",
+    "summary": "Authenticated Rundeck users can view or delete jobs they do not have authorization for.",
+    "severity": "high",
+    "published_at": "2023-11-16T20:48:46Z",
+    "references": [
+      "https://github.com/rundeck/rundeck/security/advisories/GHSA-phmw-jx86-x666",
+      "https://nvd.nist.gov/vuln/detail/CVE-2023-48222",
+      "https://github.com/advisories/GHSA-phmw-jx86-x666"
+    ],
+    "vulnerabilities": [
+      {
+        "package": {
+          "ecosystem": "maven",
+          "name": "org.rundeck:rundeck"
+        },
+        "vulnerable_version_range": ">= 4.12.0, < 4.17.3",
+        "first_patched_version": "4.17.3",
+        "vulnerable_functions": []
+      }
+    ],
+    "_source_repo": "rundeck/rundeck",
+    "_framework": "grails",
+    "_fix_commits": [],
+    "_fix_prs": [],
+    "_patched_version": "4.17.3",
+    "_last_vuln_before": "4.17.3",
+    "_patched_tag_sha": "f570e9de614cff8d345ae59d9a69683af9847627"
+  },
+  {
+    "ghsa_id": "GHSA-vmm6-w4cf-7f3x",
+    "cve_id": "CVE-2020-5206",
+    "summary": "Authentication Bypass For Endpoints With Anonymous Access in Opencast",
+    "severity": "critical",
+    "published_at": "2020-01-30T21:21:30Z",
+    "references": [
+      "https://github.com/opencast/opencast/security/advisories/GHSA-vmm6-w4cf-7f3x",
+      "https://github.com/opencast/opencast/commit/b157e1fb3b35991ca7bf59f0730329fbe7ce82e8",
+      "https://nvd.nist.gov/vuln/detail/CVE-2020-5206",
+      "https://github.com/advisories/GHSA-vmm6-w4cf-7f3x"
+    ],
+    "vulnerabilities": [
+      {
+        "package": {
+          "ecosystem": "maven",
+          "name": "org.opencastproject:opencast-kernel"
+        },
+        "vulnerable_version_range": "< 7.6",
+        "first_patched_version": "7.6",
+        "vulnerable_functions": []
+      },
+      {
+        "package": {
+          "ecosystem": "maven",
+          "name": "org.opencastproject:opencast-kernel"
+        },
+        "vulnerable_version_range": ">= 8.0, < 8.1",
+        "first_patched_version": "8.1",
+        "vulnerable_functions": []
+      }
+    ],
+    "_source_repo": "opencast/opencast",
+    "_framework": "spring",
+    "_fix_commits": [
+      {
+        "repo": "opencast/opencast",
+        "sha": "b157e1fb3b35991ca7bf59f0730329fbe7ce82e8"
+      }
+    ],
+    "_fix_prs": []
+  },
+  {
+    "ghsa_id": "GHSA-9g98-5mj6-f9mv",
+    "cve_id": "CVE-2023-0264",
+    "url": "https://api.github.com/repos/keycloak/keycloak/security-advisories/GHSA-9g98-5mj6-f9mv",
+    "html_url": "https://github.com/keycloak/keycloak/security/advisories/GHSA-9g98-5mj6-f9mv",
+    "summary": "User impersonation via stolen UUID code",
+    "description": "Keycloak's OpenID Connect user authentication was found to incorrectly authenticate requests. An authenticated attacker who could also obtain a certain piece of info from a user request, from a victim within the same realm, could use that data to impersonate the victim and generate new session tokens.",
+    "severity": "high",
+    "author": null,
+    "publisher": {
+      "login": "stianst",
+      "id": 2271511,
+      "node_id": "MDQ6VXNlcjIyNzE1MTE=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2271511?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/stianst",
+      "html_url": "https://github.com/stianst",
+      "followers_url": "https://api.github.com/users/stianst/followers",
+      "following_url": "https://api.github.com/users/stianst/following{/other_user}",
+      "gists_url": "https://api.github.com/users/stianst/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/stianst/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/stianst/subscriptions",
+      "organizations_url": "https://api.github.com/users/stianst/orgs",
+      "repos_url": "https://api.github.com/users/stianst/repos",
+      "events_url": "https://api.github.com/users/stianst/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/stianst/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "identifiers": [
+      {
+        "value": "GHSA-9g98-5mj6-f9mv",
+        "type": "GHSA"
+      },
+      {
+        "value": "CVE-2023-0264",
+        "type": "CVE"
+      }
+    ],
+    "state": "published",
+    "created_at": null,
+    "updated_at": "2023-03-02T06:25:07Z",
+    "published_at": "2023-03-02T06:25:07Z",
+    "closed_at": null,
+    "withdrawn_at": null,
+    "submission": null,
+    "vulnerabilities": [
+      {
+        "package": {
+          "ecosystem": "maven",
+          "name": "org.keycloak"
+        },
+        "vulnerable_version_range": "< 21.0.1",
+        "patched_versions": "21.0.1",
+        "vulnerable_functions": []
+      }
+    ],
+    "cvss_severities": {
+      "cvss_v3": {
+        "vector_string": "CVSS:3.1/AV:N/AC:L/PR:L/UI:R/S:C/C:H/I:H/A:N",
+        "score": 8.7
+      },
+      "cvss_v4": {
+        "vector_string": null,
+        "score": null
+      }
+    },
+    "cwes": [
+      {
+        "cwe_id": "CWE-345",
+        "name": "Insufficient Verification of Data Authenticity"
+      }
+    ],
+    "cwe_ids": [
+      "CWE-345"
+    ],
+    "credits": [
+      {
+        "login": "JorZay",
+        "type": "analyst"
+      }
+    ],
+    "credits_detailed": [
+      {
+        "user": {
+          "login": "JorZay",
+          "id": 105672884,
+          "node_id": "U_kgDOBkxwtA",
+          "avatar_url": "https://avatars.githubusercontent.com/u/105672884?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/JorZay",
+          "html_url": "https://github.com/JorZay",
+          "followers_url": "https://api.github.com/users/JorZay/followers",
+          "following_url": "https://api.github.com/users/JorZay/following{/other_user}",
+          "gists_url": "https://api.github.com/users/JorZay/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/JorZay/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/JorZay/subscriptions",
+          "organizations_url": "https://api.github.com/users/JorZay/orgs",
+          "repos_url": "https://api.github.com/users/JorZay/repos",
+          "events_url": "https://api.github.com/users/JorZay/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/JorZay/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "type": "analyst",
+        "state": "accepted"
+      }
+    ],
+    "collaborating_users": null,
+    "collaborating_teams": null,
+    "private_fork": null,
+    "cvss": {
+      "vector_string": "CVSS:3.1/AV:N/AC:L/PR:L/UI:R/S:C/C:H/I:H/A:N",
+      "score": 8.7
+    },
+    "_source_repo": "keycloak/keycloak",
+    "_framework": "jaxrs",
+    "_fix_commits": [
+      {
+        "repo": "keycloak/keycloak",
+        "sha": "ec8109112e67208c13e13f6d1f8706a5a3ba8d4c"
+      }
+    ],
+    "_fix_prs": []
+  },
+  {
+    "ghsa_id": "GHSA-37gf-gmxv-74wv",
+    "cve_id": "CVE-2026-1486",
+    "url": "https://api.github.com/advisories/GHSA-37gf-gmxv-74wv",
+    "html_url": "https://github.com/advisories/GHSA-37gf-gmxv-74wv",
+    "summary": "Keycloak fails to verify if an Identity Provider (IdP) is enabled before issuing tokens",
+    "description": "A flaw was found in Keycloak. A vulnerability exists in the jwt-authorization-grant flow where the server fails to verify if an Identity Provider (IdP) is enabled before issuing tokens. The issuer lookup mechanism (lookupIdentityProviderFromIssuer) retrieves the IdP configuration but does not filter for isEnabled=false. If an administrator disables an IdP (e.g., due to a compromise or offboarding), an entity possessing that IdP's signing key can still generate valid JWT assertions that Keycloak accepts, resulting in the issuance of valid access tokens.",
+    "type": "reviewed",
+    "severity": "high",
+    "repository_advisory_url": null,
+    "source_code_location": "https://github.com/keycloak/keycloak",
+    "identifiers": [
+      {
+        "value": "GHSA-37gf-gmxv-74wv",
+        "type": "GHSA"
+      },
+      {
+        "value": "CVE-2026-1486",
+        "type": "CVE"
+      }
+    ],
+    "references": [
+      "https://nvd.nist.gov/vuln/detail/CVE-2026-1486",
+      "https://access.redhat.com/security/cve/CVE-2026-1486",
+      "https://bugzilla.redhat.com/show_bug.cgi?id=2433347",
+      "https://access.redhat.com/errata/RHSA-2026:2365",
+      "https://access.redhat.com/errata/RHSA-2026:2366",
+      "https://github.com/keycloak/keycloak/issues/46146",
+      "https://github.com/keycloak/keycloak/pull/46148",
+      "https://github.com/keycloak/keycloak/commit/176dc8902ce552056d3648c4601d519afc6fb043",
+      "https://github.com/keycloak/keycloak/commit/8316e8538f0037d9f998181e73122cff93a94035",
+      "https://github.com/advisories/GHSA-37gf-gmxv-74wv"
+    ],
+    "published_at": "2026-02-09T21:31:03Z",
+    "updated_at": "2026-02-13T21:49:43Z",
+    "github_reviewed_at": "2026-02-10T18:35:15Z",
+    "nvd_published_at": "2026-02-09T20:15:55Z",
+    "withdrawn_at": null,
+    "vulnerabilities": [
+      {
+        "package": {
+          "ecosystem": "maven",
+          "name": "org.keycloak:keycloak-services"
+        },
+        "vulnerable_version_range": ">= 26.5.0, < 26.5.3",
+        "first_patched_version": "26.5.3",
+        "vulnerable_functions": []
+      },
+      {
+        "package": {
+          "ecosystem": "maven",
+          "name": "org.keycloak:keycloak-services"
+        },
+        "vulnerable_version_range": "< 26.4.9",
+        "first_patched_version": "26.4.9",
+        "vulnerable_functions": []
+      }
+    ],
+    "cvss_severities": {
+      "cvss_v3": {
+        "vector_string": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
+        "score": 8.8
+      },
+      "cvss_v4": {
+        "vector_string": null,
+        "score": 0.0
+      }
+    },
+    "cwes": [
+      {
+        "cwe_id": "CWE-358",
+        "name": "Improperly Implemented Security Check for Standard"
+      }
+    ],
+    "credits": [
+      {
+        "user": {
+          "login": "eminaktas",
+          "id": 54074230,
+          "node_id": "MDQ6VXNlcjU0MDc0MjMw",
+          "avatar_url": "https://avatars.githubusercontent.com/u/54074230?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/eminaktas",
+          "html_url": "https://github.com/eminaktas",
+          "followers_url": "https://api.github.com/users/eminaktas/followers",
+          "following_url": "https://api.github.com/users/eminaktas/following{/other_user}",
+          "gists_url": "https://api.github.com/users/eminaktas/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/eminaktas/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/eminaktas/subscriptions",
+          "organizations_url": "https://api.github.com/users/eminaktas/orgs",
+          "repos_url": "https://api.github.com/users/eminaktas/repos",
+          "events_url": "https://api.github.com/users/eminaktas/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/eminaktas/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "type": "analyst"
+      }
+    ],
+    "cvss": {
+      "vector_string": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
+      "score": 8.8
+    },
+    "epss": {
+      "percentage": 0.00025,
+      "percentile": 0.06663
+    },
+    "_source_repo": "keycloak/keycloak",
+    "_framework": "jaxrs",
+    "_fix_commits": [
+      {
+        "repo": "keycloak/keycloak",
+        "sha": "176dc8902ce552056d3648c4601d519afc6fb043"
+      },
+      {
+        "repo": "keycloak/keycloak",
+        "sha": "8316e8538f0037d9f998181e73122cff93a94035"
+      }
+    ],
+    "_fix_prs": [
+      {
+        "repo": "keycloak/keycloak",
+        "pr": "46148"
+      }
+    ]
+  },
+  {
+    "ghsa_id": "GHSA-hcvw-475w-8g7p",
+    "cve_id": "CVE-2026-1529",
+    "url": "https://api.github.com/advisories/GHSA-hcvw-475w-8g7p",
+    "html_url": "https://github.com/advisories/GHSA-hcvw-475w-8g7p",
+    "summary": "Keycloak affected by improper invitation token validation",
+    "description": "A flaw was found in Keycloak. An attacker can exploit this vulnerability by modifying the organization ID and target email within a legitimate invitation token's JSON Web Token (JWT) payload. This lack of cryptographic signature verification allows the attacker to successfully self-register into an unauthorized organization, leading to unauthorized access.",
+    "type": "reviewed",
+    "severity": "high",
+    "repository_advisory_url": null,
+    "source_code_location": "https://github.com/keycloak/keycloak",
+    "identifiers": [
+      {
+        "value": "GHSA-hcvw-475w-8g7p",
+        "type": "GHSA"
+      },
+      {
+        "value": "CVE-2026-1529",
+        "type": "CVE"
+      }
+    ],
+    "references": [
+      "https://nvd.nist.gov/vuln/detail/CVE-2026-1529",
+      "https://access.redhat.com/errata/RHSA-2026:2364",
+      "https://access.redhat.com/security/cve/CVE-2026-1529",
+      "https://bugzilla.redhat.com/show_bug.cgi?id=2433783",
+      "https://access.redhat.com/errata/RHSA-2026:2363",
+      "https://access.redhat.com/errata/RHSA-2026:2365",
+      "https://access.redhat.com/errata/RHSA-2026:2366",
+      "https://github.com/keycloak/keycloak/issues/46145",
+      "https://github.com/keycloak/keycloak/pull/46155",
+      "https://github.com/keycloak/keycloak/commit/8fc9a98026106a326f4faa98d4c9a48341ace2d7",
+      "https://github.com/keycloak/keycloak/commit/82cd7941d1dd28fa14a67a6e6b912301f1a5e1a1",
+      "https://github.com/keycloak/keycloak/commit/b2519756487b519f95c07aa8b10afe003e492119",
+      "https://github.com/advisories/GHSA-hcvw-475w-8g7p"
+    ],
+    "published_at": "2026-02-09T21:31:03Z",
+    "updated_at": "2026-02-13T20:32:02Z",
+    "github_reviewed_at": "2026-02-10T18:35:20Z",
+    "nvd_published_at": "2026-02-09T20:15:55Z",
+    "withdrawn_at": null,
+    "vulnerabilities": [
+      {
+        "package": {
+          "ecosystem": "maven",
+          "name": "org.keycloak:keycloak-services"
+        },
+        "vulnerable_version_range": ">= 26.5.0, < 26.5.3",
+        "first_patched_version": "26.5.3",
+        "vulnerable_functions": []
+      },
+      {
+        "package": {
+          "ecosystem": "maven",
+          "name": "org.keycloak:keycloak-services"
+        },
+        "vulnerable_version_range": "< 26.2.13",
+        "first_patched_version": "26.2.13",
+        "vulnerable_functions": []
+      },
+      {
+        "package": {
+          "ecosystem": "maven",
+          "name": "org.keycloak:keycloak-services"
+        },
+        "vulnerable_version_range": ">= 26.3.0, < 26.4.9",
+        "first_patched_version": "26.4.9",
+        "vulnerable_functions": []
+      }
+    ],
+    "cvss_severities": {
+      "cvss_v3": {
+        "vector_string": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:N",
+        "score": 8.1
+      },
+      "cvss_v4": {
+        "vector_string": null,
+        "score": 0.0
+      }
+    },
+    "cwes": [
+      {
+        "cwe_id": "CWE-347",
+        "name": "Improper Verification of Cryptographic Signature"
+      }
+    ],
+    "credits": [
+      {
+        "user": {
+          "login": "eminaktas",
+          "id": 54074230,
+          "node_id": "MDQ6VXNlcjU0MDc0MjMw",
+          "avatar_url": "https://avatars.githubusercontent.com/u/54074230?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/eminaktas",
+          "html_url": "https://github.com/eminaktas",
+          "followers_url": "https://api.github.com/users/eminaktas/followers",
+          "following_url": "https://api.github.com/users/eminaktas/following{/other_user}",
+          "gists_url": "https://api.github.com/users/eminaktas/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/eminaktas/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/eminaktas/subscriptions",
+          "organizations_url": "https://api.github.com/users/eminaktas/orgs",
+          "repos_url": "https://api.github.com/users/eminaktas/repos",
+          "events_url": "https://api.github.com/users/eminaktas/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/eminaktas/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "type": "analyst"
+      }
+    ],
+    "cvss": {
+      "vector_string": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:N",
+      "score": 8.1
+    },
+    "epss": {
+      "percentage": 0.00013,
+      "percentile": 0.01879
+    },
+    "_source_repo": "keycloak/keycloak",
+    "_framework": "jaxrs",
+    "_fix_commits": [
+      {
+        "repo": "keycloak/keycloak",
+        "sha": "8fc9a98026106a326f4faa98d4c9a48341ace2d7"
+      },
+      {
+        "repo": "keycloak/keycloak",
+        "sha": "82cd7941d1dd28fa14a67a6e6b912301f1a5e1a1"
+      },
+      {
+        "repo": "keycloak/keycloak",
+        "sha": "b2519756487b519f95c07aa8b10afe003e492119"
+      }
+    ],
+    "_fix_prs": [
+      {
+        "repo": "keycloak/keycloak",
+        "pr": "46155"
+      }
+    ]
+  }
+]

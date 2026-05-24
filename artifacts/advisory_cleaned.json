@@ -1,0 +1,471 @@
+[
+  {
+    "cve_id": "CVE-2025-67715",
+    "ghsa_id": "GHSA-3pmh-24wp-xpf4",
+    "package": "Weblate",
+    "summary": "Weblate has Systematic User and Project Enumeration via Broken Authorization in REST API (IDOR)",
+    "has_fix": "yes",
+    "fix_urls": [
+      "https://github.com/WeblateOrg/weblate/pull/17256"
+    ]
+  },
+  {
+    "cve_id": "",
+    "ghsa_id": "GHSA-96vq-gqr9-vf2c",
+    "package": "defectdojo",
+    "summary": "Product and findings metrics/reports information leak to unauthorized users",
+    "has_fix": "yes",
+    "fix_urls": []
+  },
+  {
+    "cve_id": "",
+    "ghsa_id": "GHSA-9jr7-2hgp-vhp8",
+    "package": "defectdojo",
+    "summary": "API: findings and endpoint data exposed to unauthorized users via v1/v2 API",
+    "has_fix": "yes",
+    "fix_urls": []
+  },
+  {
+    "cve_id": "",
+    "ghsa_id": "GHSA-qm5q-2jrx-cch3",
+    "package": "defectdojo",
+    "summary": "Improper access control: groups/config accessible to non-superusers via direct URL",
+    "has_fix": "yes",
+    "fix_urls": []
+  },
+  {
+    "cve_id": "",
+    "ghsa_id": "GHSA-v7fv-g69g-x7p2",
+    "package": "defectdojo",
+    "summary": "Improper access control: Jira configs and Product_Types visible to unauthorized staff",
+    "has_fix": "yes",
+    "fix_urls": []
+  },
+  {
+    "cve_id": "CVE-2016-2048",
+    "ghsa_id": "GHSA-46x4-9jmv-jc8p",
+    "package": "django",
+    "summary": "Django Access Restrictions Bypass ",
+    "has_fix": "yes",
+    "fix_urls": [
+      "https://github.com/django/django/commit/adbca5e4db42542575734b8e5d26961c8ada7265"
+    ]
+  },
+  {
+    "cve_id": "CVE-2018-16984",
+    "ghsa_id": "GHSA-6mx3-3vqg-hpp2",
+    "package": "django",
+    "summary": "Django allows unprivileged users to read the password hashes of arbitrary accounts",
+    "has_fix": "yes",
+    "fix_urls": [
+      "https://github.com/django/django/commit/bf39978a53f117ca02e9a0c78b76664a41a54745"
+    ]
+  },
+  {
+    "cve_id": "CVE-2025-13030",
+    "ghsa_id": "GHSA-qp2c-xqv6-phh6",
+    "package": "django-mdeditor",
+    "summary": "django-mdeditor is Missing Authentication for Critical Function",
+    "has_fix": "yes",
+    "fix_urls": [
+      "https://github.com/pylixm/django-mdeditor/pull/185",
+      "https://github.com/pylixm/django-mdeditor/commit/3e80f9edcabc5d2fc136b05a501964b8a5e97cfe"
+    ]
+  },
+  {
+    "cve_id": "CVE-2026-31815",
+    "ghsa_id": "GHSA-ffv6-jj46-x367",
+    "package": "django-unicorn",
+    "summary": "django-unicorn affected by component state manipulation via unvalidated attribute access",
+    "has_fix": "no",
+    "fix_urls": []
+  },
+  {
+    "cve_id": "CVE-2026-42864",
+    "ghsa_id": "GHSA-fqvv-jvhr-g5jc",
+    "package": "firefighter-incident",
+    "summary": "FireFighter has unauthenticated SSRF in its Raid jira_bot endpoint that allows IAM credential theft",
+    "has_fix": "yes",
+    "fix_urls": [
+      "https://github.com/ManoManoTech/firefighter-incident/commit/2586679e6f32c12d223668b73e98f4c4de7b771f"
+    ]
+  },
+  {
+    "cve_id": "CVE-2023-47117",
+    "ghsa_id": "GHSA-f475-x83m-rx3c",
+    "package": "label-studio",
+    "summary": "Label Studio ORM Leak - task API filtering exposes unauthorized data",
+    "has_fix": "yes",
+    "fix_urls": [
+      "https://github.com/HumanSignal/label-studio/commit/f931d9d129002f54a495995774ce7384174cef5c"
+    ]
+  },
+  {
+    "cve_id": "CVE-2023-0777",
+    "ghsa_id": "GHSA-49hq-5r8p-g8ch",
+    "package": "modoboa",
+    "summary": "Authentication Bypass in modoboa prior to 2.0.4",
+    "has_fix": "yes",
+    "fix_urls": [
+      "https://github.com/modoboa/modoboa/commit/47d17ac6643f870719691073956a26e4be0a4806"
+    ]
+  },
+  {
+    "cve_id": "CVE-2023-2227",
+    "ghsa_id": "GHSA-c4fh-4rg3-8c3q",
+    "package": "modoboa",
+    "summary": "Improper Authorization: GET /api/v2/parameters/core/ returns sensitive data without auth",
+    "has_fix": "yes",
+    "fix_urls": [
+      "https://github.com/modoboa/modoboa/commit/7bcd3f6eb264d4e3e01071c97c2bac51cdd6fe97"
+    ]
+  },
+  {
+    "cve_id": "CVE-2023-50263",
+    "ghsa_id": "GHSA-75mc-3pjc-727q",
+    "package": "nautobot",
+    "summary": "Unauthenticated db-file-storage views",
+    "has_fix": "yes",
+    "fix_urls": [
+      "https://github.com/nautobot/nautobot/pull/4959",
+      "https://github.com/nautobot/nautobot/pull/4964",
+      "https://github.com/nautobot/nautobot/commit/458280c359a4833a20da294eaf4b8d55edc91cee"
+    ]
+  },
+  {
+    "cve_id": "CVE-2023-51649",
+    "ghsa_id": "GHSA-vf5m-xrhm-v999",
+    "package": "nautobot",
+    "summary": "Nautobot missing object-level permissions enforcement when running Job Buttons",
+    "has_fix": "yes",
+    "fix_urls": [
+      "https://github.com/nautobot/nautobot/pull/4993",
+      "https://github.com/nautobot/nautobot/pull/4995",
+      "https://github.com/nautobot/nautobot/commit/3d964f996f4926126c1d7853ca87b2ff475997a2"
+    ]
+  },
+  {
+    "cve_id": "CVE-2024-29199",
+    "ghsa_id": "GHSA-m732-wvh2-7cq4",
+    "package": "nautobot",
+    "summary": "Unauthenticated views may expose information to anonymous users",
+    "has_fix": "yes",
+    "fix_urls": [
+      "https://github.com/nautobot/nautobot/pull/5464",
+      "https://github.com/nautobot/nautobot/pull/5465",
+      "https://github.com/nautobot/nautobot/commit/2fd95c365f8477b26e06d60b999ddd36882d5750"
+    ]
+  },
+  {
+    "cve_id": "CVE-2024-36112",
+    "ghsa_id": "GHSA-qmjf-wc2h-6x3q",
+    "package": "nautobot",
+    "summary": "Nautobot dynamic-group-members doesn't enforce permission restrictions on member objects",
+    "has_fix": "yes",
+    "fix_urls": [
+      "https://github.com/nautobot/nautobot/pull/5757",
+      "https://github.com/nautobot/nautobot/pull/5762",
+      "https://github.com/nautobot/nautobot/commit/3a63aa1327f943b2ac8452757ea2e4d403387ad6"
+    ]
+  },
+  {
+    "cve_id": "CVE-2025-49143",
+    "ghsa_id": "GHSA-rh67-4c8j-hjjh",
+    "package": "nautobot",
+    "summary": "Nautobot may allows uploaded media files to be accessible without authentication",
+    "has_fix": "yes",
+    "fix_urls": [
+      "https://github.com/nautobot/nautobot/pull/6672",
+      "https://github.com/nautobot/nautobot/pull/6703",
+      "https://github.com/nautobot/nautobot/commit/9c892dc300429948a4714f743c9c2879d8987340"
+    ]
+  },
+  {
+    "cve_id": "CVE-2026-44794",
+    "ghsa_id": "GHSA-wpxj-44w3-2j6x",
+    "package": "nautobot",
+    "summary": "Nautobot: REST API permits creation of GenericForeignKey references to objects that the user should ",
+    "has_fix": "yes",
+    "fix_urls": [
+      "https://github.com/nautobot/nautobot/commit/36cde7148a207234de6212ec074f321dbc9d1b5b",
+      "https://github.com/nautobot/nautobot/commit/9918bdb9bcf1eb42cda72c344f420a64ef7665f1"
+    ]
+  },
+  {
+    "cve_id": "",
+    "ghsa_id": "GHSA-32w2-6gm2-7766",
+    "package": "netbox",
+    "summary": "Insufficient authorization in global search: unauthenticated users view all objects",
+    "has_fix": "yes",
+    "fix_urls": []
+  },
+  {
+    "cve_id": "CVE-2026-30244",
+    "ghsa_id": "",
+    "package": "plane",
+    "summary": "Unauthenticated Workspace Member Information Disclosure via misconfigured DRF permissions",
+    "has_fix": "no",
+    "fix_urls": []
+  },
+  {
+    "cve_id": "CVE-2025-14881",
+    "ghsa_id": "GHSA-r2h2-g46h-8mx8",
+    "package": "pretix",
+    "summary": "pretix has Broken Access Control Allowing Cross-User File Access via UUID",
+    "has_fix": "yes",
+    "fix_urls": [
+      "https://github.com/pretix/pretix/commit/4b5651862c57c6e384822d1d23292342126c479a"
+    ]
+  },
+  {
+    "cve_id": "CVE-2025-14882",
+    "ghsa_id": "GHSA-pmjj-h5jm-vxh4",
+    "package": "pretix",
+    "summary": "pretix has Broken Access Control Allowing Cross-User File Access via UUID",
+    "has_fix": "yes",
+    "fix_urls": [
+      "https://github.com/pretix/pretix/commit/4b5651862c57c6e384822d1d23292342126c479a"
+    ]
+  },
+  {
+    "cve_id": "CVE-2020-7964",
+    "ghsa_id": "GHSA-rgcm-rpq9-9cgr",
+    "package": "saleor",
+    "summary": "Missing Authentication for Critical Function in Saleor",
+    "has_fix": "yes",
+    "fix_urls": [
+      "https://github.com/mirumee/saleor/commit/233b8890c60fa6d90daf99e4d90fea85867732c3"
+    ]
+  },
+  {
+    "cve_id": "CVE-2022-0932",
+    "ghsa_id": "GHSA-mcgw-5fhw-3fq8",
+    "package": "saleor",
+    "summary": "saleor Missing Authorization vulnerability",
+    "has_fix": "yes",
+    "fix_urls": [
+      "https://github.com/saleor/saleor/commit/521dfd6394f3926a77c60d8633c058e16d0f916d"
+    ]
+  },
+  {
+    "cve_id": "CVE-2023-36826",
+    "ghsa_id": "GHSA-fm88-hgrf-jvfx",
+    "package": "sentry",
+    "summary": "Improper authorization on debug and artifact file downloads from arbitrary orgs",
+    "has_fix": "yes",
+    "fix_urls": [
+      "https://github.com/getsentry/sentry/pull/49680"
+    ]
+  },
+  {
+    "cve_id": "CVE-2024-45605",
+    "ghsa_id": "GHSA-rr7f-74v8-4gxq",
+    "package": "sentry",
+    "summary": "Sentry improperly authorizes deletion of user issue alert notifications (CWE-639)",
+    "has_fix": "yes",
+    "fix_urls": [
+      "https://github.com/getsentry/sentry/pull/77093"
+    ]
+  },
+  {
+    "cve_id": "CVE-2024-45606",
+    "ghsa_id": "GHSA-rfqj-8r8q-3xq2",
+    "package": "sentry",
+    "summary": "Sentry improperly authorizes muting of alert rules from arbitrary orgs (CWE-639)",
+    "has_fix": "yes",
+    "fix_urls": [
+      "https://github.com/getsentry/sentry/pull/77016"
+    ]
+  },
+  {
+    "cve_id": "CVE-2024-32882",
+    "ghsa_id": "GHSA-w2v8-php4-p8hc",
+    "package": "wagtail",
+    "summary": "Wagtail has permission check bypass when editing a model with per-field restrictions through `wagtai",
+    "has_fix": "yes",
+    "fix_urls": [
+      "https://github.com/wagtail/wagtail/commit/fa0d4829f9c81eefb37cc058e2fa1b6a918741da",
+      "https://github.com/wagtail/wagtail/commit/ab2a5d82b4ee3c909d2456704388ccf90e367c9b"
+    ]
+  },
+  {
+    "cve_id": "CVE-2026-25517",
+    "ghsa_id": "GHSA-4qvv-g3vr-m348",
+    "package": "wagtail",
+    "summary": "Wagtail has improper permission handling on admin preview endpoints",
+    "has_fix": "yes",
+    "fix_urls": [
+      "https://github.com/wagtail/wagtail/commit/01fd3477365a193e6a8270311defb76e890d2719",
+      "https://github.com/wagtail/wagtail/commit/5f09b6da61e779b0e8499bdbba52bf2f7bd3241f",
+      "https://github.com/wagtail/wagtail/commit/73f070dbefbd3b39ea6649ce36bd2d2a6eef2190"
+    ]
+  },
+  {
+    "cve_id": "CVE-2026-44197",
+    "ghsa_id": "GHSA-v7c4-9mhp-hx3g",
+    "package": "wagtail",
+    "summary": "Improper permission handling when comparing revisions (access without edit perm)",
+    "has_fix": "yes",
+    "fix_urls": []
+  },
+  {
+    "cve_id": "CVE-2026-44198",
+    "ghsa_id": "GHSA-3q2h-6p5m-2c8g",
+    "package": "wagtail",
+    "summary": "Improper permission handling when viewing page history without edit permission",
+    "has_fix": "yes",
+    "fix_urls": []
+  },
+  {
+    "cve_id": "CVE-2026-44199",
+    "ghsa_id": "GHSA-m5hc-9h3g-r4c8",
+    "package": "wagtail",
+    "summary": "Improper permission handling: delete form submissions from pages user lacks access to",
+    "has_fix": "yes",
+    "fix_urls": []
+  },
+  {
+    "cve_id": "CVE-2026-44200",
+    "ghsa_id": "GHSA-4v9m-8c2g-7h6p",
+    "package": "wagtail",
+    "summary": "Improper permission handling: copy page user has no access to (source not checked)",
+    "has_fix": "yes",
+    "fix_urls": []
+  },
+  {
+    "cve_id": "CVE-2026-21889",
+    "ghsa_id": "GHSA-3g2f-4rjg-9385",
+    "package": "weblate",
+    "summary": "Weblate leaks information via screenshots",
+    "has_fix": "yes",
+    "fix_urls": [
+      "https://github.com/WeblateOrg/weblate/pull/17516",
+      "https://github.com/WeblateOrg/weblate/commit/a6eb5fd0299780eca286be8ff187dc2d10feec47"
+    ]
+  },
+  {
+    "cve_id": "CVE-2026-27457",
+    "ghsa_id": "GHSA-wppc-7cq7-cgfv",
+    "package": "weblate",
+    "summary": "Weblate: Missing access control for the AddonViewSet API exposes all addon configurations",
+    "has_fix": "yes",
+    "fix_urls": [
+      "https://github.com/WeblateOrg/weblate/pull/18107",
+      "https://github.com/WeblateOrg/weblate/pull/18164",
+      "https://github.com/WeblateOrg/weblate/commit/3f58f9a4152bc0cbdd6eff5954f9c7bc4d9f0af9"
+    ]
+  },
+  {
+    "cve_id": "CVE-2026-33212",
+    "ghsa_id": "GHSA-vj45-x3pj-f4w4",
+    "package": "weblate",
+    "summary": "Weblate: Improper access control for pending tasks in API",
+    "has_fix": "yes",
+    "fix_urls": [
+      "https://github.com/WeblateOrg/weblate/pull/18515",
+      "https://github.com/WeblateOrg/weblate/commit/4e06b12cd05d087db68384e09d5f70fe883f2b70"
+    ]
+  },
+  {
+    "cve_id": "CVE-2026-33214",
+    "ghsa_id": "GHSA-mpf5-3vph-q75r",
+    "package": "weblate",
+    "summary": "Weblate: Improper access control for the translation memory in API",
+    "has_fix": "yes",
+    "fix_urls": [
+      "https://github.com/WeblateOrg/weblate/pull/18513"
+    ]
+  },
+  {
+    "cve_id": "CVE-2026-34393",
+    "ghsa_id": "GHSA-3382-gw9x-477v",
+    "package": "weblate",
+    "summary": "Weblate: Privilege escalation in the user API endpoint",
+    "has_fix": "yes",
+    "fix_urls": [
+      "https://github.com/WeblateOrg/weblate/pull/18687"
+    ]
+  },
+  {
+    "cve_id": "CVE-2026-44263",
+    "ghsa_id": "GHSA-xxxx-xxxx-xxxx",
+    "package": "weblate",
+    "summary": "Private Translation Enumeration via Screenshot, Tasks, and Component Link API",
+    "has_fix": "yes",
+    "fix_urls": [
+      "https://github.com/WeblateOrg/weblate/pull/19258"
+    ]
+  },
+  {
+    "cve_id": "CVE-2026-27835",
+    "ghsa_id": "GHSA-xf68-8hjw-7mpm",
+    "package": "wger",
+    "summary": "wger: IDOR in RepetitionsConfig and MaxRepetitionsConfig API leak other users' workout data",
+    "has_fix": "yes",
+    "fix_urls": [
+      "https://github.com/wger-project/wger/commit/1fda5690b35706bb137850c8a084ec6a13317b64"
+    ]
+  },
+  {
+    "cve_id": "CVE-2026-27838",
+    "ghsa_id": "GHSA-42cr-w2gr-m54q",
+    "package": "wger",
+    "summary": "wger: IDOR via user-unscoped cache keys on routine API actions exposes workout data",
+    "has_fix": "yes",
+    "fix_urls": [
+      "https://github.com/wger-project/wger/commit/e964328784e2ee2830a1991d69fadbce86ac9fbf"
+    ]
+  },
+  {
+    "cve_id": "CVE-2026-27839",
+    "ghsa_id": "GHSA-g8gc-6c4h-jg86",
+    "package": "wger",
+    "summary": "wger: IDOR in nutritional_values endpoints exposes private dietary data via direct ORM lookup",
+    "has_fix": "yes",
+    "fix_urls": [
+      "https://github.com/wger-project/wger/commit/29876a1954fe959e4b58ef070170e81703dab60e"
+    ]
+  },
+  {
+    "cve_id": "CVE-2026-40474",
+    "ghsa_id": "GHSA-xppv-4jrx-qf8m",
+    "package": "wger",
+    "summary": "wger has Broken Access Control in Global Gym Configuration Update Endpoint",
+    "has_fix": "yes",
+    "fix_urls": [
+      "https://github.com/wger-project/wger/commit/47ee5af93b3ced24b9f94b0a8b9296b50bc9523f"
+    ]
+  },
+  {
+    "cve_id": "CVE-2026-43948",
+    "ghsa_id": "",
+    "package": "wger",
+    "summary": "Cross-tenant password reset via gym=None bypass in reset_user_password view",
+    "has_fix": "no",
+    "fix_urls": []
+  },
+  {
+    "cve_id": "CVE-2026-43977",
+    "ghsa_id": "GHSA-cj9g-27ph-4cgv",
+    "package": "wger",
+    "summary": "wger Vulnerable to IDOR: Authenticated Users Can Read Any User's Private Workout Session Data via Te",
+    "has_fix": "no",
+    "fix_urls": []
+  },
+  {
+    "cve_id": "CVE-2026-43978",
+    "ghsa_id": "",
+    "package": "wger",
+    "summary": "Privilege escalation via trainer-login session chaining (trainer impersonates manager)",
+    "has_fix": "no",
+    "fix_urls": []
+  },
+  {
+    "cve_id": "",
+    "ghsa_id": "GHSA-mw8f-w6p8-xrf4",
+    "package": "wger",
+    "summary": "Cross-tenant account deletion/deactivation via gym=None bypass in gym.manage_gym",
+    "has_fix": "no",
+    "fix_urls": []
+  }
+]

@@ -67,6 +67,17 @@ _AUTOWIRED_FIELD_RE = re.compile(
     r"(?ms)@(?:Autowired|Inject)[^\n]*\n\s*(?:private|protected|public)?\s*(?:final\s+)?"
     r"(\w+Repository)(?:<[^>]+>)?\s+(\w+)"
 )
+# Match any @Autowired/@Inject field (services, repos, etc.)
+_INJECTABLE_FIELD_RE = re.compile(
+    r"(?ms)@(?:Autowired|Inject)[^\n]*\n\s*(?:private|protected|public)?\s*(?:final\s+)?"
+    r"(\w+)\s+(\w+)\s*[;=]"
+)
+# Match non-annotated fields whose type ends in Service/Provider/Manager/Client
+_SERVICE_FIELD_RE = re.compile(
+    r"(?m)^\s*(?:private|protected|public)?\s*(?:final\s+)?"
+    r"(\w+(?:Service|Provider|Manager|Client|Facade|Helper|Delegate))"
+    r"(?:<[^>]+>)?\s+(\w+)\s*[;=]"
+)
 
 _HTTP_ANN_TO_METHODS: dict[str, tuple[str, ...]] = {
     # Spring MVC
@@ -130,6 +141,7 @@ class _ParsedClass:
     class_route: str
     methods: list[dict[str, Any]] = field(default_factory=list)
     repo_fields: dict[str, str] = field(default_factory=dict)  # var -> repo_type
+    service_fields: dict[str, str] = field(default_factory=dict)  # var -> service_type
 
 
 # --- helpers --------------------------------------------------------------
@@ -235,8 +247,20 @@ def _parse_file(path: Path) -> list[_ParsedClass]:
         ann_names = [_ann_name(a) for a in anns]
         is_spring_ctrl = any(n in {"RestController", "Controller"} for n in ann_names)
         is_jaxrs_resource = any(n in _JAXRS_CLASS_ANN for n in ann_names)
+        # Also detect JAX-RS sub-resource classes (no class-level @Path but have
+        # HTTP method annotations on methods). Peek into the class body.
         if not (is_spring_ctrl or is_jaxrs_resource):
-            continue
+            body_start = text.find("{", cm.end())
+            if body_start >= 0:
+                # Quick regex check for HTTP method annotations in body
+                _has_http_ann = bool(re.search(
+                    r'@(GET|POST|PUT|DELETE|PATCH|GetMapping|PostMapping|PutMapping|DeleteMapping|PatchMapping|RequestMapping)\b',
+                    text[body_start:body_start + 10000]
+                ))
+            else:
+                _has_http_ann = False
+            if not _has_http_ann:
+                continue
         # class-level @RequestMapping or @Path for base path
         class_route = ""
         for a in anns:
@@ -270,6 +294,17 @@ def _parse_file(path: Path) -> list[_ParsedClass]:
             pc.repo_fields[rm.group(2)] = rm.group(1)
         for rm in _AUTOWIRED_FIELD_RE.finditer(body):
             pc.repo_fields[rm.group(2)] = rm.group(1)
+
+        # Service/injectable fields (non-repo).
+        for rm in _INJECTABLE_FIELD_RE.finditer(body):
+            ftype, fname = rm.group(1), rm.group(2)
+            if ftype.endswith("Repository"):
+                continue  # already captured above
+            pc.service_fields[fname] = ftype
+        for rm in _SERVICE_FIELD_RE.finditer(body):
+            ftype, fname = rm.group(1), rm.group(2)
+            if fname not in pc.service_fields and fname not in pc.repo_fields:
+                pc.service_fields[fname] = ftype
 
         # Methods: hand-scan to handle nested parens in annotations like
         # @PreAuthorize("isAuthenticated()") which break greedy regexes.
@@ -617,6 +652,17 @@ def build_pfg(project_root: str | Path, *, application: str | None = None) -> PF
     root = Path(project_root).resolve()
     app_name = application or root.name
 
+    # Build global class index for cross-class tracing (service → repo).
+    all_classes: dict[str, _ParsedClass] = {}  # class_name -> ParsedClass
+    java_files = list(root.rglob("*.java"))
+    for f in java_files:
+        try:
+            classes = _parse_file(f)
+        except OSError:
+            continue
+        for pc in classes:
+            all_classes[pc.name] = pc
+
     nodes: list[dict[str, Any]] = []
     edges: list[dict[str, Any]] = []
     seen_nodes: set[str] = set()
@@ -672,6 +718,58 @@ def build_pfg(project_root: str | Path, *, application: str | None = None) -> PF
 
         local_repos = _local_repos_in(mdef["body"])
         accesses = _detect_data_accesses(mdef["body"], pc.repo_fields, local_repos)
+
+        # Cross-class tracing: find service calls and trace into service repos.
+        for cm in re.finditer(r"\b(\w+)\.(\w+)\s*\(([^)]*)\)", mdef["body"]):
+            var, meth, args = cm.group(1), cm.group(2), cm.group(3)
+            svc_type = pc.service_fields.get(var)
+            if svc_type is None:
+                continue
+            svc_class = all_classes.get(svc_type)
+            if svc_class is None:
+                continue
+            # Find the called method in the service class.
+            svc_method_bodies: list[str] = []
+            for sm in svc_class.methods:
+                if sm["name"] == meth:
+                    svc_method_bodies.append(sm["body"])
+            # If we can't find the exact method, trace ALL service repos.
+            if svc_method_bodies:
+                for sbody in svc_method_bodies:
+                    svc_local = _local_repos_in(sbody)
+                    accesses.extend(
+                        _detect_data_accesses(sbody, svc_class.repo_fields, svc_local)
+                    )
+            elif svc_class.repo_fields:
+                # Heuristic: method name maps to a repo call pattern.
+                op = "READ"
+                if meth.startswith(("save", "update", "put")):
+                    op = "UPDATE"
+                elif meth.startswith(("delete", "remove")):
+                    op = "DELETE"
+                elif meth.startswith(("create", "insert", "add")):
+                    op = "WRITE"
+                for rvar, rtype in svc_class.repo_fields.items():
+                    entity = rtype[:-len("Repository")] if rtype.endswith("Repository") else rtype
+                    arg_names = tuple(re.findall(r"\b([A-Za-z_]\w*)\b", args))
+                    kws = {"new", "true", "false", "null", "this"}
+                    arg_names = tuple(a for a in arg_names if a not in kws)
+                    accesses.append(
+                        SpringDataAccess(
+                            repo_var=rvar,
+                            repo_type=rtype,
+                            method=meth,
+                            operation=op,
+                            has_ownership_predicate=any(
+                                k in meth for k in ("ByOwner", "ByUser", "ByCurrentUser", "Owner", "User")
+                            ),
+                            arg_names=arg_names,
+                            target_entity=entity,
+                            line=0,
+                        )
+                    )
+                    break  # one data_access per service call is sufficient
+
         for idx, da in enumerate(accesses):
             did = _safe_id(f"data__{ep.handler_qualname}__{da.method}__{idx}")
             add_node(

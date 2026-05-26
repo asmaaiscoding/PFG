@@ -27,6 +27,8 @@ class HttpMethod(StrEnum):
     PUT = "PUT"
     DELETE = "DELETE"
     PATCH = "PATCH"
+    OPTIONS = "OPTIONS"
+    HEAD = "HEAD"
 
 
 class Role(StrEnum):

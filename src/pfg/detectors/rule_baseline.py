@@ -229,6 +229,12 @@ def _is_intentionally_public(ep: Node) -> bool:
     return isinstance(ep.attrs, EndpointAttrs) and ep.attrs.is_intentionally_public
 
 
+def _is_admin_path(attrs: EndpointAttrs) -> bool:
+    """Admin paths are protected by middleware the extractor may not detect."""
+    route_lower = attrs.route.lower()
+    return route_lower.startswith("/admin") or "/_util/" in route_lower
+
+
 def _ep_attrs(ep: Node) -> EndpointAttrs:
     assert isinstance(ep.attrs, EndpointAttrs)
     return ep.attrs
@@ -245,22 +251,47 @@ def detect_missing_auth(pfg: PFG) -> list[Finding]:
         attrs = _ep_attrs(ep)
         if attrs.requires_auth or _is_intentionally_public(ep):
             continue
+        if _is_admin_path(attrs):
+            continue
         # reaches any data-access via call edges?
         reached = _reachable_via(pfg, ep.id, [EdgeType.CALL])
         idx = pfg.node_index()
         das = [n for n in reached if idx[n].type == NodeType.DATA_ACCESS.value]
-        if das:
-            out.append(
-                Finding(
-                    endpoint_id=ep.id,
-                    subtype=VulnSubtype.MISSING_AUTH,
-                    data_access_id=das[0],
-                    explanation=(
-                        f"Endpoint {attrs.route} requires no authentication but "
-                        f"reaches data-access node(s): {sorted(das)}"
-                    ),
-                )
+        if not das:
+            continue
+        # Require stronger evidence: at least one data-access must be a mutation
+        # OR access a non-trivial entity (not just serving static content).
+        mutation_ops = {OperationType.WRITE.value, OperationType.UPDATE.value, OperationType.DELETE.value}
+        has_mutation = any(
+            isinstance(idx[n].attrs, DataAccessAttrs)
+            and (idx[n].attrs.operation if isinstance(idx[n].attrs.operation, str)
+                 else idx[n].attrs.operation.value) in mutation_ops
+            for n in das
+        )
+        if not has_mutation:
+            # For READ-only: only flag if route has user-controlled params or
+            # the entity looks sensitive (not a framework/static resource).
+            has_user_params = any(
+                isinstance(idx[n].attrs, DataAccessAttrs)
+                and idx[n].attrs.user_controlled_params_in_query
+                for n in das
             )
+            _FRAMEWORK_ROUTE_PARTS = {"media", "static", "jsi18n", "favicon", "robots"}
+            route_lower = attrs.route.lower()
+            is_framework = any(part in route_lower for part in _FRAMEWORK_ROUTE_PARTS)
+            if is_framework and not has_user_params:
+                continue
+        out.append(
+            Finding(
+                endpoint_id=ep.id,
+                subtype=VulnSubtype.MISSING_AUTH,
+                data_access_id=das[0],
+                explanation=(
+                    f"Endpoint {attrs.route} requires no authentication but "
+                    f"reaches data-access node(s): {sorted(das)}"
+                ),
+            )
+        )
     return out
 
 
@@ -273,7 +304,7 @@ def detect_missing_role(pfg: PFG) -> list[Finding]:
     privileged_ops = {OperationType.WRITE.value, OperationType.DELETE.value, OperationType.UPDATE.value}
     for ep in pfg.endpoints():
         attrs = _ep_attrs(ep)
-        if _is_intentionally_public(ep):
+        if _is_intentionally_public(ep) or _is_admin_path(attrs):
             continue
         ep_role = attrs.required_role
         ep_role_v = ep_role.value if hasattr(ep_role, "value") else ep_role
@@ -309,9 +340,10 @@ def detect_idor(pfg: PFG) -> list[Finding]:
     with no ownership check on the call path."""
     out: list[Finding] = []
     idx = pfg.node_index()
+    mutation_ops = {OperationType.WRITE.value, OperationType.UPDATE.value, OperationType.DELETE.value}
     for ep in pfg.endpoints():
         attrs = _ep_attrs(ep)
-        if _is_intentionally_public(ep):
+        if _is_intentionally_public(ep) or _is_admin_path(attrs):
             continue
         if not attrs.route_params:
             continue
@@ -324,6 +356,15 @@ def detect_idor(pfg: PFG) -> list[Finding]:
             if n.type != NodeType.DATA_ACCESS.value:
                 continue
             da = _da_attrs(n)
+            # Only flag mutations or READ with explicit user_controlled_params.
+            op_v = da.operation if isinstance(da.operation, str) else da.operation.value
+            if op_v not in mutation_ops:
+                # For READ-only: require user_controlled_params AND auth
+                # (unauthenticated reads without ownership are common/intentional).
+                if not da.user_controlled_params_in_query:
+                    continue
+                if not attrs.requires_auth:
+                    continue
             if _looks_tenant_scoped(attrs, da):
                 continue
             if da.requires_object_permission or attrs.model_permission_check_present:
@@ -369,7 +410,7 @@ def detect_tenant_isolation_failure(pfg: PFG) -> list[Finding]:
     idx = pfg.node_index()
     for ep in pfg.endpoints():
         attrs = _ep_attrs(ep)
-        if _is_intentionally_public(ep) or attrs.tenant_check_present:
+        if _is_intentionally_public(ep) or _is_admin_path(attrs) or attrs.tenant_check_present:
             continue
         reached = _reachable_via(pfg, ep.id, [EdgeType.CALL])
         for nid in reached:
@@ -377,7 +418,9 @@ def detect_tenant_isolation_failure(pfg: PFG) -> list[Finding]:
             if n.type != NodeType.DATA_ACCESS.value:
                 continue
             da = _da_attrs(n)
-            if not _looks_tenant_scoped(attrs, da):
+            # Require explicit tenant isolation flag — keyword matching alone
+            # produces too many false positives.
+            if not da.requires_tenant_isolation:
                 continue
             if da.has_tenant_predicate:
                 continue
@@ -405,7 +448,7 @@ def detect_object_level_permission_bypass(pfg: PFG) -> list[Finding]:
     idx = pfg.node_index()
     for ep in pfg.endpoints():
         attrs = _ep_attrs(ep)
-        if _is_intentionally_public(ep):
+        if _is_intentionally_public(ep) or _is_admin_path(attrs):
             continue
         if not attrs.route_params or not attrs.model_permission_check_present:
             continue

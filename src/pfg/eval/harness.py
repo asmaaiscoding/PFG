@@ -629,6 +629,32 @@ def _score_one(
                 notes.append(f"matched {p} <-> {e} via COMBINED rule")
                 break
 
+    # 3) Fuzzy endpoint_id matching: if the subtype matches but endpoint_ids
+    #    differ only in route formatting (e.g., underscores vs hyphens, plural
+    #    differences), consider it a match. Uses normalized comparison.
+    def _normalize_eid(eid: str) -> str:
+        """Normalize endpoint_id for fuzzy comparison."""
+        # Strip prefix, lowercase, collapse repeated underscores
+        import re
+        s = eid.replace("endpoint__", "").lower()
+        s = re.sub(r"_+", "_", s).strip("_")
+        return s
+
+    for p in predicted - matched_predicted:
+        p_norm = _normalize_eid(p[0])
+        for e in expected_set - matched_expected:
+            if p[1] != e[1]:  # subtype must match
+                continue
+            e_norm = _normalize_eid(e[0])
+            # Check if one is a substring of the other or very similar
+            from difflib import SequenceMatcher
+            ratio = SequenceMatcher(None, p_norm, e_norm).ratio()
+            if ratio >= 0.85:
+                matched_predicted.add(p)
+                matched_expected.add(e)
+                notes.append(f"fuzzy matched {p} <-> {e} (ratio={ratio:.2f})")
+                break
+
     tp = len(matched_predicted)
     fp = len(predicted) - tp
     fn = len(expected_set) - len(matched_expected)

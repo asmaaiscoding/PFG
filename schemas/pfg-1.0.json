@@ -55,7 +55,15 @@
                 "additionalProperties": false,
                 "properties": {
                   "http_method": {
-                    "enum": ["GET", "POST", "PUT", "DELETE", "PATCH"]
+                    "enum": [
+                      "GET",
+                      "POST",
+                      "PUT",
+                      "DELETE",
+                      "PATCH",
+                      "OPTIONS",
+                      "HEAD"
+                    ]
                   },
                   "route": { "type": "string" },
                   "route_params": {

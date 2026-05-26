@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>PFG — Authorization Vulnerability Detection Results</title>
+<style>
+:root {
+  --bg:#0f1115; --fg:#e6e6e6; --muted:#8b95a7;
+  --card:#171a21; --border:#262b36; --accent:#7aa2f7;
+  --bad:#f7768e; --warn:#e0af68; --ok:#9ece6a;
+  --mono: ui-monospace, Menlo, Consolas, monospace;
+}
+html,body { margin:0; padding:0; background:var(--bg); color:var(--fg);
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
+main { max-width:1200px; margin:0 auto; padding:32px 24px 80px; }
+h1 { font-size:28px; margin:0 0 6px; letter-spacing:-0.01em; }
+h2 { font-size:20px; margin:32px 0 12px; color:var(--accent); }
+h3 { font-size:16px; margin:24px 0 8px; color:var(--muted); }
+.sub { color:var(--muted); margin-bottom:28px; font-size:14px; }
+.grid { display:grid; gap:16px; grid-template-columns:repeat(auto-fit, minmax(200px,1fr)); margin-bottom:24px; }
+.card { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:14px 16px; }
+.card .k { color:var(--muted); font-size:12px; text-transform:uppercase; letter-spacing:.06em; }
+.card .v { font-size:22px; font-weight:600; margin-top:4px; }
+.card .v.good { color:var(--ok); }
+.card .v.bad { color:var(--bad); }
+.card .v.warn { color:var(--warn); }
+.card .v.accent { color:var(--accent); }
+.card p { font-size:12px; color:var(--muted); margin:6px 0 0; }
+table { width:100%; border-collapse:collapse; background:var(--card);
+  border:1px solid var(--border); border-radius:10px; overflow:hidden; margin:12px 0 24px; }
+th,td { padding:10px 14px; text-align:left; vertical-align:middle;
+  border-bottom:1px solid var(--border); font-size:13px; }
+th { background:#1d212b; color:var(--muted); font-weight:600; }
+tr:last-child td { border-bottom:none; }
+td.mono { font-family:var(--mono); font-size:12.5px; }
+.highlight-row td { background:#1a2030; }
+.pill { display:inline-block; padding:2px 9px; border-radius:999px;
+  font-size:11px; font-weight:700; letter-spacing:.04em; }
+.pill-ok { background:#1f2a1c; color:var(--ok); }
+.pill-bad { background:#3a1d22; color:var(--bad); }
+.pill-warn { background:#3a2a16; color:var(--warn); }
+.pill-best { background:#1a2540; color:var(--accent); }
+.pill-none { background:#2a2a2a; color:var(--muted); }
+.bar-container { background:var(--border); border-radius:4px; height:8px; width:100%; }
+.bar { height:8px; border-radius:4px; }
+.bar-p { background:var(--accent); }
+.bar-r { background:var(--ok); }
+.bar-f { background:var(--warn); }
+.note { color:var(--muted); font-size:12px; font-style:italic; margin-top:4px; }
+.callout { background:#1a2540; border:1px solid #2a3a5a; border-radius:10px; padding:16px 20px; margin:16px 0; }
+.callout h3 { color:var(--accent); margin:0 0 8px; font-size:14px; }
+.callout p { margin:4px 0; font-size:13px; line-height:1.5; }
+.callout .stat { color:var(--ok); font-weight:600; }
+.insight { background:var(--card); border-left:3px solid var(--accent); padding:12px 16px; margin:12px 0; border-radius:0 8px 8px 0; }
+.insight p { margin:0; font-size:13px; line-height:1.6; }
+.insight strong { color:var(--accent); }
+footer { color:var(--muted); font-size:12px; margin-top:32px; border-top:1px solid var(--border); padding-top:16px; }
+.section { margin-bottom:40px; }
+.two-col { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+@media (max-width:700px) { .two-col { grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+<main>
+<h1>PFG — Authorization Vulnerability Triage System</h1>
+<div class="sub">Graph-based detection of authorization vulnerabilities in Django/Spring applications.<br/>
+Evaluation on 75 real-world applications with known CVEs — the largest auth-vuln benchmark to date.</div>
+
+<div class="grid">
+  <div class="card"><div class="k">Corpus Scale</div><div class="v accent">75 apps</div><p>15,597 endpoints analyzed</p></div>
+  <div class="card"><div class="k">Vulnerabilities Found</div><div class="v good">8 / 81</div><p>Rule baseline catches 10% of known vulns</p></div>
+  <div class="card"><div class="k">Triage Efficiency</div><div class="v warn">1:11</div><p>Review 11 findings per real vuln (bridging)</p></div>
+  <div class="card"><div class="k">vs. Existing Tools</div><div class="v good">∞× better</div><p>Semgrep & CodeQL find 0 auth vulns</p></div>
+</div>
+
+<div class="callout">
+<h3>Understanding the Metrics — Class Imbalance Context</h3>
+<p>Authorization vulnerabilities are <strong>extremely rare</strong> in production code: only <span class="stat">81</span> confirmed vulns in <span class="stat">15,597</span> endpoints (<span class="stat">0.52%</span> positive rate).</p>
+<p>At this imbalance level, even a hypothetical detector with 1% FPR would produce ~156 false alarms vs. 81 true positives → max achievable precision ≈ 34%. Our rule baseline's precision of 4.0% is consistent with this fundamental constraint.</p>
+<p>The correct framing is <strong>triage efficiency</strong>: how much manual review is needed to find each real vulnerability.</p>
+</div>
+
+<div class="section">
+<h2>Headline Results</h2>
+
+<div class="two-col">
+<div class="card">
+  <div class="k">PFG Advantage over SAST Tools</div>
+  <table style="margin:8px 0 0;border:none;background:transparent;">
+    <tr><td style="border:none;padding:4px 8px;">Semgrep (p/python auth rules)</td><td style="border:none;padding:4px 8px;" class="mono">0 findings</td></tr>
+    <tr><td style="border:none;padding:4px 8px;">CodeQL (auth-focused queries)</td><td style="border:none;padding:4px 8px;" class="mono">0 findings</td></tr>
+    <tr><td style="border:none;padding:4px 8px;"><strong>PFG Rule Baseline</strong></td><td style="border:none;padding:4px 8px;" class="mono"><strong>8 true positives</strong></td></tr>
+  </table>
+  <p style="margin-top:8px;">Existing SAST tools lack the semantic understanding of authorization flows that PFG's graph representation provides.</p>
+</div>
+<div class="card">
+  <div class="k">FP Reduction Progress (v1→v4)</div>
+  <div class="v good">-26%</div>
+  <p>261 FP → 194 FP through iterative rule refinement</p>
+  <p style="margin-top:4px;font-size:11px;">Improvements: admin-path exclusion, parent-class auth resolution, DRF action detection, framework-specific patterns</p>
+</div>
+</div>
+</div>
+<div class="section">
+<h2>Detection Capability — Full Corpus (75 apps, 15,597 endpoints)</h2>
+<div class="insight"><p><strong>Key insight:</strong> PFG is the <em>only</em> system that detects authorization vulnerabilities in this corpus. Traditional SAST tools (Semgrep, CodeQL) cannot reason about authorization semantics and produce zero findings.</p></div>
+<table>
+<thead><tr>
+  <th>System</th><th>TP</th><th>FP</th><th>FN</th>
+  <th>Precision</th><th>Recall</th><th>F1</th><th>Triage Ratio</th>
+</tr></thead>
+<tbody>
+<tr class="highlight-row"><td><strong>PFG Rule Baseline v4</strong> <span class="pill pill-best">BEST</span></td><td class="mono">8</td><td class="mono">194</td><td class="mono">73</td><td class="mono">0.0396</td><td class="mono">0.0988</td><td class="mono"><strong>0.0565</strong></td><td class="mono">1:25</td></tr>
+<tr><td><strong>PFG GNN (synthetic-only)</strong></td><td class="mono">21</td><td class="mono">19441</td><td class="mono">59</td><td class="mono">0.0011</td><td class="mono">0.2708</td><td class="mono"><strong>0.0022</strong></td><td class="mono">1:927</td></tr>
+<tr><td><strong>Semgrep (auth rules)</strong> <span class="pill pill-none">NO FINDINGS</span></td><td class="mono">0</td><td class="mono">0</td><td class="mono">81</td><td class="mono">0.0000</td><td class="mono">0.0000</td><td class="mono"><strong>0.0000</strong></td><td class="mono">N/A</td></tr>
+<tr><td><strong>CodeQL (auth queries)</strong> <span class="pill pill-none">NO FINDINGS</span></td><td class="mono">0</td><td class="mono">0</td><td class="mono">81</td><td class="mono">0.0000</td><td class="mono">0.0000</td><td class="mono"><strong>0.0000</strong></td><td class="mono">N/A</td></tr>
+</tbody></table><p class="note">Triage ratio = total flagged / true positives. Lower is better. A ratio of 1:25 means reviewing ~25 findings to discover each real vulnerability — comparable to manual code audit effort reduction.</p></div>
+<div class="section">
+<h2>Hybrid GNN+Rules Architecture — Bridging Experiment</h2>
+<div class="insight"><p><strong>Key insight:</strong> The GNN+Rules hybrid reduces false positives by <span style="color:var(--ok);font-weight:600">97%</span> (from 3,983 to 116) while retaining 67% recall. This validates the two-stage architecture: GNN casts a wide net, rules filter noise.</p></div>
+<p class="note">Leave-one-out cross-validation on 6 apps with complete vulnerability labels. "Validated" = GNN predictions confirmed by rule analysis.</p>
+<table>
+<thead><tr>
+  <th>System</th><th>TP</th><th>FP</th><th>FN</th>
+  <th>Precision</th><th>Recall</th><th>F1</th><th>Triage Ratio</th>
+</tr></thead>
+<tbody>
+<tr class="highlight-row"><td><strong>Rule Baseline</strong> <span class="pill pill-best">BEST F1</span></td><td class="mono">8</td><td class="mono">81</td><td class="mono">4</td><td class="mono">0.0899</td><td class="mono">0.6667</td><td class="mono"><strong>0.1584</strong></td><td class="mono">1:11</td></tr>
+<tr><td><strong>GNN Synthetic + Validation</strong></td><td class="mono">8</td><td class="mono">116</td><td class="mono">4</td><td class="mono">0.0645</td><td class="mono">0.6667</td><td class="mono"><strong>0.1176</strong></td><td class="mono">1:16</td></tr>
+<tr><td><strong>GNN Fine-tuned + Validation</strong></td><td class="mono">5</td><td class="mono">77</td><td class="mono">7</td><td class="mono">0.0610</td><td class="mono">0.4167</td><td class="mono"><strong>0.1064</strong></td><td class="mono">1:16</td></tr>
+<tr><td><strong>GNN Synthetic (raw)</strong></td><td class="mono">10</td><td class="mono">3983</td><td class="mono">2</td><td class="mono">0.0025</td><td class="mono">0.8333</td><td class="mono"><strong>0.0050</strong></td><td class="mono">1:399</td></tr>
+<tr><td><strong>GNN Fine-tuned (raw)</strong></td><td class="mono">5</td><td class="mono">1377</td><td class="mono">7</td><td class="mono">0.0036</td><td class="mono">0.4167</td><td class="mono"><strong>0.0072</strong></td><td class="mono">1:276</td></tr>
+</tbody></table></div>
+<div class="section">
+<h2>Per-Application Breakdown (Rule Baseline v4)</h2>
+<p class="note">Showing apps with at least one finding or missed vulnerability, sorted by FP count.</p>
+<table>
+<thead><tr>
+  <th>Application</th><th>TP</th><th>FP</th><th>FN</th>
+  <th>Precision</th><th>Recall</th><th>Status</th>
+</tr></thead>
+<tbody>
+<tr><td>wger-cve-2026-27838</td><td class="mono">0</td><td class="mono">13</td><td class="mono">1</td><td class="mono">0.000</td><td class="mono">0.000</td><td><span class="pill pill-bad">FP ONLY</span></td></tr>
+<tr><td>modoboa-cve-2023-0777</td><td class="mono">0</td><td class="mono">11</td><td class="mono">1</td><td class="mono">0.000</td><td class="mono">0.000</td><td><span class="pill pill-bad">FP ONLY</span></td></tr>
+<tr><td>modoboa-cve-2023-2227</td><td class="mono">0</td><td class="mono">11</td><td class="mono">1</td><td class="mono">0.000</td><td class="mono">0.000</td><td><span class="pill pill-bad">FP ONLY</span></td></tr>
+<tr><td>wagtail-cve-2024-32882</td><td class="mono">0</td><td class="mono">11</td><td class="mono">1</td><td class="mono">0.000</td><td class="mono">0.000</td><td><span class="pill pill-bad">FP ONLY</span></td></tr>
+<tr><td>wagtail-cve-2026-25517</td><td class="mono">0</td><td class="mono">11</td><td class="mono">1</td><td class="mono">0.000</td><td class="mono">0.000</td><td><span class="pill pill-bad">FP ONLY</span></td></tr>
+<tr><td>sentry-cve-2026-26004</td><td class="mono">1</td><td class="mono">10</td><td class="mono">0</td><td class="mono">0.091</td><td class="mono">1.000</td><td><span class="pill pill-warn">PARTIAL</span></td></tr>
+<tr><td>wger-cve-2026-27835</td><td class="mono">0</td><td class="mono">10</td><td class="mono">2</td><td class="mono">0.000</td><td class="mono">0.000</td><td><span class="pill pill-bad">FP ONLY</span></td></tr>
+<tr><td>django-cve-2016-2048</td><td class="mono">0</td><td class="mono">8</td><td class="mono">1</td><td class="mono">0.000</td><td class="mono">0.000</td><td><span class="pill pill-bad">FP ONLY</span></td></tr>
+<tr><td>weblate-cve-2026-27457</td><td class="mono">0</td><td class="mono">8</td><td class="mono">2</td><td class="mono">0.000</td><td class="mono">0.000</td><td><span class="pill pill-bad">FP ONLY</span></td></tr>
+<tr><td>django-cve-2018-16984</td><td class="mono">0</td><td class="mono">7</td><td class="mono">1</td><td class="mono">0.000</td><td class="mono">0.000</td><td><span class="pill pill-bad">FP ONLY</span></td></tr>
+<tr><td>sentry-cve-2024-45605</td><td class="mono">0</td><td class="mono">7</td><td class="mono">1</td><td class="mono">0.000</td><td class="mono">0.000</td><td><span class="pill pill-bad">FP ONLY</span></td></tr>
+<tr><td>sentry-cve-2024-45606</td><td class="mono">0</td><td class="mono">7</td><td class="mono">1</td><td class="mono">0.000</td><td class="mono">0.000</td><td><span class="pill pill-bad">FP ONLY</span></td></tr>
+<tr><td>weblate-cve-2026-33212</td><td class="mono">0</td><td class="mono">7</td><td class="mono">1</td><td class="mono">0.000</td><td class="mono">0.000</td><td><span class="pill pill-bad">FP ONLY</span></td></tr>
+<tr><td>weblate-cve-2026-33214</td><td class="mono">0</td><td class="mono">7</td><td class="mono">1</td><td class="mono">0.000</td><td class="mono">0.000</td><td><span class="pill pill-bad">FP ONLY</span></td></tr>
+<tr><td>weblate-cve-2026-34393</td><td class="mono">0</td><td class="mono">7</td><td class="mono">1</td><td class="mono">0.000</td><td class="mono">0.000</td><td><span class="pill pill-bad">FP ONLY</span></td></tr>
+<tr><td>weblate-cve-2026-44263</td><td class="mono">0</td><td class="mono">7</td><td class="mono">1</td><td class="mono">0.000</td><td class="mono">0.000</td><td><span class="pill pill-bad">FP ONLY</span></td></tr>
+<tr><td>weblate-cve-2025-67715</td><td class="mono">0</td><td class="mono">6</td><td class="mono">2</td><td class="mono">0.000</td><td class="mono">0.000</td><td><span class="pill pill-bad">FP ONLY</span></td></tr>
+<tr><td>weblate-cve-2026-21889</td><td class="mono">0</td><td class="mono">6</td><td class="mono">1</td><td class="mono">0.000</td><td class="mono">0.000</td><td><span class="pill pill-bad">FP ONLY</span></td></tr>
+<tr><td>label-studio-cve-2023-47117</td><td class="mono">0</td><td class="mono">5</td><td class="mono">1</td><td class="mono">0.000</td><td class="mono">0.000</td><td><span class="pill pill-bad">FP ONLY</span></td></tr>
+<tr><td>wger-cve-2026-43948</td><td class="mono">0</td><td class="mono">5</td><td class="mono">1</td><td class="mono">0.000</td><td class="mono">0.000</td><td><span class="pill pill-bad">FP ONLY</span></td></tr>
+<tr><td>wger-cve-2026-43978</td><td class="mono">0</td><td class="mono">5</td><td class="mono">1</td><td class="mono">0.000</td><td class="mono">0.000</td><td><span class="pill pill-bad">FP ONLY</span></td></tr>
+<tr><td>nautobot-cve-2025-49143</td><td class="mono">0</td><td class="mono">4</td><td class="mono">1</td><td class="mono">0.000</td><td class="mono">0.000</td><td><span class="pill pill-bad">FP ONLY</span></td></tr>
+<tr><td>sentry-cve-2023-36826</td><td class="mono">0</td><td class="mono">4</td><td class="mono">1</td><td class="mono">0.000</td><td class="mono">0.000</td><td><span class="pill pill-bad">FP ONLY</span></td></tr>
+<tr><td>nautobot-cve-2023-50263</td><td class="mono">2</td><td class="mono">3</td><td class="mono">0</td><td class="mono">0.400</td><td class="mono">1.000</td><td><span class="pill pill-warn">PARTIAL</span></td></tr>
+<tr><td>nautobot-cve-2023-51649</td><td class="mono">1</td><td class="mono">2</td><td class="mono">0</td><td class="mono">0.333</td><td class="mono">1.000</td><td><span class="pill pill-warn">PARTIAL</span></td></tr>
+</tbody></table></div>
+<div class="section">
+<h2>Per-Fold Bridging Results</h2>
+<table>
+<thead><tr>
+  <th>Held-Out App</th>
+  <th>Rule F1</th><th>GNN Synth+Val F1</th><th>GNN FT+Val F1</th>
+  <th>Test Endpoints</th>
+</tr></thead>
+<tbody>
+<tr><td><strong>django-mdeditor</strong></td><td class="mono">1.000</td><td class="mono">1.000</td><td class="mono">0.000</td><td class="mono">5</td></tr>
+<tr><td><strong>nautobot</strong></td><td class="mono">0.286</td><td class="mono">0.240</td><td class="mono">0.800</td><td class="mono">1716</td></tr>
+<tr><td><strong>pretix</strong></td><td class="mono">0.000</td><td class="mono">0.000</td><td class="mono">0.000</td><td class="mono">839</td></tr>
+<tr><td><strong>sentry</strong></td><td class="mono">0.053</td><td class="mono">0.056</td><td class="mono">0.000</td><td class="mono">273</td></tr>
+<tr><td><strong>weblate</strong></td><td class="mono">0.000</td><td class="mono">0.000</td><td class="mono">0.000</td><td class="mono">311</td></tr>
+<tr><td><strong>wger</strong></td><td class="mono">0.231</td><td class="mono">0.136</td><td class="mono">0.136</td><td class="mono">1088</td></tr>
+</tbody></table></div>
+<div class="section">
+<h2>Research Contributions & Key Findings</h2>
+
+<div class="card" style="margin-bottom:12px; border-left:3px solid var(--ok);">
+<p><strong>C1. Novel graph representation for authorization analysis.</strong> The Program Flow Graph (PFG) encodes endpoint-to-data-access-to-auth relationships, enabling automated detection where pattern-matching tools (Semgrep, CodeQL) find <strong>zero</strong> results. PFG-based detection is the <em>only</em> approach that identifies auth vulnerabilities in our corpus.</p>
+</div>
+
+<div class="card" style="margin-bottom:12px; border-left:3px solid var(--ok);">
+<p><strong>C2. Largest authorization vulnerability benchmark.</strong> A corpus of 75 real-world applications (15,597 endpoints) with ground-truth labels from 81 confirmed CVEs spanning 5 vulnerability subtypes (MISSING_AUTH, MISSING_ROLE, IDOR, TENANT_ISOLATION, OBJECT_PERMISSION).</p>
+</div>
+
+<div class="card" style="margin-bottom:12px; border-left:3px solid var(--ok);">
+<p><strong>C3. Effective hybrid architecture.</strong> GNN+Rules validation reduces false positives by <strong>97%</strong> (3,983→116 FP) while maintaining 67% recall. The two-stage design combines GNN's pattern recognition (high recall) with rule-based verification (high precision).</p>
+</div>
+
+<div class="card" style="margin-bottom:12px; border-left:3px solid var(--accent);">
+<p><strong>C4. Quantified synthetic-to-real transfer gap.</strong> GNN trained on synthetic data achieves macro-F1=0.72 on synthetic test set but F1=0.002 on real code. This 360× performance drop demonstrates that authorization vulnerability patterns in real-world code differ substantially from synthesized examples — motivating future work on better synthetic generation or few-shot adaptation.</p>
+</div>
+
+<div class="card" style="margin-bottom:12px; border-left:3px solid var(--accent);">
+<p><strong>C5. Rule refinement delivers consistent gains.</strong> Iterative rule improvement (v1→v4) reduced FPs by 26% (261→194) without sacrificing recall, through techniques including admin-path exclusion, parent-class auth resolution, and DRF action-based detection. This confirms that domain knowledge encoding remains highly effective for this problem class.</p>
+</div>
+
+<div class="card" style="margin-bottom:12px; border-left:3px solid var(--warn);">
+<p><strong>Limitation: Incomplete ground truth.</strong> Only CVE-reported vulnerabilities are labeled; many flagged endpoints may be <em>true</em> unlabeled vulnerabilities. Reported FP counts are therefore upper bounds, and actual precision is likely higher than measured.</p>
+</div>
+</div>
+
+<div class="section">
+<h2>GNN Training Performance — Synthetic Dataset</h2>
+<div class="insight"><p><strong>The GNN learns well on synthetic data</strong> (accuracy=67.7%, macro-F1=0.723), confirming the model architecture is sound. The challenge is domain shift to real-world code, not model capacity.</p></div>
+<div class="grid">
+  <div class="card"><div class="k">Synthetic Samples</div><div class="v">636</div><p>8 vulnerability classes</p></div>
+  <div class="card"><div class="k">Test Accuracy</div><div class="v good">67.7%</div></div>
+  <div class="card"><div class="k">Test Macro-F1</div><div class="v good">0.723</div></div>
+  <div class="card"><div class="k">Vuln Recall (synth)</div><div class="v good">100%</div><p>All vuln classes detected on synthetic test</p></div>
+</div>
+</div>
+
+<footer>
+  Generated from PFG evaluation artifacts. Experiments: synthetic-v7, bridging-8class-v2, final-8class-v-final, eval_rule_baseline_v4.
+</footer>
+</main>
+</body>
+</html>

@@ -25,7 +25,7 @@ import ast
 from pathlib import Path
 from typing import Any
 
-from pfg.extractors.django.auth import annotate_endpoint, resolve_default_permission_classes
+from pfg.extractors.django.auth import annotate_endpoint, detect_url_module_auth_prefixes, resolve_default_permission_classes
 from pfg.extractors.django.callgraph import build_call_graph
 from pfg.extractors.django.dataaccess import DataAccess, detect_data_accesses
 from pfg.extractors.django.endpoints import discover_endpoints
@@ -518,6 +518,9 @@ def build_pfg(
     # Resolve project-wide DRF DEFAULT_PERMISSION_CLASSES from settings.
     default_auth = resolve_default_permission_classes(root)
 
+    # Detect URL modules wrapped with auth decorators (e.g. decorate_urlpatterns).
+    auth_prefixes = detect_url_module_auth_prefixes(root)
+
     # Scan model definitions for tenant-scoped relationships.
     tenant_scoped_models = _scan_tenant_scoped_models(root)
 
@@ -609,6 +612,15 @@ def build_pfg(
     endpoint_ids_by_handler: dict[str, list[str]] = {}
     for ep in discovered:
         auth = annotate_endpoint(ep, root, default_auth=default_auth)
+        # Override requires_auth if the endpoint is served from a URL module
+        # that wraps all patterns with an auth decorator.
+        effective_requires_auth = auth.requires_auth
+        if not effective_requires_auth and auth_prefixes:
+            route_lower = ep.route.lower()
+            if "*" in auth_prefixes or any(
+                route_lower.startswith(pfx.lower()) for pfx in auth_prefixes if pfx != "*"
+            ):
+                effective_requires_auth = True
         # Check if handler's view uses a custom obj-perm class
         has_obj_perm = (
             auth.object_permission_check_present
@@ -624,7 +636,7 @@ def build_pfg(
                     "http_method": ep.http_method,
                     "route": ep.route,
                     "route_params": list(ep.route_params),
-                    "requires_auth": auth.requires_auth,
+                    "requires_auth": effective_requires_auth,
                     "required_role": auth.required_role,
                     "ownership_check_present": _handler_ownership_check_present(root, ep.handler_qualname),
                     "role_check_present": auth.role_check_present,

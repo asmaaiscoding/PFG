@@ -242,3 +242,60 @@ def build_dashboard(
         encoding="utf-8",
     )
     return index
+
+
+def build_dashboard_from_manifests(
+    corpus_root: Path,
+    out_dir: Path,
+    *,
+    title: str | None = None,
+) -> Path:
+    """Build dashboard using manifest.yaml discovery (supports nested src/ layouts)."""
+    from pfg.eval.manifest import discover_manifests
+
+    corpus_root = Path(corpus_root)
+    out_dir = Path(out_dir)
+    out_dir.mkdir(parents=True, exist_ok=True)
+
+    manifests = discover_manifests(corpus_root)
+    entries: list[DashboardEntry] = []
+    for m in manifests:
+        if m.framework != "django":
+            continue
+        report_path = out_dir / f"{m.application}.html"
+        try:
+            from pfg.extractors.django.build import build_pfg
+
+            pfg = build_pfg(m.project_root, application=m.application)
+            findings = detect_all(pfg)
+            n_endpoints = sum(
+                1 for n in pfg.nodes if getattr(n.type, "value", n.type) == "endpoint"
+            )
+            write_report(pfg, report_path, findings=findings)
+            entries.append(
+                DashboardEntry(
+                    app=m.application,
+                    framework=m.framework,
+                    report_href=report_path.name,
+                    n_endpoints=n_endpoints,
+                    n_findings=len(findings),
+                )
+            )
+        except Exception as exc:
+            entries.append(
+                DashboardEntry(
+                    app=m.application,
+                    framework=m.framework,
+                    report_href="",
+                    n_endpoints=0,
+                    n_findings=0,
+                    error=f"{type(exc).__name__}: {exc}".splitlines()[0],
+                )
+            )
+
+    index = out_dir / "index.html"
+    index.write_text(
+        render_dashboard(entries, title=title or f"PFG Dashboard — {corpus_root.name}"),
+        encoding="utf-8",
+    )
+    return index

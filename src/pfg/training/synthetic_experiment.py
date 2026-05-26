@@ -244,7 +244,7 @@ def run_synthetic_experiment(
     )
 
     # --- Step 5: Evaluate on ALL real data ---
-    all_manifests = discover_manifests(corpus_root)
+    all_manifests = [m for m in discover_manifests(corpus_root) if m.framework == "django"]
     pfg_cache: PfgCache = {}
 
     def cached_build(root: Path):

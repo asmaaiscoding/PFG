@@ -982,9 +982,16 @@ def dashboard_cmd(
     title: str | None,
 ) -> None:
     """Build a navigable HTML dashboard for every app under CORPUS_ROOT."""
-    from pfg.report.dashboard import build_dashboard
+    from pfg.report.dashboard import build_dashboard, build_dashboard_from_manifests
 
-    index = build_dashboard(corpus_root, out_dir, framework=framework, title=title)
+    # Try manifest-based discovery first (works with nested src/ layouts)
+    from pfg.eval.manifest import discover_manifests
+
+    manifests = discover_manifests(corpus_root)
+    if manifests:
+        index = build_dashboard_from_manifests(corpus_root, out_dir, title=title)
+    else:
+        index = build_dashboard(corpus_root, out_dir, framework=framework, title=title)
     click.echo(f"Wrote dashboard -> {index}")
     click.echo(f"Open in browser:  file:///{index.resolve().as_posix()}")
     click.echo(f"Or serve locally: pfg serve {out_dir}")

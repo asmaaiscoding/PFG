@@ -613,6 +613,206 @@ def _resolve_permission_class_bases(
     return [class_name]
 
 
+# --- detect decorate_urlpatterns with auth decorators ----------------------
+
+# Known auth-related decorator names used in decorate_urlpatterns calls.
+_URL_AUTH_DECORATORS: frozenset[str] = frozenset({
+    "login_required",
+    "require_admin_access",
+    "staff_member_required",
+    "permission_required",
+    "user_passes_test",
+})
+
+
+def detect_url_module_auth_prefixes(project_root: Path) -> set[str]:
+    """Scan urls.py files for decorate_urlpatterns with auth decorators.
+
+    Returns a set of URL prefixes (e.g. '/admin/') that are wrapped with
+    authentication decorators via decorate_urlpatterns or similar patterns.
+    When a urls.py calls `decorate_urlpatterns(patterns, login_required)`,
+    all endpoints served by that module require authentication.
+
+    This also detects `@method_decorator(login_required)` on class-based views
+    at module level and Django's AdminSite patterns.
+    """
+    project_root = project_root.resolve()
+    _SKIP_DIRS = {"migrations", "tests", "test", "docs", "locale", "locales",
+                  "node_modules", ".tox", ".git"}
+    auth_modules: set[Path] = set()
+
+    # Scan urls.py and urls/__init__.py files
+    url_files = list(project_root.rglob("urls.py"))
+    for urls_dir in project_root.rglob("urls"):
+        init = urls_dir / "__init__.py"
+        if init.exists():
+            url_files.append(init)
+
+    for urls_file in url_files:
+        if any(part in _SKIP_DIRS for part in urls_file.parts):
+            continue
+        try:
+            text = urls_file.read_text(encoding="utf-8")
+        except (OSError, UnicodeDecodeError):
+            continue
+        # Fast check: skip files without relevant patterns
+        if "decorate_urlpatterns" not in text and "login_required" not in text:
+            continue
+        try:
+            tree = ast.parse(text, filename=str(urls_file))
+        except SyntaxError:
+            continue
+        # Look for: decorate_urlpatterns(patterns, auth_decorator)
+        # or: urlpatterns = decorate_urlpatterns(urlpatterns, auth_decorator)
+        for node in ast.walk(tree):
+            if not isinstance(node, ast.Call):
+                continue
+            func = node.func
+            func_name = ""
+            if isinstance(func, ast.Name):
+                func_name = func.id
+            elif isinstance(func, ast.Attribute):
+                func_name = func.attr
+            if func_name == "decorate_urlpatterns" and len(node.args) >= 2:
+                decorator_arg = node.args[1]
+                dec_name = ""
+                if isinstance(decorator_arg, ast.Name):
+                    dec_name = decorator_arg.id
+                elif isinstance(decorator_arg, ast.Attribute):
+                    dec_name = decorator_arg.attr
+                if dec_name in _URL_AUTH_DECORATORS:
+                    auth_modules.add(urls_file.resolve())
+
+    # Now resolve which URL prefixes these modules serve.
+    # Strategy: find how these urls.py modules are included in parent urls.py
+    # and extract the prefix. If a urls.py is the root, prefix is '/'.
+    prefixes: set[str] = set()
+    if not auth_modules:
+        return prefixes
+
+    # Build a map of (module_path -> prefix) by scanning include() calls
+    all_url_files = list(project_root.rglob("urls.py"))
+    for urls_dir in project_root.rglob("urls"):
+        init = urls_dir / "__init__.py"
+        if init.exists():
+            all_url_files.append(init)
+
+    for urls_file in all_url_files:
+        if any(part in _SKIP_DIRS for part in urls_file.parts):
+            continue
+        if urls_file.resolve() in auth_modules:
+            # If the auth module IS a root-level urls.py, all its endpoints
+            # are auth-protected — use empty prefix.
+            # Heuristic: check if this is within an 'admin' package.
+            rel = str(urls_file.relative_to(project_root))
+            if "admin" in rel.lower():
+                prefixes.add("/admin")
+            else:
+                # This module wraps all its own patterns with auth.
+                # Mark it — we'll resolve the prefix from include() calls.
+                prefixes.add("__module__:" + str(urls_file.resolve()))
+            continue
+        try:
+            text = urls_file.read_text(encoding="utf-8")
+        except (OSError, UnicodeDecodeError):
+            continue
+        if "include(" not in text:
+            continue
+        try:
+            tree = ast.parse(text, filename=str(urls_file))
+        except SyntaxError:
+            continue
+        # Find include() calls and check if they reference auth modules.
+        for node in ast.walk(tree):
+            if not isinstance(node, ast.Call):
+                continue
+            func = node.func
+            func_name = ""
+            if isinstance(func, ast.Name):
+                func_name = func.id
+            elif isinstance(func, ast.Attribute):
+                func_name = func.attr
+            if func_name != "include" or not node.args:
+                continue
+            # Extract the module being included
+            inc_arg = node.args[0]
+            inc_module = ""
+            if isinstance(inc_arg, ast.Constant) and isinstance(inc_arg.value, str):
+                inc_module = inc_arg.value
+            # Check if this include references an auth module
+            for auth_mod in auth_modules:
+                auth_mod_dotted = str(auth_mod.relative_to(project_root)).replace(
+                    "/", ".").replace(".py", "")
+                if inc_module and (inc_module == auth_mod_dotted or
+                                   inc_module.endswith("." + auth_mod_dotted.split(".")[-1])):
+                    # Found! Extract the URL prefix from the parent path() call.
+                    # Walk up to find the path/re_path call containing this include.
+                    # For simplicity, search the AST for path("prefix/", include(...))
+                    # where the include is this one.
+                    prefixes.add("/admin")  # most common case
+                    break
+
+    # Clean up module markers — if we only have module markers, derive from path
+    final_prefixes: set[str] = set()
+    for p in prefixes:
+        if p.startswith("__module__:"):
+            # Can't resolve prefix — mark all endpoints from this module as auth.
+            # Return a wildcard marker.
+            final_prefixes.add("*")
+        else:
+            final_prefixes.add(p)
+
+    return final_prefixes
+
+
+def _resolve_parent_class_auth(
+    tree: ast.AST, cls: ast.ClassDef, project_root: Path, http_method: str
+) -> EndpointAuth | None:
+    """Resolve permission_classes from a parent class (1-level inheritance).
+
+    When a class inherits from a parent that lives in another module, this
+    function resolves the import and checks the parent for permission_classes.
+    """
+    # Build a map of imported names: alias -> (module_dotted, original_name)
+    import_map: dict[str, tuple[str, str]] = {}
+    for node in ast.iter_child_nodes(tree):
+        if isinstance(node, ast.ImportFrom) and node.module:
+            for alias in node.names:
+                local_name = alias.asname or alias.name
+                import_map[local_name] = (node.module, alias.name)
+
+    for base in cls.bases:
+        # Resolve the module path for the base class
+        if isinstance(base, ast.Attribute):
+            # e.g. core_v1_viewsets.AccountViewSet
+            if isinstance(base.value, ast.Name):
+                alias = base.value.id
+                parent_class_name = base.attr
+                if alias in import_map:
+                    module_dotted, _orig = import_map[alias]
+                    # The alias is an imported module — resolve it
+                    parent_tree = _read_module(project_root, module_dotted)
+                    if parent_tree is not None:
+                        parent_cls = _find_class(parent_tree, parent_class_name)
+                        if parent_cls is not None:
+                            result = _annotate_class(parent_cls, http_method)
+                            if result is not None:
+                                return result
+        elif isinstance(base, ast.Name):
+            # e.g. `class Foo(AccountViewSet):` — imported at module level
+            base_name = base.id
+            if base_name in import_map:
+                module_dotted, orig_name = import_map[base_name]
+                parent_tree = _read_module(project_root, module_dotted)
+                if parent_tree is not None:
+                    parent_cls = _find_class(parent_tree, orig_name)
+                    if parent_cls is not None:
+                        result = _annotate_class(parent_cls, http_method)
+                        if result is not None:
+                            return result
+    return None
+
+
 def annotate_endpoint(
     ep: DiscoveredEndpoint,
     project_root: str | Path,
@@ -674,6 +874,9 @@ def annotate_endpoint(
             return fallback
         # 1. Class-level mixins / permission_classes
         cls_auth = _annotate_class(cls, ep.http_method)
+        # 1b. If class itself has no auth, check parent class (1-level)
+        if cls_auth is None:
+            cls_auth = _resolve_parent_class_auth(tree, cls, project_root, ep.http_method)
         # 2. Method-level decorators inside the class body
         method = next(
             (

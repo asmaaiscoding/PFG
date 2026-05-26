@@ -67,14 +67,30 @@ def fetch_manifest_source(manifest: Manifest, *, force: bool = False) -> Path:
     elif force:
         _run_git(["fetch", "--all", "--tags"], cwd=root)
 
-    _run_git(["fetch", "origin", manifest.git_ref], cwd=root)
-    _run_git(["checkout", "--detach", manifest.git_ref], cwd=root)
+    git_ref = manifest.git_ref
+    # Handle rev-parse expressions like "sha~1" or "sha^1" — fetch the base SHA,
+    # then let git resolve the expression locally after checkout.
+    base_ref = git_ref.split("~")[0].split("^")[0]
+    try:
+        _run_git(["fetch", "origin", base_ref], cwd=root)
+    except subprocess.CalledProcessError:
+        # SHA may already be reachable from cloned history
+        pass
+    _run_git(["checkout", "--detach", git_ref], cwd=root)
     return manifest.project_root
 
 
 def fetch_corpus(corpus_root: str | Path, *, force: bool = False) -> list[Path]:
     """Fetch every manifest source under a corpus root."""
-    return [fetch_manifest_source(m, force=force) for m in discover_manifests(corpus_root)]
+    results: list[Path] = []
+    for m in discover_manifests(corpus_root):
+        try:
+            results.append(fetch_manifest_source(m, force=force))
+        except Exception as exc:  # noqa: BLE001
+            import sys
+
+            print(f"SKIP {m.application}: {exc}", file=sys.stderr)
+    return results
 
 
 @dataclass

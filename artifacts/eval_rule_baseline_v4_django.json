@@ -1,0 +1,1589 @@
+{
+  "detector": "rule_baseline",
+  "micro_precision": 0.039603960396039604,
+  "micro_recall": 0.16666666666666666,
+  "micro_f1": 0.064,
+  "apps": [
+    {
+      "application": "django-cve-2016-2048",
+      "tp": 0,
+      "fp": 8,
+      "fn": 1,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "predictions": [
+        {
+          "endpoint_id": "endpoint__GET___custom_templates__path_",
+          "subtype": "MISSING_AUTH"
+        },
+        {
+          "endpoint_id": "endpoint__GET___flatpage_root__url_",
+          "subtype": "MISSING_AUTH"
+        },
+        {
+          "endpoint_id": "endpoint__GET___model_view_",
+          "subtype": "MISSING_AUTH"
+        },
+        {
+          "endpoint_id": "endpoint__GET___model_view_",
+          "subtype": "TENANT_ISOLATION_FAILURE"
+        },
+        {
+          "endpoint_id": "endpoint__GET___shortcut___0_9_________",
+          "subtype": "MISSING_AUTH"
+        },
+        {
+          "endpoint_id": "endpoint__GET___test_utils_get_person___0_9____",
+          "subtype": "MISSING_AUTH"
+        },
+        {
+          "endpoint_id": "endpoint__GET___test_utils_get_person___0_9____",
+          "subtype": "TENANT_ISOLATION_FAILURE"
+        },
+        {
+          "endpoint_id": "endpoint__GET___unicode_name_",
+          "subtype": "MISSING_AUTH"
+        }
+      ],
+      "expected": [
+        {
+          "endpoint_id": "endpoint__POST___admin__app___model__add_",
+          "subtype": "MISSING_ROLE"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "application": "django-cve-2018-16984",
+      "tp": 0,
+      "fp": 7,
+      "fn": 1,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "predictions": [
+        {
+          "endpoint_id": "endpoint__GET___flatpage_root__url_",
+          "subtype": "MISSING_AUTH"
+        },
+        {
+          "endpoint_id": "endpoint__GET___model_view_",
+          "subtype": "MISSING_AUTH"
+        },
+        {
+          "endpoint_id": "endpoint__GET___model_view_",
+          "subtype": "TENANT_ISOLATION_FAILURE"
+        },
+        {
+          "endpoint_id": "endpoint__GET___shortcut___0_9_________",
+          "subtype": "MISSING_AUTH"
+        },
+        {
+          "endpoint_id": "endpoint__GET___test_utils_get_person___0_9____",
+          "subtype": "MISSING_AUTH"
+        },
+        {
+          "endpoint_id": "endpoint__GET___test_utils_get_person___0_9____",
+          "subtype": "TENANT_ISOLATION_FAILURE"
+        },
+        {
+          "endpoint_id": "endpoint__GET___unicode_name_",
+          "subtype": "MISSING_AUTH"
+        }
+      ],
+      "expected": [
+        {
+          "endpoint_id": "endpoint__GET___admin_auth_user__pk__change_",
+          "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "application": "django-mdeditor-cve-2025-13030",
+      "tp": 1,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "predictions": [
+        {
+          "endpoint_id": "endpoint__POST___mdeditor_uploads_",
+          "subtype": "MISSING_AUTH"
+        }
+      ],
+      "expected": [
+        {
+          "endpoint_id": "endpoint__POST___mdeditor_uploads_",
+          "subtype": "MISSING_AUTH"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "application": "django-unicorn-cve-2026-31815",
+      "tp": 0,
+      "fp": 0,
+      "fn": 1,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "predictions": [],
+      "expected": [
+        {
+          "endpoint_id": "endpoint__POST___unicorn_message__component__",
+          "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "application": "firefighter-cve-2026-42864",
+      "tp": 0,
+      "fp": 0,
+      "fn": 1,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "predictions": [],
+      "expected": [
+        {
+          "endpoint_id": "endpoint__POST___api_jira_bot_",
+          "subtype": "MISSING_AUTH"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "application": "label-studio-cve-2023-47117",
+      "tp": 0,
+      "fp": 5,
+      "fn": 1,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "predictions": [
+        {
+          "endpoint_id": "endpoint__GET___api_ml__pk__versions",
+          "subtype": "TENANT_ISOLATION_FAILURE"
+        },
+        {
+          "endpoint_id": "endpoint__GET___data_upload__filename_",
+          "subtype": "TENANT_ISOLATION_FAILURE"
+        },
+        {
+          "endpoint_id": "endpoint__GET___tasks__task_id__presign_",
+          "subtype": "TENANT_ISOLATION_FAILURE"
+        },
+        {
+          "endpoint_id": "endpoint__POST___api_ml__pk__train",
+          "subtype": "TENANT_ISOLATION_FAILURE"
+        },
+        {
+          "endpoint_id": "endpoint__POST___api_projects__pk__exports__export_pk__convert",
+          "subtype": "TENANT_ISOLATION_FAILURE"
+        }
+      ],
+      "expected": [
+        {
+          "endpoint_id": "endpoint__GET___api_tasks_",
+          "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "application": "modoboa-cve-2023-0777",
+      "tp": 0,
+      "fp": 11,
+      "fn": 1,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "predictions": [
+        {
+          "endpoint_id": "endpoint__DELETE___account_api_token_",
+          "subtype": "MISSING_AUTH"
+        },
+        {
+          "endpoint_id": "endpoint__DELETE___api_v2_account_api_token_",
+          "subtype": "MISSING_AUTH"
+        },
+        {
+          "endpoint_id": "endpoint__GET___account_api_token_",
+          "subtype": "MISSING_AUTH"
+        },
+        {
+          "endpoint_id": "endpoint__GET___account_forward_",
+          "subtype": "MISSING_AUTH"
+        },
+        {
+          "endpoint_id": "endpoint__GET___api_v2_account_api_token_",
+          "subtype": "MISSING_AUTH"
+        },
+        {
+          "endpoint_id": "endpoint__GET___api_v2_account_forward_",
+          "subtype": "MISSING_AUTH"
+        },
+        {
+          "endpoint_id": "endpoint__POST___account_api_token_",
+          "subtype": "MISSING_AUTH"
+        },
+        {
+          "endpoint_id": "endpoint__POST___account_forward_",
+          "subtype": "MISSING_AUTH"
+        },
+        {
+          "endpoint_id": "endpoint__POST___api_v2_account_api_token_",
+          "subtype": "MISSING_AUTH"
+        },
+        {
+          "endpoint_id": "endpoint__POST___api_v2_account_forward_",
+          "subtype": "MISSING_AUTH"
+        },
+        {
+          "endpoint_id": "endpoint__POST___api_v2_account_tfa_setup_check_",
+          "subtype": "MISSING_AUTH"
+        }
+      ],
+      "expected": [
+        {
+          "endpoint_id": "endpoint__POST___api_v2_password_reset_confirm_",
+          "subtype": "MISSING_AUTH"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "application": "modoboa-cve-2023-2227",
+      "tp": 0,
+      "fp": 11,
+      "fn": 1,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "predictions": [
+        {
+          "endpoint_id": "endpoint__DELETE___account_api_token_",
+          "subtype": "MISSING_AUTH"
+        },
+        {
+          "endpoint_id": "endpoint__DELETE___api_v2_account_api_token_",
+          "subtype": "MISSING_AUTH"
+        },
+        {
+          "endpoint_id": "endpoint__GET___account_api_token_",
+          "subtype": "MISSING_AUTH"
+        },
+        {
+          "endpoint_id": "endpoint__GET___account_forward_",
+          "subtype": "MISSING_AUTH"
+        },
+        {
+          "endpoint_id": "endpoint__GET___api_v2_account_api_token_",
+          "subtype": "MISSING_AUTH"
+        },
+        {
+          "endpoint_id": "endpoint__GET___api_v2_account_forward_",
+          "subtype": "MISSING_AUTH"
+        },
+        {
+          "endpoint_id": "endpoint__POST___account_api_token_",
+          "subtype": "MISSING_AUTH"
+        },
+        {
+          "endpoint_id": "endpoint__POST___account_forward_",
+          "subtype": "MISSING_AUTH"
+        },
+        {
+          "endpoint_id": "endpoint__POST___api_v2_account_api_token_",
+          "subtype": "MISSING_AUTH"
+        },
+        {
+          "endpoint_id": "endpoint__POST___api_v2_account_forward_",
+          "subtype": "MISSING_AUTH"
+        },
+        {
+          "endpoint_id": "endpoint__POST___api_v2_account_tfa_setup_check_",
+          "subtype": "MISSING_AUTH"
+        }
+      ],
+      "expected": [
+        {
+          "endpoint_id": "endpoint__GET___api_v2_parameters_core_",
+          "subtype": "MISSING_AUTH"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "application": "nautobot-cve-2023-50263",
+      "tp": 2,
+      "fp": 3,
+      "fn": 0,
+      "precision": 0.4,
+      "recall": 1.0,
+      "f1": 0.5714285714285715,
+      "predictions": [
+        {
+          "endpoint_id": "endpoint__GET___files_download_",
+          "subtype": "MISSING_AUTH"
+        },
+        {
+          "endpoint_id": "endpoint__GET___files_get_",
+          "subtype": "MISSING_AUTH"
+        },
+        {
+          "endpoint_id": "endpoint__POST___dcim_virtual_chassis__pk__edit_",
+          "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+        },
+        {
+          "endpoint_id": "endpoint__POST___dcim_virtual_chassis_members__pk__delete_",
+          "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+        },
+        {
+          "endpoint_id": "endpoint__POST___extras_job_button__pk__run_",
+          "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+        }
+      ],
+      "expected": [
+        {
+          "endpoint_id": "endpoint__GET___files_get_",
+          "subtype": "MISSING_AUTH"
+        },
+        {
+          "endpoint_id": "endpoint__GET___files_download_",
+          "subtype": "MISSING_AUTH"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "application": "nautobot-cve-2023-51649",
+      "tp": 1,
+      "fp": 2,
+      "fn": 0,
+      "precision": 0.3333333333333333,
+      "recall": 1.0,
+      "f1": 0.5,
+      "predictions": [
+        {
+          "endpoint_id": "endpoint__POST___dcim_virtual_chassis__pk__edit_",
+          "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+        },
+        {
+          "endpoint_id": "endpoint__POST___dcim_virtual_chassis_members__pk__delete_",
+          "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+        },
+        {
+          "endpoint_id": "endpoint__POST___extras_job_button__pk__run_",
+          "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+        }
+      ],
+      "expected": [
+        {
+          "endpoint_id": "endpoint__POST___extras_job_button__pk__run_",
+          "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "application": "nautobot-cve-2024-29199",
+      "tp": 0,
+      "fp": 2,
+      "fn": 1,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "predictions": [
+        {
+          "endpoint_id": "endpoint__POST___dcim_virtual_chassis__pk__edit_",
+          "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+        },
+        {
+          "endpoint_id": "endpoint__POST___dcim_virtual_chassis_members__pk__delete_",
+          "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+        }
+      ],
+      "expected": [
+        {
+          "endpoint_id": "endpoint__GET___api_dcim_racks__pk__elevation_",
+          "subtype": "MISSING_AUTH"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "application": "nautobot-cve-2024-36112",
+      "tp": 0,
+      "fp": 2,
+      "fn": 1,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "predictions": [
+        {
+          "endpoint_id": "endpoint__POST___dcim_virtual_chassis__pk__edit_",
+          "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+        },
+        {
+          "endpoint_id": "endpoint__POST___dcim_virtual_chassis_members__pk__delete_",
+          "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+        }
+      ],
+      "expected": [
+        {
+          "endpoint_id": "endpoint__GET___api_extras_dynamic_groups__pk__members_",
+          "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "application": "nautobot-cve-2025-49143",
+      "tp": 0,
+      "fp": 4,
+      "fn": 1,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "predictions": [
+        {
+          "endpoint_id": "endpoint__GET___extras_jobs__class_path__run_",
+          "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+        },
+        {
+          "endpoint_id": "endpoint__GET___extras_jobs__pk__run_",
+          "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+        },
+        {
+          "endpoint_id": "endpoint__POST___dcim_virtual_chassis__pk__edit_",
+          "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+        },
+        {
+          "endpoint_id": "endpoint__POST___dcim_virtual_chassis_members__pk__delete_",
+          "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+        }
+      ],
+      "expected": [
+        {
+          "endpoint_id": "endpoint__GET___media__path__",
+          "subtype": "MISSING_AUTH"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "application": "nautobot-cve-2026-44794",
+      "tp": 0,
+      "fp": 1,
+      "fn": 1,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "predictions": [
+        {
+          "endpoint_id": "endpoint__POST___dcim_virtual_chassis_members__pk__delete_",
+          "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+        }
+      ],
+      "expected": [
+        {
+          "endpoint_id": "endpoint__POST___api_extras_tags_",
+          "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "application": "plane-cve-2026-30244",
+      "tp": 0,
+      "fp": 0,
+      "fn": 1,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "predictions": [],
+      "expected": [
+        {
+          "endpoint_id": "endpoint__GET___api_v1_workspaces__slug__members_",
+          "subtype": "MISSING_AUTH"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "application": "pretix-cve-2025-14881",
+      "tp": 0,
+      "fp": 1,
+      "fn": 1,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "predictions": [
+        {
+          "endpoint_id": "endpoint__GET___control_invite__token_",
+          "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+        }
+      ],
+      "expected": [
+        {
+          "endpoint_id": "endpoint__GET___download__id__",
+          "subtype": "IDOR"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "application": "pretix-cve-2025-14882",
+      "tp": 0,
+      "fp": 0,
+      "fn": 1,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "predictions": [],
+      "expected": [
+        {
+          "endpoint_id": "endpoint__GET___api_v1_organizers__organizer__events__event__orderpositions__id__download__output__",
+          "subtype": "IDOR"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "application": "saleor-cve-2020-7964",
+      "tp": 0,
+      "fp": 1,
+      "fn": 1,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "predictions": [
+        {
+          "endpoint_id": "endpoint__GET___digital_download__token__",
+          "subtype": "MISSING_AUTH"
+        }
+      ],
+      "expected": [
+        {
+          "endpoint_id": "endpoint__POST___graphql_",
+          "subtype": "MISSING_AUTH"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "application": "saleor-cve-2022-0932",
+      "tp": 0,
+      "fp": 1,
+      "fn": 1,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "predictions": [
+        {
+          "endpoint_id": "endpoint__GET___digital_download__token__",
+          "subtype": "MISSING_AUTH"
+        }
+      ],
+      "expected": [
+        {
+          "endpoint_id": "endpoint__POST___graphql_",
+          "subtype": "MISSING_ROLE"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "application": "sentry-cve-2023-36826",
+      "tp": 0,
+      "fp": 4,
+      "fn": 1,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "predictions": [
+        {
+          "endpoint_id": "endpoint__GET___",
+          "subtype": "MISSING_AUTH"
+        },
+        {
+          "endpoint_id": "endpoint__POST___issue_occurrence_",
+          "subtype": "TENANT_ISOLATION_FAILURE"
+        },
+        {
+          "endpoint_id": "endpoint__POST___issue_updated__token__",
+          "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+        },
+        {
+          "endpoint_id": "endpoint__PUT___prompts_activity_",
+          "subtype": "TENANT_ISOLATION_FAILURE"
+        }
+      ],
+      "expected": [
+        {
+          "endpoint_id": "endpoint__GET___api_0_projects__org__project__files_dsyms__id__",
+          "subtype": "IDOR"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "application": "sentry-cve-2024-45605",
+      "tp": 0,
+      "fp": 7,
+      "fn": 1,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "predictions": [
+        {
+          "endpoint_id": "endpoint__DELETE___api_tokens__token_id__",
+          "subtype": "IDOR"
+        },
+        {
+          "endpoint_id": "endpoint__GET___",
+          "subtype": "MISSING_AUTH"
+        },
+        {
+          "endpoint_id": "endpoint__GET___api_tokens__token_id__",
+          "subtype": "IDOR"
+        },
+        {
+          "endpoint_id": "endpoint__GET___installation__installation_id__",
+          "subtype": "IDOR"
+        },
+        {
+          "endpoint_id": "endpoint__GET___installation__installation_id__",
+          "subtype": "TENANT_ISOLATION_FAILURE"
+        },
+        {
+          "endpoint_id": "endpoint__PUT___api_tokens__token_id__",
+          "subtype": "IDOR"
+        },
+        {
+          "endpoint_id": "endpoint__PUT___prompts_activity_",
+          "subtype": "TENANT_ISOLATION_FAILURE"
+        }
+      ],
+      "expected": [
+        {
+          "endpoint_id": "endpoint__DELETE___api_0_projects__org__project__rules__rule_id__snooze_",
+          "subtype": "IDOR"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "application": "sentry-cve-2024-45606",
+      "tp": 0,
+      "fp": 7,
+      "fn": 1,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "predictions": [
+        {
+          "endpoint_id": "endpoint__DELETE___api_tokens__token_id__",
+          "subtype": "IDOR"
+        },
+        {
+          "endpoint_id": "endpoint__GET___",
+          "subtype": "MISSING_AUTH"
+        },
+        {
+          "endpoint_id": "endpoint__GET___api_tokens__token_id__",
+          "subtype": "IDOR"
+        },
+        {
+          "endpoint_id": "endpoint__GET___installation__installation_id__",
+          "subtype": "IDOR"
+        },
+        {
+          "endpoint_id": "endpoint__GET___installation__installation_id__",
+          "subtype": "TENANT_ISOLATION_FAILURE"
+        },
+        {
+          "endpoint_id": "endpoint__PUT___api_tokens__token_id__",
+          "subtype": "IDOR"
+        },
+        {
+          "endpoint_id": "endpoint__PUT___prompts_activity_",
+          "subtype": "TENANT_ISOLATION_FAILURE"
+        }
+      ],
+      "expected": [
+        {
+          "endpoint_id": "endpoint__PUT___api_0_projects__org__project__rules__rule_id__snooze_",
+          "subtype": "IDOR"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "application": "sentry-cve-2026-26004",
+      "tp": 1,
+      "fp": 10,
+      "fn": 0,
+      "precision": 0.09090909090909091,
+      "recall": 1.0,
+      "f1": 0.16666666666666669,
+      "predictions": [
+        {
+          "endpoint_id": "endpoint__DELETE___api_0_api_tokens__token_id__",
+          "subtype": "IDOR"
+        },
+        {
+          "endpoint_id": "endpoint__GET____organization_slug__issues__group_id__events__event_id_or_latest__json_",
+          "subtype": "TENANT_ISOLATION_FAILURE"
+        },
+        {
+          "endpoint_id": "endpoint__GET___api_0_api_tokens__token_id__",
+          "subtype": "IDOR"
+        },
+        {
+          "endpoint_id": "endpoint__GET___debug_mail_performance_alert__sample_name___",
+          "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+        },
+        {
+          "endpoint_id": "endpoint__GET___debug_mail_performance_alert__sample_name___",
+          "subtype": "TENANT_ISOLATION_FAILURE"
+        },
+        {
+          "endpoint_id": "endpoint__GET___github_installation__installation_id__",
+          "subtype": "IDOR"
+        },
+        {
+          "endpoint_id": "endpoint__GET___github_installation__installation_id__",
+          "subtype": "TENANT_ISOLATION_FAILURE"
+        },
+        {
+          "endpoint_id": "endpoint__GET___js_sdk_loader__public_key_____minified_____js",
+          "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+        },
+        {
+          "endpoint_id": "endpoint__GET___recover_confirm__user_id___hash__",
+          "subtype": "IDOR"
+        },
+        {
+          "endpoint_id": "endpoint__GET___relocation_reclaim__user_id__",
+          "subtype": "IDOR"
+        },
+        {
+          "endpoint_id": "endpoint__PUT___api_0_api_tokens__token_id__",
+          "subtype": "IDOR"
+        }
+      ],
+      "expected": [
+        {
+          "endpoint_id": "endpoint__GET____organization_slug__issues__group_id__events__event_id_or_latest__json_",
+          "subtype": "TENANT_ISOLATION_FAILURE"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "application": "wagtail-cve-2024-32882",
+      "tp": 0,
+      "fp": 11,
+      "fn": 1,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "predictions": [
+        {
+          "endpoint_id": "endpoint__GET____app_name___model_name__",
+          "subtype": "MISSING_AUTH"
+        },
+        {
+          "endpoint_id": "endpoint__GET____redirect_id__",
+          "subtype": "MISSING_AUTH"
+        },
+        {
+          "endpoint_id": "endpoint__GET____redirect_id__delete_",
+          "subtype": "MISSING_AUTH"
+        },
+        {
+          "endpoint_id": "endpoint__GET___chooser_upload_",
+          "subtype": "MISSING_AUTH"
+        },
+        {
+          "endpoint_id": "endpoint__GET___documents___d_______",
+          "subtype": "MISSING_AUTH"
+        },
+        {
+          "endpoint_id": "endpoint__GET___documents_authenticate_with_password__restriction_id__",
+          "subtype": "MISSING_AUTH"
+        },
+        {
+          "endpoint_id": "endpoint__GET___submissions__page_id__",
+          "subtype": "MISSING_AUTH"
+        },
+        {
+          "endpoint_id": "endpoint__GET___testimages_actions_redirect________d_____________",
+          "subtype": "MISSING_AUTH"
+        },
+        {
+          "endpoint_id": "endpoint__GET___testimages_actions_serve________d_____________",
+          "subtype": "MISSING_AUTH"
+        },
+        {
+          "endpoint_id": "endpoint__GET___testimages_custom_key________d_____________",
+          "subtype": "MISSING_AUTH"
+        },
+        {
+          "endpoint_id": "endpoint__GET___testimages_custom_view___________d________________",
+          "subtype": "MISSING_AUTH"
+        }
+      ],
+      "expected": [
+        {
+          "endpoint_id": "endpoint__POST___admin_pages__pk__edit_",
+          "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "application": "wagtail-cve-2026-25517",
+      "tp": 0,
+      "fp": 11,
+      "fn": 1,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "predictions": [
+        {
+          "endpoint_id": "endpoint__GET____app_name___model_name__",
+          "subtype": "MISSING_AUTH"
+        },
+        {
+          "endpoint_id": "endpoint__GET____redirect_id__delete_",
+          "subtype": "MISSING_AUTH"
+        },
+        {
+          "endpoint_id": "endpoint__GET___chooser_upload_",
+          "subtype": "MISSING_AUTH"
+        },
+        {
+          "endpoint_id": "endpoint__GET___documents___d_______",
+          "subtype": "MISSING_AUTH"
+        },
+        {
+          "endpoint_id": "endpoint__GET___documents_authenticate_with_password__restriction_id__",
+          "subtype": "MISSING_AUTH"
+        },
+        {
+          "endpoint_id": "endpoint__GET___submissions__page_id__",
+          "subtype": "MISSING_AUTH"
+        },
+        {
+          "endpoint_id": "endpoint__GET___submissions__page_id__results_",
+          "subtype": "MISSING_AUTH"
+        },
+        {
+          "endpoint_id": "endpoint__GET___testimages_actions_redirect________d_____________",
+          "subtype": "MISSING_AUTH"
+        },
+        {
+          "endpoint_id": "endpoint__GET___testimages_actions_serve________d_____________",
+          "subtype": "MISSING_AUTH"
+        },
+        {
+          "endpoint_id": "endpoint__GET___testimages_custom_key________d_____________",
+          "subtype": "MISSING_AUTH"
+        },
+        {
+          "endpoint_id": "endpoint__GET___testimages_custom_view___________d________________",
+          "subtype": "MISSING_AUTH"
+        }
+      ],
+      "expected": [
+        {
+          "endpoint_id": "endpoint__GET___admin_pages__pk__preview_",
+          "subtype": "MISSING_ROLE"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "application": "wagtail-cve-2026-44197",
+      "tp": 0,
+      "fp": 0,
+      "fn": 1,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "predictions": [],
+      "expected": [
+        {
+          "endpoint_id": "endpoint__GET___admin_pages__pk__revisions_compare__rev1__rev2__",
+          "subtype": "MISSING_ROLE"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "application": "wagtail-cve-2026-44198",
+      "tp": 0,
+      "fp": 0,
+      "fn": 1,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "predictions": [],
+      "expected": [
+        {
+          "endpoint_id": "endpoint__GET___admin_pages__pk__history_",
+          "subtype": "MISSING_ROLE"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "application": "wagtail-cve-2026-44199",
+      "tp": 0,
+      "fp": 0,
+      "fn": 1,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "predictions": [],
+      "expected": [
+        {
+          "endpoint_id": "endpoint__POST___admin_forms_submissions__pk__delete_",
+          "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "application": "wagtail-cve-2026-44200",
+      "tp": 0,
+      "fp": 0,
+      "fn": 1,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "predictions": [],
+      "expected": [
+        {
+          "endpoint_id": "endpoint__POST___admin_pages__pk__copy_",
+          "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "application": "weblate-cve-2025-67715",
+      "tp": 0,
+      "fp": 6,
+      "fn": 2,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "predictions": [
+        {
+          "endpoint_id": "endpoint__DELETE___api_users__pk__groups_",
+          "subtype": "TENANT_ISOLATION_FAILURE"
+        },
+        {
+          "endpoint_id": "endpoint__GET___changes_render__pk__",
+          "subtype": "IDOR"
+        },
+        {
+          "endpoint_id": "endpoint__POST___api_groups__pk__projects_",
+          "subtype": "TENANT_ISOLATION_FAILURE"
+        },
+        {
+          "endpoint_id": "endpoint__POST___api_users__pk__groups_",
+          "subtype": "TENANT_ISOLATION_FAILURE"
+        },
+        {
+          "endpoint_id": "endpoint__POST___hooks__service_",
+          "subtype": "IDOR"
+        },
+        {
+          "endpoint_id": "endpoint__POST___hooks__service__",
+          "subtype": "IDOR"
+        }
+      ],
+      "expected": [
+        {
+          "endpoint_id": "endpoint__GET___api_users__pk__",
+          "subtype": "IDOR"
+        },
+        {
+          "endpoint_id": "endpoint__GET___api_projects__pk__",
+          "subtype": "IDOR"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "application": "weblate-cve-2026-21889",
+      "tp": 0,
+      "fp": 6,
+      "fn": 1,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "predictions": [
+        {
+          "endpoint_id": "endpoint__DELETE___api_users__pk__groups_",
+          "subtype": "TENANT_ISOLATION_FAILURE"
+        },
+        {
+          "endpoint_id": "endpoint__GET___changes_render__pk__",
+          "subtype": "IDOR"
+        },
+        {
+          "endpoint_id": "endpoint__POST___api_groups__pk__projects_",
+          "subtype": "TENANT_ISOLATION_FAILURE"
+        },
+        {
+          "endpoint_id": "endpoint__POST___api_users__pk__groups_",
+          "subtype": "TENANT_ISOLATION_FAILURE"
+        },
+        {
+          "endpoint_id": "endpoint__POST___hooks__service_",
+          "subtype": "IDOR"
+        },
+        {
+          "endpoint_id": "endpoint__POST___hooks__service__",
+          "subtype": "IDOR"
+        }
+      ],
+      "expected": [
+        {
+          "endpoint_id": "endpoint__GET___api_screenshots__pk__",
+          "subtype": "MISSING_ROLE"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "application": "weblate-cve-2026-27457",
+      "tp": 0,
+      "fp": 8,
+      "fn": 2,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "predictions": [
+        {
+          "endpoint_id": "endpoint__DELETE___api_users__pk__groups_",
+          "subtype": "TENANT_ISOLATION_FAILURE"
+        },
+        {
+          "endpoint_id": "endpoint__GET___changes_render__pk__",
+          "subtype": "IDOR"
+        },
+        {
+          "endpoint_id": "endpoint__GET___js_bulk_accept_suggestions__path__",
+          "subtype": "IDOR"
+        },
+        {
+          "endpoint_id": "endpoint__GET___js_bulk_accept_suggestions__path__",
+          "subtype": "TENANT_ISOLATION_FAILURE"
+        },
+        {
+          "endpoint_id": "endpoint__POST___api_groups__pk__projects_",
+          "subtype": "TENANT_ISOLATION_FAILURE"
+        },
+        {
+          "endpoint_id": "endpoint__POST___api_users__pk__groups_",
+          "subtype": "TENANT_ISOLATION_FAILURE"
+        },
+        {
+          "endpoint_id": "endpoint__POST___hooks__service_",
+          "subtype": "IDOR"
+        },
+        {
+          "endpoint_id": "endpoint__POST___hooks__service__",
+          "subtype": "IDOR"
+        }
+      ],
+      "expected": [
+        {
+          "endpoint_id": "endpoint__GET___api_addons_",
+          "subtype": "TENANT_ISOLATION_FAILURE"
+        },
+        {
+          "endpoint_id": "endpoint__GET___api_addons__pk__",
+          "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "application": "weblate-cve-2026-33212",
+      "tp": 0,
+      "fp": 7,
+      "fn": 1,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "predictions": [
+        {
+          "endpoint_id": "endpoint__DELETE___api_users__pk__groups_",
+          "subtype": "TENANT_ISOLATION_FAILURE"
+        },
+        {
+          "endpoint_id": "endpoint__GET___changes_render__pk__",
+          "subtype": "IDOR"
+        },
+        {
+          "endpoint_id": "endpoint__GET___js_bulk_accept_suggestions__path__",
+          "subtype": "IDOR"
+        },
+        {
+          "endpoint_id": "endpoint__GET___js_bulk_accept_suggestions__path__",
+          "subtype": "TENANT_ISOLATION_FAILURE"
+        },
+        {
+          "endpoint_id": "endpoint__POST___api_users__pk__groups_",
+          "subtype": "TENANT_ISOLATION_FAILURE"
+        },
+        {
+          "endpoint_id": "endpoint__POST___hooks__service_",
+          "subtype": "IDOR"
+        },
+        {
+          "endpoint_id": "endpoint__POST___hooks__service__",
+          "subtype": "IDOR"
+        }
+      ],
+      "expected": [
+        {
+          "endpoint_id": "endpoint__GET___api_tasks_",
+          "subtype": "MISSING_ROLE"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "application": "weblate-cve-2026-33214",
+      "tp": 0,
+      "fp": 7,
+      "fn": 1,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "predictions": [
+        {
+          "endpoint_id": "endpoint__DELETE___api_users__pk__groups_",
+          "subtype": "TENANT_ISOLATION_FAILURE"
+        },
+        {
+          "endpoint_id": "endpoint__GET___changes_render__pk__",
+          "subtype": "IDOR"
+        },
+        {
+          "endpoint_id": "endpoint__GET___js_bulk_accept_suggestions__path__",
+          "subtype": "IDOR"
+        },
+        {
+          "endpoint_id": "endpoint__GET___js_bulk_accept_suggestions__path__",
+          "subtype": "TENANT_ISOLATION_FAILURE"
+        },
+        {
+          "endpoint_id": "endpoint__POST___api_users__pk__groups_",
+          "subtype": "TENANT_ISOLATION_FAILURE"
+        },
+        {
+          "endpoint_id": "endpoint__POST___hooks__service_",
+          "subtype": "IDOR"
+        },
+        {
+          "endpoint_id": "endpoint__POST___hooks__service__",
+          "subtype": "IDOR"
+        }
+      ],
+      "expected": [
+        {
+          "endpoint_id": "endpoint__GET___api_translation_memory_",
+          "subtype": "MISSING_ROLE"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "application": "weblate-cve-2026-34393",
+      "tp": 0,
+      "fp": 7,
+      "fn": 1,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "predictions": [
+        {
+          "endpoint_id": "endpoint__DELETE___api_users__pk__groups_",
+          "subtype": "TENANT_ISOLATION_FAILURE"
+        },
+        {
+          "endpoint_id": "endpoint__GET___changes_render__pk__",
+          "subtype": "IDOR"
+        },
+        {
+          "endpoint_id": "endpoint__GET___js_bulk_accept_suggestions__path__",
+          "subtype": "IDOR"
+        },
+        {
+          "endpoint_id": "endpoint__GET___js_bulk_accept_suggestions__path__",
+          "subtype": "TENANT_ISOLATION_FAILURE"
+        },
+        {
+          "endpoint_id": "endpoint__POST___api_users__pk__groups_",
+          "subtype": "TENANT_ISOLATION_FAILURE"
+        },
+        {
+          "endpoint_id": "endpoint__POST___hooks__service_",
+          "subtype": "IDOR"
+        },
+        {
+          "endpoint_id": "endpoint__POST___hooks__service__",
+          "subtype": "IDOR"
+        }
+      ],
+      "expected": [
+        {
+          "endpoint_id": "endpoint__PATCH___api_users__pk__",
+          "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "application": "weblate-cve-2026-44263",
+      "tp": 0,
+      "fp": 7,
+      "fn": 1,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "predictions": [
+        {
+          "endpoint_id": "endpoint__DELETE___api_users__pk__groups_",
+          "subtype": "TENANT_ISOLATION_FAILURE"
+        },
+        {
+          "endpoint_id": "endpoint__GET___changes_render__pk__",
+          "subtype": "IDOR"
+        },
+        {
+          "endpoint_id": "endpoint__GET___js_bulk_accept_suggestions__path__",
+          "subtype": "IDOR"
+        },
+        {
+          "endpoint_id": "endpoint__GET___js_bulk_accept_suggestions__path__",
+          "subtype": "TENANT_ISOLATION_FAILURE"
+        },
+        {
+          "endpoint_id": "endpoint__POST___api_users__pk__groups_",
+          "subtype": "TENANT_ISOLATION_FAILURE"
+        },
+        {
+          "endpoint_id": "endpoint__POST___hooks__service_",
+          "subtype": "IDOR"
+        },
+        {
+          "endpoint_id": "endpoint__POST___hooks__service__",
+          "subtype": "IDOR"
+        }
+      ],
+      "expected": [
+        {
+          "endpoint_id": "endpoint__GET___api_component_links_",
+          "subtype": "MISSING_ROLE"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "application": "wger-cve-2026-27835",
+      "tp": 0,
+      "fp": 10,
+      "fn": 2,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "predictions": [
+        {
+          "endpoint_id": "endpoint__GET___api_v2_exerciseimage__pk__thumbnails_",
+          "subtype": "IDOR"
+        },
+        {
+          "endpoint_id": "endpoint__GET___nutrition__id__pdf",
+          "subtype": "MISSING_AUTH"
+        },
+        {
+          "endpoint_id": "endpoint__GET___nutrition_ingredient__pk__view_",
+          "subtype": "MISSING_AUTH"
+        },
+        {
+          "endpoint_id": "endpoint__GET___nutrition_ingredient__pk__view__slug__",
+          "subtype": "MISSING_AUTH"
+        },
+        {
+          "endpoint_id": "endpoint__GET___routine__pk__copy",
+          "subtype": "IDOR"
+        },
+        {
+          "endpoint_id": "endpoint__GET___routine__pk__ical",
+          "subtype": "MISSING_AUTH"
+        },
+        {
+          "endpoint_id": "endpoint__GET___routine__pk__pdf_log",
+          "subtype": "MISSING_AUTH"
+        },
+        {
+          "endpoint_id": "endpoint__GET___routine__pk__pdf_table",
+          "subtype": "MISSING_AUTH"
+        },
+        {
+          "endpoint_id": "endpoint__GET___software_features",
+          "subtype": "MISSING_AUTH"
+        },
+        {
+          "endpoint_id": "endpoint__GET___user_registration",
+          "subtype": "MISSING_AUTH"
+        }
+      ],
+      "expected": [
+        {
+          "endpoint_id": "endpoint__GET___api_v2_repetitionsconfig__pk__",
+          "subtype": "IDOR"
+        },
+        {
+          "endpoint_id": "endpoint__GET___api_v2_maxrepetitionsconfig__pk__",
+          "subtype": "IDOR"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "application": "wger-cve-2026-27838",
+      "tp": 0,
+      "fp": 13,
+      "fn": 1,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "predictions": [
+        {
+          "endpoint_id": "endpoint__GET___api_v2_exerciseimage__pk__thumbnails_",
+          "subtype": "IDOR"
+        },
+        {
+          "endpoint_id": "endpoint__GET___api_v2_meal__pk__nutritional_values_",
+          "subtype": "IDOR"
+        },
+        {
+          "endpoint_id": "endpoint__GET___api_v2_mealitem__pk__nutritional_values_",
+          "subtype": "IDOR"
+        },
+        {
+          "endpoint_id": "endpoint__GET___api_v2_nutritionplan__pk__nutritional_values_",
+          "subtype": "IDOR"
+        },
+        {
+          "endpoint_id": "endpoint__GET___nutrition__id__pdf",
+          "subtype": "MISSING_AUTH"
+        },
+        {
+          "endpoint_id": "endpoint__GET___nutrition_ingredient__pk__view_",
+          "subtype": "MISSING_AUTH"
+        },
+        {
+          "endpoint_id": "endpoint__GET___nutrition_ingredient__pk__view__slug__",
+          "subtype": "MISSING_AUTH"
+        },
+        {
+          "endpoint_id": "endpoint__GET___routine__pk__copy",
+          "subtype": "IDOR"
+        },
+        {
+          "endpoint_id": "endpoint__GET___routine__pk__ical",
+          "subtype": "MISSING_AUTH"
+        },
+        {
+          "endpoint_id": "endpoint__GET___routine__pk__pdf_log",
+          "subtype": "MISSING_AUTH"
+        },
+        {
+          "endpoint_id": "endpoint__GET___routine__pk__pdf_table",
+          "subtype": "MISSING_AUTH"
+        },
+        {
+          "endpoint_id": "endpoint__GET___software_features",
+          "subtype": "MISSING_AUTH"
+        },
+        {
+          "endpoint_id": "endpoint__GET___user_registration",
+          "subtype": "MISSING_AUTH"
+        }
+      ],
+      "expected": [
+        {
+          "endpoint_id": "endpoint__GET___api_v2_routine__pk__",
+          "subtype": "IDOR"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "application": "wger-cve-2026-27839",
+      "tp": 3,
+      "fp": 2,
+      "fn": 0,
+      "precision": 0.6,
+      "recall": 1.0,
+      "f1": 0.7499999999999999,
+      "predictions": [
+        {
+          "endpoint_id": "endpoint__GET___api_v2_exerciseimage__pk__thumbnails_",
+          "subtype": "IDOR"
+        },
+        {
+          "endpoint_id": "endpoint__GET___api_v2_meal__pk__nutritional_values_",
+          "subtype": "IDOR"
+        },
+        {
+          "endpoint_id": "endpoint__GET___api_v2_mealitem__pk__nutritional_values_",
+          "subtype": "IDOR"
+        },
+        {
+          "endpoint_id": "endpoint__GET___api_v2_nutritionplan__pk__nutritional_values_",
+          "subtype": "IDOR"
+        },
+        {
+          "endpoint_id": "endpoint__GET___workout_set_get_formset__base_pk___reps_",
+          "subtype": "IDOR"
+        }
+      ],
+      "expected": [
+        {
+          "endpoint_id": "endpoint__GET___api_v2_nutritionplan__pk__nutritional_values_",
+          "subtype": "IDOR"
+        },
+        {
+          "endpoint_id": "endpoint__GET___api_v2_meal__pk__nutritional_values_",
+          "subtype": "IDOR"
+        },
+        {
+          "endpoint_id": "endpoint__GET___api_v2_mealitem__pk__nutritional_values_",
+          "subtype": "IDOR"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "application": "wger-cve-2026-40474",
+      "tp": 0,
+      "fp": 2,
+      "fn": 1,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "predictions": [
+        {
+          "endpoint_id": "endpoint__GET___api_v2_exerciseimage__pk__thumbnails_",
+          "subtype": "IDOR"
+        },
+        {
+          "endpoint_id": "endpoint__GET___routine__pk__copy",
+          "subtype": "IDOR"
+        }
+      ],
+      "expected": [
+        {
+          "endpoint_id": "endpoint__POST___config_gym_config_edit",
+          "subtype": "MISSING_ROLE"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "application": "wger-cve-2026-43948",
+      "tp": 0,
+      "fp": 5,
+      "fn": 1,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "predictions": [
+        {
+          "endpoint_id": "endpoint__GET___api_v2_exerciseimage__pk__thumbnails_",
+          "subtype": "IDOR"
+        },
+        {
+          "endpoint_id": "endpoint__GET___api_v2_meal__pk__nutritional_values_",
+          "subtype": "IDOR"
+        },
+        {
+          "endpoint_id": "endpoint__GET___api_v2_mealitem__pk__nutritional_values_",
+          "subtype": "IDOR"
+        },
+        {
+          "endpoint_id": "endpoint__GET___api_v2_nutritionplan__pk__nutritional_values_",
+          "subtype": "IDOR"
+        },
+        {
+          "endpoint_id": "endpoint__GET___workout_set_get_formset__base_pk___reps_",
+          "subtype": "IDOR"
+        }
+      ],
+      "expected": [
+        {
+          "endpoint_id": "endpoint__POST___api_v2_gym_user__pk__reset_password_",
+          "subtype": "TENANT_ISOLATION_FAILURE"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "application": "wger-cve-2026-43978",
+      "tp": 0,
+      "fp": 5,
+      "fn": 1,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "predictions": [
+        {
+          "endpoint_id": "endpoint__GET___api_v2_exerciseimage__pk__thumbnails_",
+          "subtype": "IDOR"
+        },
+        {
+          "endpoint_id": "endpoint__GET___api_v2_meal__pk__nutritional_values_",
+          "subtype": "IDOR"
+        },
+        {
+          "endpoint_id": "endpoint__GET___api_v2_mealitem__pk__nutritional_values_",
+          "subtype": "IDOR"
+        },
+        {
+          "endpoint_id": "endpoint__GET___api_v2_nutritionplan__pk__nutritional_values_",
+          "subtype": "IDOR"
+        },
+        {
+          "endpoint_id": "endpoint__GET___workout_set_get_formset__base_pk___reps_",
+          "subtype": "IDOR"
+        }
+      ],
+      "expected": [
+        {
+          "endpoint_id": "endpoint__POST___api_v2_gym_trainer_login_",
+          "subtype": "OBJECT_LEVEL_PERMISSION_BYPASS"
+        }
+      ],
+      "notes": []
+    }
+  ],
+  "note": "Django-only (29 Java/Spring stubs removed - no real extraction available)"
+}

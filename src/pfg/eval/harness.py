@@ -289,6 +289,29 @@ def validated_gnn_detector(
             for n in seen if n in idx and n != ep_id
         )
 
+    def _endpoint_has_auth(pfg: PFG, ep_id: str) -> bool:
+        """True if endpoint requires authentication (can't be MISSING_AUTH)."""
+        idx = pfg.node_index()
+        ep = idx.get(ep_id)
+        if ep is None or not isinstance(ep.attrs, EndpointAttrs):
+            return False
+        return bool(ep.attrs.requires_auth)
+
+    def _is_search_or_list_endpoint(pfg: PFG, ep_id: str) -> bool:
+        """True if endpoint looks like a search/list/public-content route."""
+        idx = pfg.node_index()
+        ep = idx.get(ep_id)
+        if ep is None or not isinstance(ep.attrs, EndpointAttrs):
+            return False
+        route = ep.attrs.route.lower() if ep.attrs.route else ""
+        _SEARCH_TERMS = ("search", "autocomplete", "suggest", "lookup")
+        _PUBLIC_CONTENT = ("thumbnail", "avatar", "icon", "image", "media", "static")
+        if any(t in route for t in _SEARCH_TERMS):
+            return True
+        if any(t in route for t in _PUBLIC_CONTENT) and not ep.attrs.route_params:
+            return True
+        return False
+
     def _has_unprotected_id_flow(pfg: PFG, ep_id: str) -> bool:
         """True if endpoint has route params and reaches data_access w/o ownership
         via identifier_flow edges (strict — matches rule baseline logic)."""
@@ -344,9 +367,6 @@ def validated_gnn_detector(
                 op = n.attrs.operation if isinstance(n.attrs.operation, str) else n.attrs.operation.value
                 if op in privileged:
                     return True
-                # Also flag if HTTP method is mutation and reaches any data
-                if is_mutation:
-                    return True
         return False
 
     def _reachable_call_nodes(pfg: PFG, ep_id: str) -> set[str]:
@@ -390,28 +410,34 @@ def validated_gnn_detector(
         return False
 
     def _has_object_permission_bypass_shape(pfg: PFG, ep_id: str) -> bool:
-        """Relaxed: route params + reaches data without object permission.
-        Does NOT require model_permission_check_present on endpoint."""
+        """Route params + reaches data without object permission check.
+        Fires when endpoint has route params and reaches any data_access
+        node without an intervening object permission guard."""
         idx = pfg.node_index()
         ep = idx.get(ep_id)
         if ep is None or not isinstance(ep.attrs, EndpointAttrs):
             return False
         if ep.attrs.object_permission_check_present:
             return False
+        if ep.attrs.ownership_check_present:
+            return False
         if not ep.attrs.route_params:
             return False
+        # Suppress on admin/control routes (already protected by Django admin)
+        route = ep.attrs.route.lower() if ep.attrs.route else ""
+        if any(route.startswith(p) for p in ("/admin/", "/control/", "/manage/")):
+            return False
+        found_data = False
         for nid in _reachable_call_nodes(pfg, ep_id):
             n = idx.get(nid)
             attrs = getattr(n, "attrs", None)
             if isinstance(attrs, MiddlewareAttrs) and attrs.guard_type == GuardType.OBJECT_PERMISSION_CHECK.value:
                 return False
             if isinstance(attrs, DataAccessAttrs):
-                if attrs.requires_object_permission and not attrs.has_object_permission_check:
-                    return True
-                # Also flag if model_permission is on endpoint but no obj check
-                if ep.attrs.model_permission_check_present and not attrs.has_ownership_predicate:
-                    return True
-        return False
+                # Fire on any data access without object permission check
+                if not getattr(attrs, "has_object_permission_check", False):
+                    found_data = True
+        return found_data
 
     def _structural_fallback(pfg: PFG, ep_id: str, subtype: str) -> bool:
         """Trust GNN prediction based on endpoint-level features alone when
@@ -535,11 +561,16 @@ def validated_gnn_detector(
     def _detect(pfg: PFG) -> set[Prediction]:
         raw = base(pfg)
         validated: set[Prediction] = set()
+        # Two-pass for COMBINED: collect candidates first, then rate-limit
+        combined_candidates: list[tuple[str, str, int]] = []  # (ep_id, subtype, conditions)
         for ep_id, subtype in raw:
             # Phase 1d: suppress findings on known-safe endpoints
             if _is_known_safe_endpoint(pfg, ep_id):
                 continue
             if subtype == "MISSING_AUTH":
+                # Can't be missing auth if it already requires auth
+                if _endpoint_has_auth(pfg, ep_id):
+                    continue
                 if _reaches_data_or_service(pfg, ep_id) or _structural_fallback(pfg, ep_id, subtype):
                     validated.add((ep_id, subtype))
             elif subtype == "MISSING_ROLE":
@@ -555,15 +586,25 @@ def validated_gnn_detector(
                 if _has_object_permission_bypass_shape(pfg, ep_id) or _structural_fallback(pfg, ep_id, subtype):
                     validated.add((ep_id, subtype))
             else:
-                # COMBINED: keep if any condition is met
-                if (
-                    _reaches_data_or_service(pfg, ep_id)
-                    or _has_unprotected_id_flow(pfg, ep_id)
-                    or _has_unscoped_tenant_access(pfg, ep_id)
-                    or _has_object_permission_bypass_shape(pfg, ep_id)
-                    or _structural_fallback(pfg, ep_id, subtype)
-                ):
+                # COMBINED: collect with condition count
+                conditions_met = sum([
+                    _has_unprotected_id_flow(pfg, ep_id),
+                    _has_unscoped_tenant_access(pfg, ep_id),
+                    _has_object_permission_bypass_shape(pfg, ep_id),
+                    _has_missing_role_shape(pfg, ep_id),
+                ])
+                if conditions_met >= 1:
+                    combined_candidates.append((ep_id, subtype, conditions_met))
+
+        # Rate-limit COMBINED: if too many candidates (>10), require ≥2 conditions
+        if len(combined_candidates) > 10:
+            for ep_id, subtype, conds in combined_candidates:
+                if conds >= 2:
                     validated.add((ep_id, subtype))
+        else:
+            for ep_id, subtype, conds in combined_candidates:
+                validated.add((ep_id, subtype))
+
         return validated
 
     return _detect
@@ -662,12 +703,25 @@ def _score_one(
 
 
 def evaluate_app(
-    manifest: Manifest, detector: Detector, *, build: Callable[[Path], PFG] | None = None
+    manifest: Manifest, detector: Detector, *, build: Callable[[Path], PFG] | None = None,
+    _pfg_cache: dict[Path, PFG] | None = None,
+    _pred_cache: dict[Path, set[Prediction]] | None = None,
 ) -> AppScore:
     """Run the detector on one app and score it."""
     builder = build or (lambda root: build_pfg(root))
-    pfg = builder(manifest.project_root)
-    predicted = detector(pfg)
+    root = manifest.project_root
+    if _pfg_cache is not None and root in _pfg_cache:
+        pfg = _pfg_cache[root]
+    else:
+        pfg = builder(root)
+        if _pfg_cache is not None:
+            _pfg_cache[root] = pfg
+    if _pred_cache is not None and root in _pred_cache:
+        predicted = _pred_cache[root]
+    else:
+        predicted = detector(pfg)
+        if _pred_cache is not None:
+            _pred_cache[root] = predicted
     tp, fp, fn, notes = _score_one(
         manifest.expected_findings, predicted, manifest.intentional_public_endpoints
     )
@@ -706,8 +760,20 @@ def evaluate_corpus(
     *,
     detector_name: str = "rule_baseline",
     build: Callable[[Path], PFG] | None = None,
+    verbose: bool = False,
 ) -> CorpusReport:
-    apps = [evaluate_app(m, detector, build=build) for m in manifests]
+    manifest_list = list(manifests)
+    pfg_cache: dict[Path, PFG] = {}
+    pred_cache: dict[Path, set[Prediction]] = {}
+    apps = []
+    for i, m in enumerate(manifest_list):
+        if verbose:
+            import sys
+            print(f"  [{i+1}/{len(manifest_list)}] {m.application}...", end=" ", flush=True)
+        score = evaluate_app(m, detector, build=build, _pfg_cache=pfg_cache, _pred_cache=pred_cache)
+        if verbose:
+            print(f"TP={score.tp} FP={score.fp} FN={score.fn}", flush=True)
+        apps.append(score)
     tp = sum(a.tp for a in apps)
     fp = sum(a.fp for a in apps)
     fn = sum(a.fn for a in apps)

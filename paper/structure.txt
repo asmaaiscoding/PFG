@@ -1,0 +1,276 @@
+# Part II — Contribution: Proposed Structure
+
+Based on your introduction, the FICHE_PFE, and the reference theses, here is a **research-level structure** for Part II. Each section includes a brief description you can pass directly to Claude/Opus as a generation prompt.
+
+---
+
+## Overall Part II Organization
+
+```
+Part II – Contribution
+  Chapter 3 – Problem Formalization & Framework Design
+  Chapter 4 – Implementation
+  Chapter 5 – Evaluation & Discussion
+General Conclusion & Perspectives
+```
+
+---
+
+## Chapter 3 — Graph-Based Framework for Access Control Vulnerability Detection
+
+### 3.1 Introduction
+*One-paragraph bridge from Part I, stating what problems motivate this chapter and what the chapter delivers.*
+
+---
+
+### 3.2 Problem Formalization
+
+#### 3.2.1 Threat Model and Scope
+**Prompt for Opus:** *"Write a formal threat model section for a static analysis tool targeting access control vulnerabilities in web applications. Define the attacker model (black-box user with valid credentials), the assets (authenticated endpoints, object-level resources), and the trust boundaries. Scope the work to server-side Java/Python web applications using REST APIs. Use formal notation where appropriate."*
+
+**Mermaid diagram here:** A threat model diagram showing actors, assets, and trust boundaries.
+
+```mermaid
+flowchart LR
+    A[Unauthenticated User] -->|HTTP Request| B[Web Application]
+    C[Authenticated User] -->|Forged Object ID| B
+    B --> D[(Database)]
+    B --> E[Auth Layer]
+    E -->|Missing Check| F[Protected Resource]
+```
+
+#### 3.2.2 Taxonomy of Targeted Access Control Vulnerabilities
+**Prompt:** *"Write a formal taxonomy section covering three access control vulnerability classes: (1) Missing Authentication — endpoints reachable without any identity verification; (2) Missing Authorization — endpoints that verify identity but not permission level; (3) Insecure Direct Object Reference (IDOR) — endpoints that expose internal object identifiers without ownership verification. For each class, provide: a formal definition, a minimal code example, the CWE identifier (CWE-306, CWE-862, CWE-639), and the OWASP Top-10 2021 mapping. Distinguish them clearly from each other."*
+
+**Mermaid diagram here:** A taxonomy tree.
+
+```mermaid
+graph TD
+    AC[Access Control Vulnerabilities] --> MA[Missing Authentication\nCWE-306]
+    AC --> MZ[Missing Authorization\nCWE-862]
+    AC --> IDOR[IDOR\nCWE-639]
+    MA --> MA1[No session check]
+    MA --> MA2[Bypassed login gate]
+    MZ --> MZ1[Role not verified]
+    MZ --> MZ2[Privilege escalation]
+    IDOR --> IDOR1[Sequential ID exposure]
+    IDOR --> IDOR2[Predictable file path]
+```
+
+#### 3.2.3 Formal Research Questions
+**Prompt:** *"Formulate three research questions (RQ1, RQ2, RQ3) for a graph-neural-network-based static analysis framework targeting access control vulnerabilities. RQ1 should address detection effectiveness, RQ2 should address explainability and localization, RQ3 should address comparison with existing SAST tools. Format them using the GQM (Goal-Question-Metric) structure."*
+
+---
+
+### 3.3 Overview of the Proposed Approach
+
+#### 3.3.1 High-Level Architecture
+**Prompt:** *"Describe the high-level architecture of a four-stage pipeline: (1) Source Code Ingestion and Parsing, (2) Code Property Graph Construction and Privilege Flow Extraction, (3) GNN-Based Vulnerability Classification, (4) Explainable Report Generation. Justify each stage's role. Use precise software engineering vocabulary."*
+
+**Mermaid diagram — the core pipeline (put this prominently):**
+
+```mermaid
+flowchart TD
+    A[Source Code\nJava / Python] --> B[Parser & AST Builder]
+    B --> C[Code Property Graph\nAST + CFG + PDG]
+    C --> D[Privilege Flow\nExtractor]
+    D --> E[Graph Feature\nEngineering]
+    E --> F[GNN Model\nClassifier]
+    F --> G{Vulnerability\nType?}
+    G --> H[Missing Authentication]
+    G --> I[Missing Authorization]
+    G --> J[IDOR]
+    F --> K[GNNExplainer\nSubgraph Attribution]
+    K --> L[Explainable Report\nFile + Line + Fix Hint]
+```
+
+#### 3.3.2 Design Rationale — Why Graphs and GNNs?
+**Prompt:** *"Justify the choice of graph-based code representation (Code Property Graph) over token-based or AST-only representations for access control vulnerability detection. Argue why Graph Neural Networks are more appropriate than classical ML classifiers or sequence-based deep learning (LSTM, Transformer) for this structural problem. Cite at least three relevant papers from 2020–2024."*
+
+---
+
+### 3.4 Graph-Based Code Representation
+
+#### 3.4.1 Code Property Graph Construction
+**Prompt:** *"Describe in detail the construction of a Code Property Graph (CPG) by composing three sub-graphs: the Abstract Syntax Tree (AST), the Control Flow Graph (CFG), and the Program Dependence Graph (PDG). Explain how these three graphs are unified into a single heterogeneous graph. Use a concrete minimal code example (a Python Flask endpoint) and show how each node type and edge type is derived from it."*
+
+**Mermaid diagram:** Show how AST, CFG, PDG merge into CPG for a simple Flask route.
+
+#### 3.4.2 Privilege Flow Modeling
+**Prompt:** *"Define what constitutes a privilege flow in the context of web applications: the sequence of nodes in the CPG from an HTTP entry point, through any authentication/authorization check nodes, to a data access or object retrieval node. Describe the algorithm used to extract privilege flows as subgraphs. Explain how flows with missing checks are identified structurally. Provide a pseudocode algorithm."*
+
+#### 3.4.3 Node and Edge Feature Engineering
+**Prompt:** *"Describe the feature vectors assigned to nodes and edges in the privilege flow subgraph. For nodes: include node type (one-hot), token embedding (using a pre-trained CodeBERT or simple vocabulary), line number, and security-relevant keywords (e.g., @login_required, hasRole, findById). For edges: include edge type (AST/CFG/PDG) and direction. Justify each feature's relevance to access control detection."*
+
+---
+
+### 3.5 GNN-Based Vulnerability Detection
+
+#### 3.5.1 Graph Neural Network Architecture
+**Prompt:** *"Describe the chosen GNN architecture for graph-level classification of privilege flow subgraphs. Compare Graph Convolutional Network (GCN), Graph Attention Network (GAT), and GraphSAGE, and justify the final selection. Describe the number of layers, hidden dimensions, pooling strategy (global mean/max pooling), and the final classification head. Provide the mathematical formulation of the message-passing step."*
+
+#### 3.5.2 Multi-Class Classification Strategy
+**Prompt:** *"Explain how the three vulnerability classes (Missing Authentication, Missing Authorization, IDOR) and the safe class are handled as a 4-class graph classification problem. Discuss the class imbalance problem and the mitigation strategy used (oversampling, weighted loss, or data augmentation). Present the loss function."*
+
+#### 3.5.3 Explainability via Subgraph Attribution
+**Prompt:** *"Describe how GNNExplainer (or an equivalent method such as SubgraphX or PGExplainer) is applied post-classification to identify the critical subgraph responsible for the vulnerability prediction. Explain how the attributed subgraph is mapped back to source code lines and how this forms the basis of the remediation report."*
+
+**Mermaid diagram:**
+
+```mermaid
+flowchart LR
+    A[Full CPG Subgraph] --> B[GNN Forward Pass]
+    B --> C[Predicted Class:\nMissing Auth]
+    C --> D[GNNExplainer\nMask Learning]
+    D --> E[Critical Nodes\nattention_required=False\nno @login_required]
+    E --> F[Source Location\nfile.py line 42]
+    F --> G[Remediation Hint\nAdd authentication decorator]
+```
+
+---
+
+### 3.6 Remediation Report Generation
+
+#### 3.6.1 Vulnerability Localization
+**Prompt:** *"Describe how the output of the explainability module is translated into a precise vulnerability report: file path, function name, line range, vulnerability class, confidence score, and the specific nodes that triggered the classification. Show a sample JSON report structure."*
+
+#### 3.6.2 Automated Fix Suggestions
+**Prompt:** *"Describe the rule-based fix suggestion engine that maps each vulnerability class to a set of remediation templates: for Missing Authentication, suggest adding the appropriate decorator/middleware; for Missing Authorization, suggest a role-check insertion point; for IDOR, suggest ownership verification patterns. Discuss the limitations of this suggestion system and why full automated patch generation is left as a future direction."*
+
+---
+
+### 3.7 Conclusion
+*Summary of the design choices, transition to implementation.*
+
+---
+
+## Chapter 4 — Implementation
+
+### 4.1 Introduction
+
+### 4.2 Technologies and Tools
+
+| Component | Technology | Justification |
+|-----------|-----------|---------------|
+| Parsing | Joern / tree-sitter | Industrial CPG builder |
+| Graph ML | PyTorch Geometric | State-of-the-art GNN library |
+| Embeddings | CodeBERT (optional) | Code token semantics |
+| Explainability | GNNExplainer | Integrated with PyG |
+| API | FastAPI | Lightweight, async |
+| Visualization | Graphviz / D3.js | CPG rendering |
+
+**Prompt:** *"Write a technologies section justifying each tool in the stack: Joern for CPG construction, PyTorch Geometric for GNN implementation, FastAPI for the REST interface, and GNNExplainer for interpretability. For each tool, briefly state what it does, why it was chosen over alternatives, and any limitations encountered."*
+
+### 4.3 Dataset Construction and Labeling
+
+#### 4.3.1 Benchmark Datasets Used
+**Prompt:** *"Describe the datasets used for training and evaluation: (1) OWASP WebGoat — deliberately vulnerable Java application, (2) DVWA — PHP vulnerable app, (3) SecBench / CVEfixes — real-world CVE patches, (4) any manually labeled samples. For each, state the number of samples per vulnerability class and how labels were assigned. Discuss dataset limitations."*
+
+#### 4.3.2 Dataset Statistics and Class Distribution
+*Include a table here with counts per class, and a bar chart or Mermaid-compatible representation.*
+
+#### 4.3.3 Data Preprocessing Pipeline
+**Prompt:** *"Describe the full preprocessing pipeline from raw source code to labeled graph dataset: parsing → CPG generation → privilege flow extraction → feature computation → graph serialization (PyG Data objects). Include pseudocode for the main preprocessing loop."*
+
+### 4.4 Model Training Details
+**Prompt:** *"Describe the training protocol: train/validation/test split (e.g., 70/15/15), optimizer (Adam), learning rate schedule, number of epochs, early stopping criterion, and hardware used. Explain how hyperparameter tuning was performed (grid search or manual). Present the final hyperparameter configuration in a table."*
+
+### 4.5 System Integration
+**Prompt:** *"Describe how all components are integrated into a usable tool: the CLI interface, the REST API endpoint that accepts a source directory and returns a JSON vulnerability report, and the optional web dashboard. Include a system architecture diagram."*
+
+**Mermaid diagram — deployment architecture:**
+
+```mermaid
+sequenceDiagram
+    participant Dev as Developer
+    participant API as FastAPI Server
+    participant Parser as Joern Parser
+    participant GNN as GNN Model
+    participant Exp as GNNExplainer
+    Dev->>API: POST /analyze {source_dir}
+    API->>Parser: Parse source → CPG
+    Parser-->>API: Graph dataset
+    API->>GNN: Classify graphs
+    GNN-->>API: {class, confidence}
+    API->>Exp: Explain predictions
+    Exp-->>API: Critical subgraphs
+    API-->>Dev: JSON Report {file, line, type, fix_hint}
+```
+
+### 4.6 Conclusion
+
+---
+
+## Chapter 5 — Evaluation and Discussion
+
+### 5.1 Introduction
+*State the RQs being answered and the evaluation methodology.*
+
+### 5.2 Experimental Setup
+
+#### 5.2.1 Evaluation Metrics
+**Prompt:** *"Define and justify the evaluation metrics used: Precision, Recall, F1-score (macro and per-class), False Positive Rate, and Matthews Correlation Coefficient (MCC). Explain why MCC is particularly important for imbalanced vulnerability datasets. Provide the formula for each metric."*
+
+#### 5.2.2 Baselines and Comparison Tools
+**Prompt:** *"Describe the tools selected for comparison: (1) SonarQube — open-source SAST, (2) Semgrep — pattern-based static analysis, (3) Bandit — Python security linter, (4) CodeQL — semantic query engine. For each tool, describe how it was configured to detect the same three vulnerability classes, and acknowledge any fairness limitations of the comparison."*
+
+### 5.3 Detection Results per Vulnerability Class
+
+#### 5.3.1 Results on Missing Authentication
+*Table: Precision, Recall, F1 per model and per baseline.*
+
+#### 5.3.2 Results on Missing Authorization
+*Table.*
+
+#### 5.3.3 Results on IDOR Detection
+*Table.*
+
+#### 5.3.4 Overall Comparison with Industry Tools
+**Prompt:** *"Present a consolidated comparison table of your framework versus SonarQube, Semgrep, Bandit, and CodeQL across all three vulnerability classes. Use macro-averaged F1 as the primary metric. Discuss cases where your approach outperforms baselines (structural reasoning, privilege flow context) and cases where baselines perform better (pattern coverage, mature rule sets)."*
+
+*Sample table structure:*
+
+| Tool | MA Precision | MA Recall | MA F1 | MZ F1 | IDOR F1 | Macro F1 |
+|------|-------------|-----------|-------|-------|---------|----------|
+| Ours | | | | | | |
+| SonarQube | | | | | | |
+| Semgrep | | | | | | |
+| Bandit | | | | | | |
+| CodeQL | | | | | | |
+
+### 5.4 Explainability Evaluation
+**Prompt:** *"Evaluate the quality of the explanations produced by GNNExplainer using two criteria: (1) Fidelity — does removing the explained subgraph change the prediction? (2) Sparsity — how concise is the explanation (fraction of nodes retained)? Report these metrics and include two case studies: one true positive with a good explanation, one false positive with analysis of why the model erred."*
+
+### 5.5 Ablation Study
+**Prompt:** *"Present an ablation study analyzing the contribution of each component: (1) CPG vs. AST-only representation, (2) with vs. without privilege flow extraction, (3) with vs. without CodeBERT node features, (4) GCN vs. GAT vs. GraphSAGE. Present results in a table and discuss which design choices contribute most to performance."*
+
+### 5.6 Threats to Validity
+**Prompt:** *"Discuss threats to validity using the standard four categories from Wohlin et al.: (1) Internal validity — dataset labeling bias, model overfitting; (2) External validity — generalizability to other languages and frameworks; (3) Construct validity — whether the chosen metrics truly measure detection quality; (4) Conclusion validity — statistical significance of comparisons."*
+
+### 5.7 Discussion
+**Prompt:** *"Discuss the broader implications of your results: what does graph-based detection offer that pattern matching cannot? What are the practical deployment challenges? How does the explainability component address developer trust? What is the computational cost at analysis time?"*
+
+### 5.8 Conclusion
+
+---
+
+## General Conclusion & Perspectives
+
+**Prompt:** *"Write a general conclusion that: (1) summarizes the three objectives stated in the introduction and how each was addressed; (2) highlights the main contributions — the vulnerability taxonomy, the privilege flow graph model, the GNN classifier, and the explainable report; (3) states the main limitations honestly; (4) proposes five concrete future directions: extension to dynamic analysis, support for more languages, integration into CI/CD pipelines, automated patch generation using LLMs, and formal verification of remediations."*
+
+---
+
+## Summary of Recommended Mermaid Diagrams
+
+| Location | Diagram Type | Purpose |
+|----------|-------------|---------|
+| §3.2.1 | Flowchart | Threat model |
+| §3.2.2 | Graph TD | Vulnerability taxonomy tree |
+| §3.3.1 | Flowchart TD | Full pipeline overview |
+| §3.4.1 | Flowchart | CPG = AST + CFG + PDG merge |
+| §3.5.3 | Flowchart LR | Explainability flow |
+| §4.5 | Sequence Diagram | API interaction |
+
+---
+
+This structure gives you **3 clean contribution chapters**, each with research-grade subsections, ready-to-use Opus prompts for every section, and a clear slot for your evaluation tables and diagrams. The chapter progression follows the standard *design → implement → evaluate* arc expected at the engineering thesis level.

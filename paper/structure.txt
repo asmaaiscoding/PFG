@@ -1,0 +1,341 @@
+# Part II — Contribution: Final Structure
+
+---
+
+## Chapter Mandates (Non-Overlapping)
+
+- **Chapter 3 (Theory & Math)**: Threat model, formal PFG definition, feature vector justification, GATv2 math, pooling equations, rule formalization. NO implementation details, NO dataset stats, NO results.
+- **Chapter 4 (Engineering & Data)**: Extractor algorithms, 75-CVE corpus construction, augmentation methodology, experimental design. NO architecture justifications, NO math derivations, NO ablation results.
+- **Chapter 5 (Empirical Proof)**: Answers RQs with data. Baselines, ablations, interpretability proof, error analysis. NO re-explanations of architecture, NO re-justifications.
+
+---
+
+## Chapter 3 — PFG: A Graph-Based Framework for Authorization Vulnerability Detection
+
+### 3.1 Introduction and Core Insight
+
+The core observation: authorization vulnerabilities are not about bad code patterns — they are about MISSING guards on execution paths. This structural nature makes them fundamentally different from injection/memory vulnerabilities and unsuitable for token-based or generic-graph approaches. Present the chapter's deliverable: a formal graph schema + hybrid neural/logical architecture.
+
+### 3.2 Problem Formalization & Threat Model
+
+#### Threat Model
+- Attacker: authenticated user with valid credentials attempting privilege escalation or unauthorized object access
+- Assets: REST API endpoints exposing object-level resources
+- Trust boundary: authentication → authorization → data access chain
+- Scope: Django/DRF and Spring Boot REST APIs
+
+#### Taxonomy of Authorization Vulnerabilities (5 subtypes)
+- MISSING_AUTH (CWE-306): no identity verification before data access
+- MISSING_ROLE (CWE-862): no role/privilege elevation for sensitive operations
+- IDOR (CWE-639): route parameter flows to data access without ownership check
+- TENANT_ISOLATION_FAILURE: multi-tenant data reachable without tenant scoping
+- OBJECT_LEVEL_PERMISSION_BYPASS: model-level permissions exist but not enforced
+
+For each: formal definition, minimal code example, CWE + OWASP A01:2021 mapping.
+
+#### Research Questions
+- RQ1: Can a domain-specific graph representation effectively detect access control vulnerabilities in production web applications?
+- RQ2: Does the framework provide interpretable, actionable results without post-hoc explanation techniques?
+- RQ3: How does GNN-based detection compare with rule-based structural analysis and existing SAST tools?
+
+### 3.3 Positioning Against Existing Paradigms
+
+Make the argument ONCE, formally, here. Do not repeat elsewhere.
+
+**Against NLP-based detection (CodeBERT, VulBERTa):**
+Authorization is a cross-functional property spanning multiple files (urls.py → views.py → models.py). Token-based models operating on single-function windows cannot capture the inter-component relationship between an endpoint's URL configuration, its middleware chain, and its downstream data access. The security signal is structural, not lexical.
+
+**Against generic Code Property Graphs (CPG/Joern):**
+CPGs compose AST + CFG + PDG into graphs with thousands of nodes per function. For authorization detection, 99% of these nodes (syntax tokens, control flow branches, data dependencies) are irrelevant noise. The signal — "does a permission check exist between this entry point and this database query" — is buried. A domain-specific abstraction that models only the authorization-relevant components yields a 5–50 node graph where each node IS a meaningful architectural component.
+
+**Our positioning:**
+Purpose-built graph with interpretable features → no opaque embeddings needed. Structural path analysis → no post-hoc GNNExplainer needed. Both are eliminated by design, not compensated for after the fact.
+
+### 3.4 The Program Flow Graph Formulation
+
+#### Formal Graph Definition
+
+$$G = (V, E, \tau_V, \tau_E, \phi_V, \phi_E)$$
+
+where:
+- $V$: set of nodes, $\tau_V: V \to \{\text{ENDPOINT}, \text{MIDDLEWARE}, \text{SERVICE}, \text{DATA\_ACCESS}\}$
+- $E \subseteq V \times V$: directed edges, $\tau_E: E \to \{\text{CALL}, \text{IDENTIFIER\_FLOW}, \text{TENANT\_FLOW}\}$
+- $\phi_V: V \to \mathbb{R}^{36}$: node feature vector
+- $\phi_E: E \to \mathbb{R}^{3}$: edge feature vector (one-hot edge type)
+
+Schema version 1.0, JSON-validated against pfg-1.0.json.
+
+#### Node Types and Their Semantic Role
+
+Explain WHAT each represents in the authorization decision chain:
+- **ENDPOINT**: where the request enters (HTTP method, route, initial auth signals)
+- **MIDDLEWARE**: what guards protect it (guard_type: authentication, role, ownership, tenant, object_permission)
+- **SERVICE**: what logic processes it (business layer)
+- **DATA_ACCESS**: what data is at stake (operation type, entity, ownership/tenant predicates)
+
+A vulnerability exists when a path from ENDPOINT to DATA_ACCESS has insufficient MIDDLEWARE.
+
+#### Feature Vector Justification (φ_V ∈ ℝ^36)
+
+Rigorous justification of WHY each dimension exists. Table mapping:
+- Feature index → property name → semantic meaning → which vulnerability subtype it detects
+
+Feature categories:
+- [0:4] node type identity
+- [4:9] HTTP method (risk profile)
+- [9] authentication requirement (MISSING_AUTH signal)
+- [10:15] role requirement (MISSING_ROLE signal)
+- [15] ownership check (IDOR signal)
+- [16:19] guard type (path protection evidence)
+- [19:23] operation type (damage potential)
+- [23–35] authorization property signals (tenant, object permissions, reachability)
+
+Key insight: every feature is a human-readable boolean/categorical security property, not a learned embedding.
+
+### 3.5 Hybrid Detection Architecture
+
+#### GATv2-Based Classification (Mathematical Foundation)
+
+GATv2 message-passing equations:
+
+$$\alpha_{ij}^{(l)} = \text{softmax}_j\left(\mathbf{a}^T \text{LeakyReLU}\left(\mathbf{W}[\mathbf{h}_i^{(l)} \| \mathbf{h}_j^{(l)} \| \mathbf{e}_{ij}]\right)\right)$$
+
+$$\mathbf{h}_i^{(l+1)} = \|_{k=1}^{K} \sum_{j \in \mathcal{N}(i)} \alpha_{ij}^{(l,k)} \mathbf{W}^{(k)} \mathbf{h}_j^{(l)}$$
+
+Justify WHY attention matters: the protective relationship between a middleware guard and an endpoint is asymmetric and context-dependent. A role check protects differently depending on which data access it guards.
+
+#### Target-Aware Attention Pooling (Mathematical Foundation)
+
+Key architectural innovation. Standard global pooling loses focus on the specific endpoint being classified:
+
+$$s_i = \mathbf{w}^T \tanh(\mathbf{W}_s [\mathbf{h}_i \| \mathbf{h}_{target}])$$
+$$\alpha_i = \text{softmax}(s_i)$$
+$$\mathbf{z} = \sum_i \alpha_i \mathbf{h}_i$$
+$$\hat{y} = \text{MLP}([\mathbf{z} \| \mathbf{h}_{target}])$$
+
+This ensures the model's attention is anchored to the endpoint being evaluated.
+
+#### Five Structural Rules (Formal Boolean Logic)
+
+- $R_1$: $\exists v \in V : \tau_V(v) = \text{EP} \land \neg\text{auth}(v) \land \text{reaches}(v, \text{DA}) \land \neg\text{public}(v) \Rightarrow \text{MISSING\_AUTH}$
+- $R_2$: $\exists v : \text{reaches\_privileged}(v) \land \neg\exists m \in \text{path}(v, DA) : \text{guard}(m) = \text{ROLE} \Rightarrow \text{MISSING\_ROLE}$
+- $R_3$: $\exists v : \text{has\_param}(v) \land \exists e : \tau_E(e) = \text{ID\_FLOW} \land \neg\text{ownership\_on\_path}(v, DA) \Rightarrow \text{IDOR}$
+- $R_4$: $\exists v : \text{reaches\_tenant\_data}(v) \land \neg\text{tenant\_scoped}(v) \Rightarrow \text{TENANT\_ISO}$
+- $R_5$: $\exists v : \text{model\_perm}(v) \land \neg\text{obj\_perm\_on\_path}(v) \Rightarrow \text{OBJ\_PERM\_BYPASS}$
+
+#### Complementarity: Neural + Logical
+
+- Rules: complete for explicitly encodable patterns, guaranteed interpretability
+- GNN: captures interaction effects beyond rule expressiveness
+- Combined: GNN proposes → validator confirms + explains
+
+### 3.6 Interpretability by Design
+
+The system provides structural interpretability:
+- Each Finding traces an explicit path: ENDPOINT → [missing MIDDLEWARE] → DATA_ACCESS
+- Explanation derived from graph structure, not learned attention weights
+- Contrast with post-hoc tools (GNNExplainer): those learn WHICH subgraph mattered; our validator CONSTRUCTS the explanation from the path
+
+This satisfies RQ2 by design, not by additional tooling.
+
+### 3.7 Conclusion
+
+Summary of theoretical framework. Transition to engineering realization.
+
+---
+
+## Chapter 4 — Implementation & Dataset
+
+### 4.1 Introduction & Technology Stack
+
+Brief table: Python AST, Regex, Pydantic, PyTorch Geometric, FastAPI, Next.js 14, D3.js. One-line justification each.
+
+### 4.2 Framework-Specific PFG Extraction
+
+#### Django Extractor (AST-Based)
+
+Five sub-modules, explained by what problem they solve:
+- Endpoint discovery: resolving URLconf trees (path, re_path, include, DRF routers)
+- Auth annotation: detecting decorators, permission_classes, mixins, settings defaults
+- Call graph: intra-project traversal with alias resolution (max_depth=8)
+- Data access: ORM operation detection with ownership classification (DIRECT/INDIRECT/NONE)
+- Identifier flow: intra-procedural taint propagation
+
+**REQUIRED**: Pseudocode for identifier flow taint propagation algorithm.
+**REQUIRED**: Pseudocode for endpoint discovery across nested URLconfs.
+
+#### Spring Extractor (Regex-Based)
+
+Explain the asymmetry: Spring's annotation-centric design makes regex viable where Django's imperative URLconf requires AST parsing.
+
+#### Extractor Correctness Validation
+
+Manual verification of generated PFGs against reference applications (benchmarks/reference/ test suite). Report coverage of recognized patterns.
+
+### 4.3 Dataset Construction
+
+#### Real-World CVE Corpus (75 entries)
+
+- Source: production open-source apps (wger, Sentry, Weblate, Nautobot, Wagtail, Keycloak, etc.)
+- Manifest system: pinned git revision + ground truth (app, framework, source_root, endpoint_id, subtype, CVE)
+- Coverage: all 5 subtypes across Django and Spring/Java
+- Labeling: single-annotator methodology (addressed in §5.6)
+- Why not WebGoat/DVWA: injection-focused educational toys, not authorization flaws in production REST APIs
+
+#### Ground Truth Completeness
+
+Address the "unlabeled = safe" assumption. Manifests mark known-vulnerable endpoints; all others treated as safe. Acknowledge likely false negatives. Quantify where possible.
+
+### 4.4 Data Augmentation & Expansion
+
+#### Mutation Strategies (5 types)
+
+Take a SECURE PFG, remove a guard → labeled VULNERABLE variant.
+
+**REQUIRED**: Mutation matrix table:
+| Strategy | Source | Result Subtype | Samples Generated |
+|---|---|---|---|
+| Remove auth guard | Secure endpoints with auth | MISSING_AUTH | N |
+| Remove role guard | Endpoints with role check | MISSING_ROLE | N |
+| Remove IDOR check | Endpoints with ownership | IDOR | N |
+| Remove tenant predicate | Tenant-scoped endpoints | TENANT_ISO | N |
+| Remove object permission | Obj-perm endpoints | OBJ_PERM_BYPASS | N |
+
+Cap: 48 per manifest. Only endpoints with reachable data access.
+
+#### Weak Supervision (Rule Pseudo-Labels)
+
+Threshold: 0.35 confidence. Cap: 64 per manifest. Marked for ablation tracking.
+
+#### Synthetic Data for Pre-training
+
+Generated PFGs with controlled patterns. Contrastive pairs for two-stage training.
+
+### 4.5 Training Pipeline & Experimental Design
+
+#### Training Configurations (3 compared)
+
+- Config A: Real-only (75 CVE manifests)
+- Config B: Real + augmented + weak supervision
+- Config C: Two-stage (synthetic pretrain → real finetune)
+
+#### Split Strategy
+
+Leave-one-app-out. No data contamination. Deterministic 80/10/10.
+
+#### Hyperparameters
+
+Table: AdamW, class-weighted CE, GATv2 3 layers 4 heads hidden_dim=64, early stopping.
+
+#### Ablation Design
+
+- GNN (PathAnalyzer) vs. MLP baseline vs. rule baseline
+- Feature decontamination: removing indices 9, 15, 23, 27–35
+- Results go in Chapter 5.
+
+### 4.6 Demonstration System (Brief)
+
+One page maximum. Architecture diagram (FastAPI + Next.js + WebSocket). Analysis flow. Do not belabor — this is not a software engineering thesis.
+
+### 4.7 Conclusion
+
+---
+
+## Chapter 5 — Evaluation & Discussion
+
+### 5.1 Evaluation Protocol
+
+#### Metrics
+Precision, Recall, F1-score. Per-subtype breakdown. Confusion matrix.
+
+#### True Positive Matching Rule
+A prediction is TP iff BOTH endpoint_id AND vulnerability subtype match ground truth.
+
+#### Baselines
+- Rule baseline (structural validator alone)
+- Semgrep (external adapter)
+- CodeQL (external adapter)
+
+### 5.2 RQ1: Detection Effectiveness
+
+#### DRF-Standard Results (Best Performance)
+Strong results on well-structured standard DRF applications. P, R, F1 with per-app breakdown.
+
+#### Full Benchmark (75 CVEs, Honest Reporting)
+Aggregate across all entries. Acknowledge gap between DRF-standard and non-standard/Spring.
+
+#### Per-Subtype Performance
+Which subtypes handled well vs. poorly, and why.
+
+### 5.3 RQ2: Interpretability & Feature Analysis
+
+#### Qualitative Case Study (REQUIRED)
+Pick one real CVE. Show:
+1. The raw vulnerable code (before patch)
+2. The extracted PFG (as a diagram)
+3. The validator's natural-language explanation
+4. How a developer would use that output to write the fix
+
+Demonstrates actionable interpretability.
+
+#### Feature Decontamination Results
+Ablation showing model works after removing label-correlated features → proves structural learning, not feature shortcuts.
+
+### 5.4 RQ3: Comparison with SOTA
+
+#### GNN vs. Rule Baseline
+Where the GNN catches things rules miss (interaction effects, context-dependent patterns).
+
+#### GNN vs. Semgrep/CodeQL
+What existing tools detect vs. what our system detects. Complementary coverage.
+
+### 5.5 Failure Analysis
+
+#### Extractor Failures vs. Model Failures
+Critical distinction:
+- Extractor failure: PFG was incomplete/wrong → model had no chance
+- Model failure: PFG was correct but GNN classified wrong
+
+Quantify the split. Demonstrates academic maturity.
+
+#### The "Unlabeled = Safe" Problem
+Manifests only mark KNOWN vulnerabilities. Other endpoints labeled safe may be vulnerable. Impact on P/R interpretation.
+
+#### Framework Coverage Gap
+DRF-standard (high coverage) vs. custom auth (low) vs. Spring (regex limitations).
+
+### 5.6 Threats to Validity
+
+#### Internal
+- Single-annotator labeling (75 CVE manifests)
+- Feature contamination risk (addressed by decontamination ablation)
+- Small test sets in leave-one-app-out
+
+#### External
+- Framework generalization (Django/Spring only)
+- Application diversity (OSS only)
+
+#### Construct
+- TP matching strictness (endpoint_id + subtype)
+- Statistical significance on small test sets
+
+### 5.7 Conclusion
+
+---
+
+## General Conclusion & Perspectives
+
+- Summary of contributions (PFG formalism, hybrid GNN+validator, 75-CVE corpus, interpretable detection)
+- Final answers to RQ1, RQ2, RQ3
+- Limitations (honest)
+- Future work: additional frameworks (Flask, Express), dynamic analysis, LLM-assisted patching, larger corpora
+
+---
+
+## Narrative Arc
+
+Ch3 identifies that existing paradigms (NLP, CPG) fail for multi-layered authorization, and solves this theoretically with the PFG + hybrid architecture.
+
+Ch4 grounds theory in reality: extracting graphs from real code, building a 75-CVE corpus, overcoming class imbalance through mutation.
+
+Ch5 proves validity: hybrid PFG outperforms baselines, ablation isolates graph structure value, critical evaluation of limitations.

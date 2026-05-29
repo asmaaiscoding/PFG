@@ -1,3 +1,115 @@
+\documentclass[11pt,a4paper]{report}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+\usepackage{lmodern}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{trees,positioning}
+\usepackage{enumitem}
+\usepackage{url}
+\usepackage{booktabs}
+\usepackage{amsmath}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=black,
+  urlcolor=blue,
+  citecolor=black
+}
+
+\title{Towards an Automated Source Code Remediation Approach \\
+       for the Security and Privacy of Third-Party Mobile Applications}
+\author{Master's Thesis \\
+        Master in Sciences and Technologies \\
+        Major: Computer Science, Track: Software Engineering}
+\date{}
+
+\begin{document}
+
+% =====================================================================
+% TITLE PAGE
+% =====================================================================
+\begin{titlepage}
+\begin{center}
+    % Logo/En-tête (image complète)
+    \includegraphics[width=\textwidth]{logo.png}\\[2cm]
+    
+    % Titre du document
+    {\LARGE\bfseries Graduation thesis}\\[0.8cm]
+    {\large For the obtention of the State Computer Science Engineer Diploma}\\[0.5cm]
+    {\large\bfseries Option: Computer Systems (SQ)}\\[1cm]
+    
+    \rule{\linewidth}{0.5pt}\\[0.5cm]
+    % Titre du projet
+    {\large\bfseries Topic:}
+    \vspace{0.3cm}
+    
+    {\LARGE Towards an Approach for Software Security \\[0.3cm]Vulnerability Identification and Remediation}\\[0.5cm]
+    \rule{\linewidth}{0.5pt}\\[1.5cm]
+    
+    % Auteurs et encadrants
+    \noindent
+    \begin{minipage}{0.45\textwidth}
+        \begin{flushleft}\large
+            \textit{Made by :}\\
+            - \textsc{Nacef} Salah Eddine\\
+            - \textsc{Nouali} Asmaa
+        \end{flushleft}
+    \end{minipage}%
+    \hfill
+    \begin{minipage}{0.5\textwidth}
+        \begin{flushright}\large
+            \textit{Supervised by :}\\
+            - Mr. \textsc{Seriai} Abdelhak-Djamel (LIRMM)\\
+            - Mrs. \textsc{Zellagui} Soumia (ESI)
+        \end{flushright}
+    \end{minipage}\\[1cm]
+    
+    \vfill
+    {\large Academic Year: 2025/2026}
+\end{center}
+\end{titlepage}
+
+%=====================================================================
+% DEDICATION
+% =====================================================================
+\chapter*{Dedication}
+\addcontentsline{toc}{chapter}{Dedication}
+
+%=====================================================================
+% ACKNOWLEDGMENTS
+% =====================================================================
+\chapter*{Acknowledgments}
+\addcontentsline{toc}{chapter}{Acknowledgments}
+
+% =====================================================================
+% ABSTRACT
+% =====================================================================
+\chapter*{Abstract}
+\addcontentsline{toc}{chapter}{Abstract}
+
+The widespread integration of software systems into daily activities has significantly increased the exposure of sensitive data to security risks. As applications become more complex and interconnected, they present a growing number of potential entry points for attackers. Ensuring the security of these systems is therefore a major concern, requiring effective mechanisms to identify and address vulnerabilities.
+
+The process of securing software can be seen as a continuous confrontation between attackers, who aim to exploit weaknesses, and defenders, who seek to prevent or mitigate such exploits. In this context, vulnerability detection and remediation play a central role in reducing the attack surface and improving overall system resilience. While numerous techniques exist to uncover vulnerabilities, the challenge lies in efficiently correcting them without negatively impacting system functionality.
+
+This work focuses on the analysis and improvement of approaches for detecting and remediating software vulnerabilities. We first identify a set of common vulnerabilities that may affect software systems, then propose corresponding remediation strategies designed to preserve application behavior. Finally, we evaluate our approach through its implementation within an automated framework, demonstrating its effectiveness in enhancing software security.
+
+\medskip
+\noindent\textbf{Keywords:} software security, vulnerability detection, automated remediation, automated program repair, static analysis, dynamic analysis, machine learning, large language models, systematic mapping study, secure software engineering.
+
+%=====================================================================
+% TABLE OF CONTENTS
+% =====================================================================
+\tableofcontents
+
+% =====================================================================
+% GENERAL INTRODUCTION
+% =====================================================================
 \section*{General Introduction}
 \label{chap:introduction}
 
@@ -1457,3 +1569,9 @@ This chapter evaluated the PFG framework against three research questions and pr
 \textbf{RQ3 (Comparison with SOTA):} The system achieves recall superior to Semgrep and CodeQL on standard authorization patterns, leveraging path-aware analysis that pattern-matching tools cannot replicate. However, existing tools benefit from broader pattern libraries and direct source-code access without the intermediate PFG representation layer.
 
 \textbf{Key insight:} the PFG framework demonstrates that domain-specific graph design (encoding only authorization-relevant structure with interpretable features) is a viable alternative to generic code representations (CPGs, token embeddings) for security analysis. The primary bottleneck is not model capacity but extractor coverage — an engineering challenge with a clear path to resolution through incremental pattern recognition improvements.
+
+
+\bibliographystyle{plain}
+\bibliography{references}
+
+\end{document}

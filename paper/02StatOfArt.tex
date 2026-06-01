@@ -1,0 +1,980 @@
+\chapter{State of the Art}
+\label{chap:state-of-the-art}
+
+\section{Introduction}
+
+In order to present the context of this research work and its application
+scope, we first present a taxonomy of the research domain that introduces
+the main key concepts. Next, we present related work in order to assess the
+progress of the solutions proposed in the field.
+
+In our context, the terms \emph{application}, \emph{software} and
+\emph{program} are interchangeable to designate an independent computing
+software component. The same applies to the terms \emph{device},
+\emph{machine} and \emph{computer}, which all designate the physical
+execution platform. Finally, the terms \emph{vulnerability}, \emph{threat}
+and \emph{flaw} all designate a security issue.
+
+\section{Concepts and Taxonomy of the Research Domain}
+
+This section establishes the conceptual foundations of the research domain.
+We begin by situating software security within the broader landscape of
+computer security, then progressively narrow the scope by examining the
+targets on which security practices are applied, the stages at which they
+intervene, and the actions they perform. The final two subsections introduce
+the two technical pillars of this work: vulnerability detection techniques
+and automated program repair.
+
+\subsection{Software Security}
+
+The concept of security can be applied to many domains. For this taxonomy,
+we focus on its application to computing systems and, more specifically,
+to the software layer.
+
+Computer security is the discipline that studies and implements mechanisms
+to protect computing systems (their data, hardware, and software
+components) against unauthorized access, damage, or disruption
+\cite{placeholder-sast}. This field can be broken down into several
+sub-domains according to the aspect of the computing system being secured,
+as illustrated in Figure~\ref{fig:types-computer-security}.
+
+First, there is \texttt{physical security}. Each computing device has a
+physical interface through front-panel ports as well as the various
+electronic boards. Each of these connections can become a threat if used
+maliciously. The most well-known case is the misuse of the USB port or the
+deployment of hardware keyloggers \cite{placeholder-detection-survey}.
+
+Another aspect of computer security is \texttt{infrastructure security}.
+This branch focuses on the configuration and hardware used to set up an
+infrastructure. It includes aspects related to user and access-rights
+management as well as workstations. A large part of it focuses on the
+network side of the infrastructure, in order to limit each workstation to
+its required accesses, while preventing external intrusions and internal
+privilege escalations \cite{placeholder-detection-survey}.
+
+Computer security also includes the \texttt{system security} branch that
+focuses on operating systems (OS). As the main software component of a
+computer, an entire branch of computer security is dedicated to it. The OS
+stands out from other software because of its critical role within a machine.
+It manages both the hardware aspect of the machine and the users working on
+it. Exploiting bugs in an OS can have critical consequences by giving an
+attacker full access \cite{placeholder-sast}.
+
+Another branch is \texttt{network security}. Unlike infrastructure security
+that deals with the physical setup of the network, network security focuses
+on data transmission and its content. Network security can act on the
+majority of layers of the OSI model. A well-known example for the general
+public is the use of the HTTPS protocol as a replacement for HTTP
+\cite{placeholder-sast}.
+
+Computer security also has a more recent branch, halfway between computing
+and social sciences: \texttt{social security}. This branch encompasses all
+vulnerabilities that use the human factor to penetrate software, networks
+or infrastructures. The most common type of attack in this category is
+phishing, which relies on the inattention or gullibility of the user to
+make them enter confidential information in a corrupted context
+\cite{placeholder-detection-survey}.
+
+Finally, we find \texttt{software security}, the branch dedicated to
+securing applications, which is associated with software engineering. This
+aspect encompasses a large number of practices that involve a variety of
+roles, from the developer to the software redistributor. Its level of
+criticality has greatly increased in recent years with the democratization
+of computing in the population and its intensive use in all areas. The
+protection of personal data against theft and resale has become a major
+concern. Practices in this field are diverse and can be categorized
+according to several criteria, as detailed below \cite{placeholder-detection-survey}.
+
+Figure~\ref{fig:types-computer-security} summarizes the six main
+sub-domains of computer security described above. The remainder of this
+chapter focuses specifically on the \texttt{software security} branch,
+which constitutes the scope of the present work.
+
+\begin{figure}[htbp]
+  \centering
+  \begin{tikzpicture}[
+    every node/.style={draw, rectangle, rounded corners, align=center,
+                       font=\small, inner sep=4pt},
+    level distance=12mm, sibling distance=24mm,
+    edge from parent/.style={draw, -}
+  ]
+  \node {Computer Security}
+    child {node {Physical}}
+    child {node {Infra-\\structure}}
+    child {node {System}}
+    child {node {Network}}
+    child {node {Software}}
+    child {node {Social}};
+  \end{tikzpicture}
+  \caption{The six main sub-domains of computer security. Software security,
+           highlighted in the present work, is the branch dedicated to
+           securing applications at the source, packaged, and executed
+           levels of the development lifecycle.}
+  \label{fig:types-computer-security}
+\end{figure}
+
+\subsection{Targets of Software Security}
+\label{subsec:targets}
+
+A natural axis for categorizing software security practices is the
+\emph{target}: the kind of artefact, runtime and platform on which the
+software ultimately executes. Each target carries its own attack surface,
+and protective techniques must adapt to that surface rather than be
+applied uniformly. Modern software production has multiplied these
+targets, and any taxonomy that aspires to be comprehensive has to keep
+pace \cite{placeholder-detection-survey}.
+
+\textit{Desktop applications} run on personal computers under
+general-purpose operating systems (Windows, macOS, Linux/BSD). Their
+threat model is dominated by local privilege issues, memory-safety
+defects in native code, malicious input parsers and supply-chain
+compromises in third-party libraries \cite{placeholder-sast}.
+
+\textit{Server-side and back-end applications} are deployed on physical
+or virtualised servers and exposed to remote consumers. Here the
+dominant concerns shift towards injection flaws (SQL, command, LDAP),
+broken authentication and session management, server-side request
+forgery, deserialization issues and misconfigured access control
+\cite{placeholder-sast}.
+
+\textit{Web applications} are executed by a browser on top of a stack
+of HTTP-based protocols. The standardisation of JavaScript through
+ECMAScript flattens platform differences across browsers, but a
+distinct family of vulnerabilities arises at the browser/server
+boundary: cross-site scripting, cross-site request forgery,
+clickjacking, DOM-based attacks and parameter tampering
+\cite{placeholder-detection-survey}.
+
+\textit{Mobile applications} target Android, iOS or cross-platform
+runtimes (Flutter, React Native, .NET MAUI). They inherit many desktop
+concerns but add platform-specific risks: permission misuse,
+inter-component communication flaws, insecure local storage and
+weaknesses introduced by repackaging or sideloading
+\cite{placeholder-detection-survey}.
+
+\textit{Embedded and IoT software} runs on resource-constrained
+devices, often on stripped-down or real-time operating systems. The
+absence of standard mitigation features (ASLR, sandboxing, modern
+toolchains) makes memory-corruption bugs particularly damaging, and
+firmware update mechanisms themselves become a sensitive attack
+vector \cite{placeholder-sast}.
+
+\textit{Cloud-native and serverless workloads} are packaged as
+containers, functions or micro-services and orchestrated by platforms
+such as Kubernetes. Beyond the application code, the security
+boundary now includes infrastructure-as-code definitions, container
+images, secrets management and the configuration of the orchestrator
+itself \cite{placeholder-detection-survey}.
+
+\textit{Operating systems and system-level software} (kernels,
+hypervisors, drivers, browser engines used as runtime platforms) sit at
+the bottom of the stack. A flaw at this level usually subverts every
+higher-level protection, which explains why this target attracts a
+disproportionate share of attention from both attackers and defenders
+\cite{placeholder-sast}.
+
+\textit{Smart contracts and blockchain applications} execute on
+purpose-built virtual machines such as the EVM. They form a young but
+very active sub-domain whose vulnerabilities (reentrancy, integer
+over/underflows, state manipulation, cross-bridge attacks) have no
+direct equivalent in classical software, even though many of the
+underlying analysis techniques transfer \cite{placeholder-detection-survey}.
+
+\textit{Third-party libraries and open-source dependencies} deserve a
+category of their own. Most modern projects ship more external code
+than first-party code, so vulnerabilities propagate through the
+dependency graph rather than originate in the application itself;
+software composition analysis specifically addresses this target
+\cite{placeholder-sca}.
+
+\textit{Machine-learning systems} have recently emerged as an
+additional target. Trained models can be backdoored, prompt-injected
+or extracted, and the surrounding data pipelines expose conventional
+weaknesses such as insecure deserialization of model artefacts or
+untrusted dataset sources. Although still a niche, this target is
+growing fast as ML components become embedded in mainstream
+applications \cite{placeholder-detection-survey}.
+
+The taxonomy presented in the rest of this thesis is deliberately kept
+platform-agnostic: the techniques we examine for detection and
+remediation apply, with minor adaptations, across most of the targets
+above whenever the source code is available \cite{placeholder-sast}.
+
+\subsection{Stages of Security Protocol Application}
+\label{subsec:stages}
+
+Another criterion for categorizing the software security domain is the
+\emph{timing} of its implementation. The development and deployment cycle
+of an application is complex, and a piece of software goes through several
+states in which it is possible to intervene to secure it
+\cite{placeholder-sast}.
+
+\paragraph{Source state.} This is the state in which the application is
+during the development phases. In this state, the code is easily
+understandable by a human. During these phases, software security takes the
+form of good practices to be applied by developers, recommendations
+regarding vulnerabilities in the code, or the use of external tools that
+modify the code \cite{placeholder-sast}.
+
+\paragraph{Packaged state.} A packaged application is one that is ready to
+be deployed. It is not necessarily in the form of a single package: it can
+be the result of one or more optimizers, compilers, transpilers and
+packagers used to make it usable in production. The actual form of the
+application depends heavily on the technologies used and the target
+platform. In this state, the code is generally hardly readable by a human
+and is rather targeted at a physical or virtual machine. Software security
+is often linked here to approaches implemented by external tools that
+modify the compiled code \cite{placeholder-sast}.
+
+\paragraph{Executed state.} This is the state in which the software is when
+it is in use on a machine. Software security then takes the form of internal
+security mechanisms within the application, or of an external application
+observing and controlling the execution \cite{placeholder-detection-survey}.
+
+\subsection{Actions of Software Security}
+
+A last criterion for categorizing software security is the type of action
+performed to defend the application. These actions constitute the
+operational layer of the taxonomy and apply, in varying forms, across the
+targets introduced in Section~\ref{subsec:targets} and at each of the
+stages described in Section~\ref{subsec:stages}. They can be carried out
+either automatically or manually \cite{placeholder-sast}.
+
+\begin{itemize}
+  \item \textbf{Malware identification.} The detection of intentionally
+        malicious software. It aims to protect applications by detecting
+        and processing external threats \cite{placeholder-detection-survey}.
+  \item \textbf{Vulnerability detection.} It can be done from two angles.
+        The first is the \emph{internal} angle, which aims at detecting
+        vulnerabilities left in the application's code. The second is the
+        \emph{external} angle, which aims at detecting vulnerabilities in
+        the execution environment, that is, weaknesses that can present a
+        risk to the system's integrity in the face of an attack. The
+        external angle is by nature limited to security applied at runtime
+        since an environment is required to detect vulnerabilities in it.
+        It particularly applies to client applications, for which the
+        environment is unknown and not controlled \cite{placeholder-detection-survey}.
+  \item \textbf{Remediation.} This approach aims at modifying the code of
+        an application in order to remove its vulnerabilities. It relies
+        on the previously mentioned vulnerability detection. Two angles
+        are possible: \emph{corrective} remediation, where an existing
+        vulnerability has to be removed from the code; and
+        \emph{preventive} remediation, which consists in hardening the
+        application beforehand to make exploitation more difficult,
+        even when no specific flaw has been pinpointed. The present work
+        focuses on the corrective angle \cite{placeholder-apr-survey}.
+  \item \textbf{Runtime Application Self-Protection (RASP).} An action
+        specific to the executed state, whose goal is to protect an
+        application during its execution. It can either embed additional
+        security functions to be executed alongside the application, or
+        rely on an external application monitoring the application to be
+        secured during its execution \cite{placeholder-iast}.
+  \item \textbf{Testing.} This approach uses test suites that perform
+        security checks. They take the same form as unit or integration
+        tests, and accordingly share their advantages and drawbacks. They
+        can be performed in white-box, gray-box or black-box settings,
+        depending on the level of knowledge of the internal behavior of
+        the application \cite{placeholder-sast}.
+\end{itemize}
+
+The two actions of greatest relevance to the present work are vulnerability
+detection and remediation. The techniques underpinning each of them are
+examined in detail in the following two subsections.
+
+\subsection{Vulnerability Detection Techniques}
+\label{subsec:detection-techniques}
+
+Before surveying detection techniques, it is necessary to establish a
+working definition. In the context of this work, a \emph{vulnerability} is
+a weakness in a software system, arising from a design flaw, an
+implementation error, or a misconfiguration, that can be exploited by a
+malicious actor to compromise the confidentiality, integrity, or
+availability of the system or its data \cite{placeholder-detection-survey}.
+
+Detecting a vulnerability before an attacker exploits it is the prerequisite
+of any remediation effort. The literature has produced a rich and rather
+fragmented body of techniques, which we group below according to the
+principle that drives the analysis rather than the tooling that implements
+it. The boundaries between families are porous: many modern tools combine
+several paradigms, and recent learning-based detectors blur the classical
+static/dynamic distinction altogether \cite{placeholder-detection-survey}.
+
+\paragraph{Static Application Security Testing (SAST).}
+Static analysis inspects the source code, the bytecode or the binary
+without executing it. The simplest form relies on syntactic
+pattern matching, looking for code constructs known to be dangerous,
+for instance a call to \texttt{strcpy} in C or a SQL query built by string
+concatenation. More sophisticated engines abstract the program into
+intermediate representations such as control-flow graphs, data-flow graphs
+or call graphs, then run analyses like taint tracking, symbolic execution
+or abstract interpretation \cite{placeholder-sast}. The strength of SAST
+lies in its early-stage applicability, well before any test campaign;
+its weakness is a non-negligible rate of false positives, which has
+historically discouraged adoption in some industrial contexts. Widely used
+representatives include SonarQube, Coverity, Checkmarx, Fortify and the
+academically influential FlawFinder and Infer projects.
+
+\paragraph{Dynamic Application Security Testing (DAST).}
+Dynamic techniques execute the program and observe its behaviour. Unlike
+SAST, they require either a deployable build or a running service. The
+canonical instance is \emph{fuzzing}, where malformed or random inputs are
+fed to the program in order to trigger crashes, unexpected exceptions or
+memory corruptions. Coverage-guided fuzzers such as AFL, libFuzzer and
+their many descendants \cite{placeholder-fuzzing} have become a standard
+in low-level software, while web-oriented scanners (OWASP ZAP, Burp Suite)
+target HTTP-level flaws like SQL injection or cross-site scripting.
+Compared with SAST, DAST suffers far fewer false positives, but it can
+only flag what its execution actually reaches: code paths that the test
+harness does not visit remain invisible.
+
+\paragraph{Interactive Application Security Testing (IAST).}
+IAST combines instrumentation with runtime observation: agents inserted in
+the application correlate the inputs received by the program with the
+sensitive operations they end up reaching. The result is a hybrid view
+that retains the precision of dynamic analysis while preserving some of
+the coverage advantages of static reasoning \cite{placeholder-iast}. The
+trade-off is the deployment cost, IAST agents must be embedded in the
+runtime, and a stronger dependency on representative workloads.
+
+\paragraph{Software Composition Analysis (SCA).}
+Modern systems are assembled rather than written: a typical project pulls
+hundreds of third-party dependencies through package managers such as npm,
+Maven or PyPI. SCA tools enumerate this dependency graph and cross-check
+each component against vulnerability databases, the most widely used being
+the NVD and the GitHub Advisory Database \cite{placeholder-sca}. The
+challenge here is less about detection logic than about the quality of
+the underlying advisories and the difficulty of distinguishing
+\emph{vulnerable code present in the binary} from \emph{vulnerable code
+actually reachable from the application}.
+
+\paragraph{Learning-based detection.}
+A more recent line of work applies machine learning to the problem,
+treating vulnerability detection either as a classification task on code
+fragments or as an anomaly-detection task on traces. Early approaches
+used hand-crafted features feeding classical classifiers (SVM, random
+forests). A second wave moved to deep learning, with recurrent and
+convolutional networks operating on tokenised code, then to graph neural
+networks operating on AST or program-dependence graphs, Devign and
+Reveal being often-cited representatives \cite{placeholder-gnn}. The
+current frontier is the use of large language models, either as zero-shot
+detectors prompted with a vulnerability description, or as fine-tuned
+classifiers trained on labelled corpora such as Big-Vul or D2A
+\cite{placeholder-llm-detection}. These models extend coverage to
+vulnerabilities for which no syntactic signature exists, but they
+inherit well-known weaknesses: opacity, dataset biases, and a tendency
+to memorise rather than generalise.
+
+\paragraph{Hybrid approaches.}
+A non-trivial fraction of recent works deliberately combine several of
+the families above. A common pattern is to use SAST for a first coarse
+pass, then DAST or symbolic execution to confirm the candidates flagged
+statically, in order to filter false positives without losing recall.
+Another pattern feeds the output of a static analyser as input features
+to a learning model, letting the network re-rank or prune the warnings
+\cite{placeholder-hybrid}.
+
+Figure~\ref{fig:detection-taxonomy} summarizes the main families of
+vulnerability detection techniques described above. It illustrates how
+the learning-based sub-family has progressively diversified from
+classical machine learning towards deep learning, graph neural networks
+and large language models, while remaining distinct from hybrid
+approaches that combine learning with non-learning paradigms.
+
+\begin{figure}[htbp]
+  \centering
+  \begin{tikzpicture}[
+    every node/.style={draw, rectangle, rounded corners, align=center,
+                       font=\small, inner sep=4pt},
+    level 1/.style={sibling distance=28mm, level distance=12mm},
+    level 2/.style={sibling distance=18mm, level distance=11mm},
+    edge from parent/.style={draw, -}
+  ]
+  \node {Vulnerability Detection}
+    child {node {SAST}}
+    child {node {DAST}}
+    child {node {IAST}}
+    child {node {SCA}}
+    child {node {Learning-\\based}
+      child {node {Classical\\ML}}
+      child {node {Deep\\learning}}
+      child {node {GNN}}
+      child {node {LLM}}
+    }
+    child {node {Hybrid}};
+  \end{tikzpicture}
+  \caption{Main families of vulnerability detection techniques. The
+           learning-based family encompasses classical ML, deep learning,
+           GNN and LLM sub-categories, each representing a successive
+           wave of progress in the field. Hybrid approaches combine
+           at least one learning-based component with a classical paradigm.}
+  \label{fig:detection-taxonomy}
+\end{figure}
+
+Having established the landscape of detection techniques, the following
+subsection turns to the complementary problem of repairing the
+vulnerabilities once detected, which is the domain of Automated Program
+Repair.
+
+\subsection{Automated Program Repair}
+\label{subsec:apr}
+
+Automated Program Repair (APR) gathers the techniques whose goal is to
+correct defects in a program automatically, without altering its expected
+behaviour \cite{placeholder-apr-survey}. Historically the field grew out
+of the bug-fixing literature, and the term \emph{defect} was nearly
+synonymous with \emph{functional bug}. The notion has since been
+broadened: a defect can equally denote a code-quality smell, a
+performance regression or, as in our case, a security vulnerability
+\cite{placeholder-apr-vuln}. Adopting this wider definition is what
+makes APR directly relevant to the second half of our research question,
+since remediating a vulnerability and repairing a bug share the same
+abstract structure: locating a faulty fragment, producing a candidate
+modification, and convincing oneself that the modification is sound.
+
+Most APR pipelines, regardless of the underlying technology, decompose
+the problem into the same three stages \cite{monperrus2018apr-survey}:
+\emph{fault localization} narrows the search down to a code region;
+\emph{patch generation} proposes one or more candidate modifications for
+that region; \emph{patch validation} decides which candidates, if any,
+actually solve the problem without breaking anything else. The three
+stages are not strictly sequential in practice. Learning-based pipelines,
+in particular, often blur the boundary between the first two by emitting
+a localized patch in a single inference step, and the validation feedback
+can be looped back into either of the upstream stages.
+
+\begin{figure}[htbp]
+  \centering
+  \begin{tikzpicture}[
+    node distance=14mm and 10mm,
+    box/.style={draw, rectangle, rounded corners, align=center,
+                font=\small, minimum height=10mm, minimum width=28mm,
+                inner sep=4pt},
+    arr/.style={-latex, thick},
+    feedback/.style={-latex, thick, dashed}
+  ]
+  \node[box] (input) {Defective\\program};
+  \node[box, right=of input] (fl) {Fault\\Localization};
+  \node[box, right=of fl] (pg) {Patch\\Generation};
+  \node[box, right=of pg] (pv) {Patch\\Validation};
+  \node[box, right=of pv] (out) {Repaired\\program};
+  \draw[arr] (input) -- (fl);
+  \draw[arr] (fl) -- (pg);
+  \draw[arr] (pg) -- (pv);
+  \draw[arr] (pv) -- (out);
+  \draw[feedback] (pv.south) to[bend left=30] node[below, font=\scriptsize]{rejected candidates} (pg.south);
+  \end{tikzpicture}
+  \caption{The three canonical stages of an Automated Program Repair
+           pipeline. Fault Localization narrows down the defective region,
+           Patch Generation produces candidate fixes, and Patch Validation
+           filters them; rejected candidates are fed back into the
+           generation stage.}
+  \label{fig:apr-pipeline}
+\end{figure}
+
+\subsubsection{Fault Localization}
+
+Fault Localization (FL) is the entry point of the pipeline. Its task is
+to point at the fragment of code that is responsible for the observed
+defect, with a granularity that ranges, depending on the technique, from
+an entire file down to a single statement \cite{wong2016fl-survey}.
+Granularity matters: a coarse output forces the patch generator to
+explore a much larger search space, while an overly fine one is
+vulnerable to off-by-one errors that send the rest of the pipeline
+chasing the wrong line.
+
+Two failure modes deserve to be highlighted. A false positive, a
+location flagged as faulty when it is not, typically translates into
+wasted computation and, in the worst case, into a regression introduced
+by a useless edit. A false negative is more damaging: the real defect
+survives the run untouched, and the operator may end up with a
+false sense of security. Some learning-based methods avoid the question
+altogether by entangling localization and patch generation into a single
+end-to-end model; this simplifies the engineering at the cost of
+interpretability.
+
+\subsubsection{Patch Generation}
+
+Patch Generation (PG) sits at the heart of APR. Given a localized
+defect, the generator produces one or several candidate modifications.
+The space of plausible patches is enormous, a single line can be
+rewritten in countless syntactically valid ways, and exploring it
+naively does not scale. The art of PG is therefore as much about
+\emph{pruning} as it is about \emph{producing}: heuristics, learned
+priors, repair templates and constraint solvers all serve, in their own
+way, to keep the candidate set tractable \cite{placeholder-pg}. Time
+budget is a hard requirement in any realistic deployment, and a method
+that finds the right patch in principle but only after several hours of
+computation is of limited practical value.
+
+\subsubsection{Patch Validation}
+
+Patch Validation (PV) closes the loop. Each candidate produced upstream
+must be checked on two counts: that it actually removes the targeted
+defect, and that it does not introduce a new one elsewhere in the
+program. The dominant approach in the literature is test-suite-based
+validation, which inherits both the strengths and the weaknesses of
+functional testing: it is cheap and reproducible when the tests exist,
+but its verdict is only as exhaustive as the suite itself. The
+well-known phenomenon of \emph{patch overfitting}, patches that pass
+all available tests yet fail to capture the real fix, is a direct
+symptom of this limitation \cite{qi2015overfitting}. Formal techniques
+offer stronger guarantees, but their cost in expertise and proof effort
+has so far prevented their generalization.
+
+\subsection{Systematic Mapping Studies}
+\label{subsec:sms}
+
+The two domains presented above, detection and repair, are highly
+active research fields. Hundreds of primary studies are published every
+year, employing heterogeneous vocabulary, evaluating on incompatible
+benchmarks and reporting partial results. Before any new contribution
+can be designed, the literature itself has to be charted. This is the
+role of \emph{secondary studies}, and more specifically of
+\emph{Systematic Mapping Studies (SMS)} \cite{petersen2015sms}.
+
+A SMS aims at providing a structured overview of a research area by
+classifying its primary studies along a set of well-defined dimensions,
+typically including the type of contribution, the underlying technique,
+the addressed problem and the empirical setting. The output is less an
+in-depth synthesis, which is the province of a \emph{Systematic
+Literature Review (SLR)}, than a map: a categorical view of where the
+field is dense, where it is thin, and which combinations of dimensions
+have not yet been explored \cite{kitchenham2009slr}. The distinction
+matters in our context, because the question we ultimately ask,
+\emph{what techniques exist, for which vulnerabilities, and how do
+detection and remediation interact?}, is fundamentally a mapping
+question, not a meta-analytic one.
+
+A SMS unfolds in five stages, broadly stable across the methodological
+literature \cite{petersen2008sms-original}. \emph{Planning} fixes the
+research questions, the inclusion and exclusion criteria, and the search
+strategy. \emph{Search} executes that strategy on a chosen set of
+digital libraries, possibly extended by snowballing on the references
+and citations of seed papers. \emph{Screening} reduces the raw search
+output to the actually relevant subset, usually through a sequence of
+title-and-abstract filtering followed by full-text inspection.
+\emph{Extraction} pulls structured data out of each retained paper
+according to the predefined classification scheme. \emph{Synthesis}
+finally aggregates this data into the maps, tables and narrative
+sections that constitute the report.
+
+\begin{figure}[htbp]
+  \centering
+  \begin{tikzpicture}[
+    node distance=10mm,
+    box/.style={draw, rectangle, rounded corners, align=center,
+                font=\small, minimum height=10mm, minimum width=22mm,
+                inner sep=4pt},
+    arr/.style={-latex, thick}
+  ]
+  \node[box] (p) {Planning};
+  \node[box, right=of p] (s) {Search};
+  \node[box, right=of s] (sc) {Screening};
+  \node[box, right=of sc] (e) {Extraction};
+  \node[box, right=of e] (sy) {Synthesis};
+  \draw[arr] (p) -- (s);
+  \draw[arr] (s) -- (sc);
+  \draw[arr] (sc) -- (e);
+  \draw[arr] (e) -- (sy);
+  \end{tikzpicture}
+  \caption{The five canonical stages of a Systematic Mapping Study.}
+  \label{fig:sms-process}
+\end{figure}
+
+Conducted manually, this process is notoriously labour-intensive. A
+single SMS routinely involves screening several thousand candidate
+papers and extracting dozens of fields per retained study, with two
+reviewers working in parallel to limit subjective bias. Three
+difficulties recur in the literature \cite{placeholder-sms-pain}.
+\emph{Scalability} first: the volume of publications in software
+security has grown super-linearly over the last decade, to the point
+that an exhaustive screening is no longer feasible without tooling.
+\emph{Reproducibility} next: small variations in query strings, in the
+timing of the search or in the interpretation of the inclusion criteria
+can yield substantially different corpora, and the standard practice of
+reporting Cohen's $\kappa$ between reviewers, while useful, does not
+fully address the issue. \emph{Currency}, finally: by the time a SMS is
+published, a non-trivial fraction of its corpus is already a year or
+two old. These pain points are precisely what motivates the recent
+interest in (semi-)automated SMS pipelines, which we discuss in
+Section~\ref{subsubsec:sms-auto}.
+
+\subsubsection{Towards Automated Mapping Studies}
+\label{subsubsec:sms-auto}
+
+The pain points just listed have triggered a wave of tools that try to
+inject automation into the SMS workflow without giving up its
+methodological guarantees. Earlier systems such as ASReview, Rayyan,
+EPPI-Reviewer or RobotReviewer mostly assist a single phase, typically
+abstract screening, by ranking candidates with active learning while
+still requiring the reviewer to take every decision. More recent
+proposals push further by delegating individual screening calls to a
+large language model, but they tend to hard-code the prompts and the
+inclusion logic for one specific protocol, which limits their reuse
+across different research contexts. Crucially, no existing tool covers
+the full SMS lifecycle as a single, integrated, protocol-driven
+pipeline.
+
+The empirical material that grounds this thesis was produced with
+\emph{SMS-Auto} \cite{placeholder-sms-auto}, a human-in-the-loop LLM
+pipeline that automates the protocol-driven operational stages of an
+SMS while preserving researcher control at every critical decision
+point. Its architecture is organised into five layers: User
+Interaction, Workflow Orchestration, Protocol and Prompt Management,
+Core Processing Services, and External API Integration. The layers are
+intentionally separated so that study logic, what the protocol
+requires, is never conflated with model execution logic, how an LLM is
+called. This separation is what enables the system to generalise to
+any SMS topic without modifying any processing component.
+
+The central architectural contribution is the \emph{Protocol-to-Prompt
+engine}, which resides in the third layer. Rather than embedding
+domain-specific prompt templates, the engine synthesises LLM
+instructions at runtime directly from the researcher-supplied protocol
+fields: the objective and research questions anchor the exclusion
+prompt, the inclusion and exclusion criteria are rendered
+criterion-by-criterion into the screening prompt, and the user-defined
+extraction fields become the structured extraction prompt. Because this
+synthesis is deterministic, the same protocol always produces the same
+prompts, making the entire pipeline fully reproducible.
+
+A further distinctive feature is the \emph{dual-LLM adversarial
+screening} stage. Every candidate paper is evaluated independently by
+two LLM instances hosted on different inference providers. When both
+agree with sufficient confidence, the consensus is adopted
+automatically; when they disagree, the paper is flagged for mandatory
+human arbitration rather than resolved by an automatic tie-break.
+Disagreement is thus treated as a signal of genuine ambiguity, keeping
+a human in the loop on borderline cases without requiring exhaustive
+manual review of the entire corpus.
+
+Beyond screening, the pipeline covers the full SMS lifecycle:
+API-based retrieval from major digital libraries, multi-pass
+deduplication, LLM-assisted exclusion, forward and backward
+snowballing, structured full-text extraction, and multi-dimensional
+categorization. Five mandatory human checkpoints, one after each major
+phase, ensure that the researcher retains methodological
+accountability at every stage, in conformance with SMS guidelines
+\cite{petersen2015sms}.
+
+
+\section{Related Work}
+\label{sec:related-work}
+
+With the conceptual scope now fixed, we turn to the works that share its
+objective. The literature on automated detection and remediation of
+software vulnerabilities is large but unevenly distributed: a handful of
+techniques attract a disproportionate share of the publications, while
+several sub-areas remain thinly populated. The aim of this section is
+not to be exhaustive, the two systematic mapping studies introduced
+later in this work carry that responsibility, but to give a structured
+overview of the sub-fields directly adjacent to our contribution.
+
+We organise the discussion along the two halves of our research scope.
+Section~\ref{subsec:rw-detection} surveys works that aim at
+\emph{detecting} vulnerabilities in source or binary code, grouped by
+analysis paradigm rather than by tool name. Section~\ref{subsec:rw-apr}
+turns to \emph{remediation}, where Automated Program Repair has been
+the dominant framing for the last decade.
+Section~\ref{subsec:integrated-rw} covers the few works that try to
+close the loop between the two, and
+Section~\ref{subsec:secondary-rw} positions our effort against the
+existing secondary studies. The empirical counts we cite below come
+from the systematic mapping reported later in this thesis, and are
+introduced here only to give a sense of how the literature is
+distributed across paradigms.
+
+\subsection{Vulnerability Detection}
+\label{subsec:rw-detection}
+
+Section~\ref{subsec:detection-techniques} introduced the principal
+families of detection techniques from a conceptual and taxonomic
+perspective, describing what each paradigm does and what properties it
+offers. The present section complements that view by surveying the
+\emph{specific works} that instantiate those paradigms: concrete tools,
+datasets and empirical studies published in the literature. The
+distinction is therefore between a classification of techniques and a
+review of contributions; the former structures the landscape, the
+latter populates it with evidence.
+
+A first observation when surveying the detection literature is that
+the boundaries between paradigms are blurrier than introductory
+expositions suggest. Many recent tools combine several techniques, and
+the labels we use below should be read as identifying the
+\emph{dominant} mechanism rather than an exclusive one. At a high
+level, the surveyed corpus splits into three blocs: classical
+program-level analyses, AI- and learning-based detectors, and hybrid
+combinations of the two.
+
+\subsubsection{Classical Program-Level Analyses}
+\label{subsubsec:rw-classical}
+
+\begin{itemize}
+
+  \item \textit{Static analysis.} Static analysis remains the most
+        populated classical family. Recent contributions cover both
+        general-purpose and domain-specific settings: D2A builds a
+        labelled dataset of real-world bugs from differential analysis
+        of OSS commits \cite{placeholder-d2a}; Eth2Vec, SmartAxe and
+        SmartState target smart contracts on the Ethereum Virtual Machine
+        \cite{placeholder-eth2vec,placeholder-smartaxe}; argXtract and a
+        wave of comparative evaluations of mainstream SAST tools
+        (SonarQube, Coverity, CodeQL) study how well static analysers
+        transfer between projects and languages
+        \cite{placeholder-sast-eval}. The recurring weaknesses reported
+        by these works, namely high false-positive rates, sensitivity to
+        coding conventions, and difficulty in modelling inter-procedural
+        and inter-component flows, are the same that motivated the move
+        towards learning-based detectors.
+
+  \item \textit{Taint analysis.} Several studies refine the
+        long-standing taint-tracking framework. TaintBench provides a
+        reproducible benchmark for Android
+        \cite{placeholder-taintbench}; Taint Rabbit and the
+        ``bimodal taint'' family revisit precision-vs-coverage
+        trade-offs at binary level \cite{placeholder-taint-rabbit};
+        more recent work pairs taint propagation with LLM-driven sink
+        detection on web back-ends, with reported $F_1$ scores between
+        $0.76$ and $0.97$ on internal datasets
+        \cite{placeholder-llm-taint}. Taint analysis stays attractive
+        when the threat model is dominated by data-flow vulnerabilities
+        (injection, information leaks), but its dependence on a precise
+        model of the runtime keeps it expensive to deploy on
+        heterogeneous codebases.
+
+  \item \textit{Program and binary analysis.} A further set of studies
+        groups around program analyses that are neither pure SAST nor
+        pure taint, labelled either ``program analysis'' (e.g.\
+        slicing-based clone detection, LEOPARD's program-metric approach
+        to vulnerable-code identification \cite{placeholder-leopard}) or
+        ``binary analysis'' (memory-safety enforcement \`{a} la
+        EffectiveSan \cite{placeholder-effectivesan},
+        opaque-predicate hardening, buffer-overflow refinement). They
+        share a code-centric, semantics-aware view but differ in the
+        artefact they reason about, source vs.\ compiled binaries,
+        which has consequences on what can be repaired afterwards.
+
+  \item \textit{Web application security testing.} A distinct cluster
+        of studies addresses vulnerabilities specific to the web stack,
+        ranging from XSS and access-control flaws in cloud add-ons to
+        parameter tampering and server-side request forgery. Recent
+        entries in this cluster (e.g.\ Artemis on SSRF
+        \cite{placeholder-artemis}, MalCodeAI on multi-class detection
+        and remediation \cite{placeholder-malcodeai}) increasingly
+        bridge into the learning-based and hybrid families discussed
+        below, suggesting that classical web-AST tooling alone may have
+        reached a plateau.
+
+\end{itemize}
+
+\subsubsection{AI and Learning-Based Detection}
+\label{subsubsec:rw-ai}
+
+It is important here to insist on a hierarchy that the literature
+sometimes blurs. \emph{Machine learning}, \emph{deep learning},
+\emph{graph neural networks} and \emph{large language models} are not
+four parallel detection paradigms; they are successive layers of the
+same family, the AI- or learning-based family. We therefore treat them
+as sub-categories of a single block, and reserve the term
+\emph{hybrid} for approaches that genuinely combine learning with a
+non-learning paradigm.
+
+Within this family, deep learning dominates the corpus. A large body
+of work falls under this label, and the spread of techniques mirrors a
+decade of progress in the broader ML field. Early systems trained
+recurrent or convolutional networks on tokenised code slices labelled
+with CWE identifiers, with VulDeePecker and SySeVR as canonical
+examples \cite{placeholder-vuldeepecker,placeholder-sysevr}. A second
+wave moved to graph neural networks operating on AST, control-flow or
+program-dependence graphs, Devign \cite{placeholder-devign}, Reveal
+\cite{placeholder-reveal}, LIVABLE for long-tailed CWE classification
+\cite{placeholder-livable}, exploiting longer-range dependencies that
+flat-token models systematically miss. The third and most recent wave
+relies on transformer-based language models: VulBERTa, XGV-BERT,
+EnStack and DSHGT either fine-tune encoders such as CodeBERT on
+labelled corpora (Big-Vul, D2A) or stack several LLMs to improve
+recall on under-represented classes
+\cite{placeholder-vulberta,placeholder-xgvbert,placeholder-enstack,placeholder-dshgt}.
+
+Reported accuracies on closed benchmarks routinely fall in the
+$82$--$99\%$ range. However, several careful evaluations point out
+that these scores degrade sharply when the test set is drawn from a
+different project distribution \cite{placeholder-llm-detection-eval},
+raising serious questions about the generalisation capability of
+learning-based detectors beyond the corpora they were trained on.
+
+A small number of studies use \emph{classical} machine learning rather
+than deep learning, typically random forests or SVMs over hand-crafted
+metrics, and report comparable performance on narrow targets while
+remaining substantially cheaper to train. We mention them not because
+they dominate the corpus, they do not, but because they often serve as
+the ``simple baseline'' that the deep-learning contributions need to
+beat.
+
+\subsubsection{Hybrid Approaches}
+\label{subsubsec:rw-hybrid}
+
+A significant share of the corpus combines paradigms, and the works
+split cleanly into two patterns. The first pattern chains a static
+analyser with a learning-based component: GPTScan prompts an LLM with
+patterns surfaced by static analysis on smart contracts
+\cite{placeholder-gptscan}; PREV uses ML to triage SAST alerts;
+MalCodeAI runs an autonomous agent that calls both static tooling and
+an LLM for remediation \cite{placeholder-malcodeai}. The second
+pattern fuses graph-based and sequence-based neural representations of
+the same code: Anakin, GaGAT and GCRD report accuracies in the
+$89$--$99\%$ range by feeding the model both an AST or PDG view and a
+tokenised view of every function
+\cite{placeholder-anakin,placeholder-gagat}.
+
+These hybrid pipelines tend to dominate the high end of every reported
+benchmark, but they also accumulate the limitations of their
+components: brittleness to project-specific coding conventions on the
+static side, opacity and dataset bias on the learning side. The
+trade-off between accuracy and trustworthiness is, in our reading of
+the corpus, the open question that distinguishes hybrid work from the
+two purer paradigms above.
+
+\subsection{Automated Vulnerability Remediation}
+\label{subsec:rw-apr}
+
+The remediation literature is, by contrast, much more concentrated.
+Automated Program Repair has been its dominant framing for the last
+decade, and our mapping retains a comparatively small but
+representative sample of five APR studies focused specifically on
+security patches, complemented by the LLM-based repair entries already
+discussed above. The discussion below mirrors the three-stage pipeline
+introduced in Section~\ref{subsec:apr}: fault localization, patch
+generation and patch validation.
+
+\subsubsection{Fault Localization (FL)}
+
+Two broad regimes coexist. \emph{Traditional} FL collects the manual
+techniques a developer applies, instrumenting the program with print
+statements, stepping through it with a debugger. \emph{Advanced} FL,
+the regime relevant to APR, can be grouped into six families. Slice-
+and dice-based approaches narrow the search to the program slice
+implicated by a failing variable; spectrum-based approaches exploit the
+Executable Statement Hit Spectrum to compute a suspiciousness index per
+statement; statistics-based approaches rank predicates by the
+divergence of their truth distributions between passing and failing
+runs. Program-state approaches inject snapshots from passing runs into
+failing ones to test causality. Learning-based FL uses neural networks
+(BP, RBF) or decision trees such as C4.5 to score statement
+suspiciousness, while data-mining-based approaches extract $N$-grams or
+association rules from execution traces, sometimes coupled with Formal
+Concept Analysis. Model-based FL closes the list, comparing program
+state against a reference model derived from manual rules or from
+static analysis.
+
+\subsubsection{Patch Generation (PG)}
+
+Four families dominate the PG literature. \emph{Search-based}
+approaches explore the patch space heuristically, using genetic
+programming on AST mutations or game-theoretic search guided by an
+LTL specification. \emph{Constraint-based} approaches recast the
+problem as constraint solving, leveraging contracts, symbolic
+execution or separation logic to derive a constraint network whose
+solutions are admissible patches. \emph{Learning-based} approaches
+have grown rapidly: neural machine translation systems treat
+bug-fixing as code-to-code translation, deep models work on the AST
+rather than the textual form, and recent pipelines based on large
+language models generate full candidate patches in a single call,
+sometimes outperforming classical APR on standard benchmarks but
+suffering from the same overfitting amplified by training-data
+contamination \cite{placeholder-llm-repair}.
+\emph{Pattern-based} approaches use either manually curated patch
+templates (often mined from open-source projects) or automatically
+extracted templates derived from change history; CNN-based pattern
+extraction is one of the more recent variants in this family.
+
+Within our security-focused sample, AVATAR and Sorald exploit fix
+patterns of static-analysis violations to suggest patches at the
+SonarQube level
+\cite{placeholder-avatar,placeholder-sorald}; AddressWatcher localises
+memory-leak fixes through sanitiser feedback
+\cite{placeholder-addresswatcher}; PRD recompiles partial binaries to
+mitigate vulnerabilities without source. The reported success rates
+fall between $34\%$ and $65\%$ of correct or partially-correct
+patches, with the wide variance directly tied to dataset composition
+and to the strictness of the patch-correctness criterion used.
+
+\subsubsection{Patch Validation (PV)}
+
+PV is the least mature of the three stages. Most works rely on the
+project's own test suite as an oracle, which leaves the well-known
+\emph{patch overfitting} problem open: a patch that passes the test
+suite is not necessarily semantically correct, and most evaluations
+acknowledge this caveat. Contract-based PV, mutation-based PV and
+human-in-the-loop schemes have been proposed, but no single technique
+is consensual at the time of writing.
+
+\subsection{Integrated Detection-Remediation Frameworks}
+\label{subsec:integrated-rw}
+
+Most works treat detection and remediation as two separate problems.
+Detection tools emit warnings; remediation tools consume bug reports or
+test failures. The number of frameworks that close the loop, that is,
+that take an unannotated codebase as input and produce a corrected
+codebase as output with no human in the middle, remains modest.
+Sequencer \cite{placeholder-sequencer}, Hoppity
+\cite{placeholder-hoppity} and a handful of recent LLM-driven pipelines
+fall in this category for functional bugs; on the security side,
+MalCodeAI \cite{placeholder-malcodeai} is one of the few systems that
+genuinely chains autonomous detection and remediation, and most
+``end-to-end'' systems still rely on a pre-existing detector from the
+SAST family to feed the repair stage.
+
+This sparsity is one of the gaps that motivates the present work. We
+argue, and substantiate in the next chapter, that detection and
+remediation are not merely two phases to be chained: the choice of
+detector constrains the form of the patches that can be produced, and
+the characteristics of the repair backend in turn influence which
+detector outputs are actionable. Treating the two stages jointly is
+therefore not just an engineering convenience but a research question
+in its own right.
+
+
+\section{Positioning in the Research Problem}
+\label{sec:research-problem}
+
+The overview presented in the previous sections brings several
+limitations to the surface, and they affect the two halves of our
+scope in different but compounding ways.
+
+On the detection side, techniques have multiplied without a matching
+effort on comparability. Static analysers, taint trackers and the
+various AI-based detectors are evaluated on heterogeneous benchmarks,
+often using incompatible definitions of vulnerability classes. Reported
+accuracies above $95\%$ on internal datasets frequently degrade by
+twenty points or more on cross-project evaluations, raising serious
+questions about generalisation. The AI- and learning-based family
+compounds this with opacity and dataset bias: many headline results
+turn out to be partly explained by lexical artefacts of the training
+data, and very few detectors expose a usable explanation of why a
+given fragment was flagged.
+
+On the remediation side, Automated Program Repair has matured
+considerably, but its transposition from functional bug-fixing to
+security-relevant flaws is far from straightforward. Patch overfitting
+remains the rule rather than the exception: the standard test-based
+oracle is a poor proxy for semantic correctness, and the semantic
+preservation guarantees often advertised in the literature are weaker
+than they appear once the patch is examined manually. LLM-based repair
+compounds the problem with training-data contamination, where the test
+bug or its fix is already present in the model's pre-training corpus.
+
+The most striking gap, however, is structural and lies between the two
+halves. Detection and remediation are studied as if they were
+independent problems, even though an end-to-end secure-software
+pipeline requires them to operate in concert: the form of a
+detector's output constrains the form of the patches that can be
+produced, and the expressiveness of the repair backend constrains
+which detector outputs are actionable. The few works that bridge the
+two stages do so for narrow vulnerability classes or on a single
+language, and no consolidated map is available to guide the design of
+more general pipelines.
+
+These observations motivate the present work. The contribution
+presented in the next chapter addresses the detection side of this gap
+by proposing an approach for identifying software vulnerabilities that..

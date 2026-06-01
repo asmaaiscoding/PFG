@@ -1,0 +1,317 @@
+\documentclass[11pt,a4paper]{report}
+% --- additional packages for 03Contribution ---
+\usepackage{amsmath,amssymb}
+\usepackage{stmaryrd}        % for \llbracket, \rrbracket
+\usepackage{amsthm}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.17}
+\usetikzlibrary{arrows.meta,positioning,fit,backgrounds,calc}
+
+\definecolor{irblue}{HTML}{1F4E79}
+\definecolor{irgreen}{HTML}{2E7D32}
+\definecolor{irgray}{HTML}{555555}
+\definecolor{irlight}{HTML}{EEF3F8}
+
+\newtheorem{theorem}{Theorem}[chapter]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{definition}[theorem]{Definition}
+
+\DeclareRobustCommand{\irsam}{\mbox{IR\nobreakdash-SAM}}
+\newcommand{\bottom}{\ensuremath{\bot}}
+\newcommand{\code}[1]{\texttt{\small #1}}
+
+% ── XeLaTeX / polyglossia setup (NO inputenc, NO fontenc, NO babel) ──
+\usepackage{polyglossia}
+\setmainlanguage{english}
+\setotherlanguage{arabic}
+\newfontfamily\arabicfont[Script=Arabic,Scale=1.2]{Amiri}
+
+\usepackage{lmodern}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{trees,positioning}
+\usepackage{enumitem}
+\usepackage{url}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=black,
+  urlcolor=blue,
+  citecolor=black
+}
+
+\title{Towards an Automated Source Code Remediation Approach \\
+       for the Security and Privacy of Third-Party Mobile Applications}
+\author{Master's Thesis \\
+        Master in Sciences and Technologies \\
+        Major: Computer Science, Track: Software Engineering}
+\date{}
+
+\begin{document}
+
+% =====================================================================
+% TITLE PAGE
+% =====================================================================
+\begin{titlepage}
+\begin{center}
+    \includegraphics[width=\textwidth]{logo.png}\\[1cm]
+
+    {\LARGE\bfseries Graduation thesis}\\[0.8cm]
+    {\large For the obtention of the State Computer Science Engineer Diploma}\\[0.5cm]
+    {\Large\bfseries Option: Computer Systems (SQ)}\\[1cm]
+
+    \rule{\linewidth}{0.7pt}\\[0.5cm]
+    {\large\bfseries Topic:}
+    \vspace{0.3cm}
+
+    {\LARGE Towards an Approach for Software Security \\[0.3cm]Vulnerability Identification and Remediation}\\[0.5cm]
+    \rule{\linewidth}{0.5pt}\\[2cm]
+
+    \begin{tabular}{l@{\hspace{2cm}}l}
+        \Large\textit{Written by :} & \Large\textit{Supervised by :} \\[0.2cm]
+        \Large- \textsc{Nacef} Salah Eddine & \Large- Mr. \textsc{Seriai} Abdelhak-Djamel (LIRMM) \\[0.1cm]
+        \Large- \textsc{Nouali} Asmaa         & \Large- Mrs. \textsc{Zellagui} Soumia (ESI) \\
+    \end{tabular}\\[1cm]
+
+    \vfill
+    {\Large Promotion : 2025/2026}
+\end{center}
+\end{titlepage}
+
+% =====================================================================
+% PAGES PRÉLIMINAIRES : numérotation romaine
+% =====================================================================
+\pagenumbering{roman}
+
+%=====================================================================
+% DEDICATION
+%=====================================================================
+\chapter*{Dedication}
+\addcontentsline{toc}{chapter}{Dedication}
+\vspace*{\fill}
+\begin{center}
+
+{\LARGE\textit{``The road is long, but the destination is worth every step.''}}\\[2cm]
+
+{\Large\textit{To those who stayed up late so we could sleep,\\[0.2cm]
+who went without so we could have,\\[0.2cm]
+who made us believe that the horizon was never too far;\\[0.5cm]
+our parents.}}\\[1.5cm]
+
+{\Large\textit{To each other,\\[0.2cm]
+for every doubt shared, every burden halved,\\[0.2cm]
+and every milestone that meant more because we reached it together.}}\\[1.5cm]
+
+{\Large\textit{To every soul that crossed our path\\[0.2cm]
+and left it a little brighter.}}\\[1.5cm]
+
+{\Large\textit{And to all who pursue knowledge with curiosity and determination,\\[0.2cm]
+may your passion never fade and your journey never cease.}}
+
+\end{center}
+\vspace*{\fill}
+
+%=====================================================================
+% ACKNOWLEDGMENTS
+%=====================================================================
+\chapter*{Acknowledgments}
+\addcontentsline{toc}{chapter}{Acknowledgments}
+
+\vspace{0.5cm}
+
+\noindent First and foremost, we thank Allah, the Almighty, for granting us the
+strength, patience, and determination to carry this work through to its completion.
+
+\vspace{0.4cm}
+
+\noindent Our deepest thanks go to our supervisor \textbf{Mr. Abdelhak-Djamel Seriai}
+from LIRMM, for introducing us to this wonderful and enriching thematic, and for sparking
+our interest in a field that proved to be both challenging and deeply rewarding.
+
+\vspace{0.4cm}
+
+\noindent We are equally grateful to our supervisor \textbf{Mrs. Soumia Zellagui} from ESI,
+for her continuous guidance, valuable feedback, and unwavering support throughout the entire
+course of this work.
+
+\vspace{0.4cm}
+
+\noindent We also wish to express our gratitude to the entire teaching staff of the
+\textbf{Higher National School of Computer Science (ESI)}, for the quality of their
+instruction and the knowledge they have shared with us throughout our academic journey.
+
+\vspace{0.4cm}
+
+\noindent We are grateful to the esteemed \textbf{members of the Jury} for their time,
+consideration, and careful review of this work.
+
+\vspace{0.4cm}
+
+\noindent We extend our heartfelt thanks to our \textbf{families}, for their unconditional
+love, patience, and endless encouragement that sustained us through every step of this journey.
+
+\vspace{0.4cm}
+
+\noindent Finally, we thank all our \textbf{friends} for their support, the shared moments,
+and the motivation they provided whenever it was needed most.
+
+\vspace{1cm}
+
+\noindent{\Large\textit{To all of you, \textbf{Thank you.}}}
+
+%=====================================================================
+% ABSTRACT (ENGLISH)
+%=====================================================================
+\chapter*{Abstract}
+\addcontentsline{toc}{chapter}{Abstract}
+
+The widespread integration of software systems into daily activities has significantly
+increased the exposure of sensitive data to security risks. As applications become more
+complex and interconnected, they present a growing number of potential entry points for
+attackers. Ensuring the security of these systems is therefore a major concern, requiring
+effective mechanisms to identify and address vulnerabilities.
+
+The process of securing software can be seen as a continuous confrontation between
+attackers, who aim to exploit weaknesses, and defenders, who seek to prevent or mitigate
+such exploits. In this context, vulnerability detection and remediation play a central role
+in reducing the attack surface and improving overall system resilience. While numerous
+techniques exist to uncover vulnerabilities, the challenge lies in efficiently correcting
+them without negatively impacting system functionality.
+
+This work focuses on the analysis and improvement of approaches for detecting and
+remediating software vulnerabilities. We first identify a set of common vulnerabilities
+that may affect software systems, then propose corresponding remediation strategies
+designed to preserve application behavior. Finally, we evaluate our approach through its
+implementation within an automated framework, demonstrating its effectiveness in enhancing
+software security.
+
+\medskip
+\noindent\textbf{Keywords:} software security, vulnerability detection, automated
+remediation, automated program repair, static analysis, dynamic analysis, machine learning,
+large language models, systematic mapping study, secure software engineering.
+
+%=====================================================================
+% RÉSUMÉ (FRANÇAIS)
+%=====================================================================
+\chapter*{Résumé}
+\addcontentsline{toc}{chapter}{Résumé}
+
+L'intégration croissante des systèmes logiciels dans les activités quotidiennes a
+considérablement accru l'exposition des données sensibles aux risques de sécurité.
+À mesure que les applications deviennent plus complexes et interconnectées, elles
+présentent un nombre croissant de points d'entrée potentiels pour les attaquants.
+Assurer la sécurité de ces systèmes est donc une préoccupation majeure, nécessitant
+des mécanismes efficaces pour identifier et traiter les vulnérabilités.
+
+Le processus de sécurisation des logiciels peut être vu comme une confrontation continue
+entre les attaquants, qui cherchent à exploiter les failles, et les défenseurs, qui
+cherchent à prévenir ou atténuer ces exploits. Dans ce contexte, la détection et la
+remédiation des vulnérabilités jouent un rôle central dans la réduction de la surface
+d'attaque et l'amélioration de la résilience globale du système.
+
+Ce travail se concentre sur l'analyse et l'amélioration des approches de détection et de
+remédiation des vulnérabilités logicielles. Nous identifions d'abord un ensemble de
+vulnérabilités courantes, puis proposons des stratégies de remédiation correspondantes,
+et évaluons notre approche à travers son implémentation dans un cadre automatisé.
+
+\medskip
+\noindent\textbf{Mots-clés :} sécurité logicielle, détection de vulnérabilités,
+remédiation automatisée, réparation automatique de programmes, analyse statique,
+analyse dynamique, apprentissage automatique, grands modèles de langage, étude de
+cartographie systématique, génie logiciel sécurisé.
+
+%=====================================================================
+% ملخص (ARABE)
+%=====================================================================
+\begin{Arabic}
+
+\chapter*{ملخص}
+\addcontentsline{toc}{chapter}{ملخص}
+
+\begin{flushright}
+
+أدّى التكامل المتزايد للأنظمة البرمجية في الأنشطة اليومية إلى زيادة ملحوظة في تعرّض
+البيانات الحساسة لمخاطر أمنية. ومع تزايد تعقيد التطبيقات وترابطها، تتعدد نقاط الدخول
+المحتملة للمهاجمين. لذا، يُعدّ ضمان أمن هذه الأنظمة أمرًا بالغ الأهمية، مما يستلزم
+آليات فعّالة لرصد الثغرات الأمنية ومعالجتها.
+
+\medskip
+يمكن النظر إلى عملية تأمين البرمجيات باعتبارها مواجهة مستمرة بين المهاجمين الساعين
+إلى استغلال الثغرات، والمدافعين الحريصين على منع هذه الاستغلالات أو التخفيف من آثارها.
+في هذا السياق، يؤدي اكتشاف الثغرات ومعالجتها دورًا محوريًا في تقليص سطح الهجوم
+وتعزيز صمود النظام.
+
+\medskip
+يرتكز هذا العمل على تحليل وتحسين مناهج اكتشاف الثغرات البرمجية ومعالجتها. نبدأ
+بتحديد مجموعة من الثغرات الشائعة، ثم نقترح استراتيجيات معالجة مناسبة، وأخيرًا
+نُقيّم نهجنا من خلال تطبيقه ضمن إطار عمل آلي.
+
+\medskip
+\textbf{الكلمات المفتاحية:} أمن البرمجيات، اكتشاف الثغرات، المعالجة الآلية،
+الإصلاح التلقائي للبرامج، التحليل الساكن، التحليل الديناميكي، تعلم الآلة،
+النماذج اللغوية الكبيرة، دراسة الرسم المنهجي، هندسة البرمجيات الآمنة.
+
+\end{flushright}
+\end{Arabic}
+
+%=====================================================================
+% TABLE OF CONTENTS
+%=====================================================================
+\tableofcontents
+
+
+\listoffigures
+\addcontentsline{toc}{chapter}{List of Figures}
+
+
+\listoftables
+\addcontentsline{toc}{chapter}{List of Tables}
+
+\chapter*{Acronyms and Abbreviations}
+\addcontentsline{toc}{chapter}{Acronyms and Abbreviations}
+\begin{tabular}{@{}ll@{}}
+\textbf{APR}    & Automated Program Repair \\[4pt]
+\textbf{AST}    & Abstract Syntax Tree \\[4pt]
+\textbf{CWE}    & Common Weakness Enumeration \\[4pt]
+\textbf{DAST}   & Dynamic Application Security Testing \\[4pt]
+\textbf{FL}     & Fault Localization \\[4pt]
+\textbf{IAST}   & Interactive Application Security Testing \\[4pt]
+\textbf{IDOR}   & Insecure Direct Object Reference \\[4pt]
+\textbf{NVD}    & National Vulnerability Database \\[4pt]
+\textbf{PDG}    & Program Dependence Graph \\[4pt]
+\textbf{RASP}   & Runtime Application Self-Protection \\[4pt]
+\textbf{SARIF}  & Static Analysis Results Interchange Format \\[4pt]
+\textbf{SAST}   & Static Application Security Testing \\[4pt]
+\textbf{SCA}    & Software Composition Analysis \\[4pt]
+\textbf{SLR}    & Systematic Literature Review \\[4pt]
+\textbf{SMS}    & Systematic Mapping Study \\[4pt]
+\textbf{SSRF}   & Server-Side Request Forgery \\
+\end{tabular}
+
+% =====================================================================
+% CHAPITRES PRINCIPAUX : numérotation arabe
+% =====================================================================
+
+% =====================================================================
+% CHAPTER 1, INTRODUCTION
+% =====================================================================
+\include{01GeneralIntroduction}
+
+% =====================================================================
+% CHAPTER 2, STATE OF THE ART
+% =====================================================================
+\include{02StatOfArt}
+
+\include{03DetContribution}
+
+\include{04RemContribution}
+
+\include{05Conclusion}
+
+\bibliographystyle{plain}
+\bibliography{references}
+
+\end{document}

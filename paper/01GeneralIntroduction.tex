@@ -1,0 +1,28 @@
+\pagenumbering{arabic} 
+\section*{General Introduction}
+\label{chap:introduction}
+
+\addcontentsline{toc}{chapter}{General Introduction}
+
+
+\subsection*{Context \& Problem Statement}
+With the increasing dependence on software systems in almost every aspect of modern life, ensuring their security has become a critical concern. Applications today manage sensitive data, support essential services, and operate in highly interconnected environments. This growing complexity makes them particularly susceptible to a wide range of vulnerabilities that can be exploited by malicious actors.
+
+Software vulnerabilities arise from design flaws, implementation errors, or misconfigurations within a system. These weaknesses can compromise confidentiality, integrity, and availability, leading to serious consequences such as data breaches, financial losses, or system failures. As software continues to evolve rapidly, the number of potential vulnerabilities increases, making their management a challenging task.
+
+To address this issue, significant research efforts have focused on vulnerability detection. Various techniques have been developed, including static analysis, dynamic testing, and hybrid approaches, each offering different advantages in terms of accuracy, scalability, and coverage. More recently, intelligent methods leveraging machine learning have been introduced to enhance detection capabilities and reduce false positives.
+
+However, identifying vulnerabilities is only part of the solution. Effective remediation is essential to ensure that detected issues are properly addressed. This process may involve applying patches, modifying source code, improving system configurations, or adopting secure development practices. The challenge lies in selecting appropriate remediation strategies that are both efficient and sustainable, without introducing new weaknesses.
+
+\subsection*{Objectives}
+
+This work pursues three main objectives. First, we aim to establish a comprehensive understanding of the existing techniques used to detect software vulnerabilities, covering static, dynamic, hybrid, and learning-based approaches, and to assess their respective strengths and limitations. Second, we investigate current automated remediation strategies, analyzing how Automated Program Repair techniques can be applied to address security flaws while preserving application behavior. Third, building on these foundations, we propose a graph-based framework that models privilege-related flows in web applications, combining graph neural network models with explainable reporting to identify access-control vulnerabilities, specifically missing authentication, missing authorization, and Insecure Direct Object Reference (IDOR). IDOR is a vulnerability that occurs when an application exposes internal object identifiers (such as database keys or file paths) directly to users without verifying that the requester is authorized to access the corresponding resource. The overall aim is to improve the effectiveness and integration of detection and remediation processes within a unified, automated pipeline.
+
+\subsection*{Report Organization}
+The remainder of this document is structured as follows:
+
+\begin{itemize}[leftmargin=*]
+\item \textbf{Part~I, State of the Art} comprises two chapters. Chapter~1 establishes the theoretical foundations by presenting a taxonomy of the research domain: the landscape of software security, the principal families of detection and remediation techniques, and the methodology of systematic mapping studies. Chapter~2 reviews the related work, existing secondary studies, and the key tools and benchmarks, and identifies the problems and research questions that motivate our contribution.
+
+\item \textbf{Part~II, Contribution} 
+\end{itemize}

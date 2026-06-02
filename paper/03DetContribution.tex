@@ -27,7 +27,7 @@ vulnerabilities therefore call for a representation and a reasoning mode
 that are qualitatively different from those the community has developed for
 injection, XSS, or buffer overflow.
 
-This chapter develops the \emph{Program Flow Graph} (PFG), a domain-specific
+This chapter develops the \emph{Privilege Flow Graph} (PFG), a domain-specific
 graph formalism designed to make the authorization architecture of a web
 application explicit, inspectable, and amenable to both formal reasoning and
 learned classification. The PFG is not a general-purpose code
@@ -126,8 +126,7 @@ escalation. Horizontal escalation targets resources belonging to other users
 at the same privilege level; vertical escalation targets administrative
 operations requiring elevated privileges. We exclude unauthenticated attack
 scenarios (handled by perimeter security) and injection-based attacks
-(handled by input validation and the remediation system of
-Chapter~\ref{ch:remediation}). This scoping is deliberate: the attacker we
+(handled by input validation). This scoping is deliberate: the attacker we
 model is precisely the one that traditional SAST tools cannot see, because
 the attack vector is not a malicious input but a \emph{legitimate request
 to the wrong endpoint}.
@@ -172,11 +171,14 @@ of the generality claim.
 \subsection{Taxonomy of authorization vulnerabilities}
 \label{sec:det-taxonomy}
 
-Building on the OWASP Top~10 classification of Broken Access Control
-(A01:2021) and the Common Weakness Enumeration, we identify five structurally
-distinct subtypes of authorization vulnerabilities that the PFG is designed
-to detect. Each represents a different failure mode in the authorization
-decision chain, and each has a distinct structural signature in the graph.
+Broken Access Control (A01:2021) holds the number one position in the OWASP
+Top~10 (2021 edition)---the most critical web application security risk,
+elevated from fifth place in 2017 based on incidence data from over 400,000
+applications. Building on this classification and the Common Weakness
+Enumeration, we identify five structurally distinct subtypes of authorization
+vulnerabilities that the PFG is designed to detect. Each represents a
+different failure mode in the authorization decision chain, and each has a
+distinct structural signature in the graph.
 
 \subsubsection{MISSING\_AUTH (CWE-306)}
 
@@ -237,10 +239,11 @@ not enforce object-level authorization when accessing individual objects via
 route parameters.
 
 \begin{definition}[Object-Level Permission Bypass]
-An endpoint $v$ exhibits \textsc{object\_level\_permission\_bypass} if: $v$
-has model-level permission indicators, $v$ accepts route parameters and
-reaches a data access via identifier flow, and no object-level permission
-check is enforced on any call path to the data access.
+An endpoint $v$ exhibits object-level permission bypass
+(\textsc{obj\_perm\_bypass}) if: $v$ has model-level permission indicators,
+$v$ accepts route parameters and reaches a data access via identifier flow,
+and no object-level permission check is enforced on any call path to the
+data access.
 \end{definition}
 
 \subsection{Gaps in existing detection approaches}
@@ -364,7 +367,7 @@ the application that is not one of these four components or one of the
 relationships between them. The resulting graph will be small (a few dozen
 nodes versus the hundreds of thousands in a CPG), every element will have a
 direct security interpretation, and the vulnerability question becomes a
-structural property of paths in the graph. This is the Program Flow Graph.
+structural property of paths in the graph. This is the Privilege Flow Graph.
 
 The PFG deliberately sacrifices generality for focus. It cannot represent
 arbitrary security properties; it cannot model injection, XSS, or race
@@ -377,9 +380,9 @@ underserved problem class.
 \subsection{Formal graph definition}
 \label{sec:det-pfg-def}
 
-\begin{definition}[Program Flow Graph]
+\begin{definition}[Privilege Flow Graph]
 \label{def:pfg}
-A Program Flow Graph is a directed, typed, attributed graph defined as the
+A Privilege Flow Graph is a directed, typed, attributed graph defined as the
 6-tuple:
 \begin{equation}
 G = (V, E, \tau_V, \tau_E, \phi_V, \phi_E)
@@ -496,6 +499,13 @@ Three edge types capture the relationships between nodes:
     access queries. Their absence on paths to tenant-sensitive data indicates
     a potential tenant isolation failure.
 \end{itemize}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth]{figures/fig_pfg_schema.pdf}
+\caption{PFG graph schema. Four node types (circle = Endpoint, diamond = Middleware, rectangle = Service, hexagon = Data\_Access) connected by three edge types: solid = CALL, dashed = IDENTIFIER\_FLOW, dotted = TENANT\_FLOW. Node attributes shown below each type encode the security-relevant properties used for both feature computation and rule evaluation.}
+\label{fig:det-schema}
+\end{figure}
 
 \subsection{Feature space}
 \label{sec:det-features}
@@ -697,6 +707,13 @@ and missing role); the \textsc{intentionally\_public} class distinguishes
 endpoints that are deliberately unauthenticated (login, registration, health
 checks) from those that are accidentally so.
 
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.85\linewidth]{figures/fig_pooling.pdf}
+\caption{Target-aware attention pooling mechanism. (1)~GATv2 message passing produces contextualised node representations over the $k$-hop subgraph around target endpoint $v_t$. (2)~Attention scores $\alpha_i$ are computed relative to the target's representation, weighting nodes by their structural relevance to $v_t$'s security context. (3)~Weighted readout produces a fixed-size graph embedding $\mathbf{z}_t$ that is concatenated with $\mathbf{h}_t$ and passed to the classification MLP.}
+\label{fig:det-pooling}
+\end{figure}
+
 \subsection{Structural rules as formal predicates}
 \label{sec:det-rules}
 
@@ -823,6 +840,20 @@ explainability tool produces an \emph{approximation} of why a model decided
 what it decided; our structural validator produces the \emph{definition} of
 the vulnerability itself. The two are categorically different.
 
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth]{figures/fig_pfg_example.pdf}
+\caption{Concrete PFG comparison. (a)~A safe endpoint with authentication and ownership guards on the call path before the data access node. (b)~A vulnerable endpoint (IDOR): the identifier flow edge reaches the data access without an intervening ownership check. The vulnerability is the structural absence of a guard, made visually explicit by the graph topology.}
+\label{fig:det-example}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth]{figures/fig_detection_pipeline.pdf}
+\caption{Hybrid detection pipeline. Source code is extracted into a PFG, encoded into 36-dimensional feature vectors, then scored through two parallel channels: a GATv2 neural component (learned, generalizable) and structural rules (deterministic, interpretable). The conjunction gate requires both channels to flag an endpoint before reporting a finding, ensuring every output is structurally explainable.}
+\label{fig:det-pipeline}
+\end{figure}
+
 
 % =====================================================================
 \section{Implementation}
@@ -858,6 +889,13 @@ evaluation infrastructure remain unchanged. The two extractors we
 implement are therefore \emph{validation} of the framework-agnostic
 algorithm, not the algorithm itself.
 
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.75\linewidth]{figures/fig_extraction_twolevel.pdf}
+\caption{Two-level extraction architecture. The framework-agnostic algorithm (top) defines the four extraction steps common to all REST frameworks. Framework-specific adapters (middle) implement each step using framework idioms. Both adapters produce a unified PFG (bottom) with identical node and edge types regardless of source framework.}
+\label{fig:det-extraction}
+\end{figure}
+
 \subsection{Django extractor (AST-based)}
 \label{sec:det-django}
 
@@ -888,11 +926,19 @@ resolving:
 
 For each discovered endpoint, the extractor determines its authorization
 configuration by inspecting framework-specific mechanisms:
-decorator inspection (\texttt{@login\_required}, \texttt{@permission\_required}),
-permission class declarations (\texttt{permission\_classes = [IsAuthenticated]}),
-mixin inheritance (\texttt{LoginRequiredMixin}, \texttt{PermissionRequiredMixin}),
-project-level defaults (\texttt{REST\_FRAMEWORK['DEFAULT\_PERMISSION\_CLASSES']}),
-and per-action overrides via \texttt{@action(permission\_classes=[...])}.
+\begin{itemize}
+    \item Decorator inspection: \texttt{@login\_required},
+    \texttt{@permission\_required}
+    \item Permission class declarations:
+    \texttt{permission\_classes = [IsAuthenticated]}
+    \item Mixin inheritance: \texttt{LoginRequiredMixin},
+    \texttt{PermissionRequiredMixin}
+    \item Project-level defaults:
+    \texttt{REST\_FRAMEWORK[\textquotesingle DEFAULT\_PERMISSION\_CLASSES%
+    \textquotesingle]}
+    \item Per-action overrides:
+    \texttt{@action(permission\_classes=[...])}
+\end{itemize}
 
 \subsubsection{Call graph construction}
 
@@ -929,18 +975,24 @@ control flow) but sufficient for the patterns observed in practice.
 
 The Spring Boot extractor employs regex-based parsing rather than full AST
 analysis. The asymmetry is architectural: Spring configures routing
-declaratively through annotations (\texttt{@RequestMapping},
+declaratively through annotations (\texttt{@Request\-Mapping},
 \texttt{@GetMapping}, \texttt{@PreAuthorize}), placing security-relevant
 information in a predictable syntactic form directly on method declarations.
 Regex extraction is both viable and sufficient for this pattern.
 
-The extractor recognizes: \texttt{@RestController} and
-\texttt{@Controller} class annotations, \texttt{@RequestMapping} and
-HTTP-method-specific mapping annotations, \texttt{@PreAuthorize} SpEL
-expressions, \texttt{@Secured} role lists, and Spring Security filter chain
-configurations. The same five-step algorithm (discover, annotate, call graph,
-data access, identifier flow) is implemented with regex-based resolution
-instead of AST traversal.
+The extractor recognizes:
+\begin{itemize}
+    \item \texttt{@RestController} and \texttt{@Controller} class
+    annotations
+    \item \texttt{@Request\-Mapping} and HTTP-method-specific mapping
+    annotations
+    \item \texttt{@PreAuthorize} SpEL expressions and \texttt{@Secured}
+    role lists
+    \item Spring Security filter chain configurations
+\end{itemize}
+The same five-step algorithm (discover, annotate, call graph, data access,
+identifier flow) is implemented with regex-based resolution instead of AST
+traversal.
 
 \subsection{Extractor validation}
 \label{sec:det-validation}
@@ -975,17 +1027,27 @@ CVEs from both ecosystems.
 Each CVE is encoded as a YAML manifest pinning: application name, framework,
 version, git revision, source root, endpoint identifier (canonical HTTP
 method + route pattern format), vulnerability subtype, and CVE identifier.
-The pinned revision ensures reproducibility regardless of subsequent code
-changes.
+The manifest pins the repository to the commit immediately preceding the
+security patch, enabling analysis of the vulnerable code path as it existed
+in production. The corresponding post-patch commit provides ground truth for
+what protection the developer introduced to remediate the flaw. This
+pre-patch/post-patch pairing ensures reproducibility regardless of
+subsequent code changes.
 
 \subsubsection{Distribution}
 
-The 75 manifests distribute as: IDOR (38), MISSING\_AUTH (15),
-MISSING\_ROLE (11), OBJECT\_LEVEL\_PERMISSION\_BYPASS (7),
-TENANT\_ISOLATION\_FAILURE (4). This distribution reflects natural prevalence
----IDOR dominates because user-object binding is, according to OWASP
-statistics \cite{owasptop10}, the most commonly neglected authorization
-check in production APIs.
+Figure~\ref{fig:det-distribution} shows the distribution of vulnerability
+subtypes across the 75 manifests. IDOR dominates with 38 instances because
+user-object binding is, according to OWASP statistics \cite{owasptop10},
+the most commonly neglected authorization check in production APIs.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=1\linewidth]{figures/fig_corpus_distribution.png}
+\caption{Distribution of vulnerability subtypes in the 75-CVE evaluation
+corpus. The imbalance reflects natural prevalence in production applications.}
+\label{fig:det-distribution}
+\end{figure}
 
 \subsubsection{Ground truth and the open-world limitation}
 
@@ -1118,6 +1180,13 @@ A prediction is a true positive if and only if:
 \end{enumerate}
 This strict matching ensures that finding the right endpoint for the wrong
 reason does not inflate precision.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.7\linewidth]{figures/fig_eval_funnel.pdf}
+\caption{Evaluation funnel. From 75 total endpoints across four Django applications, the evaluation focuses progressively on endpoints with route parameters (52), those performing mutating operations via those parameters (25), and the 4 confirmed IDOR vulnerabilities. The 5.3\% positive class ratio underscores the class imbalance challenge.}
+\label{fig:det-funnel}
+\end{figure}
 
 \subsection{Baselines}
 
@@ -1526,7 +1595,7 @@ system supports pre-loaded CVE applications for immediate visualization.
 \label{det:conclusion}
 % =====================================================================
 
-This chapter has developed the Program Flow Graph, a domain-specific graph
+This chapter has developed the Privilege Flow Graph, a domain-specific graph
 formalism for detecting authorization vulnerabilities in REST APIs, and
 validated it through a hybrid neural-logical detection architecture evaluated
 on a corpus of 75 real-world CVEs.

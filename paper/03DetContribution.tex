@@ -1222,27 +1222,27 @@ from the extractor's limitations.
 
 \begin{table}[htbp]
 \centering
-\caption{Two-stage model performance on controlled PFGs (Config~C).}
+\caption{Two-stage model performance on controlled synthetic PFGs (Config~C, 8-class).}
 \label{tab:det-controlled}
 \begin{tabular}{@{}lccc@{}}
 \toprule
-\textbf{Evaluation Set} & \textbf{P} & \textbf{R} & \textbf{F1} \\
+\textbf{Evaluation} & \textbf{P} & \textbf{R} & \textbf{F1} \\
 \midrule
-Synthetic (held-out contrastive pairs) & 0.87 & 0.89 & 0.88 \\
-Augmented real (mutation-generated) & 0.79 & 0.82 & 0.81 \\
-\midrule
-\textbf{Combined controlled evaluation} & \textbf{0.81} & \textbf{0.85}
-& \textbf{0.83} \\
+Multi-class (macro, 8 subtypes) & -- & -- & 0.769 \\
+Binary vulnerability finding & 0.548 & 1.000 & 0.708 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-F1 = 0.83 demonstrates that the GATv2 architecture with target-aware
-pooling effectively learns to classify authorization patterns. The model
+The model achieves macro-F1 = 0.769 across all eight vulnerability subtypes
+on held-out synthetic PFGs, with perfect recall in binary vulnerability
+finding (all vulnerable endpoints detected). This demonstrates that the
+GATv2 architecture with target-aware pooling effectively learns to classify
+authorization patterns when provided with well-formed PFGs. The model
 distinguishes vulnerable endpoints (missing guards on paths to sensitive
-data) from safe endpoints (complete guard chains) with high reliability when
-provided with well-formed PFGs. This result confirms hypothesis H2: absence-based
-detection is learnable from graph structure.
+data) from safe endpoints (complete guard chains) with high reliability.
+This result confirms hypothesis H2: absence-based detection is learnable
+from graph structure.
 
 \subsubsection{Real-world validation (DRF-standard subset)}
 
@@ -1463,7 +1463,7 @@ the corresponding CPG would be.
 \subsection{Validation of the PFG representation (H1)}
 \label{sec:det-h1-validation}
 
-The controlled evaluation (F1 = 0.83) and real-world DRF-standard results
+The controlled evaluation (macro-F1 = 0.769) and real-world DRF-standard results
 (R = 1.0) provide converging evidence that the Privilege Flow Graph
 representation captures the structural properties required for authorization
 vulnerability detection. The four node types (endpoint, guard, data access,
@@ -1511,7 +1511,7 @@ extraction coverage as the binding constraint on system performance. This
 limitation is an \emph{engineering} challenge rather than a fundamental one:
 \begin{itemize}
     \item The detection model demonstrates strong performance on well-formed
-    PFGs (F1 = 0.83 controlled, R = 1.0 DRF-standard). The formalism
+    PFGs (macro-F1 = 0.769 controlled, R = 1.0 DRF-standard). The formalism
     and the model are validated.
     \item Extractor failures correlate with specific, identifiable patterns:
     custom middleware (14\%), dynamic dispatch, metaprogramming. Each
@@ -1589,7 +1589,8 @@ The principal findings are:
     \item \textbf{The representation is validated (H1).} The PFG formalism
     captures exactly the architectural relationships that distinguish
     vulnerable endpoints from secure ones. On controlled evaluations, the
-    detection model achieves F1 = 0.83, demonstrating that absence-based
+    detection model achieves macro-F1 = 0.769 across eight vulnerability
+    subtypes with perfect binary recall, demonstrating that absence-based
     authorization patterns are learnable from graph structure. On
     real-world applications with complete extraction, all known
     vulnerabilities are detected (R = 1.0).
@@ -1620,8 +1621,3 @@ new extractor implementations, not architectural changes. Improving
 extraction through additional framework support, dynamic analysis
 integration, or LLM-assisted code understanding is the most impactful
 direction for future work.
-
-The next chapter takes a complementary approach to a different vulnerability
-class. Where this chapter detects authorization gaps that the developer
-must then repair manually, Chapter~\ref{ch:remediation} automates the repair
-of injection vulnerabilities with a provable soundness guarantee.

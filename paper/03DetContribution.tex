@@ -42,9 +42,6 @@ interpretability of structural rules expressed as first-order logic
 predicates.
 
 
-\textcolor{red}{Several parts of this chapter appears to be largely AI-generated. Please be careful, as some jury members may not be tolerant.... AI tools can be helpful, but they should be used carefully !}
-
-
 % =====================================================================
 \section{Problem Formulation}
 \label{det:problem}
@@ -243,19 +240,19 @@ by a structural representation.
 The analysis above yields three hypotheses that the rest of the chapter
 tests:
 \begin{itemize}%[leftmargin=1.8em,style=nextline]
-  \item \texttt {H1 (Architectural abstraction suffices):}
+  \item \texttt {H1:}
   A graph representation that captures only authorization-relevant
   components (endpoints, guards, services, data accesses) and their
   relationships is sufficient to detect authorization vulnerabilities that
   are invisible to general-purpose representations.
 
-  \item \texttt {H2 (Absence detection is learnable):}
+  \item \texttt {H2:}
   A graph neural network trained on structural patterns of vulnerable and
   safe authorization architectures can learn to classify endpoints, even
   though the vulnerability signal is the absence of protective structure
   rather than the presence of dangerous patterns.
 
-  \item \texttt {H3 (Hybrid detection is superior to either component alone):}
+  \item \texttt {H3:}
   Combining a neural scorer (for generalization) with a logical validator
   (for precision and explanation) yields better detection performance than
   either in isolation, and provides interpretable explanations without
@@ -267,13 +264,13 @@ tests:
 
 We operationalise the hypotheses into three testable research questions:
 \begin{enumerate}
-    \item \textbf{RQ1 (Detection effectiveness):}
+    \item \textbf{RQ1:}
     Can a domain-specific graph representation effectively detect access
     control vulnerabilities in production web applications?
-    \item \textbf{RQ2 (Interpretability):}
+    \item \textbf{RQ2:}
     Does the framework provide interpretable, actionable results without
     requiring post-hoc explanation techniques?
-    \item \textbf{RQ3 (Comparative performance):}
+    \item \textbf{RQ3:}
     How does hybrid PFG-based detection compare with rule-based structural
     analysis and existing static analysis tools?
 \end{enumerate}
@@ -283,7 +280,6 @@ We operationalise the hypotheses into three testable research questions:
 \section{Proposed Approach and Architecture}
 \label{det:design}
 % =====================================================================
-\textcolor{red}{you must add a figure that describes the whole process}
 
 Having fixed the problem, we can now describe the solution. This section
 develops the PFG formalism and the hybrid detection architecture that
@@ -294,6 +290,15 @@ detection components, and close with the complementarity argument. All
 implementation detail (extraction algorithms, training methodology, corpus
 construction) is deferred to Section~\ref{det:impl}; here the concern is
 the \emph{what} and the \emph{why}, not the \emph{how}.
+
+Figure~\ref{fig:det-overview} summarises the end-to-end detection process.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\linewidth]{figures/fig_det_overview.png}
+\caption{End-to-end overview of the PFG-based detection approach. The application is abstracted into a Privilege Flow Graph that retains only authorization-relevant structure (four node types connected by three edge types). The graph is encoded with a 36-dimensional interpretable feature vector and processed by both a neural scorer (GATv2) and a logical validator (structural rules). Only findings confirmed by both components pass the conjunction gate, each accompanied by a structural explanation identifying the missing protection.}
+\label{fig:det-overview}
+\end{figure}
 
 \subsection{Architectural intuition}
 \label{sec:det-intuition}
@@ -1473,38 +1478,6 @@ The current extractors support Django/DRF and Spring Boot; extending to
 Flask, FastAPI, Express, or ASP.NET requires new extractor implementations
 but no changes to the detection architecture.
 
-\subsection{Threats to validity}
-
-\textcolor{red}{whats the difference between the threats to validity and the limitation sections ?}
-\label{sec:det-threats}
-
-\paragraph{Internal validity: }
-(i)~All 75 CVE manifests were created by a single researcher. While each is
-verified against the published advisory and patch diff, annotation errors
-(wrong endpoint, wrong subtype) cannot be ruled out.
-(ii)~Features at indices 9, 15, 23, and 27--35 correlate with labels. The
-decontamination experiment partially addresses this, but complete elimination
-of leakage cannot be guaranteed.
-(iii)~Leave-one-app-out folds produce evaluation sets with as few as 1--7
-CVEs. Individual results have high variance.
-
-\paragraph{External validity: }
-(i)~Results are demonstrated on Django/DRF and Spring Boot only. Extension
-to Flask, FastAPI, Express, ASP.NET requires new extractors.
-(ii)~All corpus applications are open-source. Authorization patterns in
-proprietary enterprise software may differ (LDAP/AD integration, policy
-engines, API gateways).
-
-\paragraph{Construct validity: }
-(i)~Our strict TP matching (endpoint + subtype) is conservative; relaxing
-to endpoint-only would improve apparent metrics.
-(ii)~With 4 TPs on the DRF-standard subset, confidence intervals are wide.
-We report point estimates and acknowledge that larger benchmarks are needed
-for statistical robustness.
-(iii)~Semgrep and CodeQL are not designed for authorization detection; their
-near-zero recall may reflect misapplication rather than fundamental
-limitation.
-
 \subsection{Limitations}
 \label{sec:det-limits}
 
@@ -1568,7 +1541,15 @@ model. The PFG schema is framework-agnostic; extending coverage requires
 new extractor implementations, not architectural changes. Improving
 extraction through additional framework support, dynamic analysis
 integration, or LLM-assisted code understanding is the most impactful
-direction for future work. \textcolor{red}{you need to introduce the next chapter}
+direction for future work.
 
-
-\textcolor{red}{I think the threats to validity, limitations and what you put in the conclusion could be put in the general conclusion not here}
+Detection, however, is only the first half of the security problem.
+Locating a vulnerability does not remove it; a finding must still be
+translated into a correct patch before the risk is retired. For
+injection-class vulnerabilities, which have sat near the top of the OWASP
+Top~10 for two decades, the volume of vulnerable sinks far exceeds human
+repair capacity. The following chapter addresses this complementary
+challenge by developing \irsam{}, a prove-or-abstain remediation engine
+that consumes SAST findings and either emits a patch whose soundness is
+machine-checkable, or declines with an explicit justification, ensuring
+that no false fix is ever shipped.

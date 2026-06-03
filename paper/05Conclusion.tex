@@ -1,0 +1,96 @@
+\chapter*{General Conclusion}
+\label{chap:conclusion}
+
+\addcontentsline{toc}{chapter}{Conclusion}
+
+This thesis set out from a simple observation about the state of software
+security practice. The community has learned to detect many vulnerability
+classes with considerable precision, yet two hard problems remain
+insufficiently addressed. The first is the detection of authorization flaws,
+whose defining feature is often the absence of a required protection rather
+than the presence of a dangerous code pattern. The second is the repair of
+confirmed injection vulnerabilities, where an edit must be trusted not only
+to silence a warning, but also to preserve the intended behaviour of the
+program. The work reported here therefore studies both sides of the secure
+software pipeline: how to make hard-to-see vulnerabilities explicit, and how
+to repair a supported vulnerability only when the repair can be justified.
+
+The first part of the document established the conceptual ground on which
+these questions rest. We surveyed the landscape of software security, the
+main families of vulnerability detection techniques, and the principles of
+Automated Program Repair, separating the recurring stages of fault
+localisation, patch generation and patch validation. We then examined the
+methodology of systematic mapping studies and described how a
+human-in-the-loop, protocol-driven pipeline can automate their operational
+stages while preserving the methodological guarantees that give a secondary
+study its authority. That review exposed a double gap: existing detectors
+struggle with absence-based authorization errors that require architectural
+reasoning, while learning-based and pattern-based repairers offer broad
+coverage without a principled guarantee that an accepted edit is correct.
+
+The first technical contribution of the thesis addresses the detection side
+of this gap. We developed the Privilege Flow Graph (PFG), a domain-specific
+graph representation for REST APIs that makes authorization architecture
+explicit. Instead of treating source code as a flat sequence of tokens, the
+PFG captures the structural relation between endpoints, guards,
+intermediate logic and terminal data operations. On top of this
+representation, the proposed detector combines a GATv2-based neural model
+with structural validation rules, so that the system can both identify
+candidate authorization vulnerabilities and explain the missing protection
+that makes a path unsafe. The contribution was evaluated on a corpus of
+75 real-world CVEs across Django and Spring Boot applications, and it showed
+that authorization flaws are learnable from graph structure when extraction
+coverage is adequate, whereas general-purpose tools such as Semgrep and
+CodeQL achieve near-zero recall on the same class of vulnerabilities.
+
+The second technical contribution answers the remediation side. We developed
+\irsam{}, a remediation engine built on a single uncompromising premise: it
+repairs an injection vulnerability only when it can prove the repair sound
+against a precise and decidable criterion, and otherwise it abstains,
+returning a machine-readable reason rather than an unverified edit. The
+engine realises this stance through a seven-stage pipeline organised around
+an Intent Abstract Model, a binding function that relocates untrusted data
+from the grammar layer to the protocol channel, and a five-gate validator
+that certifies each accepted patch. The soundness argument at the heart of
+the design is mechanised in Lean~4, with the principal parameterisation and
+audit results closed in the proved core. Safe-API knowledge is externalised
+into declarative, schema-validated binder catalogs, so that extending
+coverage is a data change rather than a change to the trusted code.
+
+The empirical evaluation supports the central claims of both contributions.
+For detection, the PFG achieved complete recall on real-world applications
+where extraction was complete, and the failure analysis showed that missed
+cases were primarily caused by extractor coverage rather than by the graph
+formalism itself. For remediation, \irsam{} repaired every repairable case in
+a controlled testbed of one hundred SQL injection instances with a
+re-checkable certificate and a perfect five-gate pass rate. On the OWASP
+Benchmark it returned a sound decision for all in-scope findings, never
+certifying an unsound patch, and the abstention reasons it produced were
+concrete and grounded in the code rather than opaque failures. Together,
+these results support the thesis that useful security automation should be
+both explicit about what it detects and disciplined about what it changes.
+
+We have been candid throughout about the boundaries of the work. On the
+detection side, the main limitation is extraction coverage: the PFG schema is
+framework-agnostic, but real applications use framework-specific middleware,
+routing conventions and dynamic patterns that require additional extractor
+engineering. On the remediation side, the supported repair fragment is
+narrower than the full space of injection sinks, the bundled detector limits
+the volume of findings acted upon, and a small number of per-framework
+wire-protocol lemmas in the Lean development remain to be discharged. None
+of these is a soundness hole; each is a boundary of scope that maps to a
+concrete next step. The most immediate extensions are to broaden framework
+support for PFG extraction, register a host rewriter for the shell
+interpreter, pair \irsam{} with production-grade detectors through its
+detector-agnostic ingest layer, and complete the mechanised guarantee end to
+end across every catalog.
+
+The wider lesson of the thesis generalises beyond the specific defects it
+addresses. Automated security tools become trustworthy when their internal
+representation matches the structure of the vulnerability they target, and
+when their outputs are accompanied by evidence strong enough to be checked.
+For authorization flaws, this means making missing protections visible at
+the architectural level. For injection repair, it means proving before
+patching and abstaining audibly when no proof is within reach. It is on this
+combined conviction, detection that explains and remediation that certifies,
+that the contribution of this work rests.

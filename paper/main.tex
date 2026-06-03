@@ -4,6 +4,9 @@
 \usepackage{stmaryrd}        % for \llbracket, \rrbracket
 \usepackage{amsthm}
 \usepackage{pgfplots}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{float}
 \pgfplotsset{compat=1.17}
 \usetikzlibrary{arrows.meta,positioning,fit,backgrounds,calc}
 
@@ -32,6 +35,7 @@
 \usepackage{hyperref}
 \usepackage{xcolor}
 \usepackage{tikz}
+\usepackage{natbib}
 \usetikzlibrary{trees,positioning}
 \usepackage{enumitem}
 \usepackage{url}
@@ -67,7 +71,8 @@
     {\large\bfseries Topic:}
     \vspace{0.3cm}
 
-    {\LARGE Towards an Approach for Software Security \\[0.3cm]Vulnerability Identification and Remediation}\\[0.5cm]
+    {\LARGE Advanced Frameworks for Automated Software Vulnerability Detection
+    and Remediation}\\[0.5cm]
     \rule{\linewidth}{0.5pt}\\[2cm]
 
     \begin{tabular}{l@{\hspace{2cm}}l}
@@ -90,7 +95,7 @@
 % DEDICATION
 %=====================================================================
 \chapter*{Dedication}
-\addcontentsline{toc}{chapter}{Dedication}
+%\addcontentsline{toc}{chapter}{Dedication}
 \vspace*{\fill}
 \begin{center}
 
@@ -118,7 +123,7 @@ may your passion never fade and your journey never cease.}}
 % ACKNOWLEDGMENTS
 %=====================================================================
 \chapter*{Acknowledgments}
-\addcontentsline{toc}{chapter}{Acknowledgments}
+%\addcontentsline{toc}{chapter}{Acknowledgments}
 
 \vspace{0.5cm}
 
@@ -166,7 +171,7 @@ and the motivation they provided whenever it was needed most.
 % ABSTRACT (ENGLISH)
 %=====================================================================
 \chapter*{Abstract}
-\addcontentsline{toc}{chapter}{Abstract}
+%\addcontentsline{toc}{chapter}{Abstract}
 
 The widespread integration of software systems into daily activities has significantly
 increased the exposure of sensitive data to security risks. As applications become more
@@ -181,11 +186,19 @@ in reducing the attack surface and improving overall system resilience. While nu
 techniques exist to uncover vulnerabilities, the challenge lies in efficiently correcting
 them without negatively impacting system functionality.
 
-This work focuses on the analysis and improvement of approaches for detecting and
-remediating software vulnerabilities. We first identify a set of common vulnerabilities
-that may affect software systems, then propose corresponding remediation strategies
-designed to preserve application behavior. Finally, we evaluate our approach through its
-implementation within an automated framework, demonstrating its effectiveness in enhancing
+This work proposes a novel approach that addresses both sides of this confrontation. On
+the detection side, we contribute a graph-based method that targets access-control
+vulnerabilities in web applications, a class that conventional pattern and taint analysers
+are structurally unable to detect because the flaw lies in the absence of a required check
+rather than in the presence of a dangerous construct. The application is abstracted into a
+Privilege Flow Graph that renders its authorization architecture explicit, and a hybrid
+detector combining a graph neural network with structural logic rules identifies missing
+authentication, missing authorization, and insecure direct object references. On the
+remediation side, we introduce a prove-or-abstain strategy that produces
+a corrective patch only when its soundness can be established, and that declines with an
+explicit, machine-readable justification otherwise, so that application behavior is
+preserved on benign inputs. The complete approach is realized and evaluated within an
+automated framework, whose results substantiate its effectiveness in strengthening
 software security.
 
 \medskip
@@ -197,7 +210,7 @@ large language models, systematic mapping study, secure software engineering.
 % RÉSUMÉ (FRANÇAIS)
 %=====================================================================
 \chapter*{Résumé}
-\addcontentsline{toc}{chapter}{Résumé}
+%\addcontentsline{toc}{chapter}{Résumé}
 
 L'intégration croissante des systèmes logiciels dans les activités quotidiennes a
 considérablement accru l'exposition des données sensibles aux risques de sécurité.
@@ -212,10 +225,22 @@ cherchent à prévenir ou atténuer ces exploits. Dans ce contexte, la détectio
 remédiation des vulnérabilités jouent un rôle central dans la réduction de la surface
 d'attaque et l'amélioration de la résilience globale du système.
 
-Ce travail se concentre sur l'analyse et l'amélioration des approches de détection et de
-remédiation des vulnérabilités logicielles. Nous identifions d'abord un ensemble de
-vulnérabilités courantes, puis proposons des stratégies de remédiation correspondantes,
-et évaluons notre approche à travers son implémentation dans un cadre automatisé.
+Ce travail propose une approche nouvelle qui traite les deux versants de cette
+confrontation. Du côté de la détection, nous proposons une méthode fondée sur les graphes
+qui cible les vulnérabilités de contrôle d'accès dans les applications web, une classe que
+les analyseurs par motifs et par propagation de teinte sont structurellement incapables de
+détecter, car la faille réside dans l'absence d'une vérification requise plutôt que dans la
+présence d'une construction dangereuse. L'application est abstraite en un graphe de flux de
+privilèges qui rend explicite son architecture d'autorisation, et un détecteur hybride
+combinant un réseau de neurones sur graphes et des règles logiques structurelles identifie
+les défauts d'authentification, les défauts d'autorisation et les références directes
+d'objet non sécurisées. Du côté de la remédiation, nous introduisons une stratégie de type «~prouver ou
+s'abstenir~» qui ne produit un correctif que lorsque sa validité peut être établie, et
+qui renonce sinon en fournissant une justification explicite et exploitable par la
+machine, de sorte que le comportement de l'application soit préservé sur les entrées
+légitimes. L'approche complète est mise en œuvre et évaluée au sein d'un cadre
+automatisé, dont les résultats confirment son efficacité pour renforcer la sécurité
+logicielle.
 
 \medskip
 \noindent\textbf{Mots-clés :} sécurité logicielle, détection de vulnérabilités,
@@ -229,7 +254,7 @@ cartographie systématique, génie logiciel sécurisé.
 \begin{Arabic}
 
 \chapter*{ملخص}
-\addcontentsline{toc}{chapter}{ملخص}
+%\addcontentsline{toc}{chapter}{ملخص}
 
 \begin{flushright}
 
@@ -245,9 +270,16 @@ cartographie systématique, génie logiciel sécurisé.
 وتعزيز صمود النظام.
 
 \medskip
-يرتكز هذا العمل على تحليل وتحسين مناهج اكتشاف الثغرات البرمجية ومعالجتها. نبدأ
-بتحديد مجموعة من الثغرات الشائعة، ثم نقترح استراتيجيات معالجة مناسبة، وأخيرًا
-نُقيّم نهجنا من خلال تطبيقه ضمن إطار عمل آلي.
+يقترح هذا العمل نهجًا جديدًا يعالج طرفَي هذه المواجهة معًا. فعلى صعيد الاكتشاف، نقدّم
+طريقةً قائمةً على الرسوم البيانية تستهدف ثغرات التحكم في الوصول ضمن تطبيقات الويب، وهي فئة
+يعجز محلّلو الأنماط وتتبّع التلوّث عن كشفها بنيويًا لأن الخلل يكمن في غياب تحقّق مطلوب لا في
+وجود بنية خطرة. ويُجرَّد التطبيق إلى رسمٍ لتدفّق الامتيازات يُظهر بنية التفويض فيه صراحةً،
+ويجمع كاشفٌ هجين بين شبكة عصبية على الرسوم وقواعد منطقية بنيوية لتحديد غياب المصادقة، وغياب
+التفويض، والإشارات المباشرة غير الآمنة إلى الكائنات. وعلى صعيد المعالجة، نطرح استراتيجية «الإثبات أو
+الامتناع» التي لا تُنتج تصحيحًا إلا عند إمكان إثبات سلامته، وتمتنع فيما عدا ذلك مع
+تقديم تبرير صريح قابل للمعالجة الآلية، بما يحفظ سلوك التطبيق على المدخلات المشروعة.
+ويُنفَّذ هذا النهج المتكامل ويُقيَّم ضمن إطار عمل آلي، تؤكد نتائجه فعاليته في تعزيز
+أمن البرمجيات.
 
 \medskip
 \textbf{الكلمات المفتاحية:} أمن البرمجيات، اكتشاف الثغرات، المعالجة الآلية،
@@ -264,14 +296,14 @@ cartographie systématique, génie logiciel sécurisé.
 
 
 \listoffigures
-\addcontentsline{toc}{chapter}{List of Figures}
+%\addcontentsline{toc}{chapter}{List of Figures}
 
 
 \listoftables
-\addcontentsline{toc}{chapter}{List of Tables}
+%\addcontentsline{toc}{chapter}{List of Tables}
 
 \chapter*{Acronyms and Abbreviations}
-\addcontentsline{toc}{chapter}{Acronyms and Abbreviations}
+%\addcontentsline{toc}{chapter}{Acronyms and Abbreviations}
 \begin{tabular}{@{}ll@{}}
 \textbf{APR}    & Automated Program Repair \\[4pt]
 \textbf{AST}    & Abstract Syntax Tree \\[4pt]
@@ -311,7 +343,7 @@ cartographie systématique, génie logiciel sécurisé.
 
 \include{05Conclusion}
 
-\bibliographystyle{plain}
+\bibliographystyle{plainnat}
 \bibliography{references}
 
 \end{document}

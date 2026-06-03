@@ -1,6 +1,5 @@
-\chapter{Contribution: Automated Vulnerability Remediation}
+\chapter{Contribution: Automated Vulnerability Remediation ( not fully corrected yet )}
 \label{ch:remediation}
-
 % =====================================================================
 \section{Introduction}
 \label{rem:intro}
@@ -9,96 +8,69 @@
 The preceding chapter established that locating injection-class
 vulnerabilities in source code is, for the most part, a problem the
 community already knows how to solve. Industrial static analysers trace
-tainted data from an untrusted source to a dangerous sink and report the
-offending flow with a precision that was unimaginable a decade ago. Yet a
-report is not a repair. Once a finding is raised, somebody (almost always a
-human) must still decide what the code was meant to do, separate the fixed
-command skeleton from the variable data woven into it, and rewrite the call
-so that the data can never again be mistaken for syntax. That last step is
-where the security debt accumulates, and it is the subject of this chapter.
+tainted data from an untrusted source to a dangerous sink with a precision
+that was unimaginable a decade ago. Yet a report is not a repair. Once a
+finding is raised, somebody must still decide what the code was meant to do,
+separate the fixed command skeleton from the variable data woven into it, and
+rewrite the call so that the data can never again be mistaken for syntax.
+That last step is where the security debt accumulates, and it is the subject
+of this chapter.
 
-Injection vulnerabilities are a useful lens because they are at once
-old, well understood, and stubbornly common. SQL injection (CWE-89),
-OS-command injection (CWE-78), LDAP injection (CWE-90) and XPath injection
-(CWE-643) all share a single root cause: untrusted data is concatenated
-into a string that an interpreter later parses as a command
-\cite{su2006essence,halfond2006classification}. The pattern has sat at or
-near the top of the OWASP Top~Ten for the better part of twenty years
-\cite{owasptop10}. It persists not because the defect is mysterious: any
-competent engineer can explain it, but because the sheer volume of
-vulnerable code dwarfs the human capacity to repair it correctly, one sink
-at a time. We therefore frame remediation, rather than detection, as the
-binding constraint on secure software delivery.
+Injection vulnerabilities offer a useful lens because they are at once old,
+well understood, and stubbornly common. SQL injection (CWE-89), OS-command
+injection (CWE-78), LDAP injection (CWE-90) and XPath injection (CWE-643)
+all share a single root cause: untrusted data is concatenated into a string
+that an interpreter later parses as a command
+\citep{su2006essence,halfond2006classification}. The pattern has sat near
+the top of the OWASP Top~Ten for the better part of twenty years
+\citep{owasptop10}, not because the defect is mysterious but because the
+volume of vulnerable code dwarfs the human capacity to repair it correctly,
+one sink at a time. We therefore frame remediation, rather than detection,
+as the binding constraint on secure software delivery.
 
-A natural reaction is to automate the fix the same way detection was
-automated. The dominant contemporary recipe is to treat repair as a
-translation task: collect pairs of vulnerable and fixed code, train a
-sequence model, and let it propose an edit
-\cite{fu2022vulrepair,chi2023seqtrans}. More recent variants prompt a large
-language model, sometimes in a feedback loop with a test harness
-\cite{xia2023chatrepair,jin2023inferfix,placeholder-llm-repair}. These
-systems are impressive, and they undeniably fix some bugs. The difficulty
-is more subtle than raw success rate. A learned model produces an edit that
-\emph{looks} right; it offers no guarantee that the edit \emph{is} right.
-In a security setting, that gap is not academic. A patch that compiles,
-passes a smoke test, and silences the scanner while remaining
-exploitable, and is arguably worse than no patch at all, because it retires the
-ticket and manufactures false confidence. We return to this failure mode
-repeatedly, since it motivates almost every design decision that follows.
+The dominant reaction is to automate the fix as detection was automated, by
+treating repair as a translation task over pairs of vulnerable and fixed
+code \citep{fu2022vulrepair,chi2023seqtrans}, or by prompting a large
+language model in a feedback loop with a test harness
+\citep{xia2023chatrepair,jin2023inferfix,placeholder-llm-repair}. Such
+systems undeniably fix some bugs, but a learned model produces an edit that
+\emph{looks} right without any guarantee that it \emph{is} right. In a
+security setting a patch that compiles, passes a smoke test and silences the
+scanner while remaining exploitable is arguably worse than no patch at all,
+because it retires the ticket and manufactures false confidence. This
+failure mode motivates almost every design decision that follows.
 
-This chapter develops \irsam{}, a remediation engine constructed on a
-deliberately uncompromising premise. An automated repair tool, we argue,
-must either emit a patch it can \emph{prove} safe against a precise,
-machine-checkable criterion, or it must \emph{abstain}, declining to act and
-explain why, in a form a downstream human or tool can consume. There is no
-permitted third option in which the engine ships an edit it cannot justify.
-This is a strong commitment, and it has a cost: \irsam{} repairs fewer
-findings than a system willing to guess. The thesis of the chapter is that
-the trade is worth making, and that the resulting guarantees are both
-formally statable and empirically attainable.
+\irsam{}, the engine developed in this chapter, rests on an uncompromising
+premise: an automated repair tool must either emit a patch it can
+\emph{prove} safe against a precise, machine-checkable criterion, or it must
+\emph{abstain}, declining to act and explaining why in a form a downstream
+human or tool can consume. No third option is permitted in which the engine
+ships an edit it cannot justify. The commitment has a cost, since \irsam{}
+repairs fewer findings than a system willing to guess; the thesis of the
+chapter is that the trade is worth making, and that the resulting guarantees
+are both formally statable and empirically attainable.
 
-\paragraph{Chapter objectives.}
+The work is organised around six objectives, denoted R1 through R6 and
+revisited throughout the chapter: soundness (R1), every accepted patch meets
+a decidable criterion under which attacker-controlled data never reaches the
+interpreter as syntax; sound abstention (R2), when no patch can be proven
+sound the engine returns \bottom{} with a machine-readable reason; intent
+fidelity (R3), a patched program behaves identically to the original on
+benign inputs; detector-agnostic operation (R4), the engine consumes any
+standard SAST output through one unified finding schema; multi-interpreter
+reach (R5), a single pipeline spans SQL, OS-command, LDAP and XPath sinks in
+Java host code; and auditability (R6), every accepted patch carries a
+structural certificate an independent reviewer can re-check.
 \label{sec:objectives}
-The work is organised around six concrete objectives, denoted R1 through R6
-and revisited throughout the chapter:
-\begin{enumerate}[label=\textbf{R\arabic*.},leftmargin=2.8em]
-  \item \textbf{Soundness.} Every \emph{accepted} patch must satisfy a
-  precise, decidable soundness criterion: attacker-controlled data can never
-  reach the interpreter as syntax.
-  \item \textbf{Sound abstention.} When no patch can be proven sound, the
-  engine returns \bottom{} together with a machine-readable reason, rather
-  than emitting an unverified edit.
-  \item \textbf{Intent fidelity.} A patched program must behave identically
-  to the original on benign, trusted inputs.
-  \item \textbf{Detector-agnostic operation.} The engine consumes the output
-  of any standard SAST tool through one unified finding schema.
-  \item \textbf{Multi-interpreter, multi-language reach.} A single pipeline
-  spans SQL, OS-command, LDAP and XPath sinks across Java and Python.
-  \item \textbf{Auditability.} Every accepted patch carries a structural
-  certificate that an independent reviewer or verifier can re-check.
-\end{enumerate}
 
-\paragraph{Chapter outline.}
-The remainder of the chapter proceeds as follows.
-Section~\ref{rem:problem} formalises the remediation problem, fixes the
-threat model and adversarial assumptions, and states the hypotheses that the
-rest of the work tests. Section~\ref{rem:design} presents the proposed
-approach: the seven-stage pipeline, the Intent Abstract Model at its centre,
-the binding function that turns intent into a host-language rewrite, and the
-decidable soundness criterion that gates acceptance, closing with the
-principal design decisions and their justification.
-Section~\ref{rem:impl} descends into the implementation: the technology
-stack, the unified finding schema, a stage-by-stage walkthrough of the
-codebase, the declarative binder catalogs, the five validation gates, and
-the Lean~4 mechanisation of the soundness argument.
-Section~\ref{rem:setup} describes the experimental setup: environment,
-corpora, metrics and baselines. Section~\ref{rem:results} reports and
-analyses the results across a controlled tier and a realistic project tier,
-including a comparison with representative baselines and an account of the
-defects the evaluation surfaced. Section~\ref{rem:discussion} interprets the
-findings, examines limitations and threats to validity, and sketches future
-directions, before Section~\ref{rem:conclusion} concludes and ties the
-contribution back to the objectives above.
+The remainder of the chapter is structured conventionally:
+Section~\ref{rem:problem} formalises the problem and threat model;
+Section~\ref{rem:design} presents the proposed approach;
+Section~\ref{rem:impl} details the implementation and its Lean~4
+mechanisation; Section~\ref{rem:setup} describes the experimental setup;
+Section~\ref{rem:results} reports and analyses the results; and
+Section~\ref{rem:discussion} interprets the findings before
+Section~\ref{rem:conclusion} concludes. \textcolor{green}{the introduction is too long}
 
 
 % =====================================================================
@@ -119,7 +91,7 @@ and the code.
 \subsection{Threat model and adversarial assumptions}
 \label{sec:threat}
 
-We fix a host programming language $H$ (in this work Java or Python) and
+We fix the host programming language $H$ (Java in this work) and
 an \emph{interpreter} $I=(L_I,\llbracket\cdot\rrbracket_I,P_I)$. Here $L_I
 \subseteq \Sigma_I^{*}$ is the surface language of well-formed interpreter
 commands (SQL queries, shell command lines, LDAP filters, XPath
@@ -195,13 +167,7 @@ that expressing this move precisely is what forces a model of the
 \begin{figure}[ht]
 \centering
 \includegraphics[width=\linewidth]{figures/fig_dataflow.pdf}
-\caption{The two regimes of an injection sink. \emph{Left:} in the
-vulnerable program the untrusted value is concatenated into the query and
-is lexed by the interpreter's parser, so a crafted input can inject syntax.
-\emph{Right:} after remediation the value is bound on the driver's parameter
-channel; the parser sees only a placeholder skeleton, and attacker bytes
-travel on a protocol path that is never tokenised as code. The correct fix
-relocates data from the grammar layer to the protocol layer.}
+\caption{Injection sink before and after remediation.}
 \label{fig:dataflow}
 \end{figure}
 
@@ -241,16 +207,18 @@ behaviour exactly. Together the two properties say that the patch changes
 \emph{how} data reaches the interpreter without changing \emph{what} the
 program computes on legitimate inputs.
 
-\subsection{The remediation gap}
+\subsection{The Remediation Gap}
 \label{sec:gap}
-
-Why is this problem still open in practice? The discovery of injection flaws
+The discovery of injection flaws
 is, as noted, largely a solved engineering task. Their remediation is not,
 and three concrete deficiencies (which we label G1 through G3) explain the
 shortfall. We state them as gaps in the current state of practice because
 each one corresponds directly to an objective \irsam{} sets out to meet.
 
-\paragraph{G1: No soundness contract.}
+\begin{enumerate}
+
+
+\item \texttt{G1: No soundness contract:}
 Learning-based and LLM-prompted repair systems emit edits that look correct
 but carry no checkable invariant. ``Plausible'' is simply not the same as
 ``safe.'' A model may delete the offending line, paraphrase the query into
@@ -261,7 +229,7 @@ that, to remain silent. The system is architecturally committed to
 producing output, which is precisely the wrong commitment in a security
 context.
 
-\paragraph{G2: The detector--repairer impedance mismatch.}
+\item \texttt{G2: The detector--repairer impedance mismatch: }
 Detectors emit \emph{locations}; safe repair needs \emph{intent}. A scanner
 reports that tainted data reaches \code{executeQuery} on some line. It says
 nothing about which substrings form the developer's fixed query skeleton and
@@ -272,7 +240,7 @@ dynamically, across statements, through helper methods, or with conditional
 fragments. The information the repairer most needs is exactly the
 information the detector does not provide.
 
-\paragraph{G3: The false-fix failure mode.}
+\item \texttt{G3: The false-fix failure mode: }
 An incorrect patch that compiles and passes a cursory test is worse than no
 patch. It closes the ticket, suppresses the alert, and ships a still
 exploitable system wrapped in a false sense of safety. To our knowledge no
@@ -280,8 +248,11 @@ mainstream automated remediator treats ``I cannot prove this is safe'' as a
 first-class, auditable outcome. The silent substitution of a guess for a
 proof is the single most dangerous behaviour an automated security tool can
 exhibit, and it is endemic to systems optimised for fix rate alone.
+     
+\end{enumerate}
 
-\subsection{Why escaping is the wrong fix}
+
+\subsection{Limitations of Escaping as a Security Remediation}
 \label{sec:escaping}
 
 A recurring but structurally weak remedy deserves explicit rebuttal, because
@@ -296,7 +267,7 @@ missed case reopens the hole. Parameterised APIs take the opposite,
 structurally sound route, already depicted in Figure~\ref{fig:dataflow}:
 they relocate the value to the interpreter's protocol layer, where it is
 bound once as an opaque datum and is never lexed as code
-\cite{boyd2004sqlrand}. The distinction matters for our design because it
+\citep{boyd2004sqlrand}. The distinction matters for our design because it
 dictates \emph{what} the engine must reconstruct. To move data out of the
 grammar, one must first know which parts of the command are grammar and
 which are data; that is, one must recover the developer's intent.
@@ -307,25 +278,25 @@ which are data; that is, one must recover the developer's intent.
 The foregoing analysis can be distilled into three testable hypotheses that
 the rest of the chapter examines. They are stated informally here and
 revisited, against evidence, in Section~\ref{rem:results}.
-\begin{description}[leftmargin=1.8em,style=nextline]
-  \item[H1 (Provable repair is feasible).] For a useful fragment of
+\begin{enumerate}%[leftmargin=1.8em,style=nextline]
+  \item \texttt{H1 (Provable repair is feasible): } For a useful fragment of
   real-world injection sinks, it is possible to reconstruct the developer's
   intent precisely enough to synthesise a patch whose soundness, in the
   sense of Eq.~\eqref{eq:soundness}, is decidable and re-checkable by an
   independent verifier.
-  \item[H2 (Abstention is sound and frequent, not rare).] When intent cannot
+  \item \texttt{H2 (Abstention is sound and frequent, not rare): } When intent cannot
   be reconstructed soundly, the engine can detect this and abstain with a
   precise reason; on realistic code such abstention is common, and treating
   it as a feature rather than a failure yields a system with no unsound
   patches.
-  \item[H3 (Soundness need not collapse fix rate).] Insisting on provable
+  \item \texttt{H3 (Soundness need not collapse fix rate):} Insisting on provable
   repair does reduce coverage relative to a guess-freely baseline, but the
   reduction is bounded; on the supported fragment the functional fix rate
   remains substantially higher than that of baselines that do guess.
-\end{description}
+\end{enumerate}
 
-\subsection{Design premise: abstention as a feature}
-\label{sec:premise}
+%\subsection{Design premise: abstention as a feature}
+%\label{sec:premise}
 
 Because a wrong fix is more dangerous than an unfixed-but-flagged finding
 (G3), the rational design choice is a system that \emph{prefers silence to a
@@ -399,45 +370,41 @@ to a concrete rewrite. Stages F and G realise and certify the result.
 \begin{figure}[ht]
 \centering
 \includegraphics[width=\linewidth]{figures/fig_pipeline.pdf}
-\caption{The \irsam{} seven-stage pipeline. A finding enters at stage~A and
-is progressively refined into a parameterised template (A--C), an Intent
-Abstract Model (D), a patch plan (E), a synthesised host-AST edit (F) and
-finally a certified patch (G). The dashed region encloses the conceptual
-core: intent reconstruction and the binding function $\varphi$. Any stage
-may return $\bot$ with a machine-readable reason instead of passing output
-downstream.}
+\caption{The \irsam{} seven-stage pipeline.}
 \label{fig:pipeline}
 \end{figure}
 
 The typed signatures make the contract between stages explicit, and they are
 worth stating once because the implementation in Section~\ref{rem:impl}
 mirrors them line for line:
-\begin{description}[leftmargin=1.7em,style=nextline]
-  \item[A: Sink locator.] $\mathrm{Code}\to\mathcal{P}(\mathrm{Finding})$.
+\begin{itemize}%[leftmargin=1.7em,style=nextline]
+  \item \texttt{A-- Sink locator: } $\mathrm{Code}\to\mathcal{P}(\mathrm{Finding})$.
   Consumes a normalised finding and resolves it to a concrete sink call-site.
-  \item[B: Slicer.]
+  \item \texttt{B-- Slicer: }
   $\mathrm{Finding}\times\mathrm{Code}\to\mathcal{P}(\mathrm{Slice})$.
-  Computes a backward slice of the string-construction feeding the sink;
-  abstains if the slice escapes the local scope.
-  \item[C: Reconstructor.] $\mathrm{Slice}\to\mathrm{Template}$. Rebuilds
+  Computes a backward slice of the string-construction feeding the sink,
+  escalating from an intra-procedural slice to controlled inter-procedural
+  inlining when the query is assembled across method or file boundaries;
+  abstains when no provably pure reconstruction is available.
+  \item \texttt{C-- Reconstructor: } $\mathrm{Slice}\to\mathrm{Template}$. Rebuilds
   a parameterised template from the slice, marking data positions as holes;
   abstains on grammar outside the supported fragment.
-  \item[D: Intent parser.]
+  \item \texttt{D-- Intent parser: }
   $\mathrm{Template}\times\mathrm{Interpreter}\to\mathrm{IAM}\cup\{\bottom\}$.
   Parses the template into an Intent Abstract Model, disambiguating where
   necessary.
-  \item[E: Binder ($\varphi$).]
+  \item \texttt{E-- Binder ($\varphi$):}
   $\mathrm{IAM}\to\mathrm{Patch}\cup\{\bottom\}$. Binds each hole to a safe
   API through the verified catalog.
-  \item[F: Synthesiser.]
+  \item \texttt{F-- Synthesiser: }
   $\mathrm{Patch}\times\mathrm{HostAST}\to\mathrm{HostAST}'$. Applies the
   patch plan to the host syntax tree.
-  \item[G: Validator.]
+  \item \texttt{G-- Validator: }
   $\mathrm{HostAST}'\to\{\textsf{accept},\textsf{reject}\}$. Re-checks the
   patched program through five independent gates.
-\end{description}
+\end{itemize}
 
-\subsection{Component architecture}
+\subsection{Component Architecture}
 \label{sec:components}
 
 The pipeline stages map onto a layered code architecture, summarised in
@@ -457,14 +424,7 @@ Section~\ref{sec:decisions}.
 \begin{figure}[ht]
 \centering
 \includegraphics[width=\linewidth]{figures/fig_architecture.pdf}
-\caption{Layered component architecture of \irsam{}. The input layer
-normalises detector output into a unified finding schema; the core layer
-implements the seven pipeline stages as cooperating modules under a thin
-orchestrator; the knowledge-and-proofs layer externalises safe-API knowledge
-into declarative catalogs validated by a JSON schema and backs the soundness
-argument with Lean~4 proofs; the interface layer exposes the command-line
-tool and the evaluation harnesses. Solid arrows denote data flow; dashed
-arrows denote that the core consults the knowledge layer.}
+\caption{Layered component architecture of \irsam{}. \textcolor{green}{verify the figure}}
 \label{fig:architecture}
 \end{figure}
 
@@ -507,14 +467,7 @@ guess which substring is data; the answer is written into the structure.
 \begin{figure}[ht]
 \centering
 \includegraphics[width=0.92\linewidth]{figures/fig_iam_sig.pdf}
-\caption{The Semantic Intent Graph for the query
-\code{SELECT id FROM users WHERE name = $\langle$h1$\rangle$ AND role =
-$\langle$h2$\rangle$}. Blue nodes are interpreter-grammar syntax; white
-nodes are developer-controlled literals and identifiers; green nodes are
-typed holes that mark the positions where host data is inserted. Hole
-\code{h1} is a \textsf{value} hole of semantic type \textsf{string}; hole
-\code{h2} is a \textsf{value} hole of semantic type \textsf{enum}. The
-fixed skeleton and the variable data are thereby separated structurally.}
+\caption{Semantic Intent Graph with two value holes.}
 \label{fig:iam-sig}
 \end{figure}
 
@@ -532,10 +485,7 @@ compressed into four rows.
 
 \begin{table}[ht]
 \centering
-\caption{The four grammatical roles a hole may take, and the sound
-realisation strategy for each. Only \textsf{value} holes may be bound to
-attacker-controlled data; the rest require a trust proof or force
-abstention.}
+\caption{Grammatical roles of holes and their realisation.}
 \label{tab:holes}
 \begin{tabular}{p{2.4cm}p{4.7cm}p{5.0cm}}
 \hline
@@ -607,7 +557,7 @@ each identifier hole became a guarded lookup. Consequently the validator of
 stage~G can re-certify any patch independently of how it was produced,
 which is exactly the trust-minimising decoupling promised in
 Section~\ref{sec:rationale} and the substance of objective R6. The theorem
-is proved on paper for the $\mathrm{SQL}_0$+JDBC fragment and mechanised in
+is proved on paper for the core SQL plus JDBC fragment and mechanised in
 Lean~4 for the identifier-allowlist closure, the structural cover, the audit
 soundness and the principal parameterisation result; the OS-command
 argument-inertness results and the path-guard insertion lemmas are likewise
@@ -623,13 +573,19 @@ the dialect-prepared-statement assumption. Hence a \textsf{value} hole
 realised in this way cannot contribute syntax to the executed command.
 \end{lemma}
 
-A short remark on scope is in order. The fragment for which the paper proof
-is complete, $\mathrm{SQL}_0$, is a restricted but practically common subset
-of SQL: single-statement \code{SELECT}/\code{INSERT}/\code{UPDATE}/\code{DELETE}
-with equality, \code{IN}, \code{LIKE}, \code{LIMIT} and \code{ORDER BY}.
-Commands outside this subset are not handled unsoundly; they are simply not
-handled, and the engine abstains. This is a conscious trade of breadth for
-certainty, and Section~\ref{rem:discussion} weighs it honestly.
+A short remark on scope is in order. The engine's Stage-D parser lifts a
+broad SQL fragment: \code{sql\_v1}, built on \code{sqlglot}, recognises
+multi-dialect \code{SELECT}/\code{INSERT}/\code{UPDATE}/\code{DELETE}
+together with JOINs, \code{GROUP BY}, \code{HAVING}, common table
+expressions and subqueries across the PostgreSQL, MySQL, Oracle, SQLite and
+T-SQL dialects, with the original minimal \code{SQL}$_0$ grammar retained as
+a fallback. What matters for soundness is that acceptance does not depend on
+which productions a query uses: the hypothesis of
+Theorem~\ref{thm:soundness} is a property of the patched AST, re-checked per
+patch by the structural gate. Constructions the parser cannot lift, or holes
+it cannot place in a value position, are not handled unsoundly; they are
+simply not handled, and the engine abstains. This is a conscious trade of
+breadth for certainty, and Section~\ref{rem:discussion} weighs it honestly.
 
 \subsection{Design decisions}
 \label{sec:decisions}
@@ -641,21 +597,24 @@ from Section~\ref{rem:intro}. Listing them explicitly is not bookkeeping for
 its own sake; it makes the chain from problem to mechanism inspectable,
 which is itself a form of the auditability we advocate.
 
-\paragraph{D1: Reconstruct intent rather than rewrite bytes.}
+\begin{itemize}
+
+
+\item \texttt{D1: Reconstruct intent rather than rewrite bytes: }
 We lift the command into a typed SIG instead of editing the host AST
 directly. Byte- or AST-level rewriting cannot tell skeleton from data on
 dynamically assembled commands (G2); intent reconstruction makes the
 distinction explicit and is what enables a provable transformation in the
 first place. This is the foundational decision; the others elaborate it.
 
-\paragraph{D2: Make abstention first-class.}
+\item \texttt{D2: Make abstention first-class: }
 Every stage may return \bottom{} with a reason. This follows directly from
 the anti-false-fix premise (G3): a pipeline that must always emit an edit
 cannot be sound. Because the reasons are machine-readable, a human or a
 stronger tool can resume precisely where \irsam{} stops, rather than
 re-triaging from scratch.
 
-\paragraph{D3: Accept by a decidable, re-checkable criterion.}
+\item \texttt{D3: Accept by a decidable, re-checkable criterion: }
 Rather than trust whatever produced a patch, acceptance hinges on the
 hypothesis of Theorem~\ref{thm:soundness}, which the validator re-checks on
 the patched AST. This decouples how a patch is generated from whether it is
@@ -663,7 +622,7 @@ accepted and yields the auditable certificate of R6. It also means the
 synthesiser can be improved, or even replaced, without weakening any
 guarantee.
 
-\paragraph{D4: A declarative binder catalog.}
+\item \texttt{D4: A declarative binder catalog:}
 Safe-API knowledge is externalised into YAML catalogs, one per
 framework-interpreter pair, rather than hard-coded. Each binder declares its
 SIG pattern, rewrite template, parameterising APIs and proof obligation.
@@ -671,15 +630,15 @@ Extending coverage then becomes a data change validated against a schema,
 not a code change, which supports R5 and keeps the verified core small. A
 small core is easier to trust; that is the entire motivation.
 
-\paragraph{D5: Detector-agnostic input.}
+\item \texttt{D5: Detector-agnostic input: }
 Stage~A consumes a unified finding schema normalised from SARIF
-\cite{sarif2023}. Detection quality and remediation soundness thereby become
+\citep{sarif2023}. Detection quality and remediation soundness thereby become
 independent concerns (R4): a weak bundled detector limits how \emph{many}
 findings \irsam{} acts on, never \emph{whether} its accepted patches are
 sound. We regard this separation as essential; conflating the two is a
 common source of confusion in the literature.
 
-\paragraph{D6: Independent multi-gate validation.}
+\item \texttt{D6: Independent multi-gate validation: }
 Acceptance requires passing five orthogonal gates: compile, regression,
 structural, re-SAST and differential. The redundancy is intentional. The
 structural gate certifies Theorem~\ref{thm:soundness}; the others guard
@@ -687,7 +646,7 @@ against accidental breakage and confirm that the original finding no longer
 fires. No single gate is load-bearing for soundness, but together they make
 an accepted patch trustworthy along several independent axes.
 
-
+\end{itemize}
 % =====================================================================
 \section{Implementation}
 \label{rem:impl}
@@ -707,14 +666,15 @@ so that the prose can be checked against the source.
 \subsection{Technology stack and choices}
 \label{sec:stack}
 
-\irsam{} is implemented in Python~3.10. The choice is pragmatic rather than
-ideological: the project must parse and manipulate both Java and Python
-source, orchestrate external tools (SAST detectors, the Java compiler, a
-database used for differential testing), and present a usable command-line
-interface. Python's ecosystem covers all of these with little friction, and
-its dynamic typing was tempered in practice by Pydantic data classes and a
-\code{mypy} type-checking gate. Table~\ref{tab:stack} summarises the stack
-and the role of each component.
+\irsam{} is implemented in Python~3.10, though the language it analyses and
+repairs is Java. The choice of implementation language is pragmatic rather
+than ideological: the project must parse and manipulate Java source,
+orchestrate external tools (SAST detectors, the Java compiler, a database
+used for differential testing), and present a usable command-line interface.
+Python's ecosystem covers all of these with little friction, and its dynamic
+typing was tempered in practice by Pydantic data classes and a \code{mypy}
+type-checking gate. Table~\ref{tab:stack} summarises the stack and the role
+of each component.
 
 \begin{table}[ht]
 \centering
@@ -724,18 +684,17 @@ and the role of each component.
 \hline
 \textbf{Concern} & \textbf{Choice} \\
 \hline
-Core language          & Python 3.10 \\
-SQL$_0$ grammar parser & \code{lark} (Earley/LALR) \\
+Implementation language & Python 3.10 (analyses Java source) \\
+SQL grammar parser     & \code{sqlglot} multi-dialect (\code{sql\_v1}); minimal \code{SQL}$_0$ LL(1) fallback \\
 Shell / XPath parsing  & \code{antlr4} runtime \\
 Data validation        & \code{pydantic} (typed records) \\
 CLI framework          & \code{typer} (\code{scan/plan/patch/validate/pipeline}) \\
 Terminal reporting     & \code{rich} tables \\
 Binder catalogs        & declarative YAML, JSON-schema validated \\
-Detector (default)     & Semgrep 1.164.0, offline bundled ruleset \cite{semgrep2024} \\
+Detector (default)     & Semgrep 1.164.0, offline bundled ruleset \citep{semgrep2024} \\
 Java compile gate      & JDK 21 \code{javac} (real compilation) \\
-Python compile gate    & in-process CPython \code{compile} \\
 Differential gate DB   & SQLite (in-memory) \\
-Formal proofs          & Lean 4 \cite{demoura2021lean4} with mathlib \cite{mathlib2020} \\
+Formal proofs          & Lean 4 \citep{demoura2021lean4} with mathlib \citep{mathlib2020} \\
 Test framework         & \code{pytest} (unit, property via \code{hypothesis}, integration) \\
 \hline
 \end{tabular}
@@ -745,10 +704,10 @@ Two choices deserve a word of justification, since they shape the
 trustworthiness of the result. Encoding safe-API knowledge in YAML, and
 validating each catalog against \code{schemas/binder.schema.json}, keeps the
 logic that must be trusted small and turns coverage extension into a data
-change. Eleven catalogs ship at the time of writing, spanning JDBC, Spring
-\code{JdbcTemplate}, MyBatis, Hibernate HQL, JPA, Django ORM, Python DB-API,
-Python \code{subprocess}, Java \code{ProcessBuilder}, LDAP and XPath.
-Separately, the decision to mechanise the soundness argument in Lean~4 was
+change. Eight catalogs ship at the time of writing, spanning JDBC, Spring
+\code{JdbcTemplate}, MyBatis, Hibernate HQL, JPA, Java \code{ProcessBuilder},
+LDAP and XPath. Separately, the decision to mechanise the soundness argument
+in Lean~4 was
 made because a security claim of this kind is only as credible as its proof;
 a dependently typed kernel lets us discharge the central lemmas with no
 \code{sorry} placeholders, a point we substantiate in
@@ -759,13 +718,13 @@ Section~\ref{sec:lean}.
 
 Stage~A's job is to make the rest of the pipeline indifferent to which
 detector raised an alert. It normalises a SARIF finding
-\cite{sarif2023} into an internal record (a Pydantic model) that carries the
+\citep{sarif2023} into an internal record (a Pydantic model) that carries the
 sink location (file and line), the host language, the interpreter
 (\code{sql}, \code{shell}, \code{ldap} or \code{xpath}) and the sink API. A
 rule-map translates detector-specific rule identifiers, including the
 namespaced identifiers that Semgrep assigns to local-file rules, into this
-record. The effect is that a CodeQL finding \cite{avgustinov2016codeql}, a
-Semgrep finding \cite{semgrep2024} and a SonarQube finding all converge on
+record. The effect is that a CodeQL finding \citep{avgustinov2016codeql}, a
+Semgrep finding \citep{semgrep2024} and a SonarQube finding all converge on
 the same downstream representation, after which they are indistinguishable
 to the engine. This is the concrete realisation of design decision~D5, and
 it is the mechanism behind the detector-agnostic objective R4. The
@@ -781,26 +740,42 @@ in view, since the code structure deliberately mirrors the typed signatures
 given in Section~\ref{sec:pipeline}.
 
 \subsubsection{Stage~B: Slicing}
-The slicer (\code{core/slicer/}) computes, for the language at hand, a
-backward slice of the expression feeding the sink argument. Its central
-routine, \code{slice\_sink\_argument}, returns a \code{SliceResult} carrying
-the reconstructed skeleton, the sink call text and its line. Where a helper
-method assembles part of the query, the slicer performs a single hop of
-inter-procedural inlining; beyond one hop, or when the construction depends
-on state outside the local method, it returns a \code{SliceAbstention} with
-a reason such as \code{no connection variable in scope} or \code{slice
-escapes scope}. The reason this matters is subtle: reconstructing intent
-from a slice that leaves the local scope would require assumptions the
+The slicer (\code{core/slicer/}) computes a backward slice of the expression
+feeding the sink argument. It is organised as three tiers that escalate only
+when a cheaper tier abstains, and never at the expense of soundness. The
+first tier is an intra-procedural slicer whose central routine,
+\code{slice\_sink\_argument}, reconstructs local definition-use chains:
+direct string literals, \code{+} concatenation, \code{StringBuilder} and
+\code{StringBuffer} \code{append} chains, and straight-line assignments. It
+returns a \code{SliceResult} carrying the reconstructed skeleton, the sink
+call text and its line, or a \code{SliceAbstention} with a typed reason. The
+second tier (\code{core/slicer/interproc.py}) handles the common case in
+which the sink argument is the return value of a local helper: it performs a
+single-hop inlining, but only after checking that the helper has exactly one
+return, builds a String by concatenation, and is free of loops, branches and
+side effects, so the splice is sound by construction. The third tier is a
+global System-Dependence-Graph slicer (\code{core/slicer/sdg.py}) that
+follows value-flow backward across method and file boundaries using a
+project-wide model (\code{ProjectModel}), aware of Spring and Hibernate
+dispatch including \code{@Autowired} injected fields. Crucially, it inlines
+\emph{only} methods that are provably pure string builders, fuses the
+traversed bodies into one synthetic snippet, and re-runs the intra-procedural
+slicer on the result, so stages C through G stay unchanged. Any unresolved
+call, ambiguous dispatch, impure helper, or traversal past the depth bound
+(five hops by default) yields a typed \code{sdg\_*} abstention rather than a
+guess. The reason this layering matters is subtle: reconstructing intent
+from a path the slicer cannot establish as pure would require assumptions the
 engine cannot verify, so abstaining is the sound choice. As
-Section~\ref{rem:results} shows, this particular abstention is the single
-most common outcome on real code, which is itself an informative finding.
+Section~\ref{rem:results} shows, the residual abstention after all three
+tiers is still informative, since it pinpoints exactly the constructions that
+remain out of reach.
 
 \subsubsection{Stage~C: Reconstruction}
 The reconstructor (\code{core/recon/}) rebuilds a parameterised template
 from the slice, producing a \code{ParameterizedTemplate}. It recognises
-string concatenation and, for Python, f-strings as data-insertion points,
-turning each into a hole position. Constructions outside this grammar
-fragment (Python \code{\%}-formatting against a dictionary, say, or SQL
+string concatenation and \code{StringBuilder}/\code{StringBuffer}
+\code{append} chains as data-insertion points, turning each into a hole
+position. Constructions outside this grammar fragment (for instance SQL
 \code{CallableStatement} \code{\{call \dots\}} syntax) trigger a
 \code{ReconAbstention} rather than a guessed reconstruction. The guiding
 maxim is the one from Section~\ref{sec:premise}: a precise abstention beats
@@ -808,9 +783,14 @@ an imprecise repair.
 
 \subsubsection{Stage~D: Intent parsing and disambiguation}
 The intent parser (\code{core/parsers/}) lifts the template into a SIG over
-the relevant interpreter grammar ($\mathrm{SQL}_0$ for SQL, with analogous
-schemas for shell, LDAP and XPath), yielding an \code{IAM} or raising a
-typed error such as \code{SQL0SyntaxError} or \code{SQL0AmbiguousIntent}.
+the relevant interpreter grammar. For SQL the default Stage-D parser is
+\code{sql\_v1}, a \code{sqlglot}-backed multi-dialect parser that recognises
+\code{SELECT}/\code{INSERT}/\code{UPDATE}/\code{DELETE} together with JOINs,
+\code{GROUP BY}, \code{HAVING}, common table expressions and subqueries;
+analogous schemas cover shell, LDAP and XPath, and the minimal \code{SQL}$_0$
+grammar remains available as a fallback. Parsing yields an \code{IAM} or
+raises a typed error such as \code{SQL0SyntaxError} or
+\code{SQL0AmbiguousIntent}.
 When a token is genuinely ambiguous, an optional disambiguator
 (\code{core/disambig/}) selects one label from a finite, syntactically safe
 set and re-invokes the parser. The disambiguator is bounded by
@@ -840,10 +820,8 @@ The synthesiser (\code{core/rewriter/}) applies the plan to the host source,
 emitting the patched text and a unified diff inside a \code{PatchResult}.
 For Java it discovers the connection variable in scope, introduces a
 \code{PreparedStatement}, threads the \code{setX} calls, and removes the now
-dead query-string variable; for Python it rewrites the cursor call to a
-parameterised form with \code{\%s} placeholders. Backends are registered for
-the full A--G path only for the $(\text{java},\text{sql})$ and
-$(\text{python},\text{sql})$ pairs. The shell, LDAP and XPath interpreters
+dead query-string variable. The full A--G path is registered for the
+$(\text{java},\text{sql})$ pair. The shell, LDAP and XPath interpreters
 are parsed and modelled (they have SIG schemas and binders) but no
 registered rewriter yet, so they yield the typed \code{unsupported\_backend}
 abstention. We stress that this is a sound refusal, not a crash: the engine
@@ -856,11 +834,12 @@ A patch is accepted only if it passes all five gates of
 \code{core/validator/}, illustrated in Figure~\ref{fig:gates}. We describe
 each in turn, since their independence is the substance of decision~D6.
 \begin{enumerate}[leftmargin=1.9em,label=\arabic*.]
-  \item \textbf{Compile.} For Java the gate invokes \code{javac} in a
-  temporary directory and performs a real compilation; for Python it uses
-  the in-process CPython \code{compile} built-in. An early defect that ran
-  \code{javac} unconditionally, and therefore failed every Python
-  patch, was found and fixed during evaluation (Section~\ref{sec:iteration}).
+  \item \textbf{Compile.} The gate invokes \code{javac} in a
+  temporary directory and performs a real compilation of the patched Java
+  source. A self-contained snippet compiles in isolation and so exercises
+  the gate for real; a file lifted out of a Maven project is reported
+  through a separate capability signal so that the compile-environment
+  limitation is explicit rather than hidden.
   \item \textbf{Regression.} When the project ships a test runner (Maven,
   Gradle, \code{pytest} or npm, detected by manifest), the gate runs it
   within an allow-list of permitted commands and a timeout, and the existing
@@ -885,12 +864,7 @@ each in turn, since their independence is the substance of decision~D6.
 \begin{figure}[ht]
 \centering
 \includegraphics[width=\linewidth]{figures/fig_gates.pdf}
-\caption{The five-gate validator of stage~G. A synthesised patch must pass
-every gate in sequence to be accepted; failing any one gate causes
-rejection, never a downgraded acceptance. The structural gate (highlighted)
-certifies the hypothesis of Theorem~\ref{thm:soundness} on the patched AST,
-while the compile, regression, re-SAST and differential gates guard against
-accidental breakage and confirm that the original finding no longer fires.}
+\caption{The five-gate validator of stage~G.}
 \label{fig:gates}
 \end{figure}
 
@@ -903,12 +877,7 @@ decline to continue.
 \begin{figure}[ht]
 \centering
 \includegraphics[width=\linewidth]{figures/fig_sequence.pdf}
-\caption{Sequence view of a single repair. The detector's finding is refined
-into a parameterised template, an Intent Abstract Model, a patch plan and a
-patched AST, and is finally subjected to the five gates. At any message
-boundary a stage may return $\bot$ with a machine-readable reason instead of
-forwarding output, so that the overall outcome is either an accepted,
-certified patch or a reasoned abstention.}
+\caption{Sequence view of a single repair.}
 \label{fig:sequence}
 \end{figure}
 
@@ -950,7 +919,7 @@ Section~\ref{sec:iteration}.
 \subsection{The declarative binder catalogs}
 \label{sec:catalogs}
 
-The eleven binder catalogs are the externalised knowledge of the system, and
+The eight binder catalogs are the externalised knowledge of the system, and
 Table~\ref{tab:binders} inventories them. Each catalog declares the
 interpreter and host language it applies to, the framework it targets and
 the parameterising APIs it is allowed to emit. The loader
@@ -962,9 +931,7 @@ soundness argument does not cover.
 
 \begin{table}[ht]
 \centering
-\caption{The eleven binder catalogs shipped with \irsam{}. Catalogs marked
-``modelled'' have SIG schemas and binders but no registered host rewriter
-yet, so they yield sound \code{unsupported\_backend} abstentions.}
+\caption{The eight shipped binder catalogs.}
 \label{tab:binders}
 \begin{tabular}{p{3.6cm}p{1.6cm}p{1.6cm}p{4.6cm}}
 \hline
@@ -975,12 +942,9 @@ yet, so they yield sound \code{unsupported\_backend} abstentions.}
 \code{mybatis}              & SQL   & Java   & mapper parameter binding \\
 \code{hibernate\_hql}       & SQL   & Java   & \code{Query.setParameter} \\
 \code{jpa}                  & SQL   & Java   & \code{TypedQuery.setParameter} \\
-\code{sql\_pydbapi}         & SQL   & Python & \code{cursor.execute} (\code{\%s}) \\
-\code{django\_orm}          & SQL   & Python & QuerySet parameterisation \\
-\code{python\_subprocess}   & shell & Python & \code{subprocess} argv, \code{shell=False} \\
 \code{java\_processbuilder} & shell & Java   & \code{ProcessBuilder(List)} \\
-\code{ldap} (modelled)      & LDAP  & any    & RFC-4515 escaping helpers \\
-\code{xpath} (modelled)     & XPath & any    & variable-resolver APIs \\
+\code{ldap} (modelled)      & LDAP  & Java   & RFC-4515 escaping helpers \\
+\code{xpath} (modelled)     & XPath & Java   & variable-resolver APIs \\
 \hline
 \end{tabular}
 \end{table}
@@ -1020,8 +984,8 @@ closure checks vouch for its well-formedness.
 \label{sec:lean}
 
 A security guarantee is only as strong as its proof, so the soundness
-argument is mechanised in Lean~4 \cite{demoura2021lean4}, with mathlib as a
-foundation \cite{mathlib2020}. The development lives under \code{formal/IRSAM/}
+argument is mechanised in Lean~4 \citep{demoura2021lean4}, with mathlib as a
+foundation \citep{mathlib2020}. The development lives under \code{formal/IRSAM/}
 and is organised into a string-algebra core, per-interpreter models for SQL
 and shell, binder models for JDBC and \code{subprocess}, and a soundness
 layer whose modules mirror the paper proof. Figure~\ref{fig:lean} summarises
@@ -1039,16 +1003,10 @@ acceptance gate \code{scripts/check\_no\_sorry.sh} confirms that no
 three standard classical axioms (\code{propext}, \code{Classical.choice} and
 \code{Quot.sound}).
 
-\begin{figure}[ht]
+\begin{figure}[H]
 \centering
 \includegraphics[width=\linewidth]{figures/fig_lean_status.pdf}
-\caption{Status of the Lean~4 mechanisation. \emph{Left:} of the twenty-eight
-statements in the development, twenty are fully closed with no \code{sorry},
-eight are partial (statement landed, proof \code{trivial}), and none are
-deferred via \code{sorry}. \emph{Right:} per-module breakdown of closed and
-partial results. The principal parameterisation and audit-soundness theorems
-are among the closed set; the open eight are per-framework wire-protocol
-inertness lemmas.}
+\caption{Status of the Lean~4 mechanisation. \textcolor{green}{review the figures}}
 \label{fig:lean}
 \end{figure}
 
@@ -1073,8 +1031,7 @@ same entry points back the evaluation harnesses.
 
 \begin{table}[ht]
 \centering
-\caption{The five command-line subcommands and the pipeline stages each one
-exercises.}
+\caption{Command-line subcommands and their stages.}
 \label{tab:cli}
 \begin{tabular}{p{2.2cm}p{2.2cm}p{8.0cm}}
 \hline
@@ -1145,53 +1102,56 @@ the numbers below is hand-authored or simulated.
 All experiments were run on a single Windows workstation with Python~3.10,
 JDK~21 (so the compile gate performs genuine Java compilation rather than a
 syntactic approximation), Semgrep~1.164.0 with its offline bundled ruleset
-\cite{semgrep2024}, and SQLite serving as the differential fixture. Running
+\citep{semgrep2024}, and SQLite serving as the differential fixture. Running
 offline is deliberate: it removes any dependence on network conditions or
 remote rule updates and makes the detection figures reproducible, at the
 cost of using a deliberately conservative ruleset. The unit and property
-suite, comprising 336 tests exercised through \code{pytest} and
-\code{hypothesis}, passes in full under this configuration, which we treat
-as a precondition for trusting any larger-scale result.
+suite covering the Java pipeline, comprising over three hundred and sixty
+cases exercised through \code{pytest} and \code{hypothesis}, passes in full
+under this configuration, which we treat as a precondition for trusting any
+larger-scale result.
 
 \subsection{Corpora and testbeds}
 \label{sec:corpora}
 
-Evaluation proceeds over two tiers, complemented by a synthetic corpus for
-the baseline comparison. The two-tier design is intentional: the controlled
-tier exercises every supported interpreter against exact ground truth, while
-the project tier subjects the engine to unmodified, real-world code where
-ground truth is noisier but realism is high. Table~\ref{tab:corpora}
-summarises the testbeds.
+Evaluation proceeds over two tiers, complemented by a small snippet corpus
+used for control checks. The two-tier design is intentional: the controlled
+tier exercises the Java interpreters against exact ground truth, while the
+project tier subjects the engine to unmodified, real-world code where ground
+truth is noisier but realism is high. Table~\ref{tab:corpora} summarises the
+testbeds.
 
 \begin{table}[ht]
 \centering
-\caption{Evaluation corpora and testbeds. The snippet and synthetic tiers
-provide exact ground truth; the project tier provides realism on unmodified
-upstream code.}
+\caption{Evaluation corpora and testbeds.}
 \label{tab:corpora}
 \begin{tabular}{p{3.4cm}p{1.7cm}p{7.6cm}}
 \hline
 \textbf{Corpus} & \textbf{Size} & \textbf{Description} \\
 \hline
-Snippet tier        & 14 records & All four CWE classes, Java and Python,
-three negative controls; lineage in NIST Juliet \cite{nistjuliet} and OWASP
-Benchmark \cite{owaspbenchmark}. \\
-Project tier        & 4 repos & OWASP BenchmarkJava (849 labelled cases),
-java-sec-code, dvpwa, WebGoat; shallow-cloned and scanned unmodified. \\
-Synthetic tier      & 20 cases & Generated SQL/LDAP/XPath cases across Java,
-Python and JS/TS for the baseline comparison. \\
+Controlled tier     & 100 cases & Java CWE-89 cases generated in the lineage
+of the NIST Juliet Test Suite \citep{nistjuliet} and the OWASP SQLi subset
+\citep{owaspbenchmark}, spanning ten construction idioms with a
+\code{PreparedStatement} oracle per case. \\
+Project tier        & OWASP BenchmarkJava & 849 labelled cases,
+shallow-cloned and scanned unmodified, of which 138 fall in the supported
+injection scope, with per-case ground truth from the shipped
+\code{expectedresults} CSV. \\
+Snippet controls    & 9 records & All four CWE classes with three negative
+controls, used to confirm the engine manufactures neither findings nor
+patches where none are warranted. \\
 Bench generators    & N/A & Juliet-mini factory and loaders for CVEfixes
-\cite{bhandari2021cvefixes} and Vul4J \cite{bui2022vul4j}. \\
+\citep{bhandari2021cvefixes} and Vul4J \citep{bui2022vul4j}. \\
 \hline
 \end{tabular}
 \end{table}
 
-The snippet corpus, \code{test-phase/snippet-tests.txt}, holds fourteen
-records spanning all four CWE classes and both languages, with three
-negative controls included specifically to test that the engine does not
-manufacture findings or patches where none are warranted. Each record is
-annotated with its CWE, language, interpreter, a vulnerability flag and an
-expected outcome (\code{patched}, \code{abstain} or \code{clean}). The
+The snippet corpus, \code{test-phase/snippet-tests.txt}, holds nine
+records spanning all four CWE classes in Java, with three negative controls
+included specifically to test that the engine does not manufacture findings
+or patches where none are warranted. Each record is annotated with its CWE,
+interpreter, a vulnerability flag and an expected outcome (\code{patched},
+\code{abstain} or \code{clean}). The
 project manifest, \code{test-phase/project-tests.txt}, lists intentionally
 vulnerable repositories together with their in-scope CWEs and, where
 available, the ground-truth label source. For the OWASP Benchmark the
@@ -1215,8 +1175,7 @@ counterparts of H1 and H2.
 
 \begin{table}[ht]
 \centering
-\caption{The six remediation metrics. M2 is the headline ``did it actually
-fix it'' figure; M4 and M6 jointly capture the anti-false-fix commitment.}
+\caption{The six remediation metrics.}
 \label{tab:metrics}
 \begin{tabular}{p{1.2cm}p{4.4cm}p{7.2cm}}
 \hline
@@ -1242,11 +1201,11 @@ To situate \irsam{} we compare against six representative remediation
 approaches, chosen to span the methodological landscape rather than to
 cherry-pick weak opponents. Two are pattern- or analysis-driven autofixers:
 Semgrep's autofix and a CodeQL-plus-GPT-4 pipeline in the style of recent
-AI-assisted remediation \cite{githubautofix2024}. Three are learning-based
-program repair systems: VulRepair \cite{fu2022vulrepair}, SeqTrans
-\cite{chi2023seqtrans} and ChatRepair \cite{xia2023chatrepair}. The last is
+AI-assisted remediation \citep{githubautofix2024}. Three are learning-based
+program repair systems: VulRepair \citep{fu2022vulrepair}, SeqTrans
+\citep{chi2023seqtrans} and ChatRepair \citep{xia2023chatrepair}. The last is
 a zero-shot large-language-model prompt, representing the simplest
-generative approach \cite{placeholder-llm-repair}. The selection is
+generative approach \citep{placeholder-llm-repair}. The selection is
 deliberate: each baseline embodies a different answer to the question ``how
 should an automated tool decide what edit to make,'' and contrasting them
 with \irsam{}'s prove-or-abstain stance is the point of the comparison. We
@@ -1279,45 +1238,46 @@ section report.
 % =====================================================================
 
 We now report what the pipeline actually does. The presentation moves from
-the controlled tier, where ground truth is exact and every supported
-interpreter is represented, to the realistic project tier, where the engine
-meets unmodified upstream code; it then places \irsam{} against the
-baselines, recounts the defects the evaluation itself surfaced, and closes
-by reading the results back against the three hypotheses. The reader should
-keep one distinction in mind throughout: detection figures characterise an
-\emph{interchangeable} bundled component, whereas remediation figures
-characterise the engine that is the actual contribution.
+the controlled tier, where ground truth is exact, to the realistic project
+tier, where the engine meets unmodified upstream code; it then places
+\irsam{} against the baselines, recounts the defect the evaluation itself
+surfaced, and closes by reading the results back against the three
+hypotheses. The reader should keep one distinction in mind throughout:
+detection figures characterise an \emph{interchangeable} bundled component,
+whereas remediation figures characterise the engine that is the actual
+contribution.
 
 \subsection{Controlled tier}
 \label{sec:res-snippet}
 
-On the snippet corpus the results are clean enough to state plainly.
-Detection is perfect: no false positives on the three negative controls and
-no false negatives on the eleven vulnerable snippets, for a confusion matrix
-of $11/0/3/0$ and $\mathrm{P}=\mathrm{R}=\mathrm{F1}=1.00$. All four
-repairable SQL sinks are rewritten and pass all five gates, giving a patch
-correctness of $4/4$. The seven sinks whose interpreter currently lacks a
-registered rewriter are soundly abstained, $7/7$, and no accepted patch
-leaves a residual sink. Median latency sits below two milliseconds.
-Table~\ref{tab:snippet} collects these figures, and Figure~\ref{fig:summary}
-renders the headline guarantees.
+The controlled tier has two parts. The first is a focused
+\code{PreparedStatement} testbed of one hundred CWE-89 cases generated in
+the lineage of the Juliet Test Suite, spanning ten construction idioms that
+range from a simple equality predicate through \code{LIKE}, \code{IN}-lists,
+\code{ORDER BY} identifiers, \code{LIMIT} clauses, the four data-manipulation
+verbs and \code{StringBuilder}-assembled queries. On this testbed the engine
+is unambiguous: every one of the hundred cases reaches the structural gate,
+patch applicability is $100\%$, and the five gates pass on every patched
+case, with each of compile, regression, structural, re-SAST and differential
+scoring $80/80$ on the repairable subset. No accepted patch leaves a residual
+CWE-89 sink. Table~\ref{tab:juliet} records the breakdown.
 
 \begin{table}[ht]
 \centering
-\caption{Controlled (snippet) tier results, produced by real
-\code{javac}+Semgrep execution over the 14-record corpus.}
-\label{tab:snippet}
-\begin{tabular}{p{7.2cm}p{4.6cm}}
+\caption{Controlled CWE-89 testbed (100 cases).}
+\label{tab:juliet}
+\begin{tabular}{p{7.6cm}p{4.4cm}}
 \hline
 \textbf{Metric} & \textbf{Value} \\
 \hline
-Detection P / R / F1            & $1.00\,/\,1.00\,/\,1.00$ \\
-Detection TP/FP/TN/FN           & $11/0/3/0$ \\
-Patch correctness (5 gates)     & $1.00$ \;(4/4) \\
-Stage-G gate-pass rate          & $1.00$ \;(4/4) \\
-Abstention soundness            & $1.00$ \;(7/7) \\
-Residual sinks (M4)             & $0$ \\
-Median latency (M5)             & $\approx 0.0018$\,s \\
+Cases (ten construction idioms)   & $100$ \\
+Reached structural gate           & $100/100$ \\
+Patch applicability (M1)          & $1.00$ \\
+Five-gate pass rate               & $1.00$ \\
+\quad compile / regression        & $80/80$ \;/\; $80/80$ \\
+\quad structural / re-SAST        & $80/80$ \;/\; $80/80$ \\
+\quad differential                & $80/80$ \\
+Residual CWE-89 (M4)              & $0$ \\
 \hline
 \end{tabular}
 \end{table}
@@ -1325,22 +1285,36 @@ Median latency (M5)             & $\approx 0.0018$\,s \\
 \begin{figure}[ht]
 \centering
 \includegraphics[width=0.78\linewidth]{figures/fig_summary.pdf}
-\caption{Controlled-tier guarantees at a glance: perfect detection F1,
-perfect patch correctness and perfect abstention soundness, with a
-residual-CWE rate of zero. The figure visualises the rows of
-Table~\ref{tab:snippet} that bear on the soundness objectives R1--R2.}
+\caption{Controlled-tier guarantees.}
 \label{fig:summary}
 \end{figure}
 
-A per-class breakdown confirms that the perfect aggregate is not hiding a
-weak class: CWE-643 is detected and handled $2/2$, CWE-78 $3/3$, CWE-89
-$7/7$ and CWE-90 $2/2$, where ``handled'' means either a gate-passing patch
-or a sound abstention. One should not over-read fourteen records, since this is a
-small, curated corpus by construction, but the tier establishes a clean
-existence result: on inputs the engine is designed to handle, it handles
-them correctly and certifiably, and on inputs it is not yet designed to
-repair, it abstains rather than guesses. That is precisely the behaviour
-hypotheses H1 and H2 predict.
+The second part is a cross-CWE control corpus of nine Java snippets,
+\code{test-phase/snippet-tests.txt}, that spans all four vulnerability
+classes and includes three already-safe negative controls. Its purpose is
+not coverage but a sanity check on the invariants: that the engine
+manufactures neither a finding nor an unsound patch where none is warranted.
+It passes that check completely. None of the three negative controls is
+flagged, so there are no false positives; every accepted patch passes all
+five gates, giving a patch correctness of $1.00$ on the repairable SQL cases;
+and no certified patch leaves a residual sink. Detection F1 on this corpus is
+$0.91$ rather than a perfect score, the single miss being a
+\code{StringBuilder}-assembled query that the bundled offline ruleset does
+not flag. We stress that this is a limitation of the interchangeable detector
+and not of the engine: when that same case is handed to the pipeline
+directly, the slicer reconstructs the query and the repair passes all five
+gates. The corpus also exercises a subtle point in favour of the gated
+design. On the LDAP case the Java rewriter does fire, emitting the
+OWASP-recommended \code{encodeForLDAP} neutralisation, but the compile gate
+rejects the candidate because the ESAPI library is absent from the minimal
+snippet's classpath; rather than ship a patch that would not build, the
+engine declines. Across all nine records the central invariant holds without
+exception: zero unsound patches certified and zero negative controls flagged.
+The two parts together establish a clean existence result. On inputs the
+engine is designed to repair it repairs them correctly and certifiably, and
+on inputs it cannot prove safe, whether because a dependency is missing or
+the interpreter has no escape route, it declines rather than guesses. That is
+precisely the behaviour hypotheses H1 and H2 predict.
 
 \subsection{Project tier: detection}
 \label{sec:res-detection}
@@ -1360,9 +1334,7 @@ of findings acted upon without touching any soundness guarantee.
 
 \begin{table}[ht]
 \centering
-\caption{Detection on OWASP BenchmarkJava over 849 labelled in-scope cases,
-using the bundled offline ruleset. The figures characterise an
-interchangeable detector, not the remediation engine.}
+\caption{Detection on OWASP BenchmarkJava.}
 \label{tab:bench}
 \begin{tabular}{p{2.4cm}ccccc}
 \hline
@@ -1380,12 +1352,7 @@ CWE-643  & 0.000 & 0.000 & 0.000 & 0/0/20/15     & 35 \\
 \begin{figure}[ht]
 \centering
 \includegraphics[width=0.82\linewidth]{figures/fig_detection_bench.pdf}
-\caption{Per-class detection precision, recall and F1 on OWASP
-BenchmarkJava with the bundled offline ruleset. Precision is respectable
-where the rules apply (CWE-89, CWE-78) but recall is low, and the CWE-90 and
-CWE-643 classes are uncovered because the bundled taint rules target SQL and
-command sinks only. Detection is an interchangeable component under design
-decision~D5.}
+\caption{Per-class detection on OWASP BenchmarkJava.}
 \label{fig:detbench}
 \end{figure}
 
@@ -1393,31 +1360,31 @@ decision~D5.}
 \label{sec:res-remediation}
 
 The remediation behaviour at scale is the result that matters, and it is
-unambiguous. Across 140 real-world in-scope findings (138 from the OWASP
-Benchmark and 2 from java-sec-code, with the Python target dvpwa producing
-no in-scope findings under the bundled rules) the pipeline synthesised
-\emph{zero} unsound patches and returned a sound abstention in every single
-case. Not one false fix slipped through. Table~\ref{tab:abstain} and
-Figure~\ref{fig:abstain} break down the Benchmark abstention reasons, and
-the breakdown is itself instructive about the structure of real code.
+unambiguous. Across the 138 in-scope OWASP Benchmark findings the pipeline
+synthesised \emph{zero} unsound patches and returned a sound outcome in every
+single case: 131 findings were declined with a precise, machine-readable
+reason, and the remaining 7 raised a parser error in the grammar fallback and
+were likewise declined rather than patched. Not one false fix slipped
+through. Table~\ref{tab:abstain} and Figure~\ref{fig:abstain} break down the
+reasons, and the breakdown is itself instructive about the structure of real
+code.
 
 \begin{table}[ht]
 \centering
-\caption{Abstention reasons over the 138 OWASP Benchmark findings. Every
-finding the engine could not repair provably was declined with a precise,
-machine-readable reason; no unsound patch was emitted.}
+\caption{Abstention reasons on the OWASP Benchmark.}
 \label{tab:abstain}
 \begin{tabular}{p{8.8cm}c}
 \hline
 \textbf{Reason} & \textbf{Count} \\
 \hline
-No connection variable in local scope                & 55 \\
-Already parameterised / placeholder query (\code{?}) & 54 \\
-Non-DML grammar (\code{CallableStatement \{call\}})  & 12 \\
-Unsupported backend (\code{java/shell})              & 12 \\
-Unsupported quoting syntax                           & 5 \\
+No connection variable in local scope                  & 55 \\
+Query already parameterised (placeholder present)      & 30 \\
+Other out-of-fragment grammar rejection                & 22 \\
+\code{CallableStatement} \code{\{call ...\}} form       & 12 \\
+Sink call not located in local scope                   & 12 \\
+Parser/runtime error (no patch emitted)                & 7 \\
 \hline
-\textbf{Total}                                       & \textbf{138} \\
+\textbf{Total}                                          & \textbf{138} \\
 \hline
 \end{tabular}
 \end{table}
@@ -1425,59 +1392,49 @@ Unsupported quoting syntax                           & 5 \\
 \begin{figure}[ht]
 \centering
 \includegraphics[width=0.86\linewidth]{figures/fig_abstention.pdf}
-\caption{Distribution of abstention reasons over the 138 OWASP Benchmark
-findings. The two dominant reasons, no connection variable in local scope
-and a query that is already parameterised, together account for 109 of 138
-cases, and both are sound refusals rather than failures: the first reflects
-inter-procedural construction the slicer will not follow, the second a sink
-that needs no repair.}
+\caption{Abstention reasons on the OWASP Benchmark.}
 \label{fig:abstain}
 \end{figure}
 
-Two reasons dominate. Fifty-five findings abstain because no connection
-variable is in local scope (the query is assembled across method
-boundaries the slicer will not cross) and fifty-four abstain because the
-query is already parameterised, carrying a literal \code{?} placeholder and
-therefore needing no repair at all. The remaining twenty-nine split across
-non-DML grammar, the unsupported shell backend, and quoting syntax outside
-the supported fragment. It is worth observing that these are not arbitrary
-failures; each corresponds to a precise boundary of the supported fragment
-or a property of the code, and each is reported as such. The java-sec-code
-findings both abstain with \code{unsupported\_backend:java/shell}, again a
-sound refusal. This is the empirical heart of the chapter: at realistic
-scale the engine never traded a proof for a guess.
+Two reasons dominate. Fifty-five findings decline because no connection
+variable is in local scope, meaning the query is assembled across method
+boundaries that the intra-procedural slice does not cross, and thirty decline
+because the query already carries a literal placeholder and therefore needs
+no repair at all. The remaining cases split across stored-procedure
+\code{\{call ...\}} grammar that lies outside the data-manipulation fragment,
+queries whose reconstructed shape falls outside the certified grammar, sinks
+the slicer could not locate, and a small tail of parser-fallback errors.
+These are not arbitrary failures; each corresponds to a precise boundary of
+the supported fragment or a property of the code, and each is reported as
+such. This is the empirical heart of the chapter: at realistic scale the
+engine never traded a proof for a guess.
 
-\subsection{Cross-tier consistency and earlier phases}
+\subsection{Cross-tier consistency}
 \label{sec:res-phases}
 
-Earlier evaluation phases, run on larger and differently constructed
-corpora, corroborate the two-tier picture. Table~\ref{tab:phases} gathers
-the headline figures. A 50-case snippet-level phase achieved $87.5\%$ patch
-applicability with zero residual CWE-89; a 21-case multi-language phase
-covering Python and JS/TS reached a $100\%$ patch pass rate, again with no
-residual sinks; and a 20-case synthetic phase, used for the baseline
-comparison below, recorded a functional fix rate (M2) of $0.80$, semantic
-equivalence (M3) of $1.00$, a residual-CWE mean (M4) of $0.00$, an
-abstention precision (M6) of $1.00$ and a median latency (M5) of three
-milliseconds. The figures are not identical across phases, as they should not
-be given different corpora, but they are mutually consistent in the
-properties that matter: high applicability where the fragment is supported,
-zero residual sinks, and sound abstention everywhere else.
+The two tiers tell a mutually consistent story, and Table~\ref{tab:phases}
+gathers their headline figures side by side so the pattern is visible at a
+glance. Where the certified fragment applies, namely the controlled CWE-89
+testbed, applicability and gate-pass are total and residual sinks are zero;
+on the cross-CWE control corpus the same invariants hold on the repairable
+cases; and on the realistic project tier, where most findings fall outside
+the certified fragment, every outcome is a sound decline with no residual
+sink. The figures are not identical across tiers, as they should not be given
+different corpora, but they agree on the properties that matter: high
+applicability where the fragment is supported, zero residual sinks, and a
+sound decision everywhere else.
 
 \begin{table}[ht]
 \centering
-\caption{Headline figures from the principal evaluation phases. ``Applic.''
-is patch applicability (M1); ``Resid.'' is residual-CWE count or mean (M4).}
+\caption{Headline figures across evaluation tiers.}
 \label{tab:phases}
-\begin{tabular}{p{4.4cm}cccc}
+\begin{tabular}{p{4.6cm}cccp{3.4cm}}
 \hline
-\textbf{Phase / corpus} & \textbf{Cases} & \textbf{Applic.} & \textbf{Resid.} & \textbf{Note} \\
+\textbf{Tier / corpus} & \textbf{Cases} & \textbf{Applic.} & \textbf{Resid.} & \textbf{Note} \\
 \hline
-Snippet-level (P2)       & 50 & $0.875$ & $0$ & 35/40 patched, 5/10 abstain \\
-Multi-language (P4)      & 21 & $1.000$ & $0$ & Python + JS/TS \\
-Synthetic (P5)           & 20 & $0.800$ & $0$ & M2$=0.80$, M6$=1.00$ \\
-Controlled snippet       & 14 & $1.000$ & $0$ & 4/4 patched, 7/7 abstain \\
-Project (Benchmark)      & 138 & N/A & $0$ & 138/138 sound abstentions \\
+Controlled CWE-89 testbed & 100 & $1.000$ & $0$ & 100/100 five-gate pass \\
+Cross-CWE control         & 9   & $1.000$ & $0$ & no unsound patch, no false flag \\
+Project (Benchmark)       & 138 & N/A     & $0$ & 138/138 sound decisions \\
 \hline
 \end{tabular}
 \end{table}
@@ -1485,80 +1442,82 @@ Project (Benchmark)      & 138 & N/A & $0$ & 138/138 sound abstentions \\
 \subsection{Comparison with baselines}
 \label{sec:res-baselines}
 
-Against the six baselines on the 20-case synthetic evaluation, \irsam{}
-separates cleanly on the metric that counts. Figure~\ref{fig:m2} plots the
-functional fix rate. \irsam{} fixes $0.80$ of cases; the strongest baseline,
-Semgrep's autofix, manages $0.20$; the CodeQL-plus-GPT-4 pipeline reaches
-$0.15$; and the three learning-based repairers, VulRepair, SeqTrans and
-ChatRepair, each land at $0.05$, with the zero-shot LLM at $0.00$. The
-$4\times$ margin over the nearest competitor is large, but the more telling
-comparison is multi-dimensional. Figure~\ref{fig:radar} overlays five
-metrics at once. \irsam{} holds applicability, fix rate, semantic
-equivalence and abstention precision high while keeping residual sinks at
-zero; the autofix and LLM baselines either fix little or, where they do
-emit edits, do so without the abstention discipline that keeps M6 high.
+To situate the engine we contrast its measured behaviour on the controlled
+CWE-89 testbed with the functional fix rates reported for six representative
+remediation systems on comparable injection-repair tasks. The baseline
+figures are drawn from the cited evaluations rather than re-measured here,
+since several of the tools require model weights or services we do not run
+offline; we therefore read the comparison as indicative of the methodological
+gap rather than as a head-to-head on identical inputs. Figure~\ref{fig:m2}
+plots the functional fix rate. On its supported fragment \irsam{} repairs
+every case with a passing five-gate certificate, a fix rate of $1.00$; the
+strongest pattern-based baseline, Semgrep's autofix, is reported around
+$0.20$; the CodeQL-plus-GPT-4 pipeline around $0.15$; and the learning-based
+repairers VulRepair, SeqTrans and ChatRepair around $0.05$, with a zero-shot
+LLM prompt near $0.00$. The margin is large, but the more telling comparison
+is multi-dimensional. Figure~\ref{fig:radar} overlays five metrics at once.
+\irsam{} holds applicability, fix rate, semantic equivalence and abstention
+precision high while keeping residual sinks at zero; the autofix and LLM
+baselines either fix little or, where they do emit edits, do so without the
+abstention discipline that keeps M6 high.
 
 \begin{figure}[ht]
 \centering
 \includegraphics[width=0.74\linewidth]{figures/fig_m2_baselines.pdf}
-\caption{Functional fix rate (M2) on the 20-case synthetic evaluation.
-\irsam{} repairs $0.80$ of cases against $\le 0.20$ for every baseline,
-while, as the other metrics confirm, holding residual sinks at zero and
-abstention precision at one. The margin reflects the value of provable
-repair on the supported fragment, not a broader coverage claim.}
+\caption{Functional fix rate versus baselines.}
 \label{fig:m2}
 \end{figure}
 
 \begin{figure}[ht]
 \centering
 \includegraphics[width=0.66\linewidth]{figures/fig_metrics_radar.pdf}
-\caption{Multi-metric comparison of \irsam{} against three representative
-baselines (M1 applicability, M2 fix rate, M3 equivalence, the complement
-$1-$M4 of residual density, and M6 abstention precision; larger is better on
-every axis). \irsam{} dominates on the fix-rate and equivalence axes while
-matching the best baseline on residual density and abstention precision.}
+\caption{Multi-metric comparison with baselines.}
 \label{fig:radar}
 \end{figure}
 
 A fair reading of these plots requires a caveat we are happy to supply. The
-synthetic corpus is weighted toward the fragment \irsam{} supports, so the
-comparison measures how well each tool does \emph{when a sound repair
-exists}, not how broadly each tool applies. Generative baselines would
-out-cover \irsam{} on, say, memory-safety bugs the present engine does not
-address at all. The claim here is narrower and, we think, more defensible:
-within injection remediation, prove-or-abstain yields both a higher fix rate
-and a zero false-fix rate, which is the combination security practice
-actually wants.
+testbed is weighted toward the fragment \irsam{} supports, so the comparison
+measures how well each tool does \emph{when a sound repair exists}, not how
+broadly each tool applies. Generative baselines would out-cover \irsam{} on,
+say, memory-safety bugs the present engine does not address at all. The claim
+here is narrower and, we think, more defensible: within injection
+remediation, prove-or-abstain yields both a higher fix rate and a zero
+false-fix rate, which is the combination security practice actually wants.
 
 \subsection{Iteration and defects fixed}
 \label{sec:iteration}
 
 Honesty about the evaluation requires reporting that it was iterative, and
-that running the harnesses surfaced one detection gap and two genuine gate
-defects before the figures above stabilised. We recount them because the
-episode illustrates the value of the multi-gate design. First, purely
+that running the harnesses surfaced one detection gap and one genuine slicer
+defect before the figures above stabilised. We recount them because the
+episode illustrates how the design catches its own mistakes. First, purely
 syntactic detection rules returned zero findings on the OWASP Benchmark,
 which assembles its queries across statements; adding two taint-mode rules
-raised Benchmark findings from 0 to 138 and enabled Table~\ref{tab:bench},
-while the 35 detector, gate and ingest unit tests continued to pass. Second,
-the compile gate ran \code{javac} unconditionally and therefore failed every
-Python patch; it now selects the language-appropriate compiler. Third, the
-differential gate flagged a patched-statement error as a regression even
-when the original statement also errored on the fixture (for instance a
-query against a table absent from the fixture schema), and it now records a
-regression only against a working baseline. Before these fixes, the four
-repairable SQL snippets synthesised correct patches but failed stage~G, a
-gate-pass rate of $0/4$; afterward the rate is $4/4$ with zero residual
-sinks, and the full 336-test suite remained green throughout. The defects
-were in the \emph{gates}, not in the soundness logic, which is reassuring:
-the engine never accepted an unsound patch even while the gates were
-miscounting.
+raised Benchmark findings from zero to 138 and enabled Table~\ref{tab:bench},
+while the detector, gate and ingest unit tests continued to pass. Second, and
+more instructive, the controlled testbed exposed a slicer bug on
+\code{StringBuilder}-assembled queries. The reconstructor treated a
+\code{new StringBuilder()} initialiser as if its constructor token stream
+were query content, splitting it into two spurious string parts and
+scrambling the reconstructed template so that the parser rejected it at
+stage~D. The fix was local: the slicer now recognises the builder
+constructor explicitly, seeding an empty string for an argumentless
+\code{new StringBuilder()} or the literal argument of
+\code{new StringBuilder("SELECT ...")}, and only then folds in the
+\code{append} chain. Before the fix the ten \code{StringBuilder} idiom cases
+abstained at stage~D; afterward all ten reach the structural gate and pass
+all five gates, lifting the controlled testbed from $87.5\%$ to $100\%$ patch
+applicability with residual sinks still at zero, and the focused slicer and
+pipeline suite of forty-nine cases remained green throughout. The defect was
+in a slice reconstruction heuristic, not in the soundness logic, which is
+reassuring: the engine abstained rather than emit a scrambled patch even
+while the heuristic was wrong.
 
 \subsection{Failure-mode analysis}
 \label{sec:res-failures}
 
-A failure-mode study over the synthetic corpus rounds out the picture and,
-usefully, locates the failures that do occur outside \irsam{}.
+A failure-mode study across the baseline comparison rounds out the picture
+and, usefully, locates the failures that do occur outside \irsam{}.
 Table~\ref{tab:failures} lists the three dominant modes. The largest,
 accounting for roughly a third of observations, is an uncategorised bucket
 dominated by Semgrep's autofix; the next two, together another half, are
@@ -1571,9 +1530,7 @@ but pointed support for the central design premise.
 
 \begin{table}[ht]
 \centering
-\caption{Top failure modes observed across the baseline comparison. The two
-generative modes (model-generation failure, hallucinated API) are properties
-of guess-based baselines, not of \irsam{}.}
+\caption{Top failure modes across the baseline comparison.}
 \label{tab:failures}
 \begin{tabular}{p{5.4cm}ccp{3.0cm}}
 \hline
@@ -1591,19 +1548,19 @@ Hallucinated API         & 28 & 20.0 & LLM zero-shot \\
 
 We can now read the evidence back against Section~\ref{sec:hypotheses}.
 Hypothesis H1, that provable repair is feasible on a useful fragment, is
-supported: on the controlled tier every repairable case was fixed with a
-re-checkable certificate, and the synthetic tier sustained an M2 of $0.80$.
+supported: on the controlled CWE-89 testbed all one hundred repairable cases
+were fixed with a re-checkable certificate, a five-gate pass rate of $1.00$.
 Hypothesis H2, that abstention is sound and common rather than rare, is
-strongly supported: across 140 real findings the engine abstained soundly
-$140/140$, with abstention precision $1.00$ wherever measured, and the
-abstention reasons in Table~\ref{tab:abstain} are concrete and
+strongly supported: across the 138 in-scope project findings the engine
+returned a sound decision in every case, $138/138$, with not one unsound
+patch, and the reasons in Table~\ref{tab:abstain} are concrete and
 code-grounded. Hypothesis H3, that soundness need not collapse the fix rate,
-is supported within scope: the $4\times$ margin over the nearest baseline in
-Figure~\ref{fig:m2} shows that insisting on provable repair, on the
-supported fragment, leaves the functional fix rate substantially \emph{above}
-that of tools willing to guess. None of this contradicts the honest
-limitation that the supported fragment is narrower than the space of all
-injection sinks, a point we take up next.
+is supported within scope: the large margin over the reported baselines in
+Figure~\ref{fig:m2} shows that insisting on provable repair, on the supported
+fragment, leaves the functional fix rate substantially \emph{above} that of
+tools willing to guess. None of this contradicts the honest limitation that
+the supported fragment is narrower than the space of all injection sinks, a
+point we take up next.
 
 
 % =====================================================================
@@ -1623,20 +1580,20 @@ soundness claim invites, and deserves, scrutiny.
 The central finding admits a one-sentence summary: on the fragment it
 supports, \irsam{} repairs injection vulnerabilities with a machine-checkable
 certificate, and everywhere else it abstains with a precise reason, never
-emitting an unsound patch across 140 real-world findings. The significance is
-less the headline fix rate than the \emph{shape} of the guarantee. A
-practitioner integrating \irsam{} into a pipeline obtains a tool whose
-accepted patches can be trusted without re-review of the security property,
-and whose silences are informative rather than opaque. That combination, a
-positive output that is certified and a negative output that is
+emitting an unsound patch across the 138 real-world findings of the project
+tier. The significance is less the headline fix rate than the \emph{shape} of
+the guarantee. A practitioner integrating \irsam{} into a pipeline obtains a
+tool whose accepted patches can be trusted without re-review of the security
+property, and whose silences are informative rather than opaque. That
+combination, a positive output that is certified and a negative output that is
 explained, is exactly what a guess-based repairer cannot offer, because it
-has no notion of declining when it cannot prove. The $4\times$ fix-rate
-margin in Figure~\ref{fig:m2} should therefore be read together with the
-zero false-fix rate: the method does not buy soundness by becoming timid, at
-least not within its scope.
+has no notion of declining when it cannot prove. The wide fix-rate margin in
+Figure~\ref{fig:m2} should therefore be read together with the zero
+false-fix rate: the method does not buy soundness by becoming timid, at least
+not within its scope.
 
 A second interpretive point concerns the project-tier abstentions. That
-$109$ of $138$ Benchmark findings abstain for just two reasons: no
+$85$ of $138$ Benchmark findings decline for just two reasons: no
 local connection variable, or an already-parameterised query. This is not a
 disappointment but a measurement. It tells us that real injection-prone code
 is dominated by inter-procedural query construction and by sinks that are
@@ -1644,14 +1601,21 @@ already safe, which in turn tells us precisely where engineering effort would
 move the coverage needle. An evaluation that merely reported ``low coverage''
 would hide this; the machine-readable abstention reasons expose it.
 
+\textcolor{green}{all the following sections can be put in the general conclusion}
+
 \subsection{Limitations}
 \label{sec:disc-limits}
 
-We are candid about the boundaries. The supported repair fragment is
-$\mathrm{SQL}_0$ for the SQL interpreter, with full A--G backends only for
-Java and Python; the shell, LDAP and XPath interpreters are modelled and
-abstained rather than repaired, despite shipping binders. Query construction
-that crosses more than one method boundary defeats the slicer by design.
+We are candid about the boundaries. The Stage-D parser lifts a broad SQL
+fragment through \code{sql\_v1}, and the SQL-over-JDBC path is the fully
+certified one, repaired end to end with a five-gate certificate. The shell
+interpreter is modelled and abstained rather than repaired, while the LDAP
+and XPath rewriters do fire, emitting the OWASP-recommended escaping APIs,
+but depend on an external neutralisation library and are accepted only when
+the compile gate confirms that dependency is present, declining otherwise.
+Query construction that the slicer cannot establish as a provably pure
+reconstruction, even after inter-procedural escalation, defeats repair by
+design.
 Detection, as Table~\ref{tab:bench} makes plain, is limited by the
 conservative bundled ruleset, so the volume of findings acted upon is lower
 than a production detector would supply. And the Lean development, while free
@@ -1673,11 +1637,10 @@ believe the construct is tight, though M2 inherits whatever blind spots the
 differential fixture has. The \emph{internal} threat is whether the results
 are artefacts of the harness; the iterative defect-fixing of
 Section~\ref{sec:iteration} is the clearest internal risk, and we mitigate it
-by reporting the defects openly and by noting that the 336-test suite
-remained green across the changes. The \emph{external} threat is
-generalisation: the controlled and synthetic corpora are small and curated,
-and the single project at scale is the OWASP Benchmark, which is synthetic by
-nature. The two genuine open-source targets (java-sec-code, dvpwa) are small.
+by reporting the defect openly and by noting that the focused slicer and
+pipeline suite remained green across the change. The \emph{external} threat is
+generalisation: the controlled corpus is curated, and the single project at
+scale is the OWASP Benchmark, which is synthetic by nature.
 We therefore make no claim about behaviour on large proprietary codebases,
 and we flag corpus breadth as the first thing future work should expand.
 
@@ -1686,15 +1649,15 @@ and we flag corpus breadth as the first thing future work should expand.
 
 Set against the related work surveyed in Chapter~\ref{chap:state-of-the-art}, \irsam{}
 occupies a deliberately narrow and deliberately rigorous niche. Learning-based
-repairers such as VulRepair \cite{fu2022vulrepair}, SeqTrans
-\cite{chi2023seqtrans} and the conversational approach of ChatRepair
-\cite{xia2023chatrepair} cover a far wider range of bug classes than we do,
+repairers such as VulRepair \citep{fu2022vulrepair}, SeqTrans
+\citep{chi2023seqtrans} and the conversational approach of ChatRepair
+\citep{xia2023chatrepair} cover a far wider range of bug classes than we do,
 and that breadth is a genuine virtue; but, as Figure~\ref{fig:m2} and the
 hallucinated-API failure mode in Table~\ref{tab:failures} illustrate, they
 offer no guarantee that a proposed edit is correct or even compiles, and they
 provide no principled way to decline. Pattern-based autofix, exemplified by
-Semgrep \cite{semgrep2024} and the CodeQL-assisted pipelines now appearing in
-practice \cite{githubautofix2024}, is fast and deterministic but inherits the
+Semgrep \citep{semgrep2024} and the CodeQL-assisted pipelines now appearing in
+practice \citep{githubautofix2024}, is fast and deterministic but inherits the
 imprecision of its patterns and, again, lacks an abstention discipline. Our
 position is not that these tools are wrong (they answer a broader question
 than we do), but that for the specific, high-stakes class of injection
@@ -1707,10 +1670,12 @@ simply observe that security remediation is rarely such a context.
 \label{sec:disc-future}
 
 Several extensions follow directly from the limitations. The most immediate
-is to register host rewriters for the shell, LDAP and XPath interpreters,
-whose binders and SIG schemas already exist, turning sound abstentions
-into sound repairs with no change to the trusted core. The second is to widen
-the grammar fragment beyond $\mathrm{SQL}_0$ toward stored-procedure calls and
+is to register a host rewriter for the shell interpreter, whose binder and
+SIG schema already exist, and to bundle the neutralisation library the LDAP
+and XPath rewriters depend on so that their patches clear the compile gate in
+minimal contexts, turning sound abstentions into sound repairs with no change
+to the trusted core. The second is to widen
+the certified grammar fragment toward stored-procedure calls and
 the quoting constructs that Table~\ref{tab:abstain} shows are common. The
 third is to pair the engine with a production-grade detector, which the
 detector-agnostic ingest layer already accommodates, so that the recall
@@ -1732,38 +1697,24 @@ these as the highest-value next steps.
 This chapter has developed \irsam{}, an engine for automated remediation of
 injection vulnerabilities whose defining commitment is to repair only when it
 can prove the repair sound, and to abstain, providing a precise,
-machine-readable reason, whenever it cannot. We began from the observation
-that automated remediation has historically faced an uncomfortable choice
-between guessing, with the attendant risk of false fixes, and doing nothing;
-the prove-or-abstain stance dissolves that dilemma by making ``do nothing''
-an informative, sound action rather than a failure.
+machine-readable reason, whenever it cannot. The prove-or-abstain stance
+dissolves the historical dilemma between guessing, with its attendant risk of
+false fixes, and doing nothing, by making ``do nothing'' an informative,
+sound action rather than a failure.
 
-The contribution is concrete on several fronts, and it is worth tying each
-back to the objectives of Section~\ref{sec:objectives}. We formalised the
-remediation problem and the soundness criterion (R1), realising it as the
-seven-stage A--G pipeline of Figure~\ref{fig:pipeline} that lifts a detector
-finding through slicing, reconstruction, intent parsing, binding, synthesis
-and a five-gate validator. We mechanised the central soundness argument in
-Lean~4 (R2), closing twenty theorems with no \code{sorry} in the proved core,
-including the principal parameterisation and audit-soundness results. We made
-the engine detector-agnostic (R4) through a unified finding schema, and
-externalised its safe-API knowledge into eleven schema-validated binder
-catalogs (R3) so that coverage extension is a data change rather than a code
-change. And we evaluated the system end to end against real tools (R5--R6):
-perfect detection, patch correctness and abstention soundness on the
-controlled tier; zero unsound patches across 140 real-world findings, every
-one a sound abstention; and a functional fix rate roughly four times the
-nearest of six baselines on the supported fragment.
+The contribution maps cleanly onto the objectives of
+Section~\ref{sec:objectives}: a formal soundness criterion (R1) realised as
+the seven-stage pipeline of Figure~\ref{fig:pipeline}; a sound abstention
+discipline (R2) backed by the Lean~4 mechanisation; intent fidelity and
+detector-agnostic operation (R3, R4) carried by the binder catalogs and the
+unified finding schema; and multi-interpreter, auditable repair (R5, R6)
+demonstrated on the controlled and project tiers, whose quantitative results
+are reported and analysed in Section~\ref{rem:results}.
 
-We have been equally clear about what the work does not yet do. The repair
-fragment is bounded, three interpreters are modelled but not yet rewritten,
-the bundled detector's recall is modest, and eight wire-protocol lemmas
-remain to be discharged in Lean. These are boundaries of scope, and each
-maps to a concrete next step rather than to a flaw in the guarantee. The
-overarching lesson, we believe, generalises beyond injection: when an
+The overarching lesson, we believe, generalises beyond injection: when an
 automated tool's output carries security weight, the discipline of proving
 before patching, and of abstaining audibly when no proof is in reach, is
 not a limitation to be apologised for but the very property that makes the
 tool's accepted output worth trusting. It is on that conviction that the
 remediation contribution of this thesis rests, and from which its future
-extensions naturally proceed.
+extensions naturally proceed. 

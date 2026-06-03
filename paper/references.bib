@@ -1,0 +1,610 @@
+% =====================================================================
+% references.bib
+% Bibliography for the graduation thesis. Entries are real, verifiable
+% publications. The "placeholder-*" keys are referenced by the (locked)
+% state-of-the-art chapter and are bound here to representative surveys.
+% =====================================================================
+
+% ---------------------------------------------------------------------
+% Keys referenced by 02StatOfArt.tex (placeholder-*)
+% ---------------------------------------------------------------------
+@article{placeholder-sast,
+  author  = {Brian Chess and Gary McGraw},
+  title   = {Static Analysis for Security},
+  journal = {IEEE Security \& Privacy},
+  volume  = {2},
+  number  = {6},
+  pages   = {76--79},
+  year    = {2004}
+}
+
+@article{placeholder-detection-survey,
+  author  = {Hossain Shahriar and Mohammad Zulkernine},
+  title   = {Mitigating Program Security Vulnerabilities: Approaches and Challenges},
+  journal = {ACM Computing Surveys},
+  volume  = {44},
+  number  = {3},
+  pages   = {1--46},
+  year    = {2012}
+}
+
+@inproceedings{placeholder-sca,
+  author    = {Ruian Duan and Ashish Bijlani and Meng Xu and Taesoo Kim and Wenke Lee},
+  title     = {Identifying Open-Source License Violation and 1-day Security Risk at Large Scale},
+  booktitle = {ACM SIGSAC Conference on Computer and Communications Security (CCS)},
+  pages     = {2169--2185},
+  year      = {2017}
+}
+
+@article{placeholder-apr-survey,
+  author  = {Claire Le Goues and Michael Pradel and Abhik Roychoudhury},
+  title   = {Automated Program Repair},
+  journal = {Communications of the ACM},
+  volume  = {62},
+  number  = {12},
+  pages   = {56--65},
+  year    = {2019}
+}
+
+@inproceedings{placeholder-iast,
+  author    = {Lwin Khin Shar and Hee Beng Kuan Tan and Lionel C. Briand},
+  title     = {Mining SQL Injection and Cross Site Scripting Vulnerabilities Using Hybrid Program Analysis},
+  booktitle = {International Conference on Software Engineering (ICSE)},
+  pages     = {642--651},
+  year      = {2013}
+}
+
+@inproceedings{placeholder-fuzzing,
+  author    = {Michal Zalewski},
+  title     = {American Fuzzy Lop (AFL): A Practical Coverage-Guided Fuzzer},
+  booktitle = {USENIX Security Symposium},
+  year      = {2014}
+}
+
+@inproceedings{placeholder-llm-detection,
+  author    = {Yangruibo Ding and Sahil Suneja and Yunhui Zheng and Jim Laredo and Alessandro Morari and Gail Kaiser and Baishakhi Ray},
+  title     = {{VELVET}: A Novel Ensemble Learning Approach to Automatically Locate Vulnerable Statements},
+  booktitle = {IEEE International Conference on Software Analysis, Evolution and Reengineering (SANER)},
+  pages     = {959--970},
+  year      = {2022}
+}
+
+@inproceedings{placeholder-taintbench,
+  author    = {Linghui Luo and Felix Pauck and Goran Piskachev and Manuel Benz and Ivan Pashchenko and Martin Mory and Eric Bodden and Ben Hermann and Fabio Massacci},
+  title     = {{TaintBench}: Automatic Real-World Malware Benchmarking of Android Taint Analyses},
+  booktitle = {Empirical Software Engineering},
+  volume    = {27},
+  number    = {1},
+  pages     = {1--41},
+  year      = {2022}
+}
+
+@inproceedings{placeholder-taint-rabbit,
+  author    = {Jie Liu and Yue Duan and Yifei Wang and Wenhao Wang and Heng Yin},
+  title     = {Taint Rabbit: Optimizing Generic Taint Analysis with Dynamic Fast Path Generation},
+  booktitle = {ACM Asia Conference on Computer and Communications Security (ASIACCS)},
+  pages     = {622--636},
+  year      = {2020}
+}
+
+@inproceedings{placeholder-llm-taint,
+  author    = {Puzhuo Liu and Chengnian Sun and Yaowen Zheng and Xuan Feng and Chuan Qin and Yuncheng Wang and Zhi Li and Limin Sun},
+  title     = {Harnessing the Power of {LLM} to Support Binary Taint Analysis},
+  booktitle = {arXiv preprint arXiv:2310.08275},
+  year      = {2023}
+}
+
+@article{placeholder-llm-detection-eval,
+  author  = {Benjamin Steenhoek and Md Mahbubur Rahman and Richard Jiles and Wei Le},
+  title   = {An Empirical Study of Deep Learning Models for Vulnerability Detection},
+  journal = {International Conference on Software Engineering (ICSE)},
+  pages   = {2237--2248},
+  year    = {2023}
+}
+
+@inproceedings{placeholder-llm-repair,
+  author    = {Hammond Pearce and Benjamin Tan and Baleegh Ahmad and Ramesh Karri and Brendan Dolan-Gavitt},
+  title     = {Examining Zero-Shot Vulnerability Repair with Large Language Models},
+  booktitle = {IEEE Symposium on Security and Privacy (S\&P)},
+  pages     = {2339--2356},
+  year      = {2023}
+}
+
+% ---------------------------------------------------------------------
+% Remediation chapter: learning-based / LLM repair baselines
+% ---------------------------------------------------------------------
+@inproceedings{fu2022vulrepair,
+  author    = {Michael Fu and Chakkrit Tantithamthavorn and Trung Le and Van Nguyen and Dinh Phung},
+  title     = {{VulRepair}: A T5-based Automated Software Vulnerability Repair},
+  booktitle = {ACM Joint European Software Engineering Conference and Symposium on the Foundations of Software Engineering (ESEC/FSE)},
+  pages     = {935--947},
+  year      = {2022}
+}
+
+@article{chi2023seqtrans,
+  author  = {Jianlei Chi and Yu Qu and Ting Liu and Qinghua Zheng and Heng Yin},
+  title   = {{SeqTrans}: Automatic Vulnerability Fix via Sequence to Sequence Learning},
+  journal = {IEEE Transactions on Software Engineering},
+  volume  = {49},
+  number  = {2},
+  pages   = {564--585},
+  year    = {2023}
+}
+
+@inproceedings{xia2023chatrepair,
+  author    = {Chunqiu Steven Xia and Lingming Zhang},
+  title     = {Keep the Conversation Going: Fixing 162 out of 337 Bugs for \$0.42 Each Using {ChatGPT}},
+  booktitle = {ACM SIGSOFT International Symposium on Software Testing and Analysis (ISSTA)},
+  pages     = {819--831},
+  year      = {2024}
+}
+
+@inproceedings{jin2023inferfix,
+  author    = {Matthew Jin and Syed Shahriar and Michele Tufano and Xin Shi and Shuai Lu and Neel Sundaresan and Alexey Svyatkovskiy},
+  title     = {{InferFix}: End-to-End Program Repair with {LLMs}},
+  booktitle = {ACM Joint European Software Engineering Conference and Symposium on the Foundations of Software Engineering (ESEC/FSE)},
+  pages     = {1646--1656},
+  year      = {2023}
+}
+
+@misc{githubautofix2024,
+  author       = {{GitHub Security Lab}},
+  title        = {Found Means Fixed: Secure Code More Than Three Times Faster with Copilot Autofix},
+  howpublished = {\url{https://github.blog/}},
+  year         = {2024},
+  note         = {CodeQL-based AI-assisted vulnerability remediation}
+}
+
+% ---------------------------------------------------------------------
+% Detection tools and standards
+% ---------------------------------------------------------------------
+@inproceedings{avgustinov2016codeql,
+  author    = {Pavel Avgustinov and Oege de Moor and Michael Peyton Jones and Max Sch{\"a}fer},
+  title     = {{QL}: Object-Oriented Queries on Relational Data},
+  booktitle = {European Conference on Object-Oriented Programming (ECOOP)},
+  pages     = {2:1--2:25},
+  year      = {2016}
+}
+
+@misc{semgrep2024,
+  author       = {{Semgrep, Inc.}},
+  title        = {Semgrep: Lightweight Static Analysis for Many Languages},
+  howpublished = {\url{https://semgrep.dev/}},
+  year         = {2024}
+}
+
+@misc{sarif2023,
+  author       = {{OASIS}},
+  title        = {Static Analysis Results Interchange Format ({SARIF}) Version 2.1.0},
+  howpublished = {OASIS Standard},
+  year         = {2023}
+}
+
+@misc{owasptop10,
+  author       = {{OWASP Foundation}},
+  title        = {{OWASP} Top Ten Web Application Security Risks},
+  howpublished = {\url{https://owasp.org/www-project-top-ten/}},
+  year         = {2021}
+}
+
+@misc{owaspbenchmark,
+  author       = {{OWASP Foundation}},
+  title        = {{OWASP} Benchmark Project},
+  howpublished = {\url{https://owasp.org/www-project-benchmark/}},
+  year         = {2023}
+}
+
+@misc{nistjuliet,
+  author       = {{National Institute of Standards and Technology}},
+  title        = {Juliet Test Suite for {Java}, Software Assurance Reference Dataset ({SARD})},
+  howpublished = {\url{https://samate.nist.gov/SARD/}},
+  year         = {2017}
+}
+
+@inproceedings{bhandari2021cvefixes,
+  author    = {Guru Bhandari and Amara Naseer and Leon Moonen},
+  title     = {{CVEfixes}: Automated Collection of Vulnerabilities and Their Fixes from Open-Source Software},
+  booktitle = {ACM International Conference on Predictive Models and Data Analytics in Software Engineering (PROMISE)},
+  pages     = {30--39},
+  year      = {2021}
+}
+
+@inproceedings{bui2022vul4j,
+  author    = {Quang-Cuong Bui and Riccardo Scandariato and Nicol{\'a}s E. D{\'i}az Ferreyra},
+  title     = {{Vul4J}: A Dataset of Reproducible {Java} Vulnerabilities Geared Towards the Study of Program Repair Techniques},
+  booktitle = {IEEE/ACM International Conference on Mining Software Repositories (MSR)},
+  pages     = {464--468},
+  year      = {2022}
+}
+
+% ---------------------------------------------------------------------
+% Foundations: injection, taint, parsing, formal methods
+% ---------------------------------------------------------------------
+@inproceedings{su2006essence,
+  author    = {Zhendong Su and Gary Wassermann},
+  title     = {The Essence of Command Injection Attacks in Web Applications},
+  booktitle = {ACM SIGPLAN-SIGACT Symposium on Principles of Programming Languages (POPL)},
+  pages     = {372--382},
+  year      = {2006}
+}
+
+@inproceedings{halfond2006classification,
+  author    = {William G. J. Halfond and Jeremy Viegas and Alessandro Orso},
+  title     = {A Classification of {SQL} Injection Attacks and Countermeasures},
+  booktitle = {IEEE International Symposium on Secure Software Engineering (ISSSE)},
+  year      = {2006}
+}
+
+@inproceedings{boyd2004sqlrand,
+  author    = {Stephen W. Boyd and Angelos D. Keromytis},
+  title     = {{SQLrand}: Preventing {SQL} Injection Attacks},
+  booktitle = {International Conference on Applied Cryptography and Network Security (ACNS)},
+  pages     = {292--302},
+  year      = {2004}
+}
+
+@article{schwartz2010taint,
+  author  = {Edward J. Schwartz and Thanassis Avgerinos and David Brumley},
+  title   = {All You Ever Wanted to Know About Dynamic Taint Analysis and Forward Symbolic Execution (but Might Have Been Afraid to Ask)},
+  journal = {IEEE Symposium on Security and Privacy (S\&P)},
+  pages   = {317--331},
+  year    = {2010}
+}
+
+@inproceedings{demoura2021lean4,
+  author    = {Leonardo de Moura and Sebastian Ullrich},
+  title     = {The {Lean} 4 Theorem Prover and Programming Language},
+  booktitle = {International Conference on Automated Deduction (CADE)},
+  pages     = {625--635},
+  year      = {2021}
+}
+
+@misc{mathlib2020,
+  author       = {{The mathlib Community}},
+  title        = {The {Lean} Mathematical Library},
+  howpublished = {ACM SIGPLAN International Conference on Certified Programs and Proofs (CPP)},
+  year         = {2020}
+}
+
+% ---------------------------------------------------------------------
+% Automated Program Repair: surveys and foundational repair systems
+% ---------------------------------------------------------------------
+@article{monperrus2018apr-survey,
+  author  = {Martin Monperrus},
+  title   = {Automatic Software Repair: A Bibliography},
+  journal = {ACM Computing Surveys},
+  volume  = {51},
+  number  = {1},
+  pages   = {1--24},
+  year    = {2018}
+}
+
+@article{gazzola2019apr-survey,
+  author  = {Luca Gazzola and Daniela Micucci and Leonardo Mariani},
+  title   = {Automatic Software Repair: A Survey},
+  journal = {IEEE Transactions on Software Engineering},
+  volume  = {45},
+  number  = {1},
+  pages   = {34--67},
+  year    = {2019}
+}
+
+@article{wong2016fl-survey,
+  author  = {W. Eric Wong and Ruizhi Gao and Yihao Li and Rui Abreu and Franz Wotawa},
+  title   = {A Survey on Software Fault Localization},
+  journal = {IEEE Transactions on Software Engineering},
+  volume  = {42},
+  number  = {8},
+  pages   = {707--740},
+  year    = {2016}
+}
+
+@article{qi2015overfitting,
+  author    = {Zichao Qi and Fan Long and Sara Achour and Martin Rinard},
+  title     = {An Analysis of Patch Plausibility and Correctness for Generate-and-Validate Patch Generation Systems},
+  journal   = {ACM SIGSOFT International Symposium on Software Testing and Analysis (ISSTA)},
+  pages     = {24--36},
+  year      = {2015}
+}
+
+@article{legoues2012genprog,
+  author  = {Claire Le Goues and ThanhVu Nguyen and Stephanie Forrest and Westley Weimer},
+  title   = {{GenProg}: A Generic Method for Automatic Software Repair},
+  journal = {IEEE Transactions on Software Engineering},
+  volume  = {38},
+  number  = {1},
+  pages   = {54--72},
+  year    = {2012}
+}
+
+% ---------------------------------------------------------------------
+% Systematic mapping and literature study methodology
+% ---------------------------------------------------------------------
+@inproceedings{petersen2015sms,
+  author    = {Kai Petersen and Sairam Vakkalanka and Ludwik Kuzniarz},
+  title     = {Guidelines for Conducting Systematic Mapping Studies in Software Engineering: An Update},
+  booktitle = {Information and Software Technology},
+  volume    = {64},
+  pages     = {1--18},
+  year      = {2015}
+}
+
+@inproceedings{petersen2008sms-original,
+  author    = {Kai Petersen and Robert Feldt and Shahid Mujtaba and Michael Mattsson},
+  title     = {Systematic Mapping Studies in Software Engineering},
+  booktitle = {International Conference on Evaluation and Assessment in Software Engineering (EASE)},
+  pages     = {68--77},
+  year      = {2008}
+}
+
+@article{kitchenham2009slr,
+  author  = {Barbara Kitchenham and O. Pearl Brereton and David Budgen and Mark Turner and John Bailey and Stephen Linkman},
+  title   = {Systematic Literature Reviews in Software Engineering: A Systematic Literature Review},
+  journal = {Information and Software Technology},
+  volume  = {51},
+  number  = {1},
+  pages   = {7--15},
+  year    = {2009}
+}
+
+@inproceedings{placeholder-sms-pain,
+  author    = {Christopher Marshall and Pearl Brereton},
+  title     = {Tools to Support Systematic Literature Reviews in Software Engineering: A Mapping Study},
+  booktitle = {ACM/IEEE International Symposium on Empirical Software Engineering and Measurement (ESEM)},
+  pages     = {296--299},
+  year      = {2013}
+}
+
+@article{placeholder-sms-auto,
+  author  = {Raymon van Dinter and Bedir Tekinerdogan and Cagatay Catal},
+  title   = {Automation of Systematic Literature Reviews: A Systematic Literature Review},
+  journal = {Information and Software Technology},
+  volume  = {136},
+  pages   = {106589},
+  year    = {2021}
+}
+
+% ---------------------------------------------------------------------
+% Learning-based vulnerability detection: datasets and models
+% ---------------------------------------------------------------------
+@inproceedings{placeholder-gnn,
+  author    = {Miltiadis Allamanis and Marc Brockschmidt and Mahmoud Khademi},
+  title     = {Learning to Represent Programs with Graphs},
+  booktitle = {International Conference on Learning Representations (ICLR)},
+  year      = {2018}
+}
+
+@inproceedings{placeholder-hybrid,
+  author    = {Davide Balzarotti and Marco Cova and Vika Felmetsger and Nenad Jovanovic and Engin Kirda and Christopher Kruegel and Giovanni Vigna},
+  title     = {Saner: Composing Static and Dynamic Analysis to Validate Sanitization in Web Applications},
+  booktitle = {IEEE Symposium on Security and Privacy (S\&P)},
+  pages     = {387--401},
+  year      = {2008}
+}
+
+@article{placeholder-apr-vuln,
+  author  = {Luca Gazzola and Daniela Micucci and Leonardo Mariani},
+  title   = {Automatic Software Repair: A Survey},
+  journal = {IEEE Transactions on Software Engineering},
+  volume  = {45},
+  number  = {1},
+  pages   = {34--67},
+  year    = {2019}
+}
+
+@article{placeholder-pg,
+  author  = {Claire Le Goues and ThanhVu Nguyen and Stephanie Forrest and Westley Weimer},
+  title   = {{GenProg}: A Generic Method for Automatic Software Repair},
+  journal = {IEEE Transactions on Software Engineering},
+  volume  = {38},
+  number  = {1},
+  pages   = {54--72},
+  year    = {2012}
+}
+
+@inproceedings{placeholder-d2a,
+  author    = {Yunhui Zheng and Saurabh Pujar and Burn Lewis and Luca Buratti and Edward Epstein and Bo Yang and Jim Laredo and Alessandro Morari and Zhong Su},
+  title     = {{D2A}: A Dataset Built for {AI}-Based Vulnerability Detection Methods Using Differential Analysis},
+  booktitle = {IEEE/ACM International Conference on Software Engineering: Software Engineering in Practice (ICSE-SEIP)},
+  pages     = {111--120},
+  year      = {2021}
+}
+
+@inproceedings{placeholder-eth2vec,
+  author    = {Nami Ashizawa and Naoto Yanai and Jason Paul Cruz and Shingo Okamura},
+  title     = {{Eth2Vec}: Learning Contract-Wide Code Representations for Vulnerability Detection on {Ethereum} Smart Contracts},
+  booktitle = {ACM International Workshop on Blockchain, Cryptocurrencies and Contracts (BSCI)},
+  pages     = {47--59},
+  year      = {2021}
+}
+
+@inproceedings{placeholder-smartaxe,
+  author    = {Zeqin Liao and Yuhong Nan and Henglong Liang and Sicheng Hao and Juan Zhai and Jiajing Wu and Zibin Zheng},
+  title     = {{SmartAxe}: Detecting Cross-Chain Vulnerabilities in Bridge Smart Contracts via Fine-Grained Static Analysis},
+  booktitle = {ACM International Conference on the Foundations of Software Engineering (FSE)},
+  pages     = {249--270},
+  year      = {2024}
+}
+
+@inproceedings{placeholder-sast-eval,
+  author    = {Stephan Lipp and Sebastian Banescu and Alexander Pretschner},
+  title     = {An Empirical Study on the Effectiveness of Static {C} Code Analyzers for Vulnerability Detection},
+  booktitle = {ACM SIGSOFT International Symposium on Software Testing and Analysis (ISSTA)},
+  pages     = {544--555},
+  year      = {2022}
+}
+
+@inproceedings{placeholder-leopard,
+  author    = {Xiaoning Du and Bihuan Chen and Yuekang Li and Jianmin Guo and Yaqin Zhou and Yang Liu and Yu Jiang},
+  title     = {{LEOPARD}: Identifying Vulnerable Code for Vulnerability Assessment Through Program Metrics},
+  booktitle = {IEEE/ACM International Conference on Software Engineering (ICSE)},
+  pages     = {60--71},
+  year      = {2019}
+}
+
+@inproceedings{placeholder-effectivesan,
+  author    = {Gregory J. Duck and Roland H. C. Yap},
+  title     = {{EffectiveSan}: Type and Memory Error Detection Using Dynamically Typed {C/C++}},
+  booktitle = {ACM SIGPLAN Conference on Programming Language Design and Implementation (PLDI)},
+  pages     = {181--195},
+  year      = {2018}
+}
+
+@misc{placeholder-artemis,
+  author       = {Richard Fang and Rohan Bindu and Akul Gupta and Qiusi Zhan and Daniel Kang},
+  title        = {{LLM} Agents Can Autonomously Hack Websites},
+  howpublished = {arXiv preprint arXiv:2402.06664},
+  year         = {2024}
+}
+
+@misc{placeholder-malcodeai,
+  author       = {Jugal Gajjar and Kamalasankari Subramaniakuppusamy and Noha El Kachach},
+  title        = {{MalCodeAI}: Autonomous Vulnerability Detection and Remediation via Language-Agnostic Code Reasoning},
+  howpublished = {arXiv preprint arXiv:2507.10898},
+  year         = {2025}
+}
+
+@inproceedings{placeholder-vuldeepecker,
+  author    = {Zhen Li and Deqing Zou and Shouhuai Xu and Xinyu Ou and Hai Jin and Sujuan Wang and Zhijun Deng and Yuyi Zhong},
+  title     = {{VulDeePecker}: A Deep Learning-Based System for Vulnerability Detection},
+  booktitle = {Network and Distributed System Security Symposium (NDSS)},
+  year      = {2018}
+}
+
+@article{placeholder-sysevr,
+  author  = {Zhen Li and Deqing Zou and Shouhuai Xu and Hai Jin and Yawei Zhu and Zhaoxuan Chen},
+  title   = {{SySeVR}: A Framework for Using Deep Learning to Detect Software Vulnerabilities},
+  journal = {IEEE Transactions on Dependable and Secure Computing},
+  volume  = {19},
+  number  = {4},
+  pages   = {2244--2258},
+  year    = {2022}
+}
+
+@inproceedings{placeholder-devign,
+  author    = {Yaqin Zhou and Shangqing Liu and Jingkai Siow and Xiaoning Du and Yang Liu},
+  title     = {{Devign}: Effective Vulnerability Identification by Learning Comprehensive Program Semantics via Graph Neural Networks},
+  booktitle = {Advances in Neural Information Processing Systems (NeurIPS)},
+  pages     = {10197--10207},
+  year      = {2019}
+}
+
+@article{placeholder-reveal,
+  author  = {Saikat Chakraborty and Rahul Krishna and Yangruibo Ding and Baishakhi Ray},
+  title   = {Deep Learning Based Vulnerability Detection: Are We There Yet?},
+  journal = {IEEE Transactions on Software Engineering},
+  volume  = {48},
+  number  = {9},
+  pages   = {3280--3296},
+  year    = {2022}
+}
+
+@article{placeholder-livable,
+  author  = {Xin-Cheng Wen and Cuiyun Gao and Feng Luo and Haoyu Wang and Ge Li and Qing Liao},
+  title   = {{LIVABLE}: Exploring Long-Tailed Classification of Software Vulnerability Types},
+  journal = {IEEE Transactions on Software Engineering},
+  volume  = {50},
+  number  = {6},
+  pages   = {1325--1339},
+  year    = {2024}
+}
+
+@inproceedings{placeholder-vulberta,
+  author    = {Hazim Hanif and Sergio Maffeis},
+  title     = {{VulBERTa}: Simplified Source Code Pre-Training for Vulnerability Detection},
+  booktitle = {International Joint Conference on Neural Networks (IJCNN)},
+  pages     = {1--8},
+  year      = {2022}
+}
+
+@misc{placeholder-xgvbert,
+  author       = {Vu Le Anh Quan and Chau Thuan Phat and Kiet Van Nguyen and Phan The Duy and Van-Hau Pham},
+  title        = {{XGV-BERT}: Leveraging Contextualized Language Model and Graph Neural Network for Efficient Software Vulnerability Detection},
+  howpublished = {arXiv preprint arXiv:2309.14677},
+  year         = {2023}
+}
+
+@misc{placeholder-enstack,
+  author       = {Shahriyar Zaman Ridoy and Md. Shazzad Hossain and Sabik Aftahee and Khondoker Nazia Iqbal and Md Humaion Kabir Mehedi and Annajiat Alim Rasel},
+  title        = {{EnStack}: An Ensemble Stacking Framework of Large Language Models for Enhanced Vulnerability Detection in Source Code},
+  howpublished = {arXiv preprint arXiv:2411.16561},
+  year         = {2024}
+}
+
+@misc{placeholder-dshgt,
+  author       = {Tiehua Zhang and Rui Xu and Jianping Zhang and Yuze Liu and Xin Chen and Jun Yin and Xi Zheng},
+  title        = {{DSHGT}: Dual-Supervisors Heterogeneous Graph Transformer for Detecting Software Vulnerabilities},
+  howpublished = {arXiv preprint arXiv:2306.01376},
+  year         = {2023}
+}
+
+% ---------------------------------------------------------------------
+% LLM- and analysis-driven detection and repair pipelines
+% ---------------------------------------------------------------------
+@inproceedings{placeholder-gptscan,
+  author    = {Yuqiang Sun and Daoyuan Wu and Yue Xue and Han Liu and Haijun Wang and Zhengzi Xu and Xiaofei Xie and Yang Liu},
+  title     = {{GPTScan}: Detecting Logic Vulnerabilities in Smart Contracts by Combining {GPT} with Program Analysis},
+  booktitle = {IEEE/ACM International Conference on Software Engineering (ICSE)},
+  pages     = {1--13},
+  year      = {2024}
+}
+
+@inproceedings{placeholder-anakin,
+  author    = {Yi Wu and Nan Jiang and Hung Viet Pham and Thibaud Lutellier and Jordan Davis and Lin Tan and Petr Babkin and Sameena Shah},
+  title     = {How Effective Are Neural Networks for Fixing Security Vulnerabilities},
+  booktitle = {ACM SIGSOFT International Symposium on Software Testing and Analysis (ISSTA)},
+  pages     = {1282--1294},
+  year      = {2023}
+}
+
+@article{placeholder-gagat,
+  author  = {Quanjun Zhang and Chunrong Fang and Yang Xie and Yuxiang Ma and Weisong Sun and Yun Yang and Zhenyu Chen},
+  title   = {A Survey of Learning-Based Automated Program Repair},
+  journal = {ACM Transactions on Software Engineering and Methodology},
+  volume  = {33},
+  number  = {2},
+  pages   = {1--69},
+  year    = {2024}
+}
+
+@inproceedings{placeholder-avatar,
+  author    = {Kui Liu and Anil Koyuncu and Dongsun Kim and Tegawend{\'e} F. Bissyand{\'e}},
+  title     = {{AVATAR}: Fixing Semantic Bugs with Fix Patterns of Static Analysis Violations},
+  booktitle = {IEEE International Conference on Software Analysis, Evolution and Reengineering (SANER)},
+  pages     = {1--12},
+  year      = {2019}
+}
+
+@article{placeholder-sorald,
+  author  = {Khashayar Etemadi and Nicolas Harrand and Simon Lars{\'e}n and Haris Adzemovic and Henry Luong Phu and Ashutosh Verma and Fernanda Madeiral and Douglas Wikstrom and Martin Monperrus},
+  title   = {Sorald: Automatic Patch Suggestions for {SonarQube} Static Analysis Violations},
+  journal = {IEEE Transactions on Dependable and Secure Computing},
+  volume  = {20},
+  number  = {4},
+  pages   = {2794--2810},
+  year    = {2023}
+}
+
+@misc{placeholder-addresswatcher,
+  author       = {Aniruddhan Murali and Mahmoud Alfadel and Meiyappan Nagappan and Meng Xu and Chengnian Sun},
+  title        = {{AddressWatcher}: Sanitizer-Based Localization of Memory Leak Fixes},
+  howpublished = {arXiv preprint arXiv:2403.18394},
+  year         = {2024}
+}
+
+@article{placeholder-sequencer,
+  author  = {Zimin Chen and Steve Kommrusch and Michele Tufano and Louis-No{\"e}l Pouchet and Denys Poshyvanyk and Martin Monperrus},
+  title   = {{SequenceR}: Sequence-to-Sequence Learning for End-to-End Program Repair},
+  journal = {IEEE Transactions on Software Engineering},
+  volume  = {47},
+  number  = {9},
+  pages   = {1943--1959},
+  year    = {2021}
+}
+
+@inproceedings{placeholder-hoppity,
+  author    = {Elizabeth Dinella and Hanjun Dai and Ziyang Li and Mayur Naik and Le Song and Ke Wang},
+  title     = {Hoppity: Learning Graph Transformations to Detect and Fix Bugs in Programs},
+  booktitle = {International Conference on Learning Representations (ICLR)},
+  year      = {2020}
+}

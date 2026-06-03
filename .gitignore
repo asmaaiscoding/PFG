@@ -41,3 +41,5 @@ artifacts/codeql/
 
 # Reproducible third-party corpus checkouts are fetched from manifest refs.
 benchmarks/realworld/*/src/
+node_modules/
+.next/

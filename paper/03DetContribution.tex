@@ -41,57 +41,6 @@ generalization capacity of graph neural networks with the precision and
 interpretability of structural rules expressed as first-order logic
 predicates.
 
-\paragraph{Chapter contributions.}
-The work contributes four artefacts, each addressing a distinct gap in the
-current state of practice:
-\begin{enumerate}[label=\textbf{D\arabic*.},leftmargin=2.8em]
-  \item \textbf{An architectural graph formalism.} The PFG abstracts any
-  REST API application into a compact graph (typically 5--50 nodes) where
-  every node and every edge has a direct, human-readable interpretation in
-  the authorization domain. The formalism is defined independently of any
-  particular web framework; it requires only that the framework implement
-  some notion of endpoints, middleware-based guards, and data access
-  operations---a property shared by virtually all modern REST frameworks.
-
-  \item \textbf{A hybrid neural-logical detection architecture.} A GATv2
-  message-passing backbone with a target-aware attention pooling mechanism
-  provides learned classification over the PFG, while five structural rules
-  formalized as boolean predicates provide validation and explanation. The
-  two components are complementary: the neural component proposes candidates
-  (recall), the logical component confirms and explains (precision).
-
-  \item \textbf{A real-world evaluation corpus.} 75 manifests drawn from
-  production open-source applications, each pinned to a specific git
-  revision and annotated with ground-truth vulnerability type. The corpus
-  enables reproducible evaluation of authorization-focused detection tools
-  against real CVEs.
-
-  \item \textbf{An honest empirical evaluation.} We demonstrate that the
-  PFG achieves complete recall on applications where extraction coverage is
-  adequate, while existing industry tools (Semgrep, CodeQL) achieve
-  near-zero recall on the same vulnerabilities. We decompose failures into
-  extraction-attributable and model-attributable categories, identifying
-  extractor coverage as the binding constraint.
-\end{enumerate}
-
-\paragraph{Chapter outline.}
-Section~\ref{det:problem} formalises the detection problem, fixes the threat
-model and adversarial assumptions, develops the taxonomy of authorization
-vulnerabilities, and states the hypotheses the remainder of the work tests.
-Section~\ref{det:design} presents the proposed approach: the PFG
-formulation, the feature space, the GATv2 architecture and target-aware
-pooling, the five structural rules, and the complementarity argument.
-Section~\ref{det:impl} descends into the implementation: the two-level
-extraction strategy, the Django and Spring Boot extractors, the 75-CVE
-corpus, the augmentation pipeline, and the training methodology.
-Section~\ref{det:setup} describes the experimental setup: environment,
-metrics, baselines, and split strategy. Section~\ref{det:results} reports
-and analyses results, including failure mode decomposition and a comparison
-with industry tools. Section~\ref{det:discussion} interprets the findings,
-addresses limitations and threats to validity, and weighs the GNN
-contribution honestly. Section~\ref{det:conclusion} concludes and ties the
-work back to the contributions above.
-
 
 % =====================================================================
 \section{Problem Formulation}

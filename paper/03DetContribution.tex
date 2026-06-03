@@ -1,4 +1,7 @@
-\chapter{Contribution: Vulnerability Detection}
+\part{Contribution}
+
+\chapter{Privilege Flow Graphs for Detecting Access Control 
+Vulnerabilities via Graph Neural Networks}
 \label{ch:detection}
 
 % =====================================================================
@@ -56,7 +59,6 @@ introduced here is reused throughout the chapter; it forms the contract
 between the formalism and the implementation.
 
 \subsection{Attacker model and security scope}
-\textcolor{red}{I do not like the title of this section}
 \label{sec:det-threat}
 \textcolor{red}{}
 
@@ -92,19 +94,19 @@ resource being accessed.
 \texttt{Trust boundary:} the authorization decision chain follows a
 three-stage model:
 \begin{enumerate}
-    \item \textbf{Authentication}: verification that the requesting entity
+    \item \textit{Authentication}: verification that the requesting entity
     possesses a valid identity (session token, JWT, API key).
-    \item \textbf{Authorization}: enforcement of access control policies
+    \item \textit{Authorization}: enforcement of access control policies
     restricting which authenticated identities may access which resources
     under which conditions.
-    \item \textbf{Data access}: the terminal database operation that reads,
+    \item \textit{Data access}: the terminal database operation that reads,
     creates, modifies, or deletes a resource.
 \end{enumerate}
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.85\linewidth]{figures/fig_threat_model.png}
-\caption{Threat model overview: the attacker is an authenticated user attempting privilege escalation. The vulnerability lies in a missing or insufficient authorization stage between authentication and data access.}
+\includegraphics[width=1\linewidth]{figures/fig_threat_model.png}
+\caption{Threat model overview: the attacker is an authenticated user attempting privilege escalation. The vulnerability lies in a missing or insufficient authorization stage between authentication and data access. \textcolor{red}{very long title}}
 \label{fig:det-threat-model}
 \end{figure}
 
@@ -141,14 +143,14 @@ distinct structural signature in the graph.
 
 \begin{itemize}
 
-\item \textbf{MISSING\_AUTH (CWE-306):}
+\item \texttt{MISSING\_AUTH (CWE-306):}
 An endpoint performs data access without requiring any form of
 authentication, allowing anonymous users to invoke the operation and access
 the underlying data. Formally, an endpoint $v$ exhibits this vulnerability
 if and only if $v$ requires no authentication, $v$ reaches at least one data
 access node via call edges, and $v$ is not designated as intentionally public.
 
-\item \textbf{MISSING\_ROLE (CWE-862):}
+\item \texttt{MISSING\_ROLE (CWE-862):}
 An authenticated endpoint performs a privileged mutation (write, update,
 delete on shared resources) without verifying that the requesting user holds
 the requisite privilege level. An endpoint $v$ exhibits this vulnerability
@@ -156,7 +158,7 @@ if $v$ requires authentication, $v$ reaches a data access performing a
 privileged operation on a shared entity, and no node on any call path from
 $v$ to the data access enforces a role check.
 
-\item \textbf{IDOR: Insecure Direct Object Reference (CWE-639):}
+\item \texttt{IDOR: Insecure Direct Object Reference (CWE-639):}
 An endpoint accepts a user-controlled identifier (route parameter) that
 flows to a database query without verifying that the authenticated user owns
 or has permission to access the referenced object. An endpoint $v$ exhibits
@@ -165,7 +167,7 @@ connects $v$ to a data access node $d$, the data access targets an
 ownership-bearing entity, no node on any call path from $v$ to $d$ enforces
 an ownership check, and $d$ has no ownership predicate in its query filter.
 
-\item \textbf{TENANT\_ISOLATION\_FAILURE:}
+\item \texttt{TENANT\_ISOLATION\_FAILURE:}
 In multi-tenant applications, a data access retrieves resources across
 tenant boundaries without enforcing tenant-scoped filtering. An endpoint $v$
 exhibits this vulnerability if $v$ reaches a data access node $d$ whose
@@ -173,7 +175,7 @@ target entity requires tenant isolation, $d$ has no tenant predicate in its
 query filter, and no middleware on the path from $v$ to $d$ enforces tenant
 scoping.
 
-\item \textbf{OBJECT\_LEVEL\_PERMISSION\_BYPASS:}
+\item \texttt{OBJECT\_LEVEL\_PERMISSION\_BYPASS:}
 An endpoint has evidence of model-level permissions (the application defines
 object-level access control for the resource) but the specific endpoint does
 not enforce object-level authorization when accessing individual objects via
@@ -240,19 +242,19 @@ by a structural representation.
 The analysis above yields three hypotheses that the rest of the chapter
 tests:
 \begin{itemize}%[leftmargin=1.8em,style=nextline]
-  \item \texttt {H1:}
+  \item \textbf {H1:}
   A graph representation that captures only authorization-relevant
   components (endpoints, guards, services, data accesses) and their
   relationships is sufficient to detect authorization vulnerabilities that
   are invisible to general-purpose representations.
 
-  \item \texttt {H2:}
+  \item \textbf {H2:}
   A graph neural network trained on structural patterns of vulnerable and
   safe authorization architectures can learn to classify endpoints, even
   though the vulnerability signal is the absence of protective structure
   rather than the presence of dangerous patterns.
 
-  \item \texttt {H3:}
+  \item \textbf {H3:}
   Combining a neural scorer (for generalization) with a logical validator
   (for precision and explanation) yields better detection performance than
   either in isolation, and provides interpretable explanations without
@@ -291,16 +293,14 @@ implementation detail (extraction algorithms, training methodology, corpus
 construction) is deferred to Section~\ref{det:impl}; here the concern is
 the \emph{what} and the \emph{why}, not the \emph{how}.
 
-Figure~\ref{fig:det-overview} summarises the end-to-end detection process.
-
 \begin{figure}[ht]
 \centering
-\includegraphics[width=\linewidth]{figures/fig_det_overview.png}
-\caption{End-to-end overview of the PFG-based detection approach. The application is abstracted into a Privilege Flow Graph that retains only authorization-relevant structure (four node types connected by three edge types). The graph is encoded with a 36-dimensional interpretable feature vector and processed by both a neural scorer (GATv2) and a logical validator (structural rules). Only findings confirmed by both components pass the conjunction gate, each accompanied by a structural explanation identifying the missing protection.}
+\includegraphics[width=0.85\linewidth]{figures/fig_det_overview.png}
+\caption{End-to-end overview of the PFG-based detection approach.}
 \label{fig:det-overview}
 \end{figure}
 
-\subsection{Architectural intuition}
+\subsection{Architectural intuition \textcolor{red}{Change this title}}
 \label{sec:det-intuition}
 
 Before the formalism, consider the intuition. Any REST API, regardless of
@@ -1335,7 +1335,7 @@ semantics. PFG provides exactly this representation.
 \subsection{Failure analysis}
 \label{sec:det-failures}
 
-\texttt{Failure mode decomposition: }
+%\texttt{Failure mode decomposition: }
 \begin{table}[htbp]
 \centering
 \caption{Failure mode decomposition (21 false negatives).}
@@ -1364,7 +1364,7 @@ from the current training corpus. Custom auth failures (14\%) represent
 guard patterns that the extractor partially resolves but cannot fully
 model (organization-scoped permissions, dynamic role resolution).
 
-\texttt{Framework coverage gap: }
+%\texttt{Framework coverage gap: }
 Performance varies by the degree of extractor coverage:
 \begin{itemize}
     \item{DRF-standard (high coverage):} Applications using
@@ -1507,7 +1507,7 @@ applications.
 
 The principal findings are:
 \begin{enumerate}
-    \item \textbf{The representation is validated (H1).} The PFG formalism
+    \item \texttt{The representation is validated (H1).} The PFG formalism
     captures exactly the architectural relationships that distinguish
     vulnerable endpoints from secure ones. On controlled evaluations, the
     detection model achieves macro-F1 = 0.769 across eight vulnerability
@@ -1516,18 +1516,18 @@ The principal findings are:
     real-world applications with complete extraction, all known
     vulnerabilities are detected (R = 1.0).
 
-    \item \textbf{Absence-based detection is learnable (H2).} The GATv2
+    \item \texttt{Absence-based detection is learnable (H2).} The GATv2
     model with target-aware attention pooling learns to distinguish
     vulnerable configurations (missing guards on paths to sensitive data)
     from safe configurations (complete guard chains), without requiring
     explicit rule authoring for each vulnerability subtype.
 
-    \item \textbf{The hybrid approach provides interpretable, actionable
+    \item \texttt{The hybrid approach provides interpretable, actionable
     findings (H3).} Each detection traces a concrete structural path through
     the PFG, identifying what is missing, where, and why. The validator
     produces explanations that directly imply remediation actions.
 
-    \item \textbf{No existing tool addresses this gap.} Semgrep and CodeQL
+    \item \texttt{No existing tool addresses this gap.} Semgrep and CodeQL
     achieve near-zero recall on authorization vulnerabilities because they
     are architecturally incapable of detecting the absence of required
     protections. This validates the need for purpose-built approaches.

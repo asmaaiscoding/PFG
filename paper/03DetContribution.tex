@@ -106,7 +106,7 @@ three-stage model:
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=1\linewidth]{figures/fig_threat_model.png}
-\caption{Threat model overview: the attacker is an authenticated user attempting privilege escalation. The vulnerability lies in a missing or insufficient authorization stage between authentication and data access. \textcolor{red}{very long title}}
+\caption{Threat model overview.}
 \label{fig:det-threat-model}
 \end{figure}
 
@@ -300,7 +300,7 @@ the \emph{what} and the \emph{why}, not the \emph{how}.
 \label{fig:det-overview}
 \end{figure}
 
-\subsection{Architectural intuition \textcolor{red}{Change this title}}
+\subsection{Design rationale}
 \label{sec:det-intuition}
 
 Before the formalism, consider the intuition. Any REST API, regardless of
@@ -455,7 +455,7 @@ Three edge types capture the relationships between nodes:
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=\linewidth]{figures/fig_pfg_schema.pdf}
-\caption{PFG graph schema. Four node types (circle = Endpoint, diamond = Middleware, rectangle = Service, hexagon = Data\_Access) connected by three edge types: solid = CALL, dashed = IDENTIFIER\_FLOW, dotted = TENANT\_FLOW. Node attributes shown below each type encode the security-relevant properties used for both feature computation and rule evaluation.}
+\caption{PFG graph schema: node types, edge types, and attributes.}
 \label{fig:det-schema}
 \end{figure}
 
@@ -992,8 +992,7 @@ the most commonly neglected authorization check in production APIs.
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=1\linewidth]{figures/fig_corpus_distribution.png}
-\caption{Distribution of vulnerability subtypes in the 75-CVE evaluation
-corpus. The imbalance reflects natural prevalence in production applications.}
+\caption{Distribution of vulnerability subtypes in the 75-CVE corpus.}
 \label{fig:det-distribution}
 \end{figure}
 
